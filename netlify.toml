@@ -1,0 +1,29 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/vault/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[redirects]]
+  from = "https://mustardseed.eone.one/*"
+  to = "https://blog.eone.one/general/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://burn.eone.one/*"
+  to = "https://blog.eone.one/tech/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://popcorn.eone.one/*"
+  to = "https://blog.eone.one/culture/:splat"
+  status = 301
+  force = true
