@@ -3,11 +3,13 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import pagefind from 'astro-pagefind';
 
 export default defineConfig({
   site: 'https://blog.eone.one',
   integrations: [
     react(),
+    pagefind(),
     sitemap({
       filter: (page) => !page.includes('/vault'),
     }),

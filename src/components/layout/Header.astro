@@ -1,6 +1,7 @@
 ---
 import DarkModeToggle from '../DarkModeToggle';
 import LanguageSwitcher from '../LanguageSwitcher';
+import SearchButton from '../SearchButton';
 
 interface Props {
   lang?: 'ko' | 'en';
@@ -12,7 +13,7 @@ const { lang = 'ko', alternateUrl } = Astro.props;
 
 const navLinks = [
   { label: 'Blog',  href: '/' },
-  { label: 'Pages', href: '/pages' },
+  { label: 'Tags',  href: '/tags' },
   { label: 'About', href: '/about' },
 ];
 
@@ -59,18 +60,8 @@ const pathname = Astro.url.pathname;
         <!-- Divider -->
         <span class="hidden md:block w-px h-4 bg-border mx-2" />
 
-        <!-- Search placeholder (Phase 4에서 Pagefind 연결) -->
-        <button
-          id="search-btn"
-          aria-label="검색"
-          disabled
-          class="p-2 rounded-md text-muted-foreground opacity-40 cursor-not-allowed"
-          title="검색 (준비 중)"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-          </svg>
-        </button>
+        <!-- Search -->
+        <SearchButton client:load />
 
         <!-- Controls -->
         <LanguageSwitcher client:load lang={lang} alternateUrl={alternateUrl} />

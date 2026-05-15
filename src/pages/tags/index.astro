@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+
+const allPosts = (await Promise.all(
+  SECTIONS.map(s => getCollection(s, e => e.id.startsWith('ko/') && !e.data.draft))
+)).flat();
+
+const tagCount = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags ?? []) {
+    tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
+  }
+}
+
+const tags = Array.from(tagCount.entries())
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+const maxCount = tags[0]?.[1] ?? 1;
+
+function fontSize(count: number): string {
+  const ratio = count / maxCount;
+  if (ratio > 0.8) return 'text-2xl font-bold';
+  if (ratio > 0.5) return 'text-xl font-semibold';
+  if (ratio > 0.3) return 'text-base font-medium';
+  if (ratio > 0.1) return 'text-sm';
+  return 'text-xs';
+}
+---
+
+<BaseLayout title="태그 목록 — eone blog" description="블로그의 모든 태그를 한눈에 봅니다.">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+    <div class="max-w-4xl mx-auto py-12">
+
+      <div class="pb-8 mb-10 border-b border-border">
+        <h1 class="text-2xl font-bold tracking-tight text-foreground mb-2">태그</h1>
+        <p class="text-sm text-muted-foreground">총 {tags.length}개의 태그</p>
+      </div>
+
+      <!-- Tag cloud -->
+      <div class="flex flex-wrap gap-3 items-baseline">
+        {tags.map(([tag, count]) => (
+          <a
+            href={`/tags/${tag}`}
+            class={`${fontSize(count)} text-muted-foreground hover:text-foreground transition-colors`}
+            title={`${count}개의 포스트`}
+          >
+            {tag}
+            <sup class="text-[10px] text-muted-foreground/60 ml-0.5">{count}</sup>
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

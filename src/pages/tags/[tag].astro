@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+
+export async function getStaticPaths() {
+  const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+  const allPosts = (await Promise.all(
+    sections.map(s => getCollection(s, e => e.id.startsWith('ko/') && !e.data.draft))
+  )).flat();
+
+  const tagSet = new Set(allPosts.flatMap(p => p.data.tags ?? []));
+
+  return Array.from(tagSet).map(tag => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props as { tag: string };
+
+const allPosts = (await Promise.all(
+  SECTIONS.map(async (section) => {
+    const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+    return posts
+      .filter(p => p.data.tags?.includes(tag))
+      .map(post => ({
+        title: post.data.title,
+        description: post.data.description,
+        date: post.data.date,
+        slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+        section,
+        tags: post.data.tags,
+        thumbnail: post.data.thumbnail,
+      }));
+  })
+)).flat().sort((a, b) => b.date.getTime() - a.date.getTime());
+---
+
+<BaseLayout
+  title={`#${tag} — eone blog`}
+  description={`'${tag}' 태그가 붙은 포스트 ${allPosts.length}개`}
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+    <div class="max-w-5xl mx-auto py-12">
+
+      <!-- Header -->
+      <div class="pb-8 mb-10 border-b border-border">
+        <nav class="text-xs text-muted-foreground mb-4">
+          <a href="/tags" class="hover:text-foreground transition-colors">태그</a>
+          <span class="mx-2">/</span>
+          <span class="text-foreground">{tag}</span>
+        </nav>
+        <h1 class="text-2xl font-bold tracking-tight text-foreground mb-1">#{tag}</h1>
+        <p class="text-sm text-muted-foreground">{allPosts.length}개의 포스트</p>
+      </div>
+
+      <!-- Posts grid -->
+      {allPosts.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {allPosts.map(post => (
+            <PostCard
+              title={post.title}
+              description={post.description}
+              date={post.date}
+              slug={post.slug}
+              section={post.section}
+              tags={post.tags}
+              thumbnail={post.thumbnail}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-muted-foreground text-sm">포스트가 없습니다.</p>
+      )}
+
+    </div>
+  </div>
+</BaseLayout>

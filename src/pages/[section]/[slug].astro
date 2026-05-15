@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
+import { readingTime } from '../../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -11,24 +12,37 @@ export async function getStaticPaths() {
       const posts = await getCollection(section, (entry) =>
         entry.id.startsWith('ko/') && !entry.data.draft
       );
-      return posts.map(post => ({
+      posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+      return posts.map((post, index) => ({
         params: {
           section,
           slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
         },
-        props: { post, section },
+        props: {
+          post,
+          section,
+          prevPost: posts[index + 1] ?? null,
+          nextPost: posts[index - 1] ?? null,
+        },
       }));
     })
   );
   return paths.flat();
 }
 
-const { post, section } = Astro.props as {
+const { post, section, prevPost, nextPost } = Astro.props as {
   post: Awaited<ReturnType<typeof getCollection>>[number];
   section: Section;
+  prevPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+  nextPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
 };
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const minutes = readingTime(post.body ?? '');
+
+function toSlug(id: string) {
+  return id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, '');
+}
 ---
 
 <PostLayout
@@ -40,6 +54,10 @@ const { Content } = await render(post);
   tags={post.data.tags}
   thumbnail={post.data.thumbnail}
   lang="ko"
+  readingTime={minutes}
+  headings={headings}
+  prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
+  nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
 >
   <Content />
 </PostLayout>

@@ -1,0 +1,57 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const filtered = headings.filter(h => h.depth <= 3);
+---
+
+{filtered.length > 0 && (
+  <nav class="toc text-sm" aria-label="목차">
+    <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">목차</p>
+    <ul class="space-y-1.5">
+      {filtered.map(({ depth, slug, text }) => (
+        <li style={`padding-left: ${(depth - 2) * 12}px`}>
+          <a
+            href={`#${slug}`}
+            class="toc-link block text-muted-foreground hover:text-foreground transition-colors leading-snug py-0.5"
+            data-slug={slug}
+          >
+            {text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+  if (links.length > 0) {
+    const headingEls = Array.from(links).map(l =>
+      document.getElementById(l.dataset.slug ?? '')
+    ).filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            links.forEach(l => l.classList.remove('text-foreground', 'font-medium'));
+            const active = document.querySelector<HTMLAnchorElement>(`.toc-link[data-slug="${entry.target.id}"]`);
+            active?.classList.add('text-foreground', 'font-medium');
+            break;
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -60% 0px' }
+    );
+    headingEls.forEach(el => observer.observe(el));
+  }
+</script>
