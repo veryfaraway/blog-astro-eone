@@ -1,0 +1,61 @@
+---
+---
+
+<footer class="mt-24 border-t border-border">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+
+      <!-- Left: branding + links -->
+      <div class="flex flex-col gap-3">
+        <!-- Easter egg: hover reveals vault icon -->
+        <a
+          href="/"
+          class="group flex items-center gap-2 text-sm font-semibold text-foreground w-fit"
+        >
+          <span
+            id="vault-trigger"
+            class="relative cursor-default select-none"
+            title=""
+          >
+            eone
+            <span
+              id="vault-icon"
+              class="absolute -right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-muted-foreground hover:text-foreground cursor-pointer"
+              aria-hidden="true"
+            >
+              ◈
+            </span>
+          </span>
+        </a>
+        <p class="text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} eone. All rights reserved.
+        </p>
+      </div>
+
+      <!-- Right: nav links -->
+      <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="푸터 내비게이션">
+        {[
+          { label: 'Life',    href: '/life' },
+          { label: 'Money',   href: '/money' },
+          { label: 'Culture', href: '/culture' },
+          { label: 'Tools',   href: '/tools' },
+          { label: 'Dev',     href: '/dev' },
+        ].map(({ label, href }) => (
+          <a
+            href={href}
+            class="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const vaultIcon = document.getElementById('vault-icon');
+  vaultIcon?.addEventListener('click', () => {
+    window.location.href = '/vault';
+  });
+</script>

@@ -18,5 +18,8 @@ export default defineConfig({
   i18n: {
     locales: ['ko', 'en'],
     defaultLocale: 'ko',
+    routing: {
+      prefixDefaultLocale: false, // 한국어: /life/slug, 영어: /en/life/slug
+    },
   },
 });

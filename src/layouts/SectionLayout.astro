@@ -1,0 +1,29 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+
+interface Props {
+  title?: string;
+  description?: string;
+  section: Section;
+  noindex?: boolean;
+  ogImage?: string;
+  lang?: 'ko' | 'en';
+  alternateUrl?: string;
+}
+
+const props = Astro.props;
+
+const sectionLabel: Record<Section, string> = {
+  life: 'Life',
+  money: 'Money',
+  culture: 'Culture',
+  tools: 'Tools',
+  dev: 'Dev',
+};
+---
+
+<BaseLayout {...props}>
+  <slot />
+</BaseLayout>

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 주식 히트맵 - 검색 엔진 차단
+Disallow: /vault/
+Disallow: /en/vault/
+
+Sitemap: https://blog.eone.one/sitemap-index.xml

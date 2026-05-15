@@ -1,17 +1,40 @@
 ---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeTabs from '../components/HomeTabs';
 
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+
+const allPosts = (await Promise.all(
+  SECTIONS.map(async (section) => {
+    const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+    return posts.map(post => ({
+      title: post.data.title,
+      description: post.data.description,
+      date: post.data.date.toISOString().split('T')[0],
+      slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+      section,
+      tags: post.data.tags,
+      thumbnail: post.data.thumbnail,
+    }));
+  })
+)).flat().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="eone blog" description="일상, 경제, 문화, 개발, 도구에 관한 이야기">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+
+    <div class="py-12 border-b border-border">
+      <h1 class="text-2xl font-bold tracking-tight text-foreground mb-2">eone blog</h1>
+      <p class="text-sm text-muted-foreground">
+        일상, 경제, 문화, 개발, 도구에 관한 이야기를 씁니다.
+      </p>
+    </div>
+
+    <div class="py-8">
+      <HomeTabs client:load posts={allPosts} />
+    </div>
+
+  </div>
+</BaseLayout>

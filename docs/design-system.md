@@ -1,7 +1,15 @@
 # 디자인 시스템
 
 > 기반: shadcn/ui + Radix UI + Tailwind CSS  
-> 원칙: 3개 섹션이 시각적으로 구분되면서도 하나의 블로그처럼 통일감을 가진다
+> 원칙: 5개 섹션이 시각적으로 구분되면서도 하나의 블로그처럼 통일감을 가진다
+
+### 디자인 방향 (확정)
+
+- **톤**: modern, calm, clean, premium, understated
+- **금지**: flashy, 과도한 색상, startup-marketing 스타일, AI 그라디언트, 과대형 카드
+- **아티클 페이지**: editorial, 읽기 집중형
+- **유틸리티 페이지** (검색, 아카이브, 태그, `/vault`): shadcn/ui 컴포넌트 그대로
+- **Accent color 사용 원칙**: 섹션 뱃지, 좌측 border-line, hover 상태 등 **서브 포인트로만** 사용. 대형 색상 블록 금지
 
 ---
 
@@ -48,16 +56,25 @@
 
 각 섹션은 고유한 accent color를 가진다. CSS 변수로 주입되어 `SectionLayout`이 적용.
 
-#### general (일상/경제/육아)
+#### life (일상/종교/육아/자동차)
 ```css
-/* 따뜻하고 신뢰감 있는 amber 계열 */
+/* 따뜻하고 자연스러운 green 계열 */
+--accent: 142 71% 45%;          /* green-500 */
+--accent-foreground: 0 0% 100%;
+--accent-light: 141 84% 93%;    /* green-100 */
+--accent-dark: 142 76% 36%;     /* green-600 */
+```
+
+#### money (경제/투자/절약/제품리뷰)
+```css
+/* 신뢰감 있는 amber/gold 계열 */
 --accent: 45 93% 47%;           /* amber-500 */
 --accent-foreground: 26 83% 14%;
 --accent-light: 48 96% 89%;     /* amber-100 */
 --accent-dark: 32 95% 44%;      /* amber-600 */
 ```
 
-#### culture (영화/게임/여행)
+#### culture (영화/영어학습/여행)
 ```css
 /* 감성적이고 무드 있는 violet 계열 */
 --accent: 262 83% 58%;          /* violet-500 */
@@ -66,7 +83,16 @@
 --accent-dark: 263 70% 50%;     /* violet-600 */
 ```
 
-#### tech (테크/개발/AI)
+#### tools (macOS/터미널/개발환경)
+```css
+/* 실용적인 slate 계열 */
+--accent: 215 25% 47%;          /* slate-500 */
+--accent-foreground: 0 0% 100%;
+--accent-light: 210 40% 93%;    /* slate-100 */
+--accent-dark: 215 28% 37%;     /* slate-600 */
+```
+
+#### dev (개발/AI/Backend/Frontend)
 ```css
 /* 차갑고 기술적인 cyan 계열 */
 --accent: 199 89% 48%;          /* cyan-500 */
@@ -75,7 +101,7 @@
 --accent-dark: 200 98% 39%;     /* cyan-600 */
 ```
 
-> **결정 필요**: 위 색상은 초안. 실제 구현 전 한섭님 확인 후 확정.
+> **초안**: 실제 렌더링 확인 후 조정 가능.
 
 ---
 
@@ -85,8 +111,7 @@
 
 | 용도 | 폰트 | 비고 |
 |------|------|------|
-| 한국어 본문 & 헤드라인 | **Noto Sans KR** ✅ | Google Fonts CDN |
-| 영어 본문 | Inter | Google Fonts CDN |
+| 한국어 + 영어 본문 & 헤드라인 | **Pretendard Variable** ✅ | jsDelivr CDN (variable font) |
 | 코드 | JetBrains Mono | Google Fonts CDN |
 
 ### 타입 스케일 (Tailwind 기준)

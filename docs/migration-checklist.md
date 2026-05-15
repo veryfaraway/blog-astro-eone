@@ -1,7 +1,7 @@
 # 콘텐츠 마이그레이션 체크리스트
 
 > 기존 3개 블로그 포스트를 blog-astro-eone으로 이전하는 작업 추적 문서  
-> 총 예상 포스트: **general 72개 + tech ~93개 + culture ~47개 ≒ 212개**
+> 총 예상 포스트: **life ~44개 + money ~26개 + culture ~47개 + tools ~45개 + dev ~48개 ≒ 210개**
 
 ---
 
@@ -42,13 +42,13 @@
 title: ""
 description: ""
 date: YYYY-MM-DD
-section: general | tech | culture        # 섹션 구분
-category: ""                              # 섹션 내 카테고리
+section: life | money | culture | tools | dev   # 섹션 구분
+category: ""                                     # 섹션 내 카테고리
 tags: []
 lang: ko | en
-thumbnail: ""                             # 선택 사항
+thumbnail: ""                                    # 선택 사항
 draft: false
-affiliate: false                          # 제휴 링크 포함 여부 (general)
+affiliate: false                                 # 제휴 링크 포함 여부 (money)
 ---
 ```
 
@@ -64,54 +64,49 @@ affiliate: false                          # 제휴 링크 포함 여부 (general
 
 ---
 
-## Section 1 — general (Hugo → Astro)
+## Section 1 — life (Hugo → Astro)
 
-**원본**: `blog-general-hugo-mainroad/content/post/`  
-**목적지**: `blog-astro-eone/src/content/general/ko/`  
-**URL 변경**: `mustardseed.eone.one/post/[slug]` → `blog.eone.one/general/[slug]`
+**원본**: `blog-general-hugo-mainroad/content/post/` 중 christian, gosip, tmi, baby, aqualife, ev  
+**목적지**: `blog-astro-eone/src/content/life/ko/`  
+**URL 변경**: `mustardseed.eone.one/post/[slug]` → `blog.eone.one/life/[slug]`
 
 ### 카테고리별 현황
 
 | 카테고리 (Hugo) | 포스트 수 | 이전 상태 | 비고 |
 |----------------|----------|----------|------|
-| `frugal` (절약/경제/투자) | 26 | ⬜ 미이전 | |
-| `christian` (종교) | 20 | ⬜ 미이전 | |
+| `christian` (종교/신앙) | 20 | ⬜ 미이전 | |
 | `ev` (전기차/자동차) | 10 | ⬜ 미이전 | |
 | `gosip` (일상/잡담) | 7 | ⬜ 미이전 | |
-| `tmi` (TMI/리뷰) | 3 | ⬜ 미이전 | |
-| `aqualife` (아쿠아리움) | 2 | ⬜ 미이전 | |
+| `tmi` (TMI) | 3 | ⬜ 미이전 | |
 | `baby` (육아) | 2 | ⬜ 미이전 | |
-| `examples` (예제) | 2 | ⬜ 건너뜀 | draft, 실제 포스트 아님 |
-| **합계** | **72** | | |
+| `aqualife` (아쿠아리움) | 2 | ⬜ 미이전 | |
+| `examples` (예제) | 2 | ⏭️ 건너뜀 | draft, 실제 포스트 아님 |
+| **합계** | **~44** | | |
 
 ### 공통 체크사항
-- [ ] Hugo shortcode (`{{< affiliate >}}` 등) → Astro 컴포넌트로 변환
-- [ ] 이미지 `/static/` → `/public/` 이동
+- [ ] Hugo shortcode 변환 처리
+- [ ] 이미지 `/static/` → `/public/images/life/` 이동
 - [ ] 301 리다이렉트 규칙 추가 (`netlify.toml`)
 
 ---
 
-## Section 2 — tech (Eleventy → Astro)
+## Section 2 — money (Hugo → Astro)
 
-**원본**: `eleventy/blog-eleventy-tech-ai/src/posts/`  
-**목적지**: `blog-astro-eone/src/content/tech/ko/`  
-**URL 변경**: `burn.eone.one/posts/[slug]` → `blog.eone.one/tech/[slug]`
+**원본**: `blog-general-hugo-mainroad/content/post/frugal/`  
+**목적지**: `blog-astro-eone/src/content/money/ko/`  
+**URL 변경**: `mustardseed.eone.one/post/[slug]` → `blog.eone.one/money/[slug]`
 
-### 연도별 현황
+### 카테고리별 현황
 
-| 연도 | 포스트 수 | 이전 상태 |
-|------|----------|----------|
-| 2022 | 13 | ⬜ 미이전 |
-| 2023 | 7 | ⬜ 미이전 |
-| 2024 | 13 | ⬜ 미이전 |
-| 2025 | 13 | ⬜ 미이전 |
-| 2026 | 47 | ⬜ 미이전 |
-| **합계** | **93** | |
+| 카테고리 (Hugo) | 포스트 수 | 이전 상태 | 비고 |
+|----------------|----------|----------|------|
+| `frugal` (경제/투자/절약/제품리뷰) | 26 | ⬜ 미이전 | 제휴링크 포함 포스트 |
+| **합계** | **26** | | |
 
 ### 공통 체크사항
-- [ ] `layout` 필드 제거
-- [ ] `slug` 필드 → 파일명으로 변환
-- [ ] 썸네일 Unsplash URL 유지 여부 결정 (외부 링크 vs 로컬 저장)
+- [ ] Hugo `{{< affiliate >}}` shortcode → `AffiliateLink.astro` 컴포넌트 변환
+- [ ] 이미지 `/static/` → `/public/images/money/` 이동
+- [ ] frontmatter에 `affiliate: true` 플래그 추가 (제휴 링크 포함 포스트)
 - [ ] 301 리다이렉트 규칙 추가 (`netlify.toml`)
 
 ---
@@ -128,15 +123,68 @@ affiliate: false                          # 제휴 링크 포함 여부 (general
 |------|----------|----------|
 | 2021 | 5 | ⬜ 미이전 |
 | 2022 | 6 | ⬜ 미이전 |
-| 2024 | 0 | - |
-| 2025 | 0 | - |
 | 2026 | 36 | ⬜ 미이전 |
 | **합계** | **47** | |
+
+### 카테고리 매핑
+
+| Eleventy 카테고리 | Astro category |
+|-----------------|---------------|
+| 나만 당할 수 없지 | movie-review |
+| 스포일러 지뢰찾기 | spoiler |
+| 여기도 한국이었어? | travel |
+| Tutorial | tutorial |
 
 ### 공통 체크사항
 - [ ] `layout` 필드 제거
 - [ ] `slug` 필드 → 파일명으로 변환
-- [ ] 영화 카드 등 특수 컴포넌트 → Astro 컴포넌트로 재구현 필요 여부 검토
+- [ ] 영어 학습 포스트(태그: 영어, 73개) 별도 카테고리 `english` 로 분류 검토
+- [ ] 영화 카드 등 특수 컴포넌트 → Astro 컴포넌트 재구현 여부 검토
+- [ ] 301 리다이렉트 규칙 추가 (`netlify.toml`)
+
+---
+
+## Section 4 — tools (Eleventy → Astro)
+
+**원본**: `eleventy/blog-eleventy-tech-ai/src/posts/` 중 category: Tools  
+**목적지**: `blog-astro-eone/src/content/tools/ko/`  
+**URL 변경**: `burn.eone.one/posts/[slug]` → `blog.eone.one/tools/[slug]`
+
+### 현황
+
+| 카테고리 | 포스트 수 | 이전 상태 | 주요 태그 |
+|---------|----------|----------|---------|
+| Tools | 45 | ⬜ 미이전 | macOS, tmux, iterm2, karabiner, git |
+| **합계** | **45** | | |
+
+### 공통 체크사항
+- [ ] `layout` 필드 제거
+- [ ] `slug` 필드 → 파일명으로 변환
+- [ ] 301 리다이렉트 규칙 추가 (`netlify.toml`)
+
+---
+
+## Section 5 — dev (Eleventy → Astro)
+
+**원본**: `eleventy/blog-eleventy-tech-ai/src/posts/` 중 category: Backend, Frontend, DevOps, Data, Trends  
+**목적지**: `blog-astro-eone/src/content/dev/ko/`  
+**URL 변경**: `burn.eone.one/posts/[slug]` → `blog.eone.one/dev/[slug]`
+
+### 카테고리별 현황
+
+| 카테고리 | 포스트 수 | 이전 상태 |
+|---------|----------|----------|
+| Trends (AI/빅테크 뉴스) | 13 | ⬜ 미이전 |
+| Backend | 15 | ⬜ 미이전 |
+| Frontend | 10 | ⬜ 미이전 |
+| DevOps | 6 | ⬜ 미이전 |
+| Data | 4 | ⬜ 미이전 |
+| **합계** | **~48** | |
+
+### 공통 체크사항
+- [ ] `layout` 필드 제거
+- [ ] `slug` 필드 → 파일명으로 변환
+- [ ] 썸네일 Unsplash URL 유지 여부 결정
 - [ ] 301 리다이렉트 규칙 추가 (`netlify.toml`)
 
 ---
@@ -145,36 +193,48 @@ affiliate: false                          # 제휴 링크 포함 여부 (general
 
 | 원본 위치 | 이전 위치 | 상태 |
 |----------|----------|------|
-| `blog-general-hugo-mainroad/static/` | `blog-astro-eone/public/images/general/` | ⬜ |
-| `blog-eleventy-tech-ai/src/assets/` | `blog-astro-eone/public/images/tech/` | ⬜ |
-| `blog-eleventy-popcorn/src/assets/` | `blog-astro-eone/public/images/culture/` | ⬜ |
+| `blog-general-hugo-mainroad/static/` (christian/gosip 등) | `public/images/life/` | ⬜ |
+| `blog-general-hugo-mainroad/static/` (frugal) | `public/images/money/` | ⬜ |
+| `blog-eleventy-popcorn/src/assets/` | `public/images/culture/` | ⬜ |
+| `blog-eleventy-tech-ai/src/assets/` (Tools) | `public/images/tools/` | ⬜ |
+| `blog-eleventy-tech-ai/src/assets/` (dev) | `public/images/dev/` | ⬜ |
 
 ---
 
 ## 301 리다이렉트 규칙 (`netlify.toml`)
 
 ```toml
-# general (Hugo)
+# mustardseed → life / money (카테고리별 분기 불가, 와일드카드로 처리)
+# frugal 카테고리는 /money, 나머지는 /life 로 분기가 필요하므로 개별 규칙 필요
+[[redirects]]
+  from = "https://mustardseed.eone.one/post/frugal/*"
+  to = "https://blog.eone.one/money/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://mustardseed.eone.one/*"
-  to = "https://blog.eone.one/general/:splat"
+  to = "https://blog.eone.one/life/:splat"
   status = 301
   force = true
 
-# tech (Eleventy)
+# burn → tools / dev (카테고리별 분기 불가, 와일드카드로 처리)
+# Tools 카테고리는 /tools, 나머지는 /dev 로 분기가 필요하므로 개별 규칙 필요
 [[redirects]]
   from = "https://burn.eone.one/*"
-  to = "https://blog.eone.one/tech/:splat"
+  to = "https://blog.eone.one/dev/:splat"
   status = 301
   force = true
 
-# culture (Eleventy)
+# popcorn → culture
 [[redirects]]
   from = "https://popcorn.eone.one/*"
   to = "https://blog.eone.one/culture/:splat"
   status = 301
   force = true
 ```
+
+> **주의**: burn.eone.one의 Tools vs dev 분기는 와일드카드로 처리 불가 → Phase 6에서 포스트별 slug 매핑 작업 필요
 
 > **주의**: URL slug가 달라지는 경우 위 와일드카드 리다이렉트로 커버 안 됨 → 해당 포스트는 개별 규칙 추가 필요
 

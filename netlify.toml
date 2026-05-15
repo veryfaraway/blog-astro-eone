@@ -10,18 +10,31 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
+# mustardseed.eone.one → life / money
+# frugal 카테고리 포스트는 /money, 나머지는 /life
+# (포스트별 slug 리다이렉트는 Phase 6 마이그레이션 시 개별 추가)
+[[redirects]]
+  from = "https://mustardseed.eone.one/post/frugal/*"
+  to = "https://blog.eone.one/money/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://mustardseed.eone.one/*"
-  to = "https://blog.eone.one/general/:splat"
+  to = "https://blog.eone.one/life/:splat"
   status = 301
   force = true
 
+# burn.eone.one → tools / dev
+# Tools 카테고리 포스트는 /tools, 나머지는 /dev
+# (포스트별 slug 리다이렉트는 Phase 6 마이그레이션 시 개별 추가)
 [[redirects]]
   from = "https://burn.eone.one/*"
-  to = "https://blog.eone.one/tech/:splat"
+  to = "https://blog.eone.one/dev/:splat"
   status = 301
   force = true
 
+# popcorn.eone.one → culture
 [[redirects]]
   from = "https://popcorn.eone.one/*"
   to = "https://blog.eone.one/culture/:splat"

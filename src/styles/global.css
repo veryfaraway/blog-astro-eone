@@ -1,13 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@100..800&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Noto Sans KR', 'Inter', sans-serif;
+    --font-sans: 'Pretendard Variable', 'Pretendard', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -50,82 +49,142 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    /* light — 우유색 배경, 다크 foreground와 동기화 */
+    --background: oklch(0.97 0.010 80);        /* 우유색 — 다크 foreground와 동일 */
+    --foreground: oklch(0.10 0.015 140);        /* #181C14 deep olive */
+    --card: oklch(0.94 0.018 80);              /* background보다 살짝 어둡게 */
+    --card-foreground: oklch(0.10 0.015 140);
+    --popover: oklch(0.94 0.018 80);
+    --popover-foreground: oklch(0.10 0.015 140);
+    --primary: oklch(0.10 0.015 140);          /* #181C14 */
+    --primary-foreground: oklch(0.97 0.010 80);
+    --secondary: oklch(0.91 0.025 80);
+    --secondary-foreground: oklch(0.10 0.015 140);
+    --muted: oklch(0.91 0.025 80);
+    --muted-foreground: oklch(0.63 0.055 70);  /* #A79277 */
+    --accent: oklch(0.88 0.035 78);
+    --accent-foreground: oklch(0.10 0.015 140);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --border: oklch(0.87 0.030 78);
+    --input: oklch(0.87 0.030 78);
+    --ring: oklch(0.63 0.055 70);              /* #A79277 */
+    --chart-1: oklch(0.72 0.18 145);
+    --chart-2: oklch(0.80 0.18 86);
+    --chart-3: oklch(0.63 0.27 303);
+    --chart-4: oklch(0.56 0.024 265);
+    --chart-5: oklch(0.72 0.14 215);
+    --radius: 0.5rem;
+    --sidebar: oklch(0.94 0.018 80);
+    --sidebar-foreground: oklch(0.10 0.015 140);
+    --sidebar-primary: oklch(0.10 0.015 140);
+    --sidebar-primary-foreground: oklch(0.97 0.010 80);
+    --sidebar-accent: oklch(0.91 0.025 80);
+    --sidebar-accent-foreground: oklch(0.10 0.015 140);
+    --sidebar-border: oklch(0.87 0.030 78);
+    --sidebar-ring: oklch(0.63 0.055 70);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    /* dark.png — #181C14 / #3C3D37 / #697565 / #ECDFCC */
+    --background: oklch(0.10 0.015 140);        /* #181C14 deep olive black */
+    --foreground: oklch(0.97 0.010 80);         /* 라이트 배경과 동일 — 우유색 */
+    --card: oklch(0.27 0.012 120);              /* #3C3D37 charcoal green */
+    --card-foreground: oklch(0.97 0.010 80);
+    --popover: oklch(0.27 0.012 120);
+    --popover-foreground: oklch(0.97 0.010 80);
+    --primary: oklch(0.97 0.010 80);
+    --primary-foreground: oklch(0.10 0.015 140);
+    --secondary: oklch(0.27 0.012 120);
+    --secondary-foreground: oklch(0.97 0.010 80);
+    --muted: oklch(0.27 0.012 120);
+    --muted-foreground: oklch(0.49 0.03 140);   /* #697565 muted green */
+    --accent: oklch(0.27 0.012 120);
+    --accent-foreground: oklch(0.97 0.010 80);
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --border: oklch(0.27 0.012 120 / 80%);
+    --input: oklch(0.32 0.012 120);             /* slightly lighter than card */
+    --ring: oklch(0.49 0.03 140);               /* #697565 */
+    --chart-1: oklch(0.72 0.18 145);
+    --chart-2: oklch(0.80 0.18 86);
+    --chart-3: oklch(0.63 0.27 303);
+    --chart-4: oklch(0.56 0.024 265);
+    --chart-5: oklch(0.72 0.14 215);
+    --sidebar: oklch(0.27 0.012 120);
+    --sidebar-foreground: oklch(0.90 0.038 80);
+    --sidebar-primary: oklch(0.97 0.010 80);
+    --sidebar-primary-foreground: oklch(0.10 0.015 140);
+    --sidebar-accent: oklch(0.32 0.012 120);
+    --sidebar-accent-foreground: oklch(0.97 0.010 80);
+    --sidebar-border: oklch(0.27 0.012 120 / 80%);
+    --sidebar-ring: oklch(0.49 0.03 140);
+}
+
+/* Section accent colors — sub-point only (badges, border-left, hover) */
+:root {
+  --section-accent: oklch(0.556 0 0);
+  --section-accent-light: oklch(0.922 0 0);
+}
+[data-section="life"] {
+  --section-accent: oklch(0.72 0.18 145);
+  --section-accent-light: oklch(0.96 0.044 156);
+}
+[data-section="money"] {
+  --section-accent: oklch(0.80 0.18 86);
+  --section-accent-light: oklch(0.97 0.063 96);
+}
+[data-section="culture"] {
+  --section-accent: oklch(0.63 0.27 303);
+  --section-accent-light: oklch(0.94 0.069 303);
+}
+[data-section="tools"] {
+  --section-accent: oklch(0.56 0.024 265);
+  --section-accent-light: oklch(0.97 0.007 247);
+}
+[data-section="dev"] {
+  --section-accent: oklch(0.72 0.14 215);
+  --section-accent-light: oklch(0.95 0.051 203);
+}
+
+/* Vault theme — dark.png 팔레트 기반, green 터미널 무드 */
+[data-section="vault"] {
+  --background: oklch(0.07 0.012 140);           /* #181C14보다 더 어둡게 */
+  --foreground: oklch(0.72 0.18 145);            /* 선명한 green */
+  --card: oklch(0.10 0.015 140);
+  --card-foreground: oklch(0.72 0.18 145);
+  --muted: oklch(0.10 0.015 140);
+  --muted-foreground: oklch(0.49 0.03 140);      /* #697565 */
+  --border: oklch(0.27 0.012 120 / 60%);
+  --section-accent: oklch(0.72 0.18 145);
+  --section-accent-light: oklch(0.15 0.05 145);
+}
+
+/* scrollbar-none utility */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
+  }
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+  /* Article typography */
+  .prose {
+    @apply max-w-prose;
+    line-height: 1.85;
+    word-break: keep-all;
+  }
 }

@@ -3,6 +3,7 @@
 ## 프로젝트 개요
 
 3개 블로그를 Astro로 통합한 멀티섹션 블로그.
+
 - **URL**: https://blog.eone.one
 - **통합 대상**: mustardseed.eone.one / burn.eone.one / popcorn.eone.one
 - **배포**: Netlify (소스: GitHub)
@@ -30,26 +31,36 @@
 
 ```
 blog.eone.one/
-├── /general/     # 일상/종교/경제/투자/육아/자동차/제품 리뷰
-├── /culture/     # 영화/게임/여행
-└── /tech/        # 테크/개발/AI
+├── /life/      # 일상/종교/육아/자동차/아쿠아리움
+├── /money/     # 경제/투자/절약/제품리뷰 (리퍼럴 수입)
+├── /culture/   # 영화/영어학습/여행
+├── /tools/     # macOS/터미널/개발환경 도구
+└── /dev/       # 개발/AI/Backend/Frontend/DevOps/트렌드
 ```
 
 ### 다국어
+
 - 기본 언어: 한국어 (`ko`)
 - 보조 언어: 영어 (`en`)
-- 구조: `/ko/general/...` 또는 `/en/general/...` (i18n 라우팅)
+- 구조: `/ko/life/...` 또는 `/en/life/...` (i18n 라우팅)
 
 ### 콘텐츠 파일 위치 (예시)
+
 ```
 src/content/
-├── general/
+├── life/
+│   ├── ko/
+│   └── en/
+├── money/
 │   ├── ko/
 │   └── en/
 ├── culture/
 │   ├── ko/
 │   └── en/
-└── tech/
+├── tools/
+│   ├── ko/
+│   └── en/
+└── dev/
     ├── ko/
     └── en/
 ```
@@ -59,6 +70,7 @@ src/content/
 ## 주요 기능 목록
 
 ### 블로그 공통
+
 - [ ] 섹션별 랜딩 페이지 (color-coded 디자인)
 - [ ] 태그 시스템 (Top 100 태그 목록, 태그 클라우드)
 - [ ] 전체 검색 (Pagefind)
@@ -72,11 +84,13 @@ src/content/
 - [ ] 네이버 서치어드바이저 최적화
 
 ### 수익화
+
 - [ ] Google AdSense (디자인에 자연스럽게 녹인 배치)
 - [ ] 쿠팡 파트너스 링크 컴포넌트
 - [ ] Amazon Affiliate 링크 컴포넌트
 
 ### 주식 히트맵 (히든 피처)
+
 - [ ] 진입 방법: 숨겨진 Easter egg 방식 (영화 The Net의 Mozart's Ghost 컨셉)
 - [ ] robots.txt에서 크롤링 차단, noindex 처리
 - [ ] 보유 미국 주식 80여 종 히트맵 (티커/수량 수동 입력)
@@ -90,18 +104,22 @@ src/content/
 ## 설계 원칙
 
 ### 멀티섹션 디자인 전략
+
 3개 섹션을 하나의 사이트에서 구분하는 핵심 챌린지.
+
 - 각 섹션은 **고유 accent color**를 가진다 (general/culture/tech)
 - 공통 헤더 네비게이션에서 섹션 전환 가능
 - 섹션 랜딩 페이지는 해당 섹션의 톤앤매너로 구성
 - 포스트 카드에 섹션 뱃지 표시
 
 ### 컴포넌트 원칙
+
 - shadcn/ui 컴포넌트를 기반으로 커스터마이징 (override 방식, 원본 수정 금지)
 - React island는 인터랙션이 필요한 곳에만 사용 (히트맵, 검색, 댓글, 다크모드 토글)
 - 나머지는 Astro 컴포넌트로 처리 (빌드 타임 렌더링)
 
 ### 코드 규칙
+
 - TypeScript strict 모드 사용
 - 컴포넌트 파일: PascalCase (`PostCard.astro`, `HeatMap.tsx`)
 - 콘텐츠 slug: kebab-case
@@ -120,6 +138,7 @@ GitHub Actions (cron: 매일 오전 9시 KST)
 ```
 
 ### Netlify 리다이렉트 (`netlify.toml`)
+
 ```toml
 [[redirects]]
   from = "https://mustardseed.eone.one/*"

@@ -1,0 +1,136 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  section: Section;
+  category: string;
+  tags?: string[];
+  thumbnail?: string;
+  lang?: 'ko' | 'en';
+  alternateUrl?: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  section,
+  category,
+  tags = [],
+  thumbnail,
+  lang = 'ko',
+  alternateUrl,
+} = Astro.props;
+
+const sectionLabel: Record<Section, string> = {
+  life: 'Life', money: 'Money', culture: 'Culture', tools: 'Tools', dev: 'Dev',
+};
+
+const formattedDate = date.toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  section={section}
+  ogImage={thumbnail}
+  lang={lang}
+  alternateUrl={alternateUrl}
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+    <div class="max-w-4xl mx-auto py-12">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs text-muted-foreground mb-8">
+        <a href="/" class="hover:text-foreground transition-colors">eone</a>
+        <span>/</span>
+        <a href={`/${section}`} class="hover:text-foreground transition-colors" style="color: var(--section-accent);">
+          {sectionLabel[section]}
+        </a>
+        <span>/</span>
+        <span class="text-foreground/60 truncate">{title}</span>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-10">
+        <div class="flex items-center gap-2 mb-4">
+          <span
+            class="text-xs font-semibold uppercase tracking-wide"
+            style="color: var(--section-accent);"
+          >
+            {category}
+          </span>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-tight mb-4">
+          {title}
+        </h1>
+
+        <p class="text-base text-muted-foreground leading-relaxed mb-6">
+          {description}
+        </p>
+
+        <div class="flex items-center gap-3 text-sm text-muted-foreground pb-8 border-b border-border">
+          <time datetime={date.toISOString()}>{formattedDate}</time>
+          {tags.length > 0 && (
+            <>
+              <span class="text-border">·</span>
+              <div class="flex flex-wrap gap-1">
+                {tags.map(tag => (
+                  <a
+                    href={`/tags/${tag}`}
+                    class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </header>
+
+      <!-- Thumbnail -->
+      {thumbnail && (
+        <div class="mb-10 rounded-lg overflow-hidden aspect-video bg-muted">
+          <img src={thumbnail} alt={title} class="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <!-- Content -->
+      <article class="prose prose-neutral dark:prose-invert max-w-none
+        prose-headings:font-semibold prose-headings:tracking-tight
+        prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4
+        prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3
+        prose-p:leading-[1.9] prose-p:text-foreground/90
+        prose-a:text-foreground prose-a:underline prose-a:underline-offset-4
+        prose-code:text-sm prose-code:font-mono
+        prose-pre:bg-muted prose-pre:border prose-pre:border-border
+        prose-blockquote:border-l-2 prose-blockquote:text-muted-foreground
+        prose-img:rounded-lg prose-img:border prose-img:border-border
+        prose-table:text-sm prose-th:text-foreground prose-td:text-foreground/80"
+        style="--tw-prose-body: var(--foreground); --tw-prose-headings: var(--foreground);"
+      >
+        <slot />
+      </article>
+
+      <!-- Footer nav -->
+      <div class="mt-12 pt-8 border-t border-border">
+        <a
+          href={`/${section}`}
+          class="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+        >
+          ← {sectionLabel[section]} 목록으로
+        </a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

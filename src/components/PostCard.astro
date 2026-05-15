@@ -1,0 +1,113 @@
+---
+import TagBadge from './TagBadge.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date | string;
+  slug: string;
+  section: Section;
+  tags?: string[];
+  thumbnail?: string;
+  readingTime?: number;
+  lang?: 'ko' | 'en';
+}
+
+const {
+  title,
+  description,
+  date,
+  slug,
+  section,
+  tags = [],
+  thumbnail,
+  readingTime,
+  lang = 'ko',
+} = Astro.props;
+
+const sectionLabel: Record<Section, string> = {
+  life: 'Life',
+  money: 'Money',
+  culture: 'Culture',
+  tools: 'Tools',
+  dev: 'Dev',
+};
+
+const postUrl = lang === 'en' ? `/en/${section}/${slug}` : `/${section}/${slug}`;
+
+const formattedDate = new Date(date).toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<article class="group flex flex-col">
+  <!-- Thumbnail -->
+  <a href={postUrl} class="block overflow-hidden rounded-lg bg-muted mb-4 aspect-[16/9]">
+    {thumbnail ? (
+      <img
+        src={thumbnail}
+        alt={title}
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div
+        class="w-full h-full flex items-center justify-center"
+        style="background-color: var(--section-accent-light);"
+      >
+        <span class="text-3xl font-bold opacity-20" style="color: var(--section-accent);">
+          {sectionLabel[section][0]}
+        </span>
+      </div>
+    )}
+  </a>
+
+  <!-- Meta -->
+  <div class="flex items-center gap-2 mb-2">
+    <!-- Section badge -->
+    <span
+      class="text-[11px] font-semibold uppercase tracking-wide"
+      style="color: var(--section-accent);"
+    >
+      {sectionLabel[section]}
+    </span>
+    <span class="text-muted-foreground/40 text-xs">·</span>
+    <time class="text-xs text-muted-foreground" datetime={new Date(date).toISOString()}>
+      {formattedDate}
+    </time>
+    {readingTime && (
+      <>
+        <span class="text-muted-foreground/40 text-xs">·</span>
+        <span class="text-xs text-muted-foreground">{readingTime}분</span>
+      </>
+    )}
+  </div>
+
+  <!-- Title -->
+  <a href={postUrl} class="block group/title mb-2">
+    <h2 class="text-base font-semibold leading-snug text-foreground group-hover/title:text-foreground/70 transition-colors line-clamp-2">
+      {title}
+    </h2>
+  </a>
+
+  <!-- Description -->
+  {description && (
+    <p class="text-sm text-muted-foreground line-clamp-2 mb-3 leading-relaxed">
+      {description}
+    </p>
+  )}
+
+  <!-- Tags -->
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-1 mt-auto pt-1">
+      {tags.slice(0, 3).map((tag) => (
+        <TagBadge tag={tag} href={`/tags/${tag}`} />
+      ))}
+    </div>
+  )}
+</article>
