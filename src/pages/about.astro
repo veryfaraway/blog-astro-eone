@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const sections = [
+  {
+    name: 'Life',
+    href: '/life',
+    desc: '일상 · 종교 · 육아 · 자동차 · 아쿠아리움',
+    color: 'oklch(0.72 0.18 145)',
+  },
+  {
+    name: 'Money',
+    href: '/money',
+    desc: '경제 · 투자 · 절약 · 제품 리뷰',
+    color: 'oklch(0.80 0.18 86)',
+  },
+  {
+    name: 'Culture',
+    href: '/culture',
+    desc: '영화 · 영어 · 여행',
+    color: 'oklch(0.63 0.27 303)',
+  },
+  {
+    name: 'Tools',
+    href: '/tools',
+    desc: 'macOS · 터미널 · 개발 환경 도구',
+    color: 'oklch(0.56 0.024 265)',
+  },
+  {
+    name: 'Dev',
+    href: '/dev',
+    desc: '개발 · AI · Backend · Frontend · DevOps',
+    color: 'oklch(0.72 0.14 215)',
+  },
+];
+---
+
+<BaseLayout title="About — eone blog" description="야근반장의 블로그, eone blog 소개">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+    <div class="max-w-2xl mx-auto py-16">
+
+      <!-- Header -->
+      <div class="pb-10 border-b border-border">
+        <h1 class="text-2xl font-bold tracking-tight text-foreground mb-3">야근반장</h1>
+        <p class="text-muted-foreground leading-relaxed">
+          낮에는 코드를 짜고, 밤에는 팝콘을 먹습니다.<br />
+          현실과 가상을 넘나드는 잡식성 기록가입니다.
+        </p>
+      </div>
+
+      <!-- Philosophy -->
+      <section class="py-10 border-b border-border">
+        <h2 class="text-base font-semibold text-foreground mb-4">블로그 철학 — 삼인행필유아사(三人行必有我師)</h2>
+        <blockquote class="border-l-2 border-border pl-4 text-muted-foreground italic mb-6">
+          "세 사람이 길을 가면 반드시 나의 스승이 있다."
+        </blockquote>
+        <div class="text-sm text-muted-foreground leading-relaxed space-y-3">
+          <p>
+            세상 모든 콘텐츠와 길 위에는 배울 점이 있습니다.
+            영화 속 대사 하나, 낯선 도시의 골목 하나, 코드 한 줄에서도 무언가를 얻어갑니다.
+          </p>
+          <p>
+            이 블로그는 그 과정을 기록하는 공간입니다.
+            화려하진 않지만, 읽는 분의 시간이 아깝지 않도록 쓰려 합니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- Sections -->
+      <section class="py-10 border-b border-border">
+        <h2 class="text-base font-semibold text-foreground mb-6">다루는 이야기들</h2>
+        <ul class="space-y-4">
+          {sections.map(({ name, href, desc, color }) => (
+            <li class="flex items-start gap-3">
+              <a
+                href={href}
+                class="text-sm font-semibold shrink-0 hover:opacity-80 transition-opacity"
+                style={`color: ${color}`}
+              >
+                {name}
+              </a>
+              <span class="text-sm text-muted-foreground">{desc}</span>
+            </li>
+          ))}
+        </ul>
+
+        <p class="mt-6 text-sm text-muted-foreground leading-relaxed">
+          섹션마다 색이 다르지만, 결국 같은 사람이 씁니다.
+          개발자가 아쿠아리움을 키우고, 영화를 보면서 영어를 공부하고,
+          EV를 타면서 배당주를 모읍니다. 어수선해 보여도 모두 연결되어 있습니다.
+        </p>
+      </section>
+
+      <!-- Made with -->
+      <section class="py-10 border-b border-border">
+        <h2 class="text-base font-semibold text-foreground mb-4">블로그 스택</h2>
+        <p class="text-sm text-muted-foreground mb-4">
+          흩어진 블로그 3개(Hugo, Eleventy × 2)를 하나로 통합하면서 만들었습니다.
+        </p>
+        <ul class="text-sm text-muted-foreground space-y-1.5">
+          <li><span class="text-foreground font-medium">Astro</span> — 정적 사이트 생성</li>
+          <li><span class="text-foreground font-medium">Tailwind CSS + shadcn/ui</span> — 스타일링</li>
+          <li><span class="text-foreground font-medium">React</span> — 인터랙티브 컴포넌트 (island 방식)</li>
+          <li><span class="text-foreground font-medium">Pagefind</span> — 전문 검색</li>
+          <li><span class="text-foreground font-medium">Giscus</span> — GitHub Discussions 기반 댓글</li>
+          <li><span class="text-foreground font-medium">Netlify</span> — 배포 & 호스팅</li>
+        </ul>
+      </section>
+
+      <!-- Contact -->
+      <section class="py-10">
+        <h2 class="text-base font-semibold text-foreground mb-4">GitHub</h2>
+        <a
+          href="https://github.com/veryfaraway"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          github.com/veryfaraway
+        </a>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

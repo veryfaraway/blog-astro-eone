@@ -158,6 +158,20 @@
   --section-accent-light: oklch(0.15 0.05 145);
 }
 
+/* Alert 스타일 */
+.alert { border-radius: 0.5rem; border-width: 1px; padding: 1rem; font-size: 0.875rem; line-height: 1.6; margin: 1.5rem 0; }
+.alert-title { font-weight: 600; margin-bottom: 0.5rem; }
+.alert-info    { background-color: oklch(0.97 0.013 236); border-color: oklch(0.83 0.07 236); color: oklch(0.35 0.07 236); }
+.alert-warning { background-color: oklch(0.98 0.02 86);  border-color: oklch(0.84 0.1 86);  color: oklch(0.4 0.1 86); }
+.alert-success { background-color: oklch(0.97 0.02 145); border-color: oklch(0.82 0.1 145); color: oklch(0.38 0.1 145); }
+.alert-danger  { background-color: oklch(0.98 0.015 27); border-color: oklch(0.82 0.1 27);  color: oklch(0.4 0.1 27); }
+.alert-tip     { background-color: oklch(0.97 0.015 303);border-color: oklch(0.82 0.1 303); color: oklch(0.38 0.1 303); }
+.dark .alert-info    { background-color: oklch(0.25 0.04 236 / 0.3); border-color: oklch(0.45 0.07 236); color: oklch(0.85 0.05 236); }
+.dark .alert-warning { background-color: oklch(0.25 0.04 86 / 0.3);  border-color: oklch(0.45 0.1 86);  color: oklch(0.88 0.07 86); }
+.dark .alert-success { background-color: oklch(0.25 0.04 145 / 0.3); border-color: oklch(0.45 0.1 145); color: oklch(0.85 0.07 145); }
+.dark .alert-danger  { background-color: oklch(0.25 0.04 27 / 0.3);  border-color: oklch(0.45 0.1 27);  color: oklch(0.85 0.07 27); }
+.dark .alert-tip     { background-color: oklch(0.25 0.04 303 / 0.3); border-color: oklch(0.45 0.1 303); color: oklch(0.85 0.07 303); }
+
 /* scrollbar-none utility */
 .scrollbar-none {
   scrollbar-width: none;

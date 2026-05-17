@@ -1,0 +1,488 @@
+---
+title: tmux.conf 전체 공개 + Karabiner JSON 실전 세팅
+description: "atppuccin 테마, TPM 플러그인, Hyper Key 기반 tmux 윈도우 이동, 세션 자동화 스크립트, dotfiles 동기화까지. 복붙해서 바로 쓸 수 있는 실전 설정 파일 모음."
+date: 2026-03-29
+category: Tools
+tags:
+  - "macos"
+  - "터미널"
+  - "dotfiles"
+  - "tmux"
+  - "karabiner"
+draft: false
+lang: ko
+thumbnail: "https://images.unsplash.com/photo-1549605659-32d82da3a059?q=80&w=2370&auto=format&fit=crop"
+---
+
+> 지난 편에서 세 도구의 개념과 연결 방식을 다뤘다. 이번 편은 실제로 쓰는 설정 파일을 그대로 공개한다. 복붙해서 바로 쓸 수 있게.
+
+## 이 글에서 다루는 내용
+
+- TPM(Tmux Plugin Manager) 설치와 Catppuccin 테마 적용
+- `tmux.conf` 전체 설정 파일 + 항목별 설명
+- Karabiner JSON — Hyper+1~9 tmux 윈도우 이동 완성판
+- Karabiner JSON — Ghostty 전용 단축키 레이어
+- 세션 자동화 스크립트 (tmuxinator 없이 순수 shell로)
+- dotfiles로 기기 간 설정 동기화하기
+
+---
+
+## TPM 설치와 Catppuccin 테마
+
+`tmux.conf` 본론 전에 플러그인 매니저부터 설치한다. TPM이 없으면 플러그인을 하나씩 수동으로 관리해야 한다.
+
+```bash
+# TPM 설치
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
+이후 `tmux.conf`에 플러그인을 선언하고, tmux 안에서 `Prefix + I`(대문자 i)를 누르면 자동으로 설치된다.
+
+**Catppuccin**은 현재 tmux 테마 중 가장 활발하게 관리되고 있는 프로젝트다. 상태바가 깔끔하고, Ghostty 테마와 자연스럽게 어울린다.
+
+---
+
+## tmux.conf 전체 설정
+
+```bash
+# ~/.tmux.conf
+# ────────────────────────────────────────────
+# Prefix
+# ────────────────────────────────────────────
+unbind C-b
+set-option -g prefix C-a
+bind-key C-a send-prefix   # Prefix 두 번 → 원래 Ctrl+a (readline) 동작
+
+
+# ────────────────────────────────────────────
+# 기본 동작
+# ────────────────────────────────────────────
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"  # True Color 지원
+
+set -g base-index 1           # 윈도우 번호 1부터 시작
+setw -g pane-base-index 1     # 패널 번호도 1부터
+set -g renumber-windows on    # 윈도우 닫으면 번호 자동 정렬
+
+set -g history-limit 10000    # 스크롤 히스토리 1만 줄
+set -g mouse on               # 마우스 지원 (패널 크기 조절, 스크롤)
+
+set -sg escape-time 0         # Escape 입력 딜레이 제거 (vim 필수)
+set -g focus-events on        # 포커스 이벤트 전달 (vim autoread 등)
+
+
+# ────────────────────────────────────────────
+# 키 바인딩
+# ────────────────────────────────────────────
+
+# 설정 리로드
+bind r source-file ~/.tmux.conf \; display "tmux.conf reloaded!"
+
+# 패널 분할 (현재 경로 유지)
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+# 패널 이동 (vim 방향키)
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# 패널 크기 조절 (대문자, 반복 가능)
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+# 패널 최대화 토글
+bind z resize-pane -Z
+
+# 새 윈도우를 현재 경로로 열기
+bind c new-window -c "#{pane_current_path}"
+
+# 세션 전환 (fzf 연동 — 없으면 기본 choose-session 사용)
+bind s display-popup -E "tmux list-sessions | sed -E 's/:.*$//' | fzf --reverse | xargs tmux switch-client -t"
+
+
+# ────────────────────────────────────────────
+# 복사 모드 (vim 키 바인딩)
+# ────────────────────────────────────────────
+setw -g mode-keys vi
+
+bind Enter copy-mode           # Enter로 복사 모드 진입
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
+bind -T copy-mode-vi Escape send -X cancel
+
+
+# ────────────────────────────────────────────
+# 플러그인 (TPM)
+# ────────────────────────────────────────────
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'    # 합리적인 기본값 모음
+set -g @plugin 'tmux-plugins/tmux-resurrect'   # 세션 영속화 (재부팅 후에도 복구)
+set -g @plugin 'tmux-plugins/tmux-continuum'   # resurrect 자동 저장
+set -g @plugin 'catppuccin/tmux'               # Catppuccin 테마
+
+
+# ────────────────────────────────────────────
+# Catppuccin 테마 설정
+# ────────────────────────────────────────────
+set -g @catppuccin_flavor "mocha"              # latte / frappe / macchiato / mocha
+
+set -g @catppuccin_window_status_style "rounded"
+set -g @catppuccin_window_current_text " #{window_name}"
+set -g @catppuccin_window_text " #{window_name}"
+
+# 상태바 왼쪽: 세션 이름
+set -g @catppuccin_status_left_separator "█"
+set -g status-left "#{E:@catppuccin_status_session}"
+
+# 상태바 오른쪽: 호스트명 + 날짜/시간
+set -g status-right "#{E:@catppuccin_status_host}#{E:@catppuccin_status_date_time}"
+set -g @catppuccin_date_time_text "%Y-%m-%d %H:%M"
+
+
+# ────────────────────────────────────────────
+# tmux-resurrect / tmux-continuum
+# ────────────────────────────────────────────
+set -g @resurrect-capture-pane-contents 'on'   # 패널 내용도 복구
+set -g @continuum-restore 'on'                 # tmux 시작 시 자동 복구
+set -g @continuum-save-interval '10'           # 10분마다 자동 저장
+
+
+# TPM 초기화 (항상 맨 마지막 줄)
+run '~/.tmux/plugins/tpm/tpm'
+```
+
+설정 파일 저장 후 tmux를 새로 시작하고, `Prefix + I`로 플러그인을 설치하면 된다.
+
+<div class="alert alert-success">
+
+`tmux-resurrect`는 tmux를 완전히 종료했다가 다시 켜도 세션을 복구해준다. 맥북을 재시작한 뒤에도 `tmux`를 실행하면 어제 상태 그대로 돌아온다. `tmux-continuum`과 함께 쓰면 자동 저장까지 되어 아무것도 신경 안 써도 된다.
+
+</div>
+
+---
+
+## Karabiner JSON — 완성판 터미널 레이어
+
+지난 편에서 개념 수준으로 보여줬던 JSON을 실제로 동작하는 완성판으로 작성했다.
+
+`~/.config/karabiner/assets/complex_modifications/terminal_layer.json` 파일로 저장하고, Karabiner 앱 → Complex Modifications → Add rule에서 가져오면 된다.
+
+```json
+{
+  "title": "Terminal Layer (Ghostty + tmux)",
+  "rules": [
+
+    {
+      "description": "Hyper+T: Ghostty 즉시 실행/전환",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "t",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "open -a Ghostty" }]
+        }
+      ]
+    },
+
+    {
+      "description": "Hyper+1~9: tmux 윈도우 직접 이동 (Ghostty 포커스 시)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "1",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "tmux select-window -t 1" }],
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "2",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "tmux select-window -t 2" }],
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "3",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "tmux select-window -t 3" }],
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "4",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "tmux select-window -t 4" }],
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "5",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command", "left_control", "left_option"]
+            }
+          },
+          "to": [{ "shell_command": "tmux select-window -t 5" }],
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        }
+      ]
+    },
+
+    {
+      "description": "Ghostty 전용: Caps Lock 단독 탭 → Escape (vim 탈출)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": { "optional": ["any"] }
+          },
+          "to": [
+            {
+              "set_variable": { "name": "hyper_key_pressed", "value": 1 }
+            },
+            {
+              "key_code": "left_shift",
+              "modifiers": ["left_command", "left_control", "left_option"]
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": { "name": "hyper_key_pressed", "value": 0 }
+            }
+          ],
+          "to_if_alone": [
+            { "key_code": "escape" }
+          ],
+          "parameters": {
+            "basic.to_if_alone_timeout_milliseconds": 200
+          },
+          "conditions": [{
+            "type": "frontmost_application_if",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        }
+      ]
+    },
+
+    {
+      "description": "Ghostty 외: Caps Lock 단독 탭 → F18 (한/영 전환), 조합 → Hyper Key",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": { "optional": ["any"] }
+          },
+          "to": [
+            {
+              "set_variable": { "name": "hyper_key_pressed", "value": 1 }
+            },
+            {
+              "key_code": "left_shift",
+              "modifiers": ["left_command", "left_control", "left_option"]
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": { "name": "hyper_key_pressed", "value": 0 }
+            }
+          ],
+          "to_if_alone": [
+            { "key_code": "f18" }
+          ],
+          "parameters": {
+            "basic.to_if_alone_timeout_milliseconds": 200
+          },
+          "conditions": [{
+            "type": "frontmost_application_unless",
+            "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+          }]
+        }
+      ]
+    }
+
+  ]
+}
+```
+
+**포인트 두 가지:**
+
+첫째, Caps Lock 단독 탭의 동작이 **앱에 따라 달라진다**. Ghostty 안에서는 vim Escape로, 그 외 앱에서는 한/영 전환(F18)으로. `frontmost_application_if`와 `unless`로 분기한다.
+
+둘째, `Hyper+1~9` tmux 이동은 **Ghostty 포커스 상태에서만** 동작한다. 다른 앱에서 `Hyper+1`을 눌렀을 때 tmux 명령이 실행되는 사고를 막기 위해서다.
+
+---
+
+## 세션 자동화 스크립트
+
+매일 아침 `tmux attach` 후 세션을 손으로 구성하는 게 귀찮다면 스크립트로 자동화할 수 있다. tmuxinator 같은 별도 도구 없이 순수 shell로도 충분하다.
+
+```bash
+#!/bin/bash
+# ~/scripts/tmux-work.sh
+# 사용법: tmux-work.sh [attach|new]
+
+SESSION="work"
+
+# 이미 세션이 있으면 attach만
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  tmux attach-session -t "$SESSION"
+  exit 0
+fi
+
+# 새 세션 생성 (첫 윈도우는 자동 생성됨)
+tmux new-session -d -s "$SESSION" -n "api" -c ~/projects/my-api
+
+# Spring Boot 서버 자동 실행
+tmux send-keys -t "$SESSION:api" "./gradlew bootRun" Enter
+
+# 윈도우 2: 프론트엔드
+tmux new-window -t "$SESSION:2" -n "front" -c ~/projects/my-front
+tmux send-keys -t "$SESSION:front" "npm run dev" Enter
+
+# 윈도우 3: Git 작업 전용 (명령만 열어두기)
+tmux new-window -t "$SESSION:3" -n "git" -c ~/projects/my-api
+
+# 윈도우 4: 로그 모니터링 — 상하 분할
+tmux new-window -t "$SESSION:4" -n "logs" -c ~/projects/my-api
+tmux split-window -v -t "$SESSION:logs"
+tmux send-keys -t "$SESSION:logs.1" "tail -f logs/app.log" Enter
+tmux send-keys -t "$SESSION:logs.2" "docker compose logs -f db" Enter
+
+# 첫 번째 윈도우로 포커스
+tmux select-window -t "$SESSION:1"
+
+tmux attach-session -t "$SESSION"
+```
+
+```bash
+# 실행 권한 부여
+chmod +x ~/scripts/tmux-work.sh
+
+# 쉘 alias 등록 (~/.zshrc)
+alias work="~/scripts/tmux-work.sh"
+```
+
+터미널을 열고 `work`만 치면 프로젝트 전체 환경이 자동으로 구성된다. 서버도 자동으로 올라간다.
+
+---
+
+## dotfiles로 기기 간 동기화
+
+설정 파일을 여러 맥에서 동일하게 유지하려면 dotfiles 레포가 필수다. 구조만 잡아두면 새 맥 셋업이 30분 안에 끝난다.
+
+### 폴더 구조
+
+```
+~/dotfiles/
+├── ghostty/
+│   └── config                  # ~/.config/ghostty/config
+├── tmux/
+│   └── tmux.conf               # ~/.tmux.conf
+├── karabiner/
+│   ├── karabiner.json          # ~/.config/karabiner/karabiner.json
+│   └── assets/
+│       └── complex_modifications/
+│           └── terminal_layer.json
+├── zsh/
+│   └── .zshrc
+└── install.sh                  # 심볼릭 링크 자동 생성 스크립트
+```
+
+### install.sh
+
+```bash
+#!/bin/bash
+# ~/dotfiles/install.sh
+
+DOTFILES="$HOME/dotfiles"
+
+# 디렉토리 생성
+mkdir -p ~/.config/ghostty
+mkdir -p ~/.config/karabiner/assets/complex_modifications
+
+# 심볼릭 링크 생성
+ln -sf "$DOTFILES/ghostty/config"           ~/.config/ghostty/config
+ln -sf "$DOTFILES/tmux/tmux.conf"           ~/.tmux.conf
+ln -sf "$DOTFILES/karabiner/karabiner.json" ~/.config/karabiner/karabiner.json
+ln -sf "$DOTFILES/karabiner/assets/complex_modifications/terminal_layer.json" \
+       ~/.config/karabiner/assets/complex_modifications/terminal_layer.json
+ln -sf "$DOTFILES/zsh/.zshrc"               ~/.zshrc
+
+echo "✅ dotfiles 링크 완료"
+
+# TPM 설치 (없으면)
+if [ ! -d ~/.tmux/plugins/tpm ]; then
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  echo "✅ TPM 설치 완료"
+fi
+```
+
+```bash
+chmod +x ~/dotfiles/install.sh
+```
+
+새 맥에서는 dotfiles 레포를 클론하고 `./install.sh` 한 번이면 끝이다. 설정 파일을 수정할 때는 `~/dotfiles/` 안에서 수정하면 심볼릭 링크 덕분에 실제 경로에 즉시 반영된다.
+
+<div class="alert alert-info">
+
+dotfiles 레포는 private으로 올려도 되고, Karabiner JSON처럼 민감하지 않은 파일은 public으로 공개해두면 다른 개발자들에게도 참고가 된다.
+
+</div>
+
+---
+
+## 마치며
+
+2편에 걸쳐서 개념부터 실제 설정 파일까지 다뤘다. 한 번 세팅해두면 맥을 바꿔도 새 맥 셋업이 30분이면 끝나고, 매일 아침 `work` 커맨드 하나로 모든 개발 환경이 올라온다.
+
+처음엔 설정 파일이 낯설게 느껴질 수 있지만, 한 줄씩 이해하면서 자기 환경에 맞게 고쳐 나가는 과정 자체가 꽤 즐겁다. 키보드에서 손을 떼는 횟수가 줄어드는 게 눈에 보일 때 특히.
+
+---
+
+**이 글은 시리즈의 2편입니다.**
+
+- 이전 편: [Ghostty + tmux + Karabiner로 구축하는 극강의 터미널 환경](/posts/2026/macos-terminal-ghostty-tmux-karabiner)

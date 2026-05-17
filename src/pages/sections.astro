@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+
+interface SectionMeta {
+  label: string;
+  description: string;
+  color: string;
+}
+
+const sectionMeta: Record<Section, SectionMeta> = {
+  life:    { label: 'Life',    description: '일상 · 종교 · 육아 · 자동차 · 아쿠아리움', color: 'oklch(0.72 0.18 145)' },
+  money:   { label: 'Money',   description: '경제 · 투자 · 절약 · 제품 리뷰',         color: 'oklch(0.80 0.18 86)' },
+  culture: { label: 'Culture', description: '영화 · 영어 · 여행',                    color: 'oklch(0.63 0.27 303)' },
+  tools:   { label: 'Tools',   description: 'macOS · 터미널 · 개발 환경 도구',         color: 'oklch(0.56 0.024 265)' },
+  dev:     { label: 'Dev',     description: '개발 · AI · Backend · Frontend · DevOps', color: 'oklch(0.72 0.14 215)' },
+};
+
+const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+
+const sectionData = await Promise.all(
+  SECTIONS.map(async (section) => {
+    const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+    const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+    return {
+      section,
+      count: sorted.length,
+      latestTitle: sorted[0]?.data.title ?? null,
+      ...sectionMeta[section],
+    };
+  })
+);
+---
+
+<BaseLayout title="Sections — eone blog" description="블로그 섹션 목록">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+
+    <!-- Page header -->
+    <div class="py-12 border-b border-border">
+      <h1 class="text-3xl font-bold tracking-tight text-foreground mb-2">Sections</h1>
+      <p class="text-sm text-muted-foreground">주제별 글 모음</p>
+    </div>
+
+    <!-- Section cards grid -->
+    <div class="py-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {sectionData.map(({ section, label, description, color, count, latestTitle }, idx) => (
+          <a
+            href={`/${section}`}
+            class:list={[
+              'group relative flex flex-col gap-3 rounded-xl border border-border bg-card p-6 hover:border-current transition-colors',
+              // 마지막 항목(5번째)이고 홀수 총개수면 full width
+              idx === sectionData.length - 1 && sectionData.length % 2 !== 0
+                ? 'sm:col-span-2 sm:max-w-[calc(50%-12px)]'
+                : '',
+            ]}
+            style={`--card-accent: ${color};`}
+          >
+            <!-- Section label -->
+            <div class="flex items-center justify-between">
+              <span
+                class="text-lg font-bold"
+                style={`color: ${color};`}
+              >
+                {label}
+              </span>
+              <span class="text-xs text-muted-foreground">{count}개의 글</span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-sm text-muted-foreground leading-relaxed">{description}</p>
+
+            <!-- Latest post -->
+            {latestTitle && (
+              <div class="pt-2 border-t border-border">
+                <p class="text-xs text-muted-foreground mb-0.5">최신 글</p>
+                <p class="text-sm font-medium text-foreground line-clamp-1 group-hover:text-foreground/70 transition-colors">
+                  {latestTitle}
+                </p>
+              </div>
+            )}
+
+            <!-- Arrow -->
+            <div
+              class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              style={`color: ${color};`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

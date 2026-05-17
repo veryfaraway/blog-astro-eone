@@ -8,25 +8,22 @@
       <!-- Left: branding + links -->
       <div class="flex flex-col gap-3">
         <!-- Easter egg: hover reveals vault icon -->
-        <a
-          href="/"
-          class="group flex items-center gap-2 text-sm font-semibold text-foreground w-fit"
-        >
-          <span
-            id="vault-trigger"
-            class="relative cursor-default select-none"
-            title=""
+        <div class="group flex items-center gap-2 w-fit">
+          <a
+            href="/"
+            class="text-sm font-semibold text-foreground hover:text-foreground/70 transition-colors"
           >
             eone
-            <span
-              id="vault-icon"
-              class="absolute -right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-muted-foreground hover:text-foreground cursor-pointer"
-              aria-hidden="true"
-            >
-              ◈
-            </span>
+          </a>
+          <span
+            id="vault-icon"
+            class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-muted-foreground hover:text-foreground cursor-pointer select-none text-sm"
+            aria-hidden="true"
+            title=""
+          >
+            π
           </span>
-        </a>
+        </div>
         <p class="text-xs text-muted-foreground">
           &copy; {new Date().getFullYear()} eone. All rights reserved.
         </p>

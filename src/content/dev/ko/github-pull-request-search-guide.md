@@ -1,0 +1,236 @@
+---
+title: "GitHub Pull Request 검색 완전 정복: 브랜치 기반 검색부터 고급 패턴까지"
+description: "GitHub PR 검색 시스템의 내부 구조(Elasticsearch)부터 head/base 브랜치 필터, 자주 쓰는 검색 패턴까지 실무에서 바로 쓸 수 있는 검색 방법을 정리합니다."
+date: 2026-03-11
+category: DevOps
+tags:
+  - "git"
+  - "github"
+  - "pull request"
+draft: false
+lang: ko
+thumbnail: "https://images.unsplash.com/photo-1516382799247-87df95d790b7?q=80&w=2374&auto=format&fit=crop"
+---
+
+## GitHub Pull Request 검색 완전 정복
+
+코드 리뷰를 하다 보면 "저번에 그 기능 PR이 어디 갔더라?" 싶은 순간이 생깁니다. 브랜치 이름은 기억나는데 PR 목록에서 찾기 어려울 때, 아니면 이미 머지된 수백 개의 PR 중에서 특정 브랜치로 올린 것만 추려야 할 때 — GitHub의 검색 기능을 제대로 알면 이런 상황을 몇 초 만에 해결할 수 있습니다.
+
+이 글에서는 GitHub 검색이 내부적으로 어떻게 동작하는지, 그리고 PR을 효율적으로 찾는 검색 방법을 실전 예시와 함께 정리합니다.
+
+---
+
+### GitHub 검색 시스템의 내부 구조
+
+GitHub의 검색 기능은 **Elasticsearch** 기반으로 구축되어 있습니다. Elasticsearch는 Apache Lucene 위에서 동작하는 분산 검색 엔진으로, 대규모 데이터를 빠르게 색인(index)하고 근실시간(near real-time)으로 검색 결과를 반환하는 데 특화되어 있습니다.
+
+GitHub은 수십억 개의 문서를 약 128개의 샤드(shard)로 분산 저장하며, 저장소 ID를 기반으로 라우팅(routing)하여 단일 저장소의 데이터가 하나의 샤드에 집중되도록 최적화되어 있습니다. 덕분에 특정 저장소 내 검색이 매우 빠릅니다.
+
+PR 검색에서 사용하는 `head:`, `base:`, `is:merged` 같은 **qualifier(한정자)** 는 Elasticsearch의 term query 및 filter context로 변환되어 처리됩니다. 전문(full-text) 검색과 달리, 이런 필터는 관련도 점수(relevance score) 계산 없이 빠르게 일치 여부만 판단하므로 응답 속도가 매우 빠릅니다.
+
+<div class="alert alert-info">
+<p class="alert-title">💡 한 줄 요약</p>
+
+GitHub 검색 = Elasticsearch 기반 분산 인덱스. qualifier는 빠른 필터 쿼리로 처리됩니다.
+
+</div>
+
+---
+
+### 기본 검색 방법
+
+#### PR 탭에서 검색창 활용
+
+저장소 페이지에서 **Pull requests** 탭으로 이동하면 상단에 검색창이 있습니다. 기본적으로 `is:pr is:open` 상태로 열려 있으며, 여기에 qualifier를 추가해서 조건을 좁힐 수 있습니다.
+
+#### GitHub 전체 검색 활용
+
+`https://github.com/search` 또는 상단 검색창에서 검색 시, `type:pr` qualifier를 추가하면 PR만 추려서 볼 수 있습니다.
+
+---
+
+### 핵심 검색 키워드 (Qualifier) 정리
+
+#### 브랜치 관련
+
+| Qualifier | 의미 | 예시 |
+|-----------|------|------|
+| `head:브랜치명` | PR의 **소스 브랜치** (변경사항이 있는 브랜치) | `head:feature/login` |
+| `base:브랜치명` | PR의 **타겟 브랜치** (머지될 대상 브랜치) | `base:main` |
+
+<div class="alert alert-warning">
+<p class="alert-title">⚠️ 주의</p>
+
+`head:feature`처럼 입력하면 `feature`로 시작하는 모든 브랜치가 매칭됩니다. `feature/login`처럼 전체 이름을 입력하는 것이 정확합니다.
+
+</div>
+
+#### 상태 관련
+
+| Qualifier | 의미 |
+| ----------- | ------ |
+| `is:open` | 열린 PR |
+| `is:closed` | 닫힌 PR (머지 여부 무관) |
+| `is:merged` | 머지 완료된 PR |
+| `is:unmerged` | 머지되지 않은 PR |
+| `is:draft` | 드래프트 PR |
+
+#### 사람 관련
+
+| Qualifier | 의미 | 예시 |
+|-----------|------|------|
+| `author:유저명` | PR을 올린 사람 | `author:octocat` |
+| `assignee:유저명` | 담당자 | `assignee:@me` |
+| `review-requested:유저명` | 리뷰 요청된 사람 | `review-requested:@me` |
+| `reviewed-by:유저명` | 리뷰한 사람 | `reviewed-by:octocat` |
+
+#### 리뷰 상태 관련
+
+| Qualifier | 의미 |
+|-----------|------|
+| `review:none` | 리뷰 없음 |
+| `review:required` | 리뷰 필요 |
+| `review:approved` | 승인된 PR |
+| `review:changes_requested` | 변경 요청된 PR |
+
+#### 날짜 관련
+
+| Qualifier | 의미 | 예시 |
+|-----------|------|------|
+| `created:>YYYY-MM-DD` | 특정 날짜 이후 생성 | `created:>2024-01-01` |
+| `updated:<YYYY-MM-DD` | 특정 날짜 이전 업데이트 | `updated:<2024-06-01` |
+| `merged:YYYY-MM-DD..YYYY-MM-DD` | 날짜 범위 내 머지 | `merged:2024-01-01..2024-03-31` |
+
+#### 기타 유용한 Qualifier
+
+| Qualifier | 의미 | 예시 |
+|-----------|------|------|
+| `label:라벨명` | 특정 라벨 | `label:bug` |
+| `milestone:마일스톤명` | 특정 마일스톤 | `milestone:"v2.0"` |
+| `repo:소유자/저장소명` | 특정 저장소 한정 | `repo:facebook/react` |
+| `org:조직명` | 특정 조직 전체 | `org:microsoft` |
+| `comments:>N` | 댓글 N개 초과 | `comments:>10` |
+
+---
+
+### 자주 쓰는 검색 패턴
+
+#### 1. 특정 브랜치에서 올린 PR 찾기
+
+```text
+head:feature/user-auth
+```
+
+브랜치가 이미 삭제되었더라도 머지된 PR은 검색됩니다.
+
+#### 2. 특정 브랜치로 향하는 모든 PR
+
+```text
+base:develop is:open
+```
+
+`develop` 브랜치로 향하는 모든 열린 PR을 봅니다.
+
+#### 3. 내가 리뷰해야 할 PR
+
+```text
+is:open is:pr review-requested:@me
+```
+
+#### 4. 특정 기간에 머지된 PR
+
+```text
+is:merged merged:2024-01-01..2024-03-31 base:main
+```
+
+분기별 릴리스 내역을 파악할 때 유용합니다.
+
+#### 5. 오래된 열린 PR (방치된 PR 찾기)
+
+```text
+is:open is:pr updated:<2024-06-01
+```
+
+#### 6. 특정 사람이 올린 + 승인 대기 PR
+
+```text
+is:open author:홍길동 review:none
+```
+
+#### 7. 특정 라벨 + 브랜치 조합
+
+```text
+is:open label:hotfix base:main
+```
+
+운영 배포용 핫픽스 PR만 모아서 봅니다.
+
+#### 8. 드래프트 제외하고 리뷰 준비된 PR
+
+```text
+is:open is:pr -is:draft review:none base:develop
+```
+
+앞에 `-`를 붙이면 해당 조건을 **제외**할 수 있습니다.
+
+#### 9. 커밋 SHA로 PR 찾기
+
+```text
+is:pr SHA해시값
+```
+
+SHA는 최소 7자 이상 입력해야 합니다. 특정 커밋이 어떤 PR로 들어왔는지 추적할 때 쓰입니다.
+
+#### 10. 조직 전체에서 내 PR 찾기
+
+```text
+is:open is:pr author:@me org:my-company
+```
+
+---
+
+### URL로 직접 검색하기
+
+검색 조건을 URL에 담아 공유할 수도 있습니다.
+
+```text
+# 특정 저장소에서 브랜치 기반 검색
+https://github.com/{owner}/{repo}/pulls?q=head:feature/login
+
+# GitHub 전체 검색
+https://github.com/search?type=pullrequests&q=head:feature/login+repo:owner/repo
+```
+
+팀 내에서 "이 브랜치 PR 검색 결과"를 공유할 때 URL을 그대로 붙여넣으면 됩니다.
+
+---
+
+### GitHub CLI로 검색하기
+
+터미널을 선호하는 분이라면 `gh` CLI로도 동일한 검색이 가능합니다.
+
+```bash
+# 브랜치 기반 검색
+gh pr list --head feature/login
+gh pr list --base main --state merged
+
+# 복잡한 조건 (query syntax 사용)
+gh search prs --repo owner/repo -- "head:feature is:open review:approved"
+
+# 내가 리뷰 요청받은 PR
+gh search prs --review-requested @me --state open
+```
+
+---
+
+### 검색 팁 요약
+
+- **조건 조합**: 여러 qualifier를 공백으로 연결하면 AND 조건으로 처리됩니다.
+- **제외 조건**: qualifier 앞에 `-`를 붙이면 NOT 조건이 됩니다. (예: `-label:wip`)
+- **부분 매칭**: `head:feature`는 `feature`로 시작하는 모든 브랜치에 매칭됩니다.
+- **대소문자 무시**: GitHub 검색은 대소문자를 구분하지 않습니다.
+- **멀티워드 값**: 공백이 포함된 값은 큰따옴표로 감쌉니다. (예: `label:"in progress"`)
+
+---
+
+PR이 수백 개 쌓인 대형 저장소에서도 올바른 qualifier 조합 하나면 원하는 PR을 5초 안에 찾을 수 있습니다. 위 패턴들을 북마크해 두고 필요할 때 꺼내 쓰세요.

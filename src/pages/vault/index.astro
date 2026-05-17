@@ -1,0 +1,179 @@
+---
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeatMap from '../../components/heatmap/HeatMap';
+import portfolio from '../../data/portfolio.json';
+
+// ── Build-time: discover all price files ──────────────────────────────────
+
+const pricesDir = join(process.cwd(), 'src/data/prices');
+let availableDates: string[] = [];
+
+try {
+  const files = await readdir(pricesDir);
+  availableDates = files
+    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .map((f) => f.replace('.json', ''))
+    .sort();
+} catch {
+  availableDates = [];
+}
+
+// ── Resolve selected date from query string (SSG fallback: latest) ────────
+
+const queryDate = Astro.url.searchParams.get('date');
+const latestDate = availableDates.at(-1) ?? '';
+const selectedDate =
+  queryDate && availableDates.includes(queryDate) ? queryDate : latestDate;
+
+// ── Load price data for the selected date ─────────────────────────────────
+
+let priceData: { date: string; prices: Record<string, { close: number; change: number; changePercent: number }> } = {
+  date: selectedDate,
+  prices: {},
+};
+
+if (selectedDate) {
+  try {
+    const mod = await import(`../../data/prices/${selectedDate}.json`);
+    priceData = mod.default ?? mod;
+  } catch {
+    // No data for this date; priceData stays empty
+  }
+}
+---
+
+<BaseLayout
+  title="VAULT"
+  description="포트폴리오 히트맵"
+  section="vault"
+  noindex={true}
+>
+  <div class="vault-wrapper">
+    <!-- Header -->
+    <header class="vault-header">
+      <div class="vault-header-meta">
+        <span class="vault-badge">◈ VAULT</span>
+        <span class="vault-tagline">눈에 띄지 않게, 그러나 발견 가능하게</span>
+      </div>
+      <div class="vault-header-title">
+        <span class="vault-cursor">_</span>
+        <h1>portfolio heatmap</h1>
+      </div>
+      <p class="vault-desc">
+        비율(%)만 표시합니다. 금액은 숨겨집니다.
+      </p>
+    </header>
+
+    <!-- HeatMap React island -->
+    <div class="vault-map-container">
+      <HeatMap
+        client:load
+        portfolio={portfolio}
+        priceData={priceData}
+        availableDates={availableDates}
+        selectedDate={selectedDate}
+      />
+    </div>
+
+    <!-- Footer note -->
+    <footer class="vault-footer">
+      <span>데이터: FMP API · 매 거래일 KST 09:00 갱신 · 30일 이후 월별 통합</span>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .vault-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .vault-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid oklch(0.27 0.012 120 / 60%);
+    padding-bottom: 1.5rem;
+  }
+
+  .vault-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .vault-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #2ea855;
+    letter-spacing: 0.12em;
+    background: oklch(0.15 0.05 145);
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid #2ea855;
+  }
+
+  .vault-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #697565;
+    letter-spacing: 0.04em;
+  }
+
+  .vault-header-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .vault-cursor {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    color: #2ea855;
+    animation: blink 1.2s step-end infinite;
+    line-height: 1;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .vault-header-title h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: oklch(0.72 0.18 145);
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .vault-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #697565;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+
+  .vault-map-container {
+    background: oklch(0.10 0.015 140);
+    border: 1px solid oklch(0.27 0.012 120 / 60%);
+    border-radius: 8px;
+    padding: 1.25rem;
+    min-height: 300px;
+  }
+
+  .vault-footer {
+    margin-top: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #3a3f48;
+    letter-spacing: 0.04em;
+    text-align: right;
+  }
+</style>

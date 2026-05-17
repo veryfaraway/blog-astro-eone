@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import SectionLayout from '../../layouts/SectionLayout.astro';
-import PostCard from '../../components/PostCard.astro';
+import SectionTabs from '../../components/SectionTabs';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -24,14 +24,19 @@ const allPosts = await getCollection(section, (entry) =>
   entry.id.startsWith('ko/') && !entry.data.draft
 );
 
-const posts = allPosts.sort((a, b) =>
-  b.data.date.getTime() - a.data.date.getTime()
-);
+const posts = allPosts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map(post => ({
+    title: post.data.title,
+    description: post.data.description,
+    date: post.data.date,
+    slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+    section,
+    tags: post.data.tags,
+    thumbnail: post.data.thumbnail,
+    category: post.data.category,
+  }));
 
-// glob loader는 id에서 확장자를 제거함 (ko/post-slug)
-const toSlug = (id: string) => id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, '');
-
-const categories = ['전체', ...new Set(posts.map(p => p.data.category))];
 const { label, description } = sectionMeta[section];
 ---
 
@@ -42,51 +47,14 @@ const { label, description } = sectionMeta[section];
 >
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
 
-    <!-- Section header (newmixcoffee style) -->
+    <!-- Section header -->
     <div class="py-12 border-b border-border">
       <h1 class="text-3xl font-bold tracking-tight text-foreground mb-2">{label}</h1>
       <p class="text-sm text-muted-foreground">{description}</p>
     </div>
 
-    <!-- Category tabs -->
-    <div class="border-b border-border">
-      <div class="flex gap-0 overflow-x-auto scrollbar-none">
-        {categories.map((cat, i) => (
-          <a
-            href={i === 0 ? `/${section}` : `/${section}?category=${encodeURIComponent(cat)}`}
-            class="relative shrink-0 px-4 py-3 text-base font-medium transition-colors text-muted-foreground hover:text-foreground"
-          >
-            {cat}
-          </a>
-        ))}
-      </div>
-    </div>
-
-    <!-- Post grid -->
-    <div class="py-10">
-      {posts.length === 0 ? (
-        <p class="text-sm text-muted-foreground py-12 text-center">아직 글이 없습니다.</p>
-      ) : (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map(post => {
-            const slug = toSlug(post.id);
-            return (
-              <div data-section={section}>
-                <PostCard
-                  title={post.data.title}
-                  description={post.data.description}
-                  date={post.data.date}
-                  slug={slug}
-                  section={section}
-                  tags={post.data.tags}
-                  thumbnail={post.data.thumbnail}
-                />
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+    <!-- SectionTabs: 카테고리 필터 + 클라이언트 페이지네이션 -->
+    <SectionTabs client:load posts={posts} section={section} />
 
   </div>
 </SectionLayout>

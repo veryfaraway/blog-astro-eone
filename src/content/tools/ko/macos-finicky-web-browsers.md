@@ -1,0 +1,148 @@
+---
+title: Mac에서 링크 하나로 브라우저를 자동 분기하는 Finicky 완벽 가이드
+description: macOS에서 URL 패턴에 따라 브라우저를 자동으로 선택해주는 무료 오픈소스 앱 Finicky의 설치부터 설정까지 완벽하게 알아봅니다.
+date: 2026-03-06
+category: Tools
+tags:
+  - "finicky"
+  - "macos"
+draft: false
+lang: ko
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/l_logo-coffee/o_70/fl_layer_apply,g_center,x_-50,y_150/v1772790687/library/meme/web_browsers_mizud3.png"
+---
+
+개발을 하다 보면 여러 브라우저를 동시에 사용하는 경우가 많습니다. 로컬 개발 서버는 Arc에서, Google 서비스는 Chrome에서, 그 외 링크는 Safari에서 열고 싶은데 매번 복사해서 붙여넣기 하거나 브라우저를 수동으로 전환하는 게 번거롭지 않으셨나요?
+
+**Finicky**는 이 문제를 완벽하게 해결해주는 macOS 전용 무료 오픈소스 앱입니다.
+
+## Finicky란?
+
+Finicky는 macOS의 **기본 브라우저 자리를 대신 차지**하면서, 클릭한 링크의 URL을 분석해 미리 정해둔 규칙에 따라 적절한 브라우저로 자동으로 열어주는 라우터 역할을 합니다.
+
+- **완전 무료** 오픈소스 ([github.com/johnste/finicky](https://github.com/johnste/finicky))
+- JavaScript 설정 파일로 **유연한 규칙 작성** 가능
+- 정규식, 문자열, 함수 등 다양한 매칭 방식 지원
+- 메뉴바에 상주하며 **백그라운드에서 가볍게 동작**
+
+## 설치 방법
+
+Homebrew가 설치되어 있다면 터미널에서 한 줄로 설치할 수 있습니다.
+
+```bash
+brew install --cask finicky
+```
+
+Homebrew가 없다면 [Finicky GitHub 릴리즈 페이지](https://github.com/johnste/finicky/releases)에서 최신 `.dmg` 파일을 직접 다운로드해 설치할 수 있습니다.
+
+## 기본 브라우저로 설정
+
+설치 후 Finicky를 실행하면 메뉴바에 아이콘이 나타납니다. 이후 macOS 기본 브라우저를 Finicky로 변경해야 합니다.
+
+1. **시스템 설정 → 기본 브라우저**로 이동
+2. 브라우저 목록에서 **Finicky** 선택
+
+이제 외부에서 클릭되는 모든 링크는 Finicky를 거치게 됩니다.
+
+## 설정 파일 작성
+
+Finicky의 설정은 홈 디렉토리의 `~/.finicky.js` 파일에 JavaScript로 작성합니다.
+
+### 기본 구조
+
+```javascript
+export default {
+  defaultBrowser: "Safari",  // 규칙에 해당하지 않는 링크는 Safari로
+  handlers: [
+    {
+      match: /패턴/,
+      browser: "브라우저 이름"
+    }
+  ]
+};
+```
+
+<div class="alert alert-warning">
+<p class="alert-title">⚠️ 주의</p>
+
+Finicky 4.x 버전부터 `module.exports` 대신 `export default`, `rules` 대신 `handlers`를 사용해야 합니다. 구버전 문법을 사용하면 설정 파일이 로드되더라도 규칙이 적용되지 않습니다.
+
+</div>
+
+### 실전 예시: 개발자를 위한 브라우저 분기 설정
+
+```javascript
+export default {
+  defaultBrowser: "Safari",
+  handlers: [
+    // localhost (포트 포함)는 Arc에서 열기
+    {
+      match: /localhost/,
+      browser: "Arc"
+    },
+    // Google 관련 서비스는 Chrome에서 열기
+    {
+      match: /google\.(com|co\.kr)|gmail\.com|youtube\.com|docs\.google\.com/,
+      browser: "Google Chrome"
+    }
+  ]
+};
+```
+
+`/localhost/` 패턴은 `localhost:8080`, `localhost:4321` 등 포트가 붙어있어도 URL 문자열에 `localhost`가 포함되어 있으면 모두 매칭됩니다.
+
+### 설정 적용
+
+파일을 저장한 뒤 메뉴바의 Finicky 아이콘을 클릭하고 **Reload Config**를 선택하면 즉시 반영됩니다. 설정 오류가 있을 경우 알림으로 안내해줍니다.
+
+## 다양한 활용 예시
+
+### 특정 도메인을 다른 프로필로 열기
+
+Chrome 프로필을 구분해서 사용하는 경우에도 활용할 수 있습니다.
+
+```javascript
+export default {
+  defaultBrowser: "Safari",
+  handlers: [
+    {
+      match: /github\.com/,
+      browser: {
+        name: "Google Chrome",
+        profile: "Work"
+      }
+    }
+  ]
+};
+```
+
+### URL에 특정 파라미터가 포함된 경우
+
+```javascript
+export default {
+  defaultBrowser: "Safari",
+  handlers: [
+    {
+      match: ({ url }) => url.search.includes("utm_source=slack"),
+      browser: "Google Chrome"
+    }
+  ]
+};
+```
+
+### 특정 프로토콜 처리
+
+```javascript
+export default {
+  defaultBrowser: "Safari",
+  handlers: [
+    {
+      match: ({ url }) => url.protocol === "http:",
+      browser: "Firefox"
+    }
+  ]
+};
+```
+
+## 마치며
+
+Finicky는 설정 파일 하나로 브라우저 라우팅을 완전히 제어할 수 있는 강력한 도구입니다. 특히 여러 브라우저를 목적에 따라 나눠 쓰는 개발자에게 워크플로우를 크게 단순화해줍니다. 무료인 데다 설정도 간단하니 macOS 사용자라면 한 번 도입해보시길 추천드립니다.

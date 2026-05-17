@@ -1,0 +1,329 @@
+---
+title: Karabiner 완전 정복기 3편 — 나만의 룰 만들기
+description: "Karabiner JSON 구조를 직접 작성하는 방법, 앱별·기기별 조건부 리매핑, 그리고 실전에서 바로 쓸 수 있는 세팅 공유까지."
+date: 2026-03-27
+category: Tools
+tags:
+  - "macos"
+  - "karabiner"
+draft: false
+lang: ko
+thumbnail: "https://images.unsplash.com/photo-1767588114207-85a196d8089e?q=80&w=2148&auto=format&fit=crop"
+---
+
+> 커뮤니티 룰을 가져다 쓰는 것도 좋지만, 내 손에 맞게 직접 만들면 차원이 다르다.
+
+## 이 글에서 다루는 내용
+
+- Karabiner JSON 파일 구조 이해하기
+- 조건부 리매핑 — 앱별, 기기별로 다르게 동작시키기
+- `to_if_alone` vs `to` — 탭과 홀드를 구분하는 법
+- 변수(variable)로 상태 관리하기
+- 실전 세팅 파일 공유
+
+---
+
+## JSON 파일 어디에 있나
+
+Karabiner의 모든 설정은 아래 경로에 JSON으로 저장된다.
+
+```bash
+~/.config/karabiner/karabiner.json
+```
+
+이 파일을 직접 수정하거나, `~/.config/karabiner/assets/complex_modifications/` 폴더에 별도 JSON 파일을 넣어두면 Karabiner 앱에서 가져다 쓸 수 있다. 설정을 버전 관리하거나 여러 기기에서 동기화할 때 이 폴더째로 dotfiles에 넣어두면 편하다.
+
+---
+
+## JSON 기본 구조
+
+Complex Modifications 룰 하나의 뼈대는 이렇게 생겼다.
+
+```json
+{
+  "title": "룰 그룹 제목",
+  "rules": [
+    {
+      "description": "이 룰이 하는 일 설명",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": { ... },   // 어떤 키 입력을
+          "to": [ ... ],     // 어떤 키 출력으로 바꿀지
+          "conditions": [ ... ]  // 조건 (없으면 항상 적용)
+        }
+      ]
+    }
+  ]
+}
+```
+
+`from`에 트리거 키를, `to`에 출력할 키를, `conditions`에 동작 조건을 적는다. 조건이 없으면 항상 적용된다.
+
+### from 작성법
+
+```json
+"from": {
+  "key_code": "h",
+  "modifiers": {
+    "mandatory": ["left_command", "left_control"],
+    "optional": ["any"]
+  }
+}
+```
+
+- `key_code`: 키 이름 ([전체 목록](https://github.com/pqrs-org/Karabiner-Elements/blob/main/src/apps/SettingsWindow/Resources/simple_modifications.json))
+- `mandatory`: 반드시 함께 눌러야 하는 수식어 키
+- `optional`: 있어도 되고 없어도 되는 수식어 키. `"any"`로 설정하면 어떤 수식어와 함께 눌러도 트리거된다.
+
+### to 작성법
+
+```json
+"to": [
+  {
+    "key_code": "left_arrow",
+    "modifiers": ["left_command"]
+  }
+]
+```
+
+배열이기 때문에 여러 키를 순서대로 내보낼 수 있다. 예를 들어 키 하나로 `⌘C` → `⌘V`를 연속으로 보내는 것도 된다.
+
+---
+
+## 탭과 홀드 구분하기 — `to_if_alone`
+
+Karabiner의 가장 강력한 기능 중 하나다. 같은 키를 **단독으로 짧게 누를 때**와 **다른 키와 함께 누를 때** 다르게 동작시킬 수 있다.
+
+2편에서 다뤘던 Hyper Key가 바로 이 원리다.
+
+```json
+{
+  "type": "basic",
+  "from": {
+    "key_code": "caps_lock",
+    "modifiers": { "optional": ["any"] }
+  },
+  "to": [
+    {
+      "set_variable": {
+        "name": "hyper_key",
+        "value": 1
+      }
+    },
+    {
+      "key_code": "left_shift",
+      "modifiers": ["left_command", "left_control", "left_option"]
+    }
+  ],
+  "to_after_key_up": [
+    {
+      "set_variable": {
+        "name": "hyper_key",
+        "value": 0
+      }
+    }
+  ],
+  "to_if_alone": [
+    {
+      "key_code": "f18"
+    }
+  ],
+  "parameters": {
+    "basic.to_if_alone_timeout_milliseconds": 200
+  }
+}
+```
+
+- `to`: 다른 키와 함께 눌릴 때 → Hyper Key 활성화
+- `to_if_alone`: 단독으로 짧게 누를 때 → F18 (한/영 전환)
+- `to_if_alone_timeout_milliseconds`: 이 시간(ms) 안에 다른 키 입력이 없으면 "단독 탭"으로 간주
+
+---
+
+## 조건 — 앱별, 기기별로 다르게
+
+### 특정 앱에서만 동작
+
+```json
+"conditions": [
+  {
+    "type": "frontmost_application_if",
+    "bundle_identifiers": [
+      "^com\\.apple\\.Terminal$",
+      "^com\\.googlecode\\.iterm2$",
+      "^io\\.alacritty$"
+    ]
+  }
+]
+```
+
+`frontmost_application_if` / `frontmost_application_unless`로 특정 앱이 포커스됐을 때만 동작하거나 제외할 수 있다. 번들 ID는 정규식으로 매칭한다.
+
+앱의 번들 ID는 터미널에서 확인할 수 있다.
+
+```bash
+osascript -e 'id of app "iTerm"'
+# → com.googlecode.iterm2
+```
+
+### 특정 키보드에서만 동작
+
+```json
+"conditions": [
+  {
+    "type": "device_if",
+    "identifiers": [
+      {
+        "vendor_id": 1241,
+        "product_id": 41618
+      }
+    ]
+  }
+]
+```
+
+Karabiner 앱의 **Devices** 탭에서 연결된 기기의 vendor_id / product_id를 확인할 수 있다. 이 조건을 쓰면 외장 키보드가 연결됐을 때만 특정 룰을 적용하고, 맥북 내장 키보드에는 적용하지 않는 식의 구성이 가능하다.
+
+### 변수(variable)로 모드 만들기
+
+복잡한 룰을 만들다 보면 "이 모드일 때만" 같은 상태 관리가 필요해진다. Karabiner는 변수를 지원한다.
+
+```json
+// 변수 설정
+"to": [
+  { "set_variable": { "name": "vim_mode", "value": 1 } }
+]
+
+// 변수 조건으로 사용
+"conditions": [
+  { "type": "variable_if", "name": "vim_mode", "value": 1 }
+]
+```
+
+이 방식으로 "Caps Lock을 누른 동안만 vim 키 매핑을 활성화"하는 레이어 시스템을 만들 수 있다.
+
+---
+
+## 실전 세팅 공유
+
+직접 쓰는 설정 중 유용한 것들을 모았다.
+
+### 터미널에서 ⌘W가 탭만 닫도록
+
+기본적으로 터미널에서 `⌘W`는 창을 닫는다. 탭이 하나 남았을 때 실수로 누르면 창 전체가 닫혀버린다. 아래 룰로 터미널 앱에서는 `⌘W`를 무력화하거나 다른 동작에 할당할 수 있다.
+
+```json
+{
+  "description": "터미널에서 ⌘W 비활성화",
+  "manipulators": [
+    {
+      "type": "basic",
+      "from": {
+        "key_code": "w",
+        "modifiers": { "mandatory": ["left_command"] }
+      },
+      "to": [ { "key_code": "vk_none" } ],
+      "conditions": [
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": ["^com\\.googlecode\\.iterm2$"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`vk_none`은 아무 출력도 하지 않는 특수 키다. 키 입력을 통째로 삼켜버린다.
+
+### 오른쪽 ⌘ 단독 탭 → 한/영 전환
+
+Space 양쪽에 있는 `⌘` 키 중 오른쪽은 단독으로 쓰일 일이 거의 없다. 이걸 한/영 전환에 활용하면 스페이스바 옆에서 엄지손가락으로 전환할 수 있다.
+
+```json
+{
+  "description": "오른쪽 ⌘ 단독 탭 → 한/영 전환 (F18)",
+  "manipulators": [
+    {
+      "type": "basic",
+      "from": {
+        "key_code": "right_command",
+        "modifiers": { "optional": ["any"] }
+      },
+      "to": [ { "key_code": "right_command" } ],
+      "to_if_alone": [ { "key_code": "f18" } ],
+      "parameters": {
+        "basic.to_if_alone_timeout_milliseconds": 200
+      }
+    }
+  ]
+}
+```
+
+### 외장 키보드 전용 레이어
+
+```json
+{
+  "description": "외장 키보드: Print Screen → 스크린샷 선택 영역",
+  "manipulators": [
+    {
+      "type": "basic",
+      "from": { "key_code": "print_screen" },
+      "to": [
+        {
+          "key_code": "4",
+          "modifiers": ["left_command", "left_shift"]
+        }
+      ],
+      "conditions": [
+        {
+          "type": "device_if",
+          "identifiers": [ { "vendor_id": 1241 } ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## 설정 파일 관리 팁
+
+Karabiner 설정이 쌓이다 보면 JSON이 꽤 복잡해진다. 몇 가지 관리 팁이다.
+
+**dotfiles에 포함시키기**
+
+```bash
+# dotfiles 레포에 심볼릭 링크로 관리
+ln -s ~/dotfiles/karabiner ~/.config/karabiner
+```
+
+**복잡한 룰은 별도 파일로 분리**
+
+`~/.config/karabiner/assets/complex_modifications/` 안에 기능별로 파일을 나눠두면 관리가 쉽다.
+
+```text
+complex_modifications/
+  hyper_key.json
+  korean_input.json
+  app_shortcuts.json
+  external_keyboard.json
+```
+
+각 파일은 Karabiner 앱 → Complex Modifications → Add rule에서 파일별로 구분돼서 보인다.
+
+---
+
+## 마치며
+
+3편에 걸쳐서 Karabiner-Elements의 설치부터 JSON 직접 작성까지 다뤘다. 처음엔 커뮤니티 룰을 가져다 쓰는 것만으로도 충분히 강력하지만, 직접 JSON을 조금씩 수정하다 보면 나만의 키보드 레이아웃이 조금씩 완성되는 재미가 있다.
+
+키보드는 하루에 수만 번 상호작용하는 도구다. 여기에 시간을 쓰는 건 충분히 가치 있는 투자라고 생각한다.
+
+---
+
+**이 글은 시리즈의 3편입니다.**
+
+- 이전 편: [Karabiner 완전 정복기 2편 — Complex Modifications & Hyper Key](/posts/2026/karabiner-elements-guide-2)

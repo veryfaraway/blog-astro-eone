@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -8,6 +9,7 @@ import pagefind from 'astro-pagefind';
 export default defineConfig({
   site: 'https://blog.eone.one',
   integrations: [
+    mdx(),
     react(),
     pagefind(),
     sitemap({

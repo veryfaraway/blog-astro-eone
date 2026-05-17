@@ -1,0 +1,27 @@
+---
+interface Props {
+  slot?: 'inArticle' | 'display';
+  adSlot?: string;
+}
+
+const { slot: type = 'display', adSlot = '' } = Astro.props;
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+
+// AdSense 미설정 시 렌더링 안 함
+if (!client || !adSlot) return;
+
+const isInArticle = type === 'inArticle';
+---
+
+<div class:list={['ad-slot not-prose', isInArticle ? 'my-8' : 'my-6']}>
+  <ins
+    class="adsbygoogle"
+    style="display:block"
+    data-ad-client={client}
+    data-ad-slot={adSlot}
+    data-ad-format={isInArticle ? 'fluid' : 'auto'}
+    data-ad-layout={isInArticle ? 'in-article' : undefined}
+    data-full-width-responsive="true"
+  />
+  <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>

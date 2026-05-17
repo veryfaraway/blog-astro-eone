@@ -1,0 +1,17 @@
+{
+  "date": "2026-05-16",
+  "prices": {
+    "AAPL": { "close": 213.50, "change": 1.23, "changePercent": 0.58 },
+    "NVDA": { "close": 135.20, "change": -2.10, "changePercent": -1.53 },
+    "MSFT": { "close": 452.30, "change": 3.80, "changePercent": 0.85 },
+    "GOOGL": { "close": 178.90, "change": 0.50, "changePercent": 0.28 },
+    "META": { "close": 612.40, "change": -8.20, "changePercent": -1.32 },
+    "AMZN": { "close": 227.10, "change": 4.30, "changePercent": 1.93 },
+    "TSLA": { "close": 340.60, "change": -12.50, "changePercent": -3.54 },
+    "SCHD": { "close": 82.40, "change": 0.30, "changePercent": 0.37 },
+    "VYM": { "close": 131.20, "change": 0.80, "changePercent": 0.61 },
+    "JEPI": { "close": 58.90, "change": 0.10, "changePercent": 0.17 },
+    "O": { "close": 57.30, "change": -0.40, "changePercent": -0.69 },
+    "ABBV": { "close": 198.70, "change": 2.10, "changePercent": 1.07 }
+  }
+}

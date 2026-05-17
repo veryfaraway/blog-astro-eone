@@ -85,6 +85,38 @@ const fullTitle = title === 'eone blog' ? title : `${title} — eone blog`;
       })();
     </script>
 
+    <!-- Search Console 인증 -->
+    {import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+      <meta name="google-site-verification" content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION} />
+    )}
+    <!-- 네이버 서치어드바이저 인증 -->
+    {import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION && (
+      <meta name="naver-site-verification" content={import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION} />
+    )}
+
+    <!-- 페이지별 추가 head 슬롯 -->
+    <slot name="head" />
+
+    <!-- JSON-LD: WebSite -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "eone blog",
+      "url": siteUrl,
+      "description": description,
+      "inLanguage": lang === 'ko' ? 'ko-KR' : 'en-US',
+    })} />
+
+    <!-- Google AdSense -->
+    {import.meta.env.PUBLIC_ADSENSE_CLIENT && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${import.meta.env.PUBLIC_ADSENSE_CLIENT}`}
+        crossorigin="anonymous"
+      />
+    )}
+
     <!-- Google Analytics -->
     {import.meta.env.PUBLIC_GA_ID && (
       <>

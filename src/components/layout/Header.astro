@@ -12,9 +12,10 @@ interface Props {
 const { lang = 'ko', alternateUrl } = Astro.props;
 
 const navLinks = [
-  { label: 'Blog',  href: '/' },
-  { label: 'Tags',  href: '/tags' },
-  { label: 'About', href: '/about' },
+  { label: 'Blog',     href: '/blog' },
+  { label: 'Sections', href: '/sections' },
+  { label: 'Tags',     href: '/tags' },
+  { label: 'About',    href: '/about' },
 ];
 
 const pathname = Astro.url.pathname;
@@ -40,7 +41,9 @@ const pathname = Astro.url.pathname;
         <!-- Page nav (desktop) -->
         <nav class="hidden md:flex items-center" aria-label="페이지 내비게이션">
           {navLinks.map(({ label, href }) => {
-            const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+            const isActive = href === '/blog'
+              ? pathname === '/blog' || pathname.startsWith('/blog/')
+              : pathname.startsWith(href);
             return (
               <a
                 href={href}

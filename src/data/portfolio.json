@@ -1,0 +1,26 @@
+{
+  "accounts": {
+    "account_a": {
+      "name": "자산증식형",
+      "holdings": [
+        { "ticker": "AAPL",  "shares": 10, "sector": "Technology" },
+        { "ticker": "NVDA",  "shares": 5,  "sector": "Technology" },
+        { "ticker": "MSFT",  "shares": 8,  "sector": "Technology" },
+        { "ticker": "GOOGL", "shares": 3,  "sector": "Communication" },
+        { "ticker": "META",  "shares": 6,  "sector": "Communication" },
+        { "ticker": "AMZN",  "shares": 4,  "sector": "Consumer" },
+        { "ticker": "TSLA",  "shares": 7,  "sector": "Consumer" }
+      ]
+    },
+    "account_b": {
+      "name": "배당성장형",
+      "holdings": [
+        { "ticker": "SCHD", "shares": 50, "sector": "ETF" },
+        { "ticker": "VYM",  "shares": 30, "sector": "ETF" },
+        { "ticker": "JEPI", "shares": 40, "sector": "ETF" },
+        { "ticker": "O",    "shares": 25, "sector": "Real Estate" },
+        { "ticker": "ABBV", "shares": 15, "sector": "Healthcare" }
+      ]
+    }
+  }
+}

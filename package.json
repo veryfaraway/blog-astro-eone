@@ -9,9 +9,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "migrate": "node scripts/migrate.mjs",
+    "migrate:hugo": "node scripts/migrate.mjs --source=hugo",
+    "migrate:popcorn": "node scripts/migrate.mjs --source=popcorn",
+    "migrate:techai": "node scripts/migrate.mjs --source=techai"
   },
   "dependencies": {
+    "@astrojs/mdx": "^5.0.5",
     "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "^3.7.2",
     "@base-ui/react": "^1.4.1",
