@@ -17,8 +17,6 @@ jobs:
 
       - name: Fetch latest prices
         run: node scripts/fetch-prices.mjs
-        env:
-          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
 
       - name: Archive old price files
         run: node scripts/archive-prices.mjs
