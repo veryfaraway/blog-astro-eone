@@ -1,0 +1,81 @@
+---
+import type { SeriesPost } from '@/components/SeriesTOC.astro';
+
+interface Props {
+  posts: SeriesPost[];
+  currentSlug: string;
+}
+
+const { posts, currentSlug } = Astro.props;
+const currentIndex = posts.findIndex(p => p.slug === currentSlug);
+const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+---
+
+<nav class="not-prose mt-10 pt-8 border-t border-border">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="text-muted-foreground"
+      >
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+      <span class="text-sm font-semibold text-foreground">시리즈 계속 읽기</span>
+    </div>
+    <span class="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full">
+      {currentIndex + 1} / {posts.length}
+    </span>
+  </div>
+
+  <!-- Prev / Next cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+    {prevPost ? (
+      <a
+        href={`/${prevPost.section}/${prevPost.slug}`}
+        class="group flex items-center gap-3 p-4 rounded-xl border border-border bg-card no-underline hover:border-muted-foreground/30 hover:bg-muted/40 transition-all"
+      >
+        <div class="shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/70 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <p class="text-xs text-muted-foreground mb-0.5">{currentIndex}편 · 이전</p>
+          <p class="text-sm font-medium text-foreground line-clamp-2 leading-snug">{prevPost.title}</p>
+        </div>
+      </a>
+    ) : (
+      <div class="flex items-center justify-center p-4 rounded-xl border border-dashed border-border">
+        <span class="text-xs text-muted-foreground">첫 번째 편</span>
+      </div>
+    )}
+
+    {nextPost ? (
+      <a
+        href={`/${nextPost.section}/${nextPost.slug}`}
+        class="group flex items-center gap-3 p-4 rounded-xl border border-border bg-card no-underline hover:border-muted-foreground/30 hover:bg-muted/40 transition-all sm:flex-row-reverse sm:text-right"
+      >
+        <div class="shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/70 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <p class="text-xs text-muted-foreground mb-0.5">{currentIndex + 2}편 · 다음</p>
+          <p class="text-sm font-medium text-foreground line-clamp-2 leading-snug">{nextPost.title}</p>
+        </div>
+      </a>
+    ) : (
+      <div class="flex items-center justify-center p-4 rounded-xl border border-dashed border-border sm:col-start-2">
+        <span class="text-xs text-muted-foreground">마지막 편</span>
+      </div>
+    )}
+
+  </div>
+</nav>

@@ -2,7 +2,7 @@
 title: 치유를 위한 기도
 description: 이렇게 기도해 보세요
 date: 2022-07-01
-category: ""
+category: Christian
 tags:
   - "기도"
 draft: false

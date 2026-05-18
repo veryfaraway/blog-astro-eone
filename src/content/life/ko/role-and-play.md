@@ -2,7 +2,7 @@
 title: "Role & Play 보드게임 소개"
 description: "우리 아이 첫 보드게임으로 적합한 Thinkfun 사의 Role & Play 보드게임 소개"
 date: 2022-07-05
-category: ""
+category: 껌딱지
 tags:
   - "보드게임"
 draft: false

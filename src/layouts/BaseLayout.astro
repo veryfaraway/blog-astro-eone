@@ -43,7 +43,9 @@ const fullTitle = title === 'eone blog' ? title : `${title} — eone blog`;
     <link rel="canonical" href={canonicalUrl} />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    {alternateUrl && <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={alternateUrl} />}
+    <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+    {alternateUrl && <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={new URL(alternateUrl, siteUrl).toString()} />}
+    {alternateUrl && <link rel="alternate" hreflang="x-default" href={canonicalUrl} />}
 
     <!-- OG / Social -->
     <meta property="og:type" content="website" />

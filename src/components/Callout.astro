@@ -1,0 +1,13 @@
+---
+interface Props {
+  type?: 'info' | 'warning' | 'success' | 'danger' | 'tip';
+  title?: string;
+}
+
+const { type = 'info', title } = Astro.props;
+---
+
+<div class:list={['alert not-prose', `alert-${type}`]}>
+  {title && <p class="alert-title">{title}</p>}
+  <slot />
+</div>

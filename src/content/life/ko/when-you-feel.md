@@ -2,7 +2,7 @@
 title: 하나님께서 당신을 쓰실 수 없다고 느껴질때
 description: 좌절금지
 date: 2022-07-02
-category: ""
+category: Christian
 tags:
   - "예화"
 draft: false

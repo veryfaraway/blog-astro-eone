@@ -2,7 +2,7 @@
 title: 시동이 안 걸리는 자동차
 description: 허버트 잭슨 선교사 이야기
 date: 2022-07-03
-category: ""
+category: Christian
 tags:
   - "예화"
 draft: false

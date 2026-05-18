@@ -13,6 +13,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1778253375/media/games/lucas/Secret%20of%20Monkey%20Island/monkey-island-1-part3_jnk2rb.jpg"
+series: "원숭이 섬의 비밀 완전 공략"
+series_order: 5
 ---
 
 > 원숭이 섬에는 아무도 돌아온 자가 없다고 했다. 가이브러시는 그 말을 기억하지 못했다.

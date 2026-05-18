@@ -13,6 +13,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1778252847/media/games/lucas/Secret%20of%20Monkey%20Island/monkey-island-1-part2_xdyyqu.jpg"
+series: "원숭이 섬의 비밀 완전 공략"
+series_order: 4
 ---
 
 > 해적이 됐다. 이제 배가 필요하다. 그리고 돈이 없다.

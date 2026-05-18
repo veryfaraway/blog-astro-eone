@@ -13,6 +13,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1778252770/media/games/lucas/Secret%20of%20Monkey%20Island/monkey-island-1-part1_xxyvs9.jpg"
+series: "원숭이 섬의 비밀 완전 공략"
+series_order: 3
 ---
 
 > 해적이 되는 길은 멀고 험하다. 특히 시작이 이 모양일 때는.

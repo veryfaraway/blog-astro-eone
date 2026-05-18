@@ -1,14 +1,12 @@
 # eone blog
 
-> 흩어진 세 개의 블로그를 하나로. 일상·경제·문화·개발·도구에 관한 이야기.
+> 일상 · 경제 · 문화 · 개발 · 도구에 관한 이야기
 
-**[blog.eone.one](https://blog.eone.one)** · Hugo + Eleventy × 2 → Astro 통합
+**[blog.eone.one](https://blog.eone.one)**
 
 ---
 
-## 소개
-
-mustardseed · burn · popcorn — 각기 다른 스택(Hugo, Eleventy)으로 운영하던 블로그 3개를 Astro 단일 프로젝트로 통합한 개인 블로그입니다.
+## 섹션
 
 | 섹션 | 주제 |
 |------|------|
@@ -23,8 +21,9 @@ mustardseed · burn · popcorn — 각기 다른 스택(Hugo, Eleventy)으로 �
 ## 기술 스택
 
 ```
-Framework   Astro 6 (SSG)
-UI          React (island) + shadcn/ui + Tailwind CSS v4
+Framework   Astro (SSG)
+UI          React island + shadcn/ui + Tailwind CSS v4
+Typography  @tailwindcss/typography
 Font        Pretendard Variable + JetBrains Mono
 Search      Pagefind
 Comments    Giscus (GitHub Discussions)
@@ -34,17 +33,28 @@ Deploy      Netlify
 
 ---
 
-## 주요 기능
+## 기능
 
-- **5섹션 구조** — 섹션별 accent color, 독립 카테고리 탭
-- **전문 검색** — Pagefind, Cmd+K 단축키
-- **다크모드** — 시스템 설정 연동 + 수동 토글
-- **TOC** — 포스트 내 목차 (lg 화면 우측 sticky)
+### 콘텐츠
+- **시리즈** — `series` / `series_order` front matter로 연작 포스트 자동 연결 (TOC + 이전/다음 편 네비게이션)
+- **다국어(i18n)** — 한국어(기본) + 영어, 같은 slug 파일을 `ko/` · `en/` 폴더에 배치하면 언어 스위처 자동 활성화
+- **Callout** — MDX 포스트에서 `<Callout type="info|warning|success|danger|tip">` 컴포넌트 사용
+
+### 포스트 뷰
+- **TOC** — `h2` · `h3` 기반 목차, lg 화면 우측 sticky
 - **읽기 시간** · **이전/다음 포스트** 네비게이션
-- **태그 워드 클라우드** — 빈도수 기반 크기 조절
-- **Giscus 댓글** — 다크모드 자동 연동
+- **태그 시스템** — 태그 워드 클라우드 (빈도수 기반 크기)
+- **Giscus 댓글** — GitHub Discussions 기반, 다크모드 자동 연동
+
+### SEO
 - **JSON-LD** — Article + BreadcrumbList 구조화 데이터
-- **◈ Vault** — 숨겨진 포트폴리오 히트맵 (Easter egg 진입)
+- **hreflang** — 다국어 페이지 간 alternate 링크 + `x-default`
+- **사이트맵** — `@astrojs/sitemap` 자동 생성 (Vault 제외)
+
+### 기타
+- **전체 검색** — Pagefind, `Cmd+K` 단축키
+- **다크모드** — 시스템 설정 연동 + 수동 토글
+- **◈ Vault** — 숨겨진 주식 히트맵 (Easter egg 진입, `noindex`)
 
 ---
 
@@ -53,34 +63,78 @@ Deploy      Netlify
 ```
 src/
 ├── components/
-│   ├── heatmap/        # Vault 히트맵 (React)
 │   ├── layout/         # Header, Footer
-│   └── ...             # PostCard, TOC, Alert 등
+│   ├── Callout.astro   # MDX 알림 박스
+│   ├── SeriesTOC.astro # 시리즈 목차
+│   ├── SeriesNav.astro # 시리즈 이전/다음 편
+│   ├── TOC.astro       # 포스트 내 목차
+│   └── ...
 ├── content/
-│   ├── life/ko/        # 섹션별 마크다운 포스트
-│   ├── money/ko/
-│   ├── culture/ko/
-│   ├── tools/ko/
-│   └── dev/ko/
-├── data/
-│   ├── portfolio.json  # 보유 종목 (수동 관리)
-│   └── prices/         # 주가 데이터 (GHA 자동 갱신)
+│   ├── {section}/
+│   │   ├── ko/         # 한국어 포스트 (.md / .mdx)
+│   │   └── en/         # 영어 포스트 (.md / .mdx)
+│   └── content.config.ts
 ├── layouts/
 │   ├── BaseLayout.astro
 │   └── PostLayout.astro
-└── pages/
-    ├── index.astro     # 홈
-    ├── blog/           # 전체 포스트 (페이지네이션)
-    ├── sections.astro  # 섹션 허브
-    ├── [section]/      # 섹션별 포스트
-    ├── tags/           # 태그 목록 + 태그별 포스트
-    ├── about.astro
-    └── vault/          # 히트맵 (noindex)
+├── pages/
+│   ├── [section]/[slug].astro   # 한국어 포스트
+│   ├── en/[section]/[slug].astro # 영어 포스트
+│   ├── blog/                    # 전체 목록 (페이지네이션)
+│   ├── tags/
+│   ├── about.astro
+│   └── vault/                   # 히트맵 (noindex)
+└── styles/
+    └── global.css
+```
 
-scripts/
-├── migrate.mjs         # Hugo/Eleventy → Astro 마이그레이션
-├── fetch-prices.mjs    # FMP API 주가 조회 (GHA)
-└── archive-prices.mjs  # 30일 초과 일별 → 월별 통합
+---
+
+## 콘텐츠 작성
+
+### 기본 포스트 (`.md`)
+
+```yaml
+---
+title: "제목"
+description: "설명"
+date: 2026-05-19
+category: 카테고리명
+tags: [태그1, 태그2]
+thumbnail: "https://..."
+lang: ko          # ko | en
+draft: false
+---
+```
+
+### 시리즈 포스트
+
+```yaml
+series: "시리즈 제목"
+series_order: 1
+```
+
+같은 섹션 내 `series` 값이 같은 포스트가 2개 이상이면 SeriesTOC · SeriesNav가 자동 렌더링됩니다.
+
+### Callout이 필요한 포스트 (`.mdx`)
+
+```mdx
+import Callout from '@/components/Callout.astro'
+
+<Callout type="info" title="제목">
+  내용
+</Callout>
+```
+
+`type`: `info` · `warning` · `success` · `danger` · `tip`
+
+### 영어 포스트
+
+한국어 파일과 **동일한 파일명**을 `en/` 폴더에 배치하면 언어 스위처가 자동 연결됩니다.
+
+```
+content/dev/ko/git-merge-vs-rebase.md  →  /dev/git-merge-vs-rebase
+content/dev/en/git-merge-vs-rebase.md  →  /en/dev/git-merge-vs-rebase
 ```
 
 ---
@@ -90,12 +144,12 @@ scripts/
 ```bash
 pnpm dev        # 개발 서버 (localhost:4321)
 pnpm build      # 프로덕션 빌드
-pnpm preview    # 빌드 결과 미리보기 (검색 포함)
+pnpm preview    # 빌드 결과 미리보기
 ```
 
 ### 환경변수
 
-`.env.example`을 참고해 `.env` 파일 생성:
+`.env.example` 복사 후 편집:
 
 ```bash
 cp .env.example .env
@@ -110,19 +164,6 @@ cp .env.example .env
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console 인증 |
 | `PUBLIC_NAVER_SITE_VERIFICATION` | 네이버 서치어드바이저 인증 |
 
-### 콘텐츠 마이그레이션
-
-기존 Hugo/Eleventy 포스트 → Astro 변환:
-
-```bash
-node scripts/migrate.mjs --source=all       # 전체 실행
-node scripts/migrate.mjs --source=hugo      # Hugo만
-node scripts/migrate.mjs --source=popcorn   # Eleventy popcorn만
-node scripts/migrate.mjs --source=techai    # Eleventy tech-ai만
-node scripts/migrate.mjs --source=all --dry-run  # 미리보기
-node scripts/migrate.mjs --source=all --force    # 덮어쓰기
-```
-
 ---
 
 ## 배포
@@ -134,8 +175,17 @@ GitHub Actions (평일 KST 09:00)
   → FMP API 주가 조회 → prices/*.json 저장 → commit → Netlify 재빌드
 ```
 
-Netlify 환경변수에 `.env`의 `PUBLIC_*` 변수 전체 등록 필요.  
+Netlify 환경변수에 `.env`의 `PUBLIC_*` 변수 전체 등록 필요.
 Vault 자동화를 위해 GitHub Secrets에 `FMP_API_KEY` 등록 필요.
+
+---
+
+## 문서
+
+- [마이그레이션](./docs/migration.md)
+- [개발 계획서](./docs/dev-plan.md)
+- [디자인 시스템](./docs/design-system.md)
+- [히트맵 스펙](./docs/heatmap-spec.md)
 
 ---
 

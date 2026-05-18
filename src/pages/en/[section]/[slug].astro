@@ -1,0 +1,74 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { readingTime } from '../../../lib/utils';
+
+type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+
+export async function getStaticPaths() {
+  const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+  const paths = await Promise.all(
+    sections.map(async (section) => {
+      const enPosts = await getCollection(section, (entry) =>
+        entry.id.startsWith('en/') && !entry.data.draft
+      );
+      const koPosts = await getCollection(section, (entry) =>
+        entry.id.startsWith('ko/') && !entry.data.draft
+      );
+      const koSlugs = new Set(
+        koPosts.map((p) => p.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''))
+      );
+
+      enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+      return enPosts.map((post, index) => {
+        const slug = post.id.replace(/^en\//, '').replace(/\.(md|mdx)$/, '');
+        const alternateUrl = koSlugs.has(slug) ? `/${section}/${slug}` : undefined;
+        return {
+          params: { section, slug },
+          props: {
+            post,
+            section,
+            alternateUrl,
+            prevPost: enPosts[index + 1] ?? null,
+            nextPost: enPosts[index - 1] ?? null,
+          },
+        };
+      });
+    })
+  );
+  return paths.flat();
+}
+
+const { post, section, alternateUrl, prevPost, nextPost } = Astro.props as {
+  post: Awaited<ReturnType<typeof getCollection>>[number];
+  section: Section;
+  alternateUrl?: string;
+  prevPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+  nextPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+};
+
+const { Content, headings } = await render(post);
+const minutes = readingTime(post.body ?? '');
+
+function toSlug(id: string) {
+  return id.replace(/^en\//, '').replace(/\.(md|mdx)$/, '');
+}
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  date={post.data.date}
+  section={section}
+  category={post.data.category}
+  tags={post.data.tags}
+  thumbnail={post.data.thumbnail}
+  lang="en"
+  alternateUrl={alternateUrl}
+  readingTime={minutes}
+  headings={headings}
+  prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
+  nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
+>
+  <Content />
+</PostLayout>

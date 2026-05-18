@@ -12,6 +12,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://static0.xdaimages.com/wordpress/wp-content/uploads/2024/07/scummvm-feature-image.png"
+series: "원숭이 섬의 비밀 완전 공략"
+series_order: 2
 ---
 
 > 35년 된 게임을 2024년형 맥에서 돌린다. 생각보다 훨씬 간단하다.

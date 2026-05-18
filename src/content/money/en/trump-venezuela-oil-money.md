@@ -10,7 +10,7 @@ tags:
   - "에너지"
   - "국제정치"
 draft: false
-lang: ko
+lang: en
 thumbnail: "https://images.unsplash.com/photo-1516937941344-00b4e0337589?q=80&w=2370&auto=format&fit=crop"
 ---
 

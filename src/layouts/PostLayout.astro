@@ -2,6 +2,9 @@
 import BaseLayout from './BaseLayout.astro';
 import TOC from '../components/TOC.astro';
 import Comments from '../components/Comments';
+import SeriesTOC from '../components/SeriesTOC.astro';
+import SeriesNav from '../components/SeriesNav.astro';
+import type { SeriesPost } from '../components/SeriesTOC.astro';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -31,6 +34,9 @@ interface Props {
   headings?: Heading[];
   prevPost?: NavPost;
   nextPost?: NavPost;
+  series?: string;
+  seriesPosts?: SeriesPost[];
+  currentSlug?: string;
 }
 
 const {
@@ -47,6 +53,9 @@ const {
   headings = [],
   prevPost,
   nextPost,
+  series,
+  seriesPosts,
+  currentSlug,
 } = Astro.props;
 
 const sectionLabel: Record<Section, string> = {
@@ -58,6 +67,7 @@ const formattedDate = date.toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US',
 });
 
 const hasTOC = headings.filter(h => h.depth <= 3).length > 0;
+const hasSeries = !!(series && seriesPosts && seriesPosts.length > 1 && currentSlug);
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
 const postUrl = `${siteUrl}/${section}/${Astro.url.pathname.split('/').pop() ?? ''}`;
@@ -160,6 +170,11 @@ const breadcrumbJsonLd = {
         </div>
       </header>
 
+      <!-- Series TOC -->
+      {hasSeries && (
+        <SeriesTOC seriesName={series!} posts={seriesPosts!} currentSlug={currentSlug!} />
+      )}
+
       <!-- Thumbnail -->
       {thumbnail && (
         <div class="mb-10 rounded-lg overflow-hidden aspect-video bg-muted">
@@ -196,6 +211,11 @@ const breadcrumbJsonLd = {
           </aside>
         )}
       </div>
+
+      <!-- Series Nav -->
+      {hasSeries && (
+        <SeriesNav posts={seriesPosts!} currentSlug={currentSlug!} />
+      )}
 
       <!-- Prev / Next navigation -->
       {(prevPost || nextPost) && (
