@@ -1,0 +1,100 @@
+---
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+
+const sections = [
+  { name: 'Life',    href: '/life',    color: 'oklch(0.72 0.18 145)' },
+  { name: 'Money',   href: '/money',   color: 'oklch(0.80 0.18 86)'  },
+  { name: 'Culture', href: '/culture', color: 'oklch(0.63 0.27 303)' },
+  { name: 'Tools',   href: '/tools',   color: 'oklch(0.56 0.024 265)'},
+  { name: 'Dev',     href: '/dev',     color: 'oklch(0.72 0.14 215)' },
+];
+---
+
+<!doctype html>
+<html lang="ko" class="antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — 야근반장도 못 찾겠습니다</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" as="style" crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-foreground font-sans">
+    <Header />
+
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
+      <div class="max-w-2xl mx-auto py-24 text-center">
+
+        <!-- 404 숫자 -->
+        <p class="text-8xl font-black tracking-tighter text-foreground/10 select-none mb-2">404</p>
+
+        <!-- 헤드라인 -->
+        <h1 class="text-xl font-bold text-foreground mb-3">
+          야근반장이 이 페이지를 찾으러 갔는데 돌아오지 않았습니다.
+        </h1>
+        <p class="text-sm text-muted-foreground mb-10">
+          수색 결과를 공유드립니다.
+        </p>
+
+        <!-- 수색 결과 테이블 -->
+        <div class="border border-border rounded-lg overflow-hidden text-left mb-10 font-mono text-sm">
+          <div class="bg-muted/40 px-4 py-2 text-xs text-muted-foreground border-b border-border">
+            $ find /eone-blog -name "이_페이지" 2>&1
+          </div>
+          {sections.map(({ name, href, color }) => (
+            <div class="flex items-center justify-between px-4 py-2.5 border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full inline-block" style={`background: ${color}`} />
+                <a href={href} class="text-muted-foreground hover:text-foreground transition-colors">
+                  /{name.toLowerCase()}
+                </a>
+              </span>
+              <span class="text-destructive text-xs">✗ 없음</span>
+            </div>
+          ))}
+          <div class="flex items-center justify-between px-4 py-2.5 bg-muted/20">
+            <span class="text-muted-foreground">/vault</span>
+            <span class="text-muted-foreground text-xs">접근 불가 (권한 없음)</span>
+          </div>
+        </div>
+
+        <!-- 코믹 결론 -->
+        <div class="border border-border rounded-lg px-5 py-4 bg-muted/20 text-sm text-muted-foreground text-left mb-10 font-mono">
+          <p><span class="text-foreground">결론:</span> 해당 페이지는 처음부터 없었거나, 삭제됐거나, 야근반장이 직접 치워버렸을 가능성이 있습니다.</p>
+          <!-- <p class="ml-4">아니면 야근반장이 직접 치워버렸을 가능성이 있습니다.</p> -->
+          <p class="mt-2"><span class="text-foreground">권고:</span> URL 재확인 후 아래 링크 중 하나를 선택하세요.</p>
+          <p class="ml-4">계속 이 페이지가 보인다면 <a href="https://github.com/veryfaraway" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-foreground transition-colors">blame 제출</a> 바랍니다.</p>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/" class="px-5 py-2.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
+            홈으로
+          </a>
+          <a href="/blog" class="px-5 py-2.5 text-sm font-medium rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
+            전체 글 목록
+          </a>
+          <a href="javascript:history.back()" class="px-5 py-2.5 text-sm font-medium rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
+            뒤로가기
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <Footer />
+  </body>
+</html>

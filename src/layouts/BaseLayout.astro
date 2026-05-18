@@ -24,7 +24,9 @@ const {
 } = Astro.props;
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const canonicalUrl = Astro.url?.pathname
+  ? new URL(Astro.url.pathname, siteUrl).toString()
+  : siteUrl;
 const ogImageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : `${siteUrl}/og-default.png`;
 const fullTitle = title === 'eone blog' ? title : `${title} — eone blog`;
 ---
