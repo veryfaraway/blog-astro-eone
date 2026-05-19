@@ -40,13 +40,12 @@ async function fetchQuote(ticker) {
   const json = await res.json();
   const meta = json?.chart?.result?.[0]?.meta;
   if (!meta) throw new Error('응답 형식 오류');
-  const close    = meta.regularMarketPrice ?? 0;
+  const close     = meta.regularMarketPrice ?? 0;
   const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? 0;
-  return {
-    close,
-    change:        meta.regularMarketChange ?? (close - prevClose),
-    changePercent: meta.regularMarketChangePercent ?? 0,
-  };
+  const change    = meta.regularMarketChange ?? (close - prevClose);
+  const changePercent = meta.regularMarketChangePercent
+    || (prevClose > 0 ? (change / prevClose) * 100 : 0);
+  return { close, change, changePercent };
 }
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
