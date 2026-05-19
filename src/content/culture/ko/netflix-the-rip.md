@@ -10,7 +10,7 @@ tags:
   - "넷플릭스"
 draft: false
 lang: ko
-thumbnail: /assets/images/netflix-the-rip/the-rip-poster.jpg
+thumbnail: /images/netflix-the-rip/the-rip-poster.jpg
 ---
 
 2026년 새해, 넷플릭스에서 가장 뜨거운 화제작을 꼽으라면 단연 **《더 립(The Rip)》** 일 것입니다. 무엇보다 영화 팬들을 설레게 하는 건, 할리우드의 영원한 단짝 **맷 데이먼과 벤 애플렉**이 다시 한 번 손을 잡았다는 사실이죠!

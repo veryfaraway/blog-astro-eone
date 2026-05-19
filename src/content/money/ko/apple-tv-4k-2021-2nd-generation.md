@@ -2,12 +2,13 @@
 title: 애플TV 4K 2세대 할인(2021년형) 정보
 description: 애플TV 4K 2021년형 재고떨이 할인 판매 $99.99
 date: 2022-11-07
-category: ""
+category: "자린고비"
 tags:
   - "알뜰구매"
   - "Amazon"
   - "Apple TV"
 draft: false
+affiliate: true
 lang: ko
 thumbnail: "https://store.storeimages.cdn-apple.com/8756/as-images.apple.com/is/apple-tv-4k-gallery1-202210?wid=4056&hei=2400&fmt=jpeg&qlt=90&.v=1664502199896"
 ---
@@ -22,13 +23,13 @@ thumbnail: "https://store.storeimages.cdn-apple.com/8756/as-images.apple.com/is/
 
 미국 아마존에서 구입 시 위 그림처럼 전원 플러그가 110V 용으로 제공되지만 모든 애플 기기가 그렇듯이 Apple TV도 110V/220V 모두 지원하기 때문에 별도의 변압기 필요 없이 돼지코만 구입해서 사용이 가능합니다. 전원 케이블이 분리형이기 때문에 [220V형 케이블](https://link.coupang.com/a/E66L7)을 따로 구매해서 사용해도 됩니다.
 
-한국까지 직배는 안되고 배송 대행을 이용해야 합니다. 
+한국까지 직배는 안되고 배송 대행을 이용해야 합니다.
 
-![](/images/amazon-unavailable.png)
+![Amazon 배송지 설정](/images/amazon-unavailable.png)
 
 참고로 위와 같이 `Currently unavailable`이라고 표시가 되는 경우가 있는데 이는 품절 상태가 아니라 지역 설정이 한국으로 되어 있어서 그렇습니다.
 
-![](/images/amazon-deliver-to.png)
+![Amazon 배송지 설정](/images/amazon-deliver-to.png)
 
 좌측 상단에 `Deliver to Republic of Korea`라고 되어 있는 부분을 클릭해서 주소를 미국 주소로 변경해 주시면 구입 가능한 상태로 변경이 됩니다.
 

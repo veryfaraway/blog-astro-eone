@@ -9,7 +9,7 @@ tags:
   - "HBO"
 draft: false
 lang: ko
-thumbnail: /assets/images/thumbnail/bob-cover.jpg
+thumbnail: /images/thumbnail/bob-cover.jpg
 ---
 
 ## 에피소드 정보

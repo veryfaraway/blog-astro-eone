@@ -4,6 +4,7 @@ import TOC from '../components/TOC.astro';
 import Comments from '../components/Comments';
 import SeriesTOC from '../components/SeriesTOC.astro';
 import SeriesNav from '../components/SeriesNav.astro';
+import AffiliateNotice from '../components/AffiliateNotice.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
@@ -37,6 +38,7 @@ interface Props {
   series?: string;
   seriesPosts?: SeriesPost[];
   currentSlug?: string;
+  affiliate?: boolean;
 }
 
 const {
@@ -56,6 +58,7 @@ const {
   series,
   seriesPosts,
   currentSlug,
+  affiliate = false,
 } = Astro.props;
 
 const sectionLabel: Record<Section, string> = {
@@ -181,6 +184,9 @@ const breadcrumbJsonLd = {
           <img src={thumbnail} alt={title} class="w-full h-full object-cover" />
         </div>
       )}
+
+      <!-- Affiliate notice -->
+      {affiliate && <AffiliateNotice />}
 
       <!-- Content + TOC -->
       <div class={hasTOC ? 'lg:grid lg:grid-cols-[1fr_220px] lg:gap-12' : ''}>

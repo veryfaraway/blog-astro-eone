@@ -11,10 +11,25 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'SchoolSafeAdventurer';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimMoheomgaR.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SchoolSafeAdventurer';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimMoheomgaB.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
     --font-heading: 'Yeongwol', 'Pretendard Variable', 'Pretendard', sans-serif;
+    --font-article-heading: 'SchoolSafeAdventurer', 'Pretendard Variable', 'Pretendard', sans-serif;
     --font-sans: 'Pretendard Variable', 'Pretendard', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --color-sidebar-ring: var(--sidebar-ring);
@@ -214,6 +229,6 @@
   .prose h2,
   .prose h3,
   .prose h4 {
-    font-family: var(--font-heading);
+    font-family: var(--font-article-heading);
   }
 }

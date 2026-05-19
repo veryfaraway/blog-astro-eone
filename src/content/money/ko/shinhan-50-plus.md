@@ -8,7 +8,8 @@ tags:
   - "만보기"
 draft: false
 lang: ko
-thumbnail: /post/2024/313/shinhan-50-plus/thumbnail.jpg
+affiliate: true
+thumbnail: /images/thumbnail/shinhan-50-plus.jpg
 ---
 
 건강한 삶과 금융 혜택을 동시에! 신한은행의 '신한 50+걸어요' 서비스

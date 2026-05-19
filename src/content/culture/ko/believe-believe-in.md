@@ -8,12 +8,12 @@ tags:
   - "영어"
 draft: false
 lang: ko
-thumbnail: /assets/images/believe-believe-in/in_GOD_we_trust_us_dollar.jpg
+thumbnail: /images/believe-believe-in/in_GOD_we_trust_us_dollar.jpg
 ---
 
-# believe 와 believe in 의 차이점
- 
-![Believe In](/images/believe-believe-in/featured-image.jpg) 
+## believe 와 believe in 의 차이점
+
+![Believe In](/images/believe-believe-in/featured-image.jpg)
 
 1. **believe**
 
@@ -26,13 +26,12 @@ thumbnail: /assets/images/believe-believe-in/in_GOD_we_trust_us_dollar.jpg
 
   - Do you believe the news? 너는 그 뉴스를 믿니? \
   He failed the exam. Do you believe it? 그는 시험에 떨어졌어. 믿어지니?
- 
- 
+
 2. **believe in**
 
-- believe in + (사람목적어) = ~의 인격이나 능력을 믿다 
+- believe in + (사람목적어) = ~의 인격이나 능력을 믿다
 
-  - Do you believe in me? 너는 나를 믿니?(나의 인격이나 능력) 
+  - Do you believe in me? 너는 나를 믿니?(나의 인격이나 능력)
 
 - believe in + (신이나 사물목적어) = ~의 존재를 믿다
 
