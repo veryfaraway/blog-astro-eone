@@ -40,9 +40,11 @@ async function fetchQuote(ticker) {
   const json = await res.json();
   const meta = json?.chart?.result?.[0]?.meta;
   if (!meta) throw new Error('응답 형식 오류');
+  const close    = meta.regularMarketPrice ?? 0;
+  const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? 0;
   return {
-    close:         meta.regularMarketPrice         ?? meta.previousClose ?? 0,
-    change:        (meta.regularMarketPrice ?? 0) - (meta.previousClose ?? 0),
+    close,
+    change:        meta.regularMarketChange ?? (close - prevClose),
     changePercent: meta.regularMarketChangePercent ?? 0,
   };
 }
@@ -72,7 +74,7 @@ if (Object.keys(prices).length === 0) {
 const today = new Date().toISOString().slice(0, 10);
 const output = { date: today, prices };
 
-const pricesDir = join(ROOT, 'src/data/prices');
+const pricesDir = join(ROOT, 'public/data/prices');
 await mkdir(pricesDir, { recursive: true });
 
 const outPath = join(pricesDir, `${today}.json`);

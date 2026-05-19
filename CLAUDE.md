@@ -158,6 +158,18 @@ GitHub Actions (cron: 매일 오전 9시 KST)
 
 ---
 
+## 기능별 문서 참조
+
+코드를 직접 분석하기 전에 아래 문서를 먼저 읽을 것.
+
+| 기능 | 문서 |
+|------|------|
+| Vault / 주식 히트맵 | [`docs/heatmap-spec.md`](docs/heatmap-spec.md) — 파일 구조, 데이터 스키마, 알려진 버그, UX 개선 옵션 포함 |
+| 마이그레이션 배경 | [`docs/migration.md`](docs/migration.md) — 기존 블로그 통합 이력, 슬러그 정책, 리다이렉트 |
+| 디자인 시스템 | [`docs/design-system.md`](docs/design-system.md) |
+
+---
+
 ## 마이그레이션 순서 (권장)
 
 1. Astro 프로젝트 초기 세팅 (스택, 레이아웃, 디자인 시스템)

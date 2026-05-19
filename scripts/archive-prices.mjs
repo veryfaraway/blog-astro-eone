@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const PRICES_DIR = join(ROOT, 'src/data/prices');
+const PRICES_DIR = join(ROOT, 'public/data/prices');
 const MONTHLY_DIR = join(PRICES_DIR, 'monthly');
 
 // ── 1. 30일 초과 일별 파일 목록 ───────────────────────────────────────────

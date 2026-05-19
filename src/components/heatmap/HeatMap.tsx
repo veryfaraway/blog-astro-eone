@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import DateCalendar from './DateCalendar';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -31,9 +32,10 @@ interface Portfolio {
 
 interface Props {
   portfolio: Portfolio;
-  priceData: PriceData;
+  priceData: PriceData;       // initial data from Astro build (latest date)
   availableDates: string[];
-  selectedDate: string;
+  availableMonths: string[];
+  latestDate: string;
 }
 
 // ── Color helpers ──────────────────────────────────────────────────────────
@@ -93,7 +95,6 @@ function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Ticker label */}
       <span
         style={{
           color: textColor,
@@ -106,7 +107,6 @@ function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
         {ticker}
       </span>
 
-      {/* Change percent */}
       <span
         style={{
           color: textColor,
@@ -119,7 +119,6 @@ function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
         {changePct}
       </span>
 
-      {/* Hover tooltip */}
       {hovered && price && (
         <div
           style={{
@@ -158,7 +157,6 @@ function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
             <br />
             <span style={{ color: '#888fa0' }}>보유비중 </span>{weightPercent.toFixed(1)}%
           </div>
-          {/* Arrow */}
           <div
             style={{
               position: 'absolute',
@@ -180,32 +178,68 @@ function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
 
 // ── Main component ─────────────────────────────────────────────────────────
 
-export default function HeatMap({ portfolio, priceData, availableDates, selectedDate }: Props) {
-  const accountKeys = Object.keys(portfolio.accounts) as Array<keyof typeof portfolio.accounts>;
+export default function HeatMap({ portfolio, priceData: initialPriceData, availableDates, availableMonths, latestDate }: Props) {
+  const accountKeys = Object.keys(portfolio.accounts) as string[];
   const [activeAccount, setActiveAccount] = useState<string>(accountKeys[0]);
+  const [priceData, setPriceData] = useState<PriceData>(initialPriceData);
+  const [currentDate, setCurrentDate] = useState<string>(latestDate);
+  const [loading, setLoading] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  const sortedDates = [...availableDates].sort();
+
+  // ── Client-side date loader ──────────────────────────────────────────────
+
+  const loadDate = useCallback(async (date: string) => {
+    if (date === currentDate) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/data/prices/${date}.json`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: PriceData = await res.json();
+      setPriceData(data);
+      setCurrentDate(date);
+      const url = new URL(window.location.href);
+      url.searchParams.set('date', date);
+      history.pushState({}, '', url.toString());
+    } catch (err) {
+      console.warn('[HeatMap] 가격 데이터 로드 실패:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDate]);
+
+  // On mount: if URL has a different date, load it
+  useEffect(() => {
+    const urlDate = new URLSearchParams(window.location.search).get('date');
+    if (urlDate && urlDate !== latestDate && sortedDates.includes(urlDate)) {
+      loadDate(urlDate);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Browser back/forward support
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlDate = new URLSearchParams(window.location.search).get('date') ?? latestDate;
+      if (sortedDates.includes(urlDate)) loadDate(urlDate);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [loadDate, latestDate, sortedDates]);
+
+  // ── Layout computation ───────────────────────────────────────────────────
 
   const currentAccount = portfolio.accounts[activeAccount];
-  const sortedDates = [...availableDates].sort();
-  const currentDateIndex = sortedDates.indexOf(selectedDate);
-
-  // Navigate to a different date via query string
-  function navigateToDate(date: string) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('date', date);
-    window.location.href = url.toString();
-  }
-
+  const currentDateIndex = sortedDates.indexOf(currentDate);
   const canGoPrev = currentDateIndex > 0;
   const canGoNext = currentDateIndex < sortedDates.length - 1;
 
-  // Compute total value of current account at selected prices
   const holdings = currentAccount.holdings;
   const totalValue = holdings.reduce((sum, h) => {
     const p = priceData.prices[h.ticker];
     return sum + (p ? p.close * h.shares : 0);
   }, 0);
 
-  // Build cell data with weights
   const cells = holdings.map((h) => {
     const p = priceData.prices[h.ticker];
     const value = p ? p.close * h.shares : 0;
@@ -213,28 +247,34 @@ export default function HeatMap({ portfolio, priceData, availableDates, selected
     return { ...h, price: p, weightPercent };
   });
 
-  // 섹터별 그룹핑 (sector 없으면 'Other')
-  const hasSectors = holdings.some(h => h.sector);
-  const sectorMap: Record<string, typeof cells> = {};
+  // 섹터별 그룹핑 + 비중 합계 내림차순 정렬
+  const hasSectors = holdings.some((h) => h.sector);
+  let sectorEntries: [string, typeof cells][] = [];
+
   if (hasSectors) {
-    cells.forEach(cell => {
+    const sectorMap: Record<string, typeof cells> = {};
+    cells.forEach((cell) => {
       const s = cell.sector ?? 'Other';
       if (!sectorMap[s]) sectorMap[s] = [];
       sectorMap[s].push(cell);
     });
-    // 섹터 내 비중 내림차순 정렬
-    Object.values(sectorMap).forEach(g => g.sort((a, b) => b.weightPercent - a.weightPercent));
+    Object.values(sectorMap).forEach((g) =>
+      g.sort((a, b) => b.weightPercent - a.weightPercent)
+    );
+    sectorEntries = Object.entries(sectorMap).sort((a, b) => {
+      const sumA = a[1].reduce((s, c) => s + c.weightPercent, 0);
+      const sumB = b[1].reduce((s, c) => s + c.weightPercent, 0);
+      return sumB - sumA;
+    });
   } else {
     cells.sort((a, b) => b.weightPercent - a.weightPercent);
   }
 
+  // ── Render ───────────────────────────────────────────────────────────────
+
   return (
-    <div
-      style={{
-        fontFamily: 'JetBrains Mono, monospace',
-        color: 'oklch(0.72 0.18 145)',
-      }}
-    >
+    <div style={{ fontFamily: 'JetBrains Mono, monospace', color: 'oklch(0.72 0.18 145)' }}>
+
       {/* Account tabs */}
       <div
         style={{
@@ -279,18 +319,19 @@ export default function HeatMap({ portfolio, priceData, availableDates, selected
           alignItems: 'center',
           gap: '12px',
           marginBottom: '16px',
+          position: 'relative',
         }}
       >
         <button
-          onClick={() => canGoPrev && navigateToDate(sortedDates[currentDateIndex - 1])}
-          disabled={!canGoPrev}
+          onClick={() => canGoPrev && loadDate(sortedDates[currentDateIndex - 1])}
+          disabled={!canGoPrev || loading}
           style={{
             background: 'transparent',
             border: '1px solid oklch(0.27 0.012 120 / 60%)',
             borderRadius: '4px',
             padding: '4px 8px',
-            color: canGoPrev ? '#2ea855' : '#3a3f48',
-            cursor: canGoPrev ? 'pointer' : 'not-allowed',
+            color: canGoPrev && !loading ? '#2ea855' : '#3a3f48',
+            cursor: canGoPrev && !loading ? 'pointer' : 'not-allowed',
             display: 'flex',
             alignItems: 'center',
           }}
@@ -302,29 +343,51 @@ export default function HeatMap({ portfolio, priceData, availableDates, selected
         <span
           style={{
             fontSize: '0.8rem',
-            color: '#72e8a0',
+            color: loading ? '#697565' : '#72e8a0',
             letterSpacing: '0.08em',
+            minWidth: '90px',
+            textAlign: 'center',
           }}
         >
-          {selectedDate}
+          {loading ? 'loading...' : currentDate}
         </span>
 
         <button
-          onClick={() => canGoNext && navigateToDate(sortedDates[currentDateIndex + 1])}
-          disabled={!canGoNext}
+          onClick={() => canGoNext && loadDate(sortedDates[currentDateIndex + 1])}
+          disabled={!canGoNext || loading}
           style={{
             background: 'transparent',
             border: '1px solid oklch(0.27 0.012 120 / 60%)',
             borderRadius: '4px',
             padding: '4px 8px',
-            color: canGoNext ? '#2ea855' : '#3a3f48',
-            cursor: canGoNext ? 'pointer' : 'not-allowed',
+            color: canGoNext && !loading ? '#2ea855' : '#3a3f48',
+            cursor: canGoNext && !loading ? 'pointer' : 'not-allowed',
             display: 'flex',
             alignItems: 'center',
           }}
           aria-label="다음 날짜"
         >
           <ChevronRight size={16} />
+        </button>
+
+        {/* Calendar toggle */}
+        <button
+          onClick={() => setCalendarOpen(v => !v)}
+          style={{
+            background: calendarOpen ? 'oklch(0.15 0.05 145)' : 'transparent',
+            border: `1px solid ${calendarOpen ? '#2ea855' : 'oklch(0.27 0.012 120 / 60%)'}`,
+            borderRadius: '4px',
+            padding: '4px 8px',
+            color: calendarOpen ? '#2ea855' : '#697565',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            transition: 'color 0.15s, border-color 0.15s',
+          }}
+          aria-label="캘린더 열기"
+          aria-expanded={calendarOpen}
+        >
+          <CalendarDays size={15} />
         </button>
 
         <span
@@ -337,14 +400,24 @@ export default function HeatMap({ portfolio, priceData, availableDates, selected
         >
           {holdings.length}개 종목 · 비중 기준
         </span>
+
+        {/* Calendar overlay */}
+        {calendarOpen && (
+          <DateCalendar
+            availableDates={availableDates}
+            availableMonths={availableMonths}
+            selectedDate={currentDate}
+            onSelectDate={(date) => { loadDate(date); setCalendarOpen(false); }}
+            onClose={() => setCalendarOpen(false)}
+          />
+        )}
       </div>
 
-      {/* Heatmap grid — 섹터별 또는 단순 flex */}
+      {/* Heatmap grid */}
       {hasSectors ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-          {Object.entries(sectorMap).map(([sector, group]) => (
+          {sectorEntries.map(([sector, group]) => (
             <div key={sector}>
-              {/* 섹터 헤더 */}
               <div
                 style={{
                   fontSize: '0.68rem',
@@ -359,9 +432,8 @@ export default function HeatMap({ portfolio, priceData, availableDates, selected
               >
                 {sector}
               </div>
-              {/* 섹터 내 종목 */}
               <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
-                {group.map(cell => (
+                {group.map((cell) => (
                   <HeatMapCell
                     key={cell.ticker}
                     ticker={cell.ticker}

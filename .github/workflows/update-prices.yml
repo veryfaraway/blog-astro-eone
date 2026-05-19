@@ -2,7 +2,7 @@ name: Update Stock Prices
 
 on:
   schedule:
-    - cron: '0 0 * * 1-5'  # UTC 00:00 = KST 09:00, 평일
+    - cron: '30 22 * * 1-5'  # UTC 22:30 = KST 07:30 (다음날 아침), 장 마감(4PM ET) 후 1.5~2.5시간
   workflow_dispatch:
 
 jobs:
@@ -27,6 +27,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/prices/
+          git add public/data/prices/
           git diff --staged --quiet || git commit -m "chore: update stock prices $(date +%Y-%m-%d)"
           git push
