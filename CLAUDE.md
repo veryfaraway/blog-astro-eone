@@ -164,6 +164,7 @@ GitHub Actions (cron: 매일 오전 9시 KST)
 
 | 기능 | 문서 |
 |------|------|
+| **Astro 컴포넌트 / MDX 작성** | [`docs/astro-components.md`](docs/astro-components.md) — 전체 컴포넌트 목록, Props, MDX 사용법. **컴포넌트 신규 제작 또는 MDX 파일 작성 전 반드시 확인** |
 | Vault / 주식 히트맵 | [`docs/heatmap-spec.md`](docs/heatmap-spec.md) — 파일 구조, 데이터 스키마, 알려진 버그, UX 개선 옵션 포함 |
 | 마이그레이션 배경 | [`docs/migration.md`](docs/migration.md) — 기존 블로그 통합 이력, 슬러그 정책, 리다이렉트 |
 | 디자인 시스템 | [`docs/design-system.md`](docs/design-system.md) |

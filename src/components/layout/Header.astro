@@ -2,6 +2,7 @@
 import DarkModeToggle from '../DarkModeToggle';
 import LanguageSwitcher from '../LanguageSwitcher';
 import SearchButton from '../SearchButton';
+import Logo from '../Logo.astro';
 
 interface Props {
   lang?: 'ko' | 'en';
@@ -31,9 +32,11 @@ const pathname = Astro.url.pathname;
       <!-- Logo -->
       <a
         href="/"
-        class="text-base font-semibold tracking-tight text-foreground hover:text-foreground/70 transition-colors shrink-0"
+        class="flex items-center gap-2 text-foreground hover:text-foreground/70 transition-colors shrink-0"
+        aria-label="eone 홈으로"
       >
-        eone
+        <Logo size={24} animated={true} />
+        <span class="font-heading text-base font-semibold tracking-tight">eone</span>
       </a>
 
       <!-- Right: nav + controls -->

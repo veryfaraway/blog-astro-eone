@@ -3,10 +3,18 @@
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
 
+@font-face {
+    font-family: 'Yeongwol';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2507-2@1.0/YeongwolTTF-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
+    --font-heading: 'Yeongwol', 'Pretendard Variable', 'Pretendard', sans-serif;
     --font-sans: 'Pretendard Variable', 'Pretendard', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --color-sidebar-ring: var(--sidebar-ring);
@@ -201,5 +209,11 @@
     @apply max-w-prose;
     line-height: 1.85;
     word-break: keep-all;
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    font-family: var(--font-heading);
   }
 }
