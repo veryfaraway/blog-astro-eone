@@ -15,7 +15,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         title: post.data.title,
         description: post.data.description,
         date: post.data.date,
-        slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+        slug: post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
         section: section as Section,
         tags: post.data.tags,
         thumbnail: post.data.thumbnail,

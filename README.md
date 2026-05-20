@@ -24,7 +24,7 @@
 Framework   Astro (SSG)
 UI          React island + shadcn/ui + Tailwind CSS v4
 Typography  @tailwindcss/typography
-Font        Pretendard Variable + JetBrains Mono
+Font        Pretendard Variable · Yeongwol · SchoolSafeAdventurer · JetBrains Mono
 Search      Pagefind
 Comments    Giscus (GitHub Discussions)
 Analytics   Google Analytics 4
@@ -54,7 +54,8 @@ Deploy      Netlify
 ### 기타
 - **전체 검색** — Pagefind, `Cmd+K` 단축키
 - **다크모드** — 시스템 설정 연동 + 수동 토글
-- **◈ Vault** — 숨겨진 주식 히트맵 (Easter egg 진입, `noindex`)
+- **컬러 테마** — 4가지 테마 제공 (`sage` · `ocean` · `sand` · `slate`), `src/config/theme.ts` 한 줄 수정 후 배포로 전환
+- **◈ Vault** — 숨겨진 주식 히트맵 (Easter egg 진입, `noindex`), 셀 크기는 섹터 내 상대 비중 기준
 
 ---
 
@@ -72,6 +73,7 @@ src/
 ├── content/
 │   ├── {section}/
 │   │   ├── ko/         # 한국어 포스트 (.md / .mdx)
+│   │   │   └── YYYY/   # (선택) 연도별 서브디렉토리 — slug는 파일명 기준
 │   │   └── en/         # 영어 포스트 (.md / .mdx)
 │   └── content.config.ts
 ├── layouts/
@@ -116,17 +118,32 @@ series_order: 1
 
 같은 섹션 내 `series` 값이 같은 포스트가 2개 이상이면 SeriesTOC · SeriesNav가 자동 렌더링됩니다.
 
-### Callout이 필요한 포스트 (`.mdx`)
+### 강조 박스가 필요한 포스트 (`.mdx`)
 
 ```mdx
-import Callout from '@/components/Callout.astro'
+import Alert from '@/components/Alert.astro';
 
-<Callout type="info" title="제목">
-  내용
-</Callout>
+<Alert type="info" title="제목">내용</Alert>
+<Alert type="warning">경고</Alert>
+<Alert type="success">성공</Alert>
+<Alert type="danger">위험</Alert>
+<Alert type="tip">팁</Alert>
 ```
 
 `type`: `info` · `warning` · `success` · `danger` · `tip`
+
+> `Callout.astro`는 동일 역할의 레거시 컴포넌트로 폐기 예정. 새 포스트에서는 `Alert.astro` 사용.
+
+### 파일 정리 — 연도/월 서브디렉토리
+
+`ko/` 아래에 연도·월 폴더를 만들어 파일을 분산해도 **URL(slug)은 파일명 기준**으로 결정되어 변경되지 않습니다.
+
+```
+content/culture/ko/2026/05/band-of-brothers-casts.md
+  →  /culture/band-of-brothers-casts  (폴더 깊이 무관)
+```
+
+> 같은 파일명이 다른 폴더에 중복되면 빌드 에러로 잡힙니다.
 
 ### 영어 포스트
 
@@ -171,12 +188,32 @@ cp .env.example .env
 ```
 GitHub main push → Netlify 자동 빌드 & 배포
 
-GitHub Actions (평일 KST 09:00)
-  → FMP API 주가 조회 → prices/*.json 저장 → commit → Netlify 재빌드
+GitHub Actions (평일 KST 07:30)
+  → Yahoo Finance API 주가 조회 → prices/*.json 저장 → commit → Netlify 재빌드
 ```
 
 Netlify 환경변수에 `.env`의 `PUBLIC_*` 변수 전체 등록 필요.
-Vault 자동화를 위해 GitHub Secrets에 `FMP_API_KEY` 등록 필요.
+Vault 자동화는 API 키 불필요 (Yahoo Finance 무료 API 사용).
+
+---
+
+## 컬러 테마 변경
+
+`src/config/theme.ts`에서 `colorTheme` 값을 수정 후 커밋 & 배포합니다.
+
+| 값 | 무드 |
+|----|------|
+| `sage` | 올리브 그린 — 자연스럽고 차분한 |
+| `ocean` | 네이비 블루 — 집중과 깊이 (기본값) |
+| `sand` | 웜 앰버 — 따뜻하고 아늑한 |
+| `slate` | 차콜 그레이 — 클린하고 미니멀한 |
+
+```ts
+// src/config/theme.ts
+export const colorTheme: ColorTheme = 'ocean'; // 👈 여기만 수정
+```
+
+라이트/다크 모드는 각 테마에 독립적으로 정의되어 있습니다.
 
 ---
 

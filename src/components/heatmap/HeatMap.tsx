@@ -61,22 +61,24 @@ interface CellProps {
   shares: number;
   price: PriceEntry | undefined;
   weightPercent: number;
+  flexBasisPercent?: number;
 }
 
-function HeatMapCell({ ticker, shares, price, weightPercent }: CellProps) {
+function HeatMapCell({ ticker, shares, price, weightPercent, flexBasisPercent }: CellProps) {
   const [hovered, setHovered] = useState(false);
 
   const bgColor = price ? getChangeColor(price.changePercent) : '#2a2d35';
   const textColor = price ? getTextColor(price.changePercent) : '#888fa0';
   const changeSign = price && price.changePercent >= 0 ? '+' : '';
   const changePct = price ? `${changeSign}${price.changePercent.toFixed(2)}%` : 'N/A';
+  const basisPercent = flexBasisPercent ?? weightPercent;
 
   return (
     <div
       className="vault-cell"
       style={{
-        flexBasis: `${weightPercent}%`,
-        minWidth: '80px',
+        flexBasis: `${basisPercent}%`,
+        minWidth: '60px',
         minHeight: '72px',
         backgroundColor: bgColor,
         borderRadius: '4px',
@@ -416,7 +418,9 @@ export default function HeatMap({ portfolio, priceData: initialPriceData, availa
       {/* Heatmap grid */}
       {hasSectors ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-          {sectorEntries.map(([sector, group]) => (
+          {sectorEntries.map(([sector, group]) => {
+            const sectorTotal = group.reduce((s, c) => s + c.weightPercent, 0);
+            return (
             <div key={sector}>
               <div
                 style={{
@@ -433,30 +437,46 @@ export default function HeatMap({ portfolio, priceData: initialPriceData, availa
                 {sector}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
-                {group.map((cell) => (
+                {group.map((cell) => {
+                  const localBasis = sectorTotal > 0
+                    ? (cell.weightPercent / sectorTotal) * 100
+                    : 100 / group.length;
+                  return (
                   <HeatMapCell
                     key={cell.ticker}
                     ticker={cell.ticker}
                     shares={cell.shares}
                     price={cell.price}
                     weightPercent={cell.weightPercent}
+                    flexBasisPercent={localBasis}
                   />
-                ))}
+                  );
+                })}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', minHeight: '200px' }}>
-          {cells.map((cell) => (
-            <HeatMapCell
-              key={cell.ticker}
-              ticker={cell.ticker}
-              shares={cell.shares}
-              price={cell.price}
-              weightPercent={cell.weightPercent}
-            />
-          ))}
+          {(() => {
+            const groupTotal = cells.reduce((s, c) => s + c.weightPercent, 0);
+            return cells.map((cell) => {
+              const localBasis = groupTotal > 0
+                ? (cell.weightPercent / groupTotal) * 100
+                : 100 / cells.length;
+              return (
+                <HeatMapCell
+                  key={cell.ticker}
+                  ticker={cell.ticker}
+                  shares={cell.shares}
+                  price={cell.price}
+                  weightPercent={cell.weightPercent}
+                  flexBasisPercent={localBasis}
+                />
+              );
+            });
+          })()}
         </div>
       )}
 

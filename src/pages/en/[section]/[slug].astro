@@ -16,12 +16,12 @@ export async function getStaticPaths() {
         entry.id.startsWith('ko/') && !entry.data.draft
       );
       const koSlugs = new Set(
-        koPosts.map((p) => p.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''))
+        koPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
       );
 
       enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       return enPosts.map((post, index) => {
-        const slug = post.id.replace(/^en\//, '').replace(/\.(md|mdx)$/, '');
+        const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
         const alternateUrl = koSlugs.has(slug) ? `/${section}/${slug}` : undefined;
         return {
           params: { section, slug },
@@ -51,7 +51,7 @@ const { Content, headings } = await render(post);
 const minutes = readingTime(post.body ?? '');
 
 function toSlug(id: string) {
-  return id.replace(/^en\//, '').replace(/\.(md|mdx)$/, '');
+  return id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
 }
 ---
 

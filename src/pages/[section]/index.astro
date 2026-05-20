@@ -30,7 +30,7 @@ const posts = allPosts
     title: post.data.title,
     description: post.data.description,
     date: post.data.date,
-    slug: post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+    slug: post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
     section,
     tags: post.data.tags,
     thumbnail: post.data.thumbnail,

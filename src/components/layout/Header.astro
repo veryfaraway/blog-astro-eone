@@ -32,11 +32,13 @@ const pathname = Astro.url.pathname;
       <!-- Logo -->
       <a
         href="/"
-        class="flex items-center gap-2 text-foreground hover:text-foreground/70 transition-colors shrink-0"
+        class="flex items-center text-foreground hover:text-foreground/70 transition-colors shrink-0"
+        style="overflow: visible;"
         aria-label="eone 홈으로"
       >
-        <Logo size={24} animated={true} />
-        <span class="font-heading text-base font-semibold tracking-tight">eone</span>
+        <span class="logo-elevated">
+          <Logo size={48} animated={true} />
+        </span>
       </a>
 
       <!-- Right: nav + controls -->
@@ -102,6 +104,19 @@ const pathname = Astro.url.pathname;
     </nav>
   </div>
 </header>
+
+<style>
+  .logo-elevated {
+    display: block;
+    line-height: 0;
+    transform: translateY(14px);
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
+    transition: filter 0.2s ease;
+  }
+  :global(.dark) .logo-elevated {
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.70));
+  }
+</style>
 
 <script>
   const header = document.getElementById('site-header');

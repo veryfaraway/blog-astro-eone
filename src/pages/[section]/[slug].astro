@@ -16,12 +16,12 @@ export async function getStaticPaths() {
         entry.id.startsWith('en/') && !entry.data.draft
       );
       const enSlugs = new Set(
-        enPosts.map((p) => p.id.replace(/^en\//, '').replace(/\.(md|mdx)$/, ''))
+        enPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
       );
 
       posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       return posts.map((post, index) => {
-        const slug = post.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, '');
+        const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
         const alternateUrl = enSlugs.has(slug) ? `/en/${section}/${slug}` : undefined;
         const seriesPosts = post.data.series
           ? posts
@@ -29,7 +29,7 @@ export async function getStaticPaths() {
               .sort((a, b) => (a.data.series_order ?? 9999) - (b.data.series_order ?? 9999))
               .map(p => ({
                 title: p.data.title,
-                slug: p.id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, ''),
+                slug: p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
                 section,
                 series_order: p.data.series_order,
               }))
@@ -66,7 +66,7 @@ const { Content, headings } = await render(post);
 const minutes = readingTime(post.body ?? '');
 
 function toSlug(id: string) {
-  return id.replace(/^ko\//, '').replace(/\.(md|mdx)$/, '');
+  return id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
 }
 ---
 

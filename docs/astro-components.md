@@ -17,6 +17,7 @@
 | 전역 등록 가능 | MDX 파일 상단에서 개별 import |
 
 **핵심 차이점:**
+
 - Astro는 TypeScript `interface Props`로 타입 안전성 보장
 - `<slot />`이 11ty의 `{% block content %}` 역할 (자식 콘텐츠 삽입)
 - `.astro` 파일은 서버사이드 렌더링 — 빌드 타임에 정적 HTML로 변환
@@ -51,6 +52,9 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 ---
 
 ## 현재 구현된 컴포넌트 목록
+
+> **`Callout.astro`는 폐기 예정입니다.** 새 포스트에서는 `Alert.astro`를 사용하세요.
+> 기존 포스트에서 `Callout`을 발견하면 `Alert`로 교체 후 삭제.
 
 ### 콘텐츠용 (MDX에서 사용)
 
@@ -112,6 +116,16 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 
 ---
 
+#### `AffiliateNotice.astro`
+포스트 상단에 표시되는 제휴 공시 박스. Props 없음. `PostLayout`에서 `affiliate: true`일 때 자동 렌더링되므로 MDX에서 직접 import할 필요 없음.
+
+```yaml
+# frontmatter에서 활성화
+affiliate: true
+```
+
+---
+
 #### `AdSlot.astro`
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.
 
@@ -143,6 +157,7 @@ import Logo from '@/components/Logo.astro';
 
 > `prefers-reduced-motion` 감지 시 애니메이션 자동 비활성화.
 > `public/favicon.svg`는 동일 디자인의 정적 버전 (다크모드 미디어쿼리 포함).
+> 헤더에서는 `size={48}` + `translateY(14px)`로 헤더 아래 10px 돌출되어 사용됨.
 
 ---
 
@@ -165,11 +180,14 @@ import Logo from '@/components/Logo.astro';
 | 컴포넌트 | 역할 | 사용 위치 |
 |---------|------|---------|
 | `DarkModeToggle.tsx` | 다크모드 토글 버튼 | Header |
+| `LanguageSwitcher.tsx` | 언어(ko/en) 전환 | Header |
 | `SearchButton.tsx` | 검색 모달 열기 버튼 | Header |
 | `SearchModal.tsx` | Pagefind 검색 UI | Header |
 | `Comments.tsx` | Giscus 댓글 | PostLayout |
 | `HomeTabs.tsx` | 홈 섹션 탭 | 홈 페이지 |
 | `SectionTabs.tsx` | 섹션 내 탭 필터 | 섹션 페이지 |
+| `heatmap/HeatMap.tsx` | 주식 히트맵 본체 (계좌 탭·날짜 네비·셀 렌더링·툴팁) | vault 페이지 |
+| `heatmap/DateCalendar.tsx` | 히트맵 날짜 캘린더 오버레이 | HeatMap 내부 |
 
 > React island는 `client:load` / `client:visible` directive로 hydration 제어.
 > 정적 콘텐츠라면 `.astro`를 사용하고, 클릭/상태 관리가 필요할 때만 `.tsx`로 작성.
@@ -204,7 +222,8 @@ const { required, optional = 'a' } = Astro.props;
 
 ---
 
-## Callout.astro 참고
+## 폐기 예정 컴포넌트
 
-`Callout.astro`는 Bootstrap 스타일 클래스(`alert alert-{type}`)를 사용하는 레거시 버전입니다.
-**새 포스트에서는 `Alert.astro`를 사용하세요.** `Callout.astro`는 기존 포스트 호환용으로만 유지.
+| 컴포넌트 | 대체 | 비고 |
+|---------|------|------|
+| `Callout.astro` | `Alert.astro` | `global.css`의 `.alert-*` 클래스 의존, 아이콘 없음. 기존 포스트 호환용으로만 존재 — 신규 사용 금지 |

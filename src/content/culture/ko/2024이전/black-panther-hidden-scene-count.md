@@ -9,7 +9,7 @@ tags:
   - "MCU"
 draft: false
 lang: ko
-thumbnail: /assets/images/wakanda-forever-hidden-scene/featured-image-preview.webp
+thumbnail: /images/wakanda-forever-hidden-scene/featured-image-preview.webp
 ---
 
 영화 상영 시간이 2시간 40여 분으로 상당히 긴 영화지만 죽은 [채드윅 보즈만](https://www.imdb.com/name/nm1569276/?ref_=nv_sr_srsg_0 "Chadwick Boseman")을 추모하고 차기 블랙 팬서에 대한 발판을 마련한 영화라는데 의의를 두고 싶습니다.

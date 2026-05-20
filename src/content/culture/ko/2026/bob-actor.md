@@ -16,11 +16,7 @@ lang: ko
 thumbnail: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Bap_%28cooked_rice%29_2.jpg"
 ---
 
-루이스 제임스 풀먼(Lewis James Pullman) 
-
----
-
-# 루이스 풀먼, 떠오르는 할리우드 스타
+## 루이스 풀먼, 떠오르는 할리우드 스타
 
 루이스 제임스 풀먼(Lewis James Pullman)은 1993년 1월 29일 미국 캘리포니아 로스앤젤레스에서 태어난 배우입니다. 키 183cm로, 유명 배우 빌 풀먼(Bill Pullman)의 아들로 알려져 있으며 어머니 타마라 허위츠(Tamra Hurwitz)는 무용가입니다. 워렌 윌슨 칼리지(Warren Wilson College)를 졸업한 후 2013년 단편영화 'The Tutor'로 데뷔했습니다.
 
@@ -30,8 +26,7 @@ thumbnail: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Bap_%28cooked_ri
 
 ---
 
-
-# 탑건: 매버릭, '밥'으로 대박 난 비하인드
+## 탑건: 매버릭, '밥'으로 대박 난 비하인드
 
 2022년 '탑건: 매버릭'에서 로버트 "밥"(Bob) 플로이드 중위 역할을 맡아 전 세계적으로 스타덤에 올랐습니다. 밥은 조용하고 신뢰할 수 있는 RIO(무기 시스템 장교)로, 톰 크루즈의 매버릭과 호흡을 맞췄습니다. 캐스팅 비하인드는 가족 연결: 아버지 빌 풀먼이 '인디펜던스 데이'에서 F/A-18 호넷을 조종한 장면과 평행성을 띠며, 실제 비행 훈련에서 구토를 견디며 열연했습니다.
 
@@ -39,10 +34,9 @@ thumbnail: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Bap_%28cooked_ri
 
 이 역할로 한국 팬들은 그를 "밥 전문 배우"로 기억하게 됐습니다.
 
-
 ---
 
-# 썬더볼츠, 다시 '밥'으로 MCU 입성
+## 썬더볼츠, 다시 '밥'으로 MCU 입성
 
 2025년 개봉한 마블의 '썬더볼츠*'에서 센트리(Sentry)의 인간적 인격 '밥'(Bob) 역으로 캐스팅됐습니다. 원래 스티븐 연(Steven Yeun)이 물망에 올랐으나 스케줄 문제로 루이스 풀먼으로 결정됐고, 탑건 밥과 이름이 같아 팬덤 폭발! 풀먼은 "이름 바꿔달라" 농담할 정도로 재미있어했다고 합니다.
 ​
@@ -51,10 +45,9 @@ thumbnail: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Bap_%28cooked_ri
 
 ![Sentry](/images/bob-actor/mcu-sentry-bob.jpg)
 
-
 ---
 
-# 미국 문화에서 '밥'의 특별한 의미
+## 미국 문화에서 '밥'의 특별한 의미
 
 '밥'(Bob)은 로버트(Robert)의 애칭으로, 고대 게르만어 'Hrodeberht'(밝고 유명한 자)에서 유래했습니다. 미국에서 평범하고 친근한 'everyman' 이미지를 상징하며, 리더십, 창의성, 유머, 모험심 같은 긍정적 특성을 띠는 이름으로 여겨집니다. 중세부터 운율 이름(rhyming nicknames) 문화로 Robert → Bob이 자연스러웠습니다.
 ​
