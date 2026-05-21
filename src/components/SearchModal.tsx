@@ -16,33 +16,41 @@ export default function SearchModal({ open, onClose }: Props) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!open || ready) return;
-    const load = () => {
-      const script = document.createElement('script');
-      script.src = '/pagefind/pagefind-ui.js';
-      script.onload = () => {
-        try {
-          if (containerRef.current && window.PagefindUI) {
-            new window.PagefindUI({
-              element: containerRef.current,
-              showSubResults: true,
-              translations: { placeholder: '검색어를 입력하세요...', zero_results: '검색 결과가 없습니다.' },
-            });
-            setReady(true);
-          }
-        } catch {
-          // PagefindUI 초기화 실패 (dev 환경)
-        }
-      };
-      script.onerror = () => { /* dev 환경에서 pagefind 없음 */ };
-      document.head.appendChild(script);
+    if (!open) return;
 
-      const style = document.createElement('link');
-      style.rel = 'stylesheet';
-      style.href = '/pagefind/pagefind-ui.css';
-      document.head.appendChild(style);
+    const init = () => {
+      try {
+        if (containerRef.current && window.PagefindUI) {
+          new window.PagefindUI({
+            element: containerRef.current,
+            showSubResults: true,
+            translations: { placeholder: '검색어를 입력하세요...', zero_results: '검색 결과가 없습니다.' },
+          });
+          setReady(true);
+          requestAnimationFrame(() => {
+            containerRef.current?.querySelector<HTMLInputElement>('.pagefind-ui__search-input')?.focus();
+          });
+        }
+      } catch {
+        // PagefindUI 초기화 실패 (dev 환경)
+      }
     };
-    load();
+
+    if (window.PagefindUI) {
+      init();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '/pagefind/pagefind-ui.js';
+    script.onload = init;
+    script.onerror = () => { /* dev 환경에서 pagefind 없음 */ };
+    document.head.appendChild(script);
+
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = '/pagefind/pagefind-ui.css';
+    document.head.appendChild(style);
   }, [open]);
 
   useEffect(() => {

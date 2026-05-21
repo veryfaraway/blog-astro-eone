@@ -9,12 +9,12 @@ tags:
   - "MCU"
 draft: false
 lang: ko
-thumbnail: /assets/images/harrison-ford-joining-mcu/featured-image-preview.jpg
+thumbnail: /images/harrison-ford-joining-mcu/featured-image-preview.jpg
 ---
 
 얼마 전에 [윌리엄 허트가 사망](/posts/2022/william-hurt-dead)했다는 안타까운 소식이 있었는데요, 이번에 해리슨 포드가 윌리엄 허트를 대신하여 '썬더볼트' 로스 장군 역을 맡아 MCU에 합류하게 되었습니다.
 
-![](/images/harrison-ford-joining-mcu/featured-image.jpg)
+![The Thunderbolt Ross](/images/harrison-ford-joining-mcu/featured-image.jpg)
 
 마블이 해리슨 포드 정도 되는 스타 배우를 캐스팅함에 따라 일각에서는 레드 헐크와 레드 쉬헐크가 등장할 것으로 예상하고 있습니다.
 

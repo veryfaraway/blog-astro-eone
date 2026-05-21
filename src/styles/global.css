@@ -357,6 +357,30 @@ html[data-color-theme="slate"].dark {
   --section-accent-light: oklch(0.15 0.05 145);
 }
 
+/* Blockquote — 따옴표 제거, section accent 왼쪽 선, 이탤릭 제거 */
+.prose blockquote {
+  font-style: normal;
+  border-left-width: 3px;
+  border-left-color: var(--section-accent);
+}
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
+}
+
+/* Pagefind UI — 디자인 시스템 통합 */
+.pagefind-ui {
+  --pagefind-ui-scale: 0.875;
+  --pagefind-ui-primary: var(--primary);
+  --pagefind-ui-text: var(--foreground);
+  --pagefind-ui-background: var(--background);
+  --pagefind-ui-border: var(--input);
+  --pagefind-ui-tag: var(--muted);
+  --pagefind-ui-border-width: 2px;
+  --pagefind-ui-border-radius: 0.5rem;
+  --pagefind-ui-font: var(--font-sans);
+}
+
 /* Alert 스타일 */
 .alert { border-radius: 0.5rem; border-width: 1px; padding: 1rem; font-size: 0.875rem; line-height: 1.6; margin: 1.5rem 0; }
 .alert-title { font-weight: 600; margin-bottom: 0.5rem; }
