@@ -5,9 +5,10 @@ date: 2022-11-11
 category: 스포일러 지뢰찾기
 tags:
   - "William Hurt"
+  - MCU
 draft: false
 lang: ko
-thumbnail: /assets/images/william-hurt-dead/featured-image.webp
+thumbnail: /images/william-hurt-dead/featured-image.webp
 ---
 
 배우 윌리엄 허트(William Hurt)가 향년 71세로 사망했습니다.
