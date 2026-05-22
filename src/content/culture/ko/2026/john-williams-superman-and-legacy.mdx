@@ -10,7 +10,12 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774461637/media/movie/Superman/superman_slogan_ihlnpa.jpg"
+series: "존 윌리엄스"
+series_order: 2
 ---
+
+import Alert from '@/components/Alert.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 > 슈퍼맨이 하늘로 솟구칠 때, 어떤 음악이 들려야 하는가. 그 질문 앞에서 40년 넘게 모든 답은 결국 하나로 돌아왔다. 존 윌리엄스.
 
@@ -32,7 +37,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774461637/media/
 
 존 윌리엄스가 쓴 슈퍼맨 메인 마치는 이렇게 시작된다. 트럼펫이 짧게 세 번 울린다. **"빠—빠-빠!"** 그 다음 순간, 현악기와 금관악기 전체가 폭포처럼 쏟아진다. 단 3초 만에 누군가는 주먹을 쥐고, 누군가는 눈물을 글썽인다. 거의 반사적인 반응이다.
 
-<iframe src="https://www.youtube.com/embed/78N2SP6JFaI" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="78N2SP6JFaI" title="슈퍼맨 메인 테마" />
 
 왜 이 음악은 이토록 강렬한가.
 
@@ -89,13 +94,10 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774461637/media/
 
 한스 짐머는 그 반대편에 있다. 그의 스튜디오 리모트 컨트롤 프로덕션에는 수십 명의 음악가와 사운드 엔지니어가 협업한다. 신디사이저, 샘플러, DAW(디지털 오디오 워크스테이션)를 자유자재로 구사한다. 그에게 악기는 악기가 아니라 **사운드 팔레트**다. 《다크 나이트》의 그 긁히는 듯한 금속음, 《인터스텔라》의 파이프 오르간 굉음, 《덩케르크》의 초침 소리로 만든 긴장감. 이 모든 것은 기존 클래식 오케스트레이션으로는 불가능한 사운드 디자인의 영역이다.
 
-<div class="alert alert-success">
-<p class="alert-title">✅ 두 거장을 간단히 구분하는 방법</p>
-
-영화를 보면서 '이 음악, 오케스트라 공연에서 그대로 연주할 수 있겠다' 싶으면 → 윌리엄스 스타일
-'이 음악, 어떤 악기인지 구분이 안 된다' 싶으면 → 짐머 스타일
-
-</div>
+<Alert type="success" title="두 거장을 간단히 구분하는 방법">
+- 영화를 보면서 '이 음악, 오케스트라 공연에서 그대로 연주할 수 있겠다' 싶으면 → 윌리엄스 스타일
+- '이 음악, 어떤 악기인지 구분이 안 된다' 싶으면 → 짐머 스타일
+</Alert>
 
 ### 철학의 차이
 

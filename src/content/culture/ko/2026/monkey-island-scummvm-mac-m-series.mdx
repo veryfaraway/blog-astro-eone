@@ -16,6 +16,9 @@ series: "원숭이 섬의 비밀 완전 공략"
 series_order: 2
 ---
 
+import Alert from '@/components/Alert.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
+
 > 35년 된 게임을 2024년형 맥에서 돌린다. 생각보다 훨씬 간단하다.
 
 ## 이 글에서 다루는 내용
@@ -35,12 +38,11 @@ ScummVM은 루카스아츠, 시에라를 비롯한 수십 개 회사의 고전 �
 
 Apple Silicon Mac, 즉 M1/M2/M3/M4 칩 계열을 탑재한 맥에서도 네이티브로 동작하는 ARM 빌드를 공식 지원한다. 별도의 Rosetta 설정이나 복잡한 환경 세팅 없이, 그냥 설치하고 게임 파일만 연결하면 된다.
 
-<div class="alert alert-info">
-<p class="alert-title">💡 ScummVM이 지원하는 게임 목록이 궁금하다면?</p>
+<Alert type="info" title="ScummVM이 지원하는 게임 목록이 궁금하다면?">
 
 [scummvm.org/compatibility](https://www.scummvm.org/compatibility/)에서 전체 목록을 확인할 수 있다. 원숭이 섬 시리즈 외에도 《그림 판당고》, 《풀 스로틀》, 《인디아나 존스》 시리즈 등 루카스아츠의 명작들이 가득하다.
 
-</div>
+</Alert>
 
 ---
 
@@ -57,12 +59,11 @@ GOG(Good Old Games)는 DRM 없는 고전 게임을 판매하는 플랫폼으로,
 3. **The Secret of Monkey Island: Special Edition**을 구매 (할인 시 $2~3 수준)
 4. 구매 후 GOG Galaxy 앱 또는 오프라인 인스톨러로 게임 파일 다운로드
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ Special Edition vs. 오리지널</p>
+<Alert type="warning" title="Special Edition vs. 오리지널">
 
 GOG에서 판매하는 버전은 2009년 리마스터된 Special Edition이다. ScummVM으로 실행할 때는 게임 설치 폴더 안의 오리지널 파일(`MONKEY.000`, `MONKEY.001` 등)을 사용한다. Special Edition 자체 실행 파일이 아닌, 데이터 파일을 ScummVM에 연결하는 방식이다.
 
-</div>
+</Alert>
 
 ---
 
@@ -74,12 +75,11 @@ GOG에서 판매하는 버전은 2009년 리마스터된 Special Edition이다. 
 
 **macOS** 섹션에서 **Apple Silicon(ARM64)** 빌드를 선택해 다운로드한다. 파일명은 `ScummVM-X.X.X-arm64.dmg` 형태다.
 
-<div class="alert alert-success">
-<p class="alert-title">✅ Intel Mac 사용자</p>
+<Alert type="success" title="Intel Mac 사용자">
 
 Intel Mac을 사용 중이라면 같은 페이지에서 **x86-64** 빌드를 받으면 된다. 이 가이드의 나머지 설치 과정은 동일하게 적용된다.
 
-</div>
+</Alert>
 
 ### 2단계: 설치
 
@@ -154,12 +154,11 @@ ScummVM에서 《원숭이 섬의 비밀》을 실행하면 화면 하단에 동
 | Ctrl + S | 빠른 저장 |
 | Ctrl + F5 | ScummVM 전역 메뉴 |
 
-<div class="alert alert-success">
-<p class="alert-title">✅ 세이브는 자주 하자</p>
+<Alert type="success" title="세이브는 자주 하자">
 
 게임 오버는 없지만, 특정 퍼즐의 분기점 전에 저장해두면 다양한 선택지를 실험해볼 수 있어 더 재미있다. ScummVM은 저장 슬롯을 넉넉하게 지원한다.
 
-</div>
+</Alert>
 
 ---
 

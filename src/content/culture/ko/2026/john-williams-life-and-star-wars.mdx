@@ -10,7 +10,12 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/movie/Star%20Wars/star_wars_music_by_john_williams_j0iqhe.jpg"
+series: "존 윌리엄스"
+series_order: 1
 ---
+
+import Alert from '@/components/Alert.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 > 그는 우주를 본 적이 없다. 외계인을 만난 적도, 상어에게 쫓긴 적도 없다. 그런데 어떻게, 연필 한 자루로 우리를 우주로 데려가고, 깊은 바다 속 공포를 심장 박동으로 옮겨놓을 수 있었을까.
 
@@ -69,7 +74,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/
 
 쉰들러 리스트에서 스필버그는 윌리엄스에게 이런 말을 했다고 전해진다. "자네보다 더 잘할 수 있는 작곡가를 데려와야 할 것 같아." 윌리엄스는 잠시 침묵하다 답했다. "저도 알아요. 하지만 그들은 이 영화를 저만큼 사랑하지는 못할 겁니다." 그 영화의 메인 테마, 이츠하크 펄만의 바이올린 선율은 지금도 홀로코스트를 다룬 음악 중 가장 많이 회자된다.
 
-<iframe src="https://www.youtube.com/embed/rQIz8Calg9o" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="rQIz8Calg9o" title="쉰들러 리스트 메인 테마" />
 
 ---
 
@@ -81,7 +86,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/
 
 스필버그는 처음 이 멜로디를 들었을 때 윌리엄스가 농담을 하는 줄 알았다고 한다. "이게 전부예요?" 윌리엄스는 웃으며 고개를 끄덕였다. "전부입니다." 스필버그는 그 순간, 이 두 음표가 어떤 화려한 오케스트레이션보다 강력하다는 걸 깨달았다.
 
-<iframe src="https://www.youtube.com/embed/M-mAFarwU18" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="M-mAFarwU18" title="죠스 테마" />
 
 음악 이론적으로 분석하면 이 테마는 **반음계적 불협화음의 긴장**을 이용한다. 조성이 불분명한 두 음의 반복은 뇌가 '해결'을 기다리게 만들고, 그 해결이 영원히 오지 않으면서 불안감이 쌓인다. 거기에 템포가 빨라질수록 긴박감은 기하급수적으로 증폭된다. 단순함이 곧 천재성이었다.
 
@@ -111,7 +116,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/
 
 **임페리얼 마치(The Imperial March, 1980)** — 다스 베이더가 등장할 때 울려 퍼지는 이 곡은 '악당의 테마'라는 장르를 완성했다. 행진곡 리듬 위에 금관악기가 내뱉는 단호한 선율. 이 음악은 선율만 들어도 캐릭터의 성격이 그려지는 최고의 라이트모티프(Leitmotif) 사례로, 음악 학교에서 교재로 쓰인다.
 
-<iframe src="https://www.youtube.com/embed/rqErQ1sn74k" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="rqErQ1sn74k" title="임페리얼 마치" />
 
 <div class="alert alert-info">
 <p class="alert-title">💡 라이트모티프(Leitmotif)란?</p>
@@ -122,11 +127,11 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/
 
 **바이너리 선셋(Binary Sunset)** — 루크 스카이워커가 타투인의 두 개의 태양을 바라보며 저 먼 우주를 꿈꾸는 장면. 호른의 서정적인 선율이 지평선 너머를 향한 그리움과 용기를 동시에 담아낸다. 이 2분 남짓의 음악은 "영웅이 되기 전의 영웅"을 묘사하는 데 있어 영화 역사상 가장 완벽한 음악으로 꼽힌다.
 
-<iframe src="https://www.youtube.com/embed/u2W5YPQJqUs" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="u2W5YPQJqUs" title="바이너리 선셋" />
 
 **듀얼 오브 더 페이트(Duel of the Fates, 1999)** — 프리퀄 3부작 《에피소드 1》에서 처음 등장한 이 곡은 윌리엄스가 단순한 클래식 재현자가 아니라 끊임없이 진화하는 혁신가임을 증명한다. 산스크리트어로 된 합창과 폭풍 같은 오케스트라가 뒤엉키는 이 곡은 스타워즈의 그 어떤 음악과도 다른 날카로움을 갖고 있다.
 
-<iframe src="https://www.youtube.com/embed/97-0ghnBMcs" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="97-0ghnBMcs" title="듀얼 오브 더 페이트" />
 
 ---
 
@@ -138,7 +143,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774458935/media/
 
 그리고 지금, 《스타워즈》 메인 테마는 단순한 영화 음악이 아니다. 나사(NASA)가 우주선 발사 행사에서 틀고, 올림픽 개막식 입장 음악으로 쓰이며, 전 세계 어린이들이 입으로 흥얼거리는 '인류 공통의 멜로디'가 되었다.
 
-<iframe src="https://www.youtube.com/embed/54hoKbTWon4" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="54hoKbTWon4" title="스타워즈 메인 테마" />
 
 ---
 
