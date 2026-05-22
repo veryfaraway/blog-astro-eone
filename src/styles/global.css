@@ -396,44 +396,16 @@ html[data-color-theme="slate"].dark {
 .dark .alert-tip     { background-color: oklch(0.25 0.04 303 / 0.3); border-color: oklch(0.45 0.1 303); color: oklch(0.85 0.07 303); }
 
 /* ── Mermaid 다이어그램 ── */
-/* rehype-mermaid inline-svg: <pre><code class="language-mermaid"> → <svg id="mermaid-N"> 로 변환 */
-[id^="mermaid"] {
-  display: block;
+/* 클라이언트사이드 렌더링: PostLayout의 스크립트가 pre[data-language="mermaid"]를
+   .mermaid-diagram 컨테이너로 교체. 다크모드는 mermaid.js dark 테마가 직접 처리. */
+.mermaid-diagram {
   overflow-x: auto;
-  margin: 1.5rem auto;
+  margin: 1.5rem 0;
+}
+.mermaid-diagram svg {
+  display: block;
   max-width: 100%;
   height: auto;
-}
-
-/* 다크모드 — neutral 테마의 하드코딩 색상 오버라이드 */
-.dark [id^="mermaid"] {
-  background: transparent !important;
-}
-.dark [id^="mermaid"] rect,
-.dark [id^="mermaid"] circle,
-.dark [id^="mermaid"] ellipse,
-.dark [id^="mermaid"] polygon {
-  fill: oklch(0.18 0.015 258) !important;
-  stroke: oklch(0.32 0.015 258) !important;
-}
-.dark [id^="mermaid"] text,
-.dark [id^="mermaid"] tspan,
-.dark [id^="mermaid"] .label {
-  fill: oklch(0.87 0.008 258) !important;
-  color: oklch(0.87 0.008 258) !important;
-}
-.dark [id^="mermaid"] path.path,
-.dark [id^="mermaid"] .flowchart-link,
-.dark [id^="mermaid"] line,
-.dark [id^="mermaid"] polyline {
-  stroke: oklch(0.5 0.01 258) !important;
-}
-.dark [id^="mermaid"] marker path {
-  fill: oklch(0.5 0.01 258) !important;
-}
-.dark [id^="mermaid"] .cluster rect {
-  fill: oklch(0.14 0.012 258) !important;
-  stroke: oklch(0.28 0.015 258) !important;
 }
 
 /* scrollbar-none utility */
