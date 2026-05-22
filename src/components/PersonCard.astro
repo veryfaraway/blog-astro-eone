@@ -1,0 +1,54 @@
+---
+interface Props {
+  name: string;
+  role: string;
+  image?: string;
+  profileUrl?: string;
+  imdbId?: string;
+}
+
+const { name, role, image, profileUrl, imdbId } = Astro.props;
+
+const href = profileUrl ?? (imdbId ? `https://www.imdb.com/name/${imdbId}/` : undefined);
+
+// 이름에서 이니셜 생성 (한국어·영어 모두 대응)
+const initials = name.includes(' ')
+  ? name.split(' ').map(n => [...n][0]).join('').toUpperCase().slice(0, 2)
+  : [...name].slice(0, 2).join('');
+
+// 이름 첫 글자 기반으로 색상 결정 (Tailwind 클래스를 완전한 문자열로 유지)
+const palettes = [
+  { bg: 'bg-rose-100 dark:bg-rose-900/40',    text: 'text-rose-600 dark:text-rose-300' },
+  { bg: 'bg-sky-100 dark:bg-sky-900/40',      text: 'text-sky-600 dark:text-sky-300' },
+  { bg: 'bg-amber-100 dark:bg-amber-900/40',  text: 'text-amber-600 dark:text-amber-300' },
+  { bg: 'bg-emerald-100 dark:bg-emerald-900/40', text: 'text-emerald-600 dark:text-emerald-300' },
+  { bg: 'bg-violet-100 dark:bg-violet-900/40', text: 'text-violet-600 dark:text-violet-300' },
+  { bg: 'bg-indigo-100 dark:bg-indigo-900/40', text: 'text-indigo-600 dark:text-indigo-300' },
+];
+const palette = palettes[name.charCodeAt(0) % palettes.length];
+
+const linkProps = href
+  ? { href, target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+<a
+  class="not-prose inline-flex w-28 flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition-colors hover:bg-muted/50"
+  {...linkProps}
+>
+  <!-- 프로필 이미지 또는 이니셜 -->
+  <div class:list={[
+    'flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-semibold',
+    image ? 'bg-muted' : `${palette.bg} ${palette.text}`,
+  ]}>
+    {image
+      ? <img src={image} alt={name} class="h-full w-full object-cover" loading="lazy" />
+      : initials
+    }
+  </div>
+
+  <div class="w-full min-w-0">
+    <p class="truncate text-sm font-semibold text-foreground">{name}</p>
+    <p class="text-xs text-muted-foreground">{role}</p>
+  </div>
+</a>

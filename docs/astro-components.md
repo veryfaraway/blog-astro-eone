@@ -138,6 +138,88 @@ import AdSlot from '@/components/AdSlot.astro';
 
 ---
 
+#### `MovieCard.astro`
+영화 정보 카드. OMDb API로 평점·개봉년도·장르·줄거리를 빌드 타임에 fetch. API 키 없거나 fetch 실패 시 title+poster만 표시.
+
+> **환경변수**: `PUBLIC_OMDB_API_KEY` 필요. [OMDb API](https://www.omdbapi.com/apikey.aspx)에서 무료 발급.
+
+```mdx
+import MovieCard from '@/components/MovieCard.astro';
+
+<MovieCard title="기생충" imdbId="tt6751668" />
+<MovieCard title="기생충" imdbId="tt6751668" poster="https://..." />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `title` | `string` | — | 영화 제목 (API 실패 시 폴백으로 사용) |
+| `imdbId` | `string` | — | IMDb ID (예: `tt6751668`) |
+| `poster` | `string` | — | 포스터 이미지 URL (지정 시 API 포스터보다 우선) |
+
+---
+
+#### `PersonCard.astro` / `PersonInline.astro`
+인물 프로필 카드. imdbId 또는 profileUrl이 있으면 링크로 렌더링.
+이미지 없으면 이름에서 자동 생성한 이니셜 + 색상 플레이스홀더 표시.
+
+`PersonInline`은 본문 텍스트 중간에 삽입하는 인라인 버전 (아바타 + 이름).
+
+```mdx
+import PersonCard from '@/components/PersonCard.astro';
+import PersonInline from '@/components/PersonInline.astro';
+
+<!-- 카드 (flex/grid 안에서 나란히 배치) -->
+<PersonCard name="봉준호" role="감독" imdbId="nm0188744" />
+<PersonCard name="톰 행크스" role="주연" imdbId="nm0000158" image="https://..." />
+
+<!-- 인라인 (문장 중간 삽입) -->
+봉준호 감독과 <PersonInline name="송강호" role="주연" imdbId="nm1817631" />가 함께한 작품.
+```
+
+**PersonCard Props**
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `name` | `string` | — | 이름 |
+| `role` | `string` | — | 역할 (예: `"감독"`, `"주연"`) |
+| `image` | `string` | — | 프로필 이미지 URL |
+| `imdbId` | `string` | — | IMDb 인물 ID (예: `nm0000158`) |
+| `profileUrl` | `string` | — | 외부 링크 (imdbId보다 우선) |
+
+**PersonInline Props** — PersonCard와 동일, `role`이 선택(optional)으로만 다름.
+
+---
+
+#### `CloudinaryImage.astro`
+Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성.
+
+> **환경변수**: `PUBLIC_CLOUDINARY_CLOUD_NAME` 필요.
+
+```mdx
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
+
+<CloudinaryImage publicId="v123/photo.jpg" alt="사진 설명" />
+<CloudinaryImage
+  publicId="v123/photo.jpg"
+  alt="사진 설명"
+  width={1200}
+  height={800}
+  sizes="(max-width: 768px) 100vw, 800px"
+/>
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `publicId` | `string` | — | Cloudinary public ID |
+| `alt` | `string` | — | 접근성 alt 텍스트 |
+| `sizes` | `string` | `(max-width:1200px) 100vw, 1200px` | 반응형 sizes 힌트 |
+| `width` | `number` | — | 원본 너비 (지정 시 aspect-ratio로 CLS 방지) |
+| `height` | `number` | — | 원본 높이 (width와 함께 지정) |
+
+> `width` / `height`를 모두 지정하면 이미지 로드 전에도 공간이 확보되어 레이아웃 시프트(CLS)가 방지됩니다.
+
+---
+
 #### `Logo.astro`
 원형 틀 안에 e 스피너 형태의 SVG 로고. 헤더 및 브랜딩 용도.
 

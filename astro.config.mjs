@@ -5,6 +5,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import pagefind from 'astro-pagefind';
+import rehypeMermaid from 'rehype-mermaid';
 
 export default defineConfig({
   site: 'https://blog.eone.one',
@@ -16,6 +17,14 @@ export default defineConfig({
       filter: (page) => !page.includes('/vault'),
     }),
   ],
+  markdown: {
+    rehypePlugins: [
+      [rehypeMermaid, {
+        strategy: 'inline-svg',
+        mermaidConfig: { theme: 'neutral' },
+      }],
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

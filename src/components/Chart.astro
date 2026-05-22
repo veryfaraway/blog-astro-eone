@@ -1,0 +1,164 @@
+---
+interface Props {
+  type: 'bar' | 'line' | 'pie' | 'doughnut' | 'radar';
+  data: Record<string, unknown>;
+  options?: Record<string, unknown>;
+  height?: number;
+  caption?: string;
+}
+
+const { type, data, options = {}, height = 300, caption } = Astro.props;
+
+const id = `chart-${Math.random().toString(36).slice(2, 9)}`;
+
+// 폴백 테이블용 데이터 추출 (서버사이드)
+const labels = (data.labels as string[] | undefined) ?? [];
+const datasets = (data.datasets as Array<{ label?: string; data: unknown[] }> | undefined) ?? [];
+
+// data-* 속성에 직렬화 (함수/순환참조 포함 시 오류 → 캔버스만 비워둠)
+let chartConfig = '';
+try {
+  chartConfig = JSON.stringify({ data, options });
+} catch {
+  // 직렬화 불가 → 폴백 테이블만 표시
+}
+---
+
+<figure class="not-prose my-6">
+  {chartConfig ? (
+    <>
+      <!-- 캔버스 래퍼 -->
+      <div id={`${id}-wrapper`} style={`position:relative;height:${height}px;`} class="w-full">
+        <canvas
+          id={id}
+          data-chart-type={type}
+          data-chart-config={chartConfig}
+          aria-label={caption ?? `${type} 차트`}
+          role="img"
+        />
+      </div>
+
+      <!-- 폴백 테이블 (차트 실패 시 표시, 기본 숨김) -->
+      {labels.length > 0 && datasets.length > 0 && (
+        <div id={`${id}-fallback`} class="hidden overflow-x-auto rounded-lg border border-border">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-muted">
+                <th class="px-3 py-2 text-left font-medium text-foreground"></th>
+                {datasets.map(ds => (
+                  <th class="px-3 py-2 text-right font-medium text-foreground">
+                    {ds.label ?? '값'}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {labels.map((label, i) => (
+                <tr class="border-t border-border">
+                  <td class="px-3 py-2 text-muted-foreground">{label}</td>
+                  {datasets.map(ds => (
+                    <td class="px-3 py-2 text-right text-foreground">
+                      {String(ds.data[i] ?? '—')}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  ) : (
+    /* 직렬화 실패 시 폴백 테이블만 */
+    <div class="overflow-x-auto rounded-lg border border-border">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-muted">
+            <th class="px-3 py-2 text-left font-medium text-foreground"></th>
+            {datasets.map(ds => (
+              <th class="px-3 py-2 text-right font-medium text-foreground">{ds.label ?? '값'}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {labels.map((label, i) => (
+            <tr class="border-t border-border">
+              <td class="px-3 py-2 text-muted-foreground">{label}</td>
+              {datasets.map(ds => (
+                <td class="px-3 py-2 text-right text-foreground">{String(ds.data[i] ?? '—')}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {caption && (
+    <figcaption class="mt-2 text-center text-xs text-muted-foreground">{caption}</figcaption>
+  )}
+</figure>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  function initCharts() {
+    document.querySelectorAll<HTMLCanvasElement>('canvas[data-chart-type]').forEach(canvas => {
+      if (canvas.dataset.initialized) return;
+      canvas.dataset.initialized = 'true';
+
+      const id = canvas.id;
+      const wrapper = document.getElementById(`${id}-wrapper`);
+      const fallback = document.getElementById(`${id}-fallback`);
+
+      try {
+        const type = canvas.dataset.chartType as 'bar' | 'line' | 'pie' | 'doughnut' | 'radar';
+        const { data, options } = JSON.parse(canvas.dataset.chartConfig!);
+
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor  = isDark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.75)';
+        const gridColor  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+
+        const scaleXY = {
+          ticks: { color: textColor },
+          grid:  { color: gridColor },
+          border: { color: gridColor },
+        };
+
+        const defaults: Record<string, unknown> = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: textColor,
+                font: { family: getComputedStyle(document.documentElement).getPropertyValue('--font-sans').trim() || undefined },
+              },
+            },
+          },
+          scales:
+            type === 'bar' || type === 'line'
+              ? { x: scaleXY, y: scaleXY }
+              : type === 'radar'
+              ? { r: { ...scaleXY, pointLabels: { color: textColor } } }
+              : undefined,
+        };
+
+        new Chart(canvas, {
+          type,
+          data,
+          options: { ...defaults, ...options },
+        });
+      } catch {
+        // 차트 실패 → 캔버스 숨기고 폴백 테이블 표시
+        wrapper?.classList.add('hidden');
+        fallback?.classList.remove('hidden');
+      }
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initCharts)
+    : initCharts();
+</script>

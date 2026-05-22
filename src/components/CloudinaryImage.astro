@@ -1,0 +1,61 @@
+---
+interface Props {
+  publicId: string;
+  alt: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+}
+
+const {
+  publicId,
+  alt,
+  sizes = '(max-width: 1200px) 100vw, 1200px',
+  width,
+  height,
+} = Astro.props;
+
+const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
+const base = cloudName
+  ? `https://res.cloudinary.com/${cloudName}/image/upload`
+  : null;
+
+const url = (transforms: string) => `${base}/${transforms}/${publicId}`;
+
+const src    = base ? url('w_1200,q_auto,f_auto') : undefined;
+const srcset = base
+  ? [400, 800, 1200, 1600].map(w => `${url(`w_${w},q_auto,f_auto`)} ${w}w`).join(', ')
+  : undefined;
+const lqip   = base ? url('w_50,e_blur:1000,q_1,f_auto') : undefined;
+
+// width/height가 있으면 aspect-ratio로 레이아웃 시프트 방지
+const aspectRatio = width && height ? `${width} / ${height}` : undefined;
+---
+
+{base ? (
+  <figure class="not-prose my-6">
+    <div
+      class="overflow-hidden rounded-lg bg-muted"
+      style={[
+        lqip        ? `background-image:url('${lqip}');background-size:cover;background-position:center;` : '',
+        aspectRatio ? `aspect-ratio:${aspectRatio};` : '',
+      ].filter(Boolean).join('')}
+    >
+      <img
+        src={src}
+        srcset={srcset}
+        sizes={sizes}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        class="block h-auto w-full"
+      />
+    </div>
+  </figure>
+) : (
+  <div class="not-prose my-6 rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+    PUBLIC_CLOUDINARY_CLOUD_NAME 환경변수가 설정되지 않았습니다.
+  </div>
+)}

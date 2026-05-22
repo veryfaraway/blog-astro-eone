@@ -1,0 +1,55 @@
+---
+interface Props {
+  name: string;
+  role?: string;
+  image?: string;
+  imdbId?: string;
+  profileUrl?: string;
+}
+
+const { name, role, image, imdbId, profileUrl } = Astro.props;
+
+const href = profileUrl ?? (imdbId ? `https://www.imdb.com/name/${imdbId}/` : undefined);
+
+const palettes = [
+  { bg: 'bg-rose-100 dark:bg-rose-900/40',      text: 'text-rose-600 dark:text-rose-300' },
+  { bg: 'bg-sky-100 dark:bg-sky-900/40',        text: 'text-sky-600 dark:text-sky-300' },
+  { bg: 'bg-amber-100 dark:bg-amber-900/40',    text: 'text-amber-600 dark:text-amber-300' },
+  { bg: 'bg-emerald-100 dark:bg-emerald-900/40', text: 'text-emerald-600 dark:text-emerald-300' },
+  { bg: 'bg-violet-100 dark:bg-violet-900/40',  text: 'text-violet-600 dark:text-violet-300' },
+  { bg: 'bg-indigo-100 dark:bg-indigo-900/40',  text: 'text-indigo-600 dark:text-indigo-300' },
+];
+const palette = palettes[name.charCodeAt(0) % palettes.length];
+const initial = [...name][0];
+---
+
+<span class="not-prose inline-flex items-center gap-1 align-middle">
+  <!-- 미니 아바타 -->
+  <span class:list={[
+    'inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full text-[10px] font-bold',
+    image ? 'bg-muted' : `${palette.bg} ${palette.text}`,
+  ]}>
+    {image
+      ? <img src={image} alt={name} class="h-full w-full object-cover" />
+      : initial
+    }
+  </span>
+
+  <!-- 이름 -->
+  {href
+    ? (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-medium text-foreground underline underline-offset-2 hover:opacity-70"
+      >
+        {name}
+      </a>
+    )
+    : <span class="font-medium text-foreground">{name}</span>
+  }
+
+  <!-- 역할 (선택) -->
+  {role && <span class="text-xs text-muted-foreground">({role})</span>}
+</span>
