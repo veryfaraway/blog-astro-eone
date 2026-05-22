@@ -10,6 +10,9 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1608022749628-3251d92cdd79?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
+import Alert from '@/components/Alert.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
+
 > 로튼토마토 점수가 높으면 좋은 영화, 낮으면 나쁜 영화? 그렇게 단순하지 않다.
 
 ## 이 글에서 다루는 내용
@@ -40,7 +43,7 @@ thumbnail: "https://images.unsplash.com/photo-1608022749628-3251d92cdd79?q=80&w=
 
 토마토 색깔에 따라 세 등급으로 나뉜다.
 
-```
+```text
 🍅 Certified Fresh  — 토마토미터 75% 이상 + 리뷰 수 조건 충족
 🍅 Fresh            — 토마토미터 60% 이상
 🍅 Rotten           — 토마토미터 59% 이하
@@ -48,11 +51,9 @@ thumbnail: "https://images.unsplash.com/photo-1608022749628-3251d92cdd79?q=80&w=
 
 **Certified Fresh**가 되려면 점수만 높아선 안 된다. 최소 리뷰 수 조건도 있다. 일반 개봉작은 평론가 리뷰 80개 이상, 제한 개봉작은 40개 이상이 기준이다. 리뷰가 적은 독립영화나 소규모 개봉작이 높은 점수를 받아도 Certified Fresh를 못 받는 이유가 여기 있다.
 
-<div class="alert alert-info">
-
+<Alert type="info" title="Certified Fresh의 조건">
 Certified Fresh 배지는 한 번 받아도 이후 리뷰가 쌓이면서 점수가 떨어지면 박탈될 수 있다. 개봉 초반 점수만 믿으면 안 되는 이유다.
-
-</div>
+</Alert>
 
 ---
 
@@ -94,11 +95,9 @@ flowchart LR
 
 점수만 보지 말고 **상단에 노출되는 평론가 코멘트 3~4개**를 읽어보는 게 훨씬 낫다. "시각적으로 화려하지만 서사가 빈약하다"는 Fresh 리뷰가 있다면, 스토리를 중요하게 생각하는 사람에겐 그게 Rotten과 다름없다.
 
-<div class="alert alert-warning">
-
+<Alert type="warning" title="팝콘미터의 변화">
 팝콘미터는 2023년부터 인증된 티켓 구매자만 참여할 수 있도록 바뀌었다. 이전까진 계정만 있으면 누구나 평점을 남길 수 있어서 조직적 평점 테러나 띄우기가 심했다. 오래된 영화의 팝콘미터는 이 맥락을 고려해서 봐야 한다.
-
-</div>
+</Alert>
 
 ---
 

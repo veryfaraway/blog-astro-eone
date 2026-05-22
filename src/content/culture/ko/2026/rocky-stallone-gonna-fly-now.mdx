@@ -13,6 +13,9 @@ lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1777813897/media/movie/Rocky/rocky-american-dream_vbhdl8.jpg"
 ---
 
+import Alert from '@/components/Alert.astro';
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
+
 > 우연히 다시 들은 *Gonna Fly Now* 한 소절에 이 글을 쓰게 됐다. 트럼펫이 울리는 그 순간, 그냥 지나칠 수가 없었다.
 
 ## 이 글에서 다루는 내용
@@ -48,11 +51,9 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1777813897/media/
 
 TV 앞에서 이 경기를 지켜보던 스탤론은 자리에서 일어나지 못했다. 그리고 며칠 뒤, 그는 시나리오를 쓰기 시작했다. **단 3일 만에** 초고가 완성됐다.
 
-<div class="alert alert-info">
-
+<Alert type="info" title="실화의 주인공, 척 웨프너">
 척 웨프너는 훗날 로키가 자신을 모티브로 만든 영화라며 소송을 제기했고, 스탤론은 이를 부정하지 않고 2003년 합의로 마무리했다. 웨프너의 실화는 2016년 영화 《척(Chuck)》으로도 만들어졌다.
-
-</div>
+</Alert>
 
 ---
 
@@ -86,7 +87,7 @@ TV 앞에서 이 경기를 지켜보던 스탤론은 자리에서 일어나지 �
 
 그 유명한 트럼펫 선율, *Gonna Fly Now*. 작곡가는 **빌 콘티(Bill Conti)**.
 
-<iframe src="https://www.youtube.com/embed/TNeIwjhjJrc" class="w-full aspect-video rounded-lg my-6" allowfullscreen loading="lazy" title="YouTube video"></iframe>
+<YouTubeEmbed id="TNeIwjhjJrc" title="Gonna Fly Now" />
 
 그런데 이 곡의 탄생 배경은 영화만큼이나 허름하다. 저예산 영화였던 만큼 음악에도 돈이 없었다. 웅장하게 울려 퍼지는 그 코러스를 부른 사람들은 다름 아닌 **빌 콘티의 아내 회사 동료들**이었다. 공짜로. 그들은 장난인 줄 알고 불렀다고 한다.
 
