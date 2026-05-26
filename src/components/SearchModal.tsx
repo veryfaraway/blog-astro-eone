@@ -60,6 +60,15 @@ export default function SearchModal({ open, onClose }: Props) {
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -71,7 +80,7 @@ export default function SearchModal({ open, onClose }: Props) {
       <div className="fixed inset-0 bg-background/80 backdrop-blur-sm" aria-hidden="true" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-xl bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+      <div className="relative w-full max-w-xl bg-card border border-border rounded-xl shadow-xl overflow-y-auto max-h-[70vh]">
         <div ref={containerRef} className="pagefind-ui p-4" />
         {!ready && (
           <div className="p-6 text-center text-sm text-muted-foreground">
