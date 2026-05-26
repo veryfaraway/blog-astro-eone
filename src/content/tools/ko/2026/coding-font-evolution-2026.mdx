@@ -2,7 +2,7 @@
 title: "코딩 폰트의 진화: 가독성을 넘어 시각적 문법으로"
 description: "DejaVu Sans Mono부터 GitHub Monaspace까지, 코딩 폰트가 단순한 글꼴을 넘어 개발 생산성 도구가 된 여정과 2026년 주목할 트렌드를 정리합니다."
 date: 2026-04-01
-category: Tools
+category: macOS
 tags:
   - "macos"
   - "font"
@@ -10,6 +10,8 @@ draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1596299786007-9974099be52b?q=80&w=2148&auto=format&fit=crop"
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > 터미널에 폰트 하나 바꿨을 뿐인데 코드가 다르게 읽힌다면, 그건 기분 탓이 아닙니다.
 
@@ -92,11 +94,9 @@ flowchart LR
 
 결과적으로 **격자 정렬은 유지하면서, 읽을 때는 가변폭 폰트처럼 매끄럽게** 흐릅니다. 글자들이 서로 "숨을 맞춘다"는 표현이 어울립니다.
 
-<div class="alert alert-info">
-
+<Alert type="info">
 Monaspace는 Argon, Neon, Xenon, Radon, Krypton 다섯 가지 서체 변형을 포함합니다. 각각 세리프 유무, 획의 성격이 다르므로 코드 외에 마크다운 문서 작업 등에서 서체를 섞어 쓰는 것도 가능합니다.
-
-</div>
+</Alert>
 
 ---
 
@@ -147,9 +147,6 @@ flowchart TD
 
 ---
 
-<div class="alert alert-info">
-<p class="alert-title">💡 Nerd Fonts 패치 버전 필수!</p>
-
+<Alert type="info" title="Nerd Fonts 패치 버전 필수!">
 폰트를 바꾼 뒤 터미널 아이콘(``, ``, `` 등)이 □□□로 보인다면, [nerdfonts.com](https://www.nerdfonts.com)에서 Nerd Fonts 패치가 완료된 버전을 설치하세요. JetBrains Mono NF, Geist Mono NF 등 대부분의 주요 폰트가 패치 버전을 제공합니다.
-
-</div>
+</Alert>

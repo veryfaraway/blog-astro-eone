@@ -2,7 +2,7 @@
 title: "Cloudinary: 개인 개발자를 위한 이미지·영상 관리 서비스 소개"
 description: "개인 개발자와 소규모 프로젝트를 위한 Cloudinary의 핵심 기능과 활용법을 소개합니다. 이미지·영상 업로드, 변환, 최적화, CDN 제공 등 다양한 기능을 쉽게 활용하는 방법을 알아봅니다."
 date: 2026-01-02
-category: Tools
+category: Services
 tags:
   - "cloudinary"
 draft: false
@@ -64,7 +64,6 @@ Cloudinary는 기본적으로 무료 플랜을 제공하고, 사용량이 커질
 
 프론트엔드(예: Vue)에서는 `<img src="cloudinary에서_받은_URL" />` 형태로 그대로 활용하면 된다.
 
-
 ***
 
 ### 2. URL 파라미터로 리사이즈·크롭·포맷 변경
@@ -98,7 +97,6 @@ https://res.cloudinary.com/<cloud_name>/image/upload/<변환옵션>/sample.jpg
 
 ***
 
-
 ### 3. 자동 최적화(포맷·압축)와 CDN
 
 Cloudinary는 “자동 포맷 선택(auto format)”과 “자동 품질 조정(auto quality)” 옵션을 제공한다.
@@ -123,8 +121,6 @@ Cloudinary가 CDN(전 세계 엣지 서버)을 통해 이미지를 제공하기 
 
 ***
 
-
-
 ### 4. 간단한 효과·필터 적용
 
 상세한 효과는 별도 글로 다루면 좋지만, 개인 프로젝트에서 자주 쓰일 법한 것만 간단히 보면 다음과 같다.
@@ -143,7 +139,6 @@ https://res.cloudinary.com/<cloud_name>/image/upload/w_600,r_20,e_grayscale/samp
 
 ***
 
-
 ### 5. 블로그·정적 사이트(Hugo/Eleventy 등)에서 활용 아이디어
 
 정적 사이트에서도 Cloudinary를 이용하면 빌드 결과의 이미지 용량을 크게 줄일 수 있다.
@@ -154,7 +149,6 @@ https://res.cloudinary.com/<cloud_name>/image/upload/w_600,r_20,e_grayscale/samp
 
 예를 들어 Hugo에서 썸네일 변수만 바꿔 쓰면 다음과 같은 느낌이 된다. (개념 예시)
 
-
 ```html
 <!-- 목록: 작은 썸네일 -->
 <img src="https://res.cloudinary.com/<cloud_name>/image/upload/f_auto,q_auto,w_320/{{ .Params.image }}" />
@@ -163,7 +157,6 @@ https://res.cloudinary.com/<cloud_name>/image/upload/w_600,r_20,e_grayscale/samp
 <img src="https://res.cloudinary.com/<cloud_name>/image/upload/f_auto,q_auto,w_1200/{{ .Params.image }}" />
 
 ```
-
 
 ***
 
