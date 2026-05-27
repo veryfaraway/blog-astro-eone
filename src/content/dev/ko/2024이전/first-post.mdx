@@ -1,0 +1,192 @@
+---
+title: "일취월장 블로그에 오신 것을 환영합니다"
+description: "Astro로 구축한 멀티섹션 통합 블로그 일취월장의 첫 포스트입니다. 블로그 소개와 MDX 컴포넌트 쇼케이스를 담았습니다."
+date: 2022-01-01
+category: Frontend
+tags:
+  - "blog"
+  - "astro"
+  - "mdx"
+draft: false
+lang: ko
+thumbnail: /images/eone_blog.png
+---
+
+import Alert from '@/components/Alert.astro';
+
+<Alert type="info" title="이 포스트는 샘플 & 쇼케이스 페이지입니다">
+  블로그 첫 소개 글이자, MDX에서 사용 가능한 컴포넌트들을 직접 확인할 수 있는 레퍼런스 페이지입니다.
+</Alert>
+
+## 안녕하세요, 일취월장입니다
+
+**일취월장(日就月將)** — *날마다 나아지고, 달마다 성장한다.*
+
+이 블로그는 개발·경제·문화·일상을 아우르는 개인 기록 공간입니다. 단순한 메모장이 아니라, 글쓰기를 통해 사고를 다듬고 지식을 정리하는 곳을 목표로 합니다.
+
+## 5개 섹션
+
+블로그는 주제별로 5개 섹션으로 구성됩니다.
+
+| 섹션 | 주제 | URL |
+|------|------|-----|
+| 🛠 Dev | 개발 · AI · Backend · Frontend | `/dev` |
+| 🌱 Life | 일상 · 육아 · 종교 · 아쿠아리움 | `/life` |
+| 💰 Money | 경제 · 투자 · 절약 · 리뷰 | `/money` |
+| 🎬 Culture | 영화 · 영어 · 여행 | `/culture` |
+| 🖥 Tools | macOS · 터미널 · 개발환경 | `/tools` |
+
+---
+
+## 기술 스택
+
+이 블로그는 **Astro** 기반으로 구축되었습니다.
+
+| 항목 | 기술 |
+|------|------|
+| 프레임워크 | Astro |
+| UI 컴포넌트 | React (island) |
+| 스타일 | Tailwind CSS + shadcn/ui |
+| 언어 | TypeScript |
+| 검색 | Pagefind |
+| 댓글 | Giscus |
+| 다크모드 | Tailwind `dark:` + CSS 변수 |
+| 배포 | Netlify |
+
+Astro의 핵심은 **Islands Architecture**입니다. 정적 HTML을 기본으로 하고, 인터랙션이 필요한 컴포넌트만 선택적으로 hydration합니다.
+
+```astro
+---
+// Astro 컴포넌트 예제
+interface Props {
+  title: string;
+  date: Date;
+}
+
+const { title, date } = Astro.props;
+---
+
+<article>
+  <h1>{title}</h1>
+  <time>{date.toLocaleDateString('ko-KR')}</time>
+  <slot />
+</article>
+```
+
+<Alert type="tip" title="Islands Architecture란?">
+  Astro는 기본적으로 JavaScript를 클라이언트에 보내지 않습니다. React 컴포넌트도 `client:load` directive를 붙이지 않으면 빌드 타임에 정적 HTML로 변환됩니다. 덕분에 초기 로딩이 빠릅니다.
+</Alert>
+
+---
+
+## MDX 컴포넌트 쇼케이스
+
+이 블로그의 MDX 포스트에서는 다양한 내장 컴포넌트를 활용할 수 있습니다.
+
+### Alert — 5가지 타입
+
+<Alert type="info">**info** — 일반적인 안내나 배경 설명에 사용합니다.</Alert>
+
+<Alert type="tip">**tip** — 유용한 팁이나 권장 방법을 강조할 때 사용합니다.</Alert>
+
+<Alert type="success" title="완료">**success** — 작업이 성공했거나 긍정적인 결과를 표시할 때 사용합니다.</Alert>
+
+<Alert type="warning" title="주의사항">**warning** — 놓치기 쉬운 주의사항이나 사이드이펙트를 표시합니다.</Alert>
+
+<Alert type="danger" title="Breaking Change">**danger** — 데이터 손실 가능성이 있거나 되돌리기 어려운 작업에 사용합니다.</Alert>
+
+사용법은 간단합니다:
+
+```mdx
+import Alert from '@/components/Alert.astro';
+
+<Alert type="warning" title="주의사항">
+  내용은 **마크다운**도 지원합니다.
+</Alert>
+```
+
+---
+
+### 코드 하이라이팅
+
+다양한 언어의 코드 블록을 지원합니다.
+
+**TypeScript — Content Collection 스키마**
+
+```typescript
+import { defineCollection, z } from 'astro:content';
+
+const devCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    category: z.string(),
+    tags: z.array(z.string()),
+    draft: z.boolean().default(false),
+    lang: z.enum(['ko', 'en']),
+    thumbnail: z.string().optional(),
+  }),
+});
+
+export const collections = { dev: devCollection };
+```
+
+**Python — 데이터 분석 예시**
+
+```python
+import pandas as pd
+
+# 포스트 조회수 분석 예시
+df = pd.read_csv('views.csv', parse_dates=['date'])
+
+monthly = (
+    df.groupby(df['date'].dt.to_period('M'))['views']
+    .sum()
+    .reset_index()
+)
+
+print(monthly.tail(3))
+#       date   views
+# 10  2024-11   8420
+# 11  2024-12  11350
+# 12  2025-01  15200
+```
+
+**Shell — 자주 쓰는 명령어**
+
+```bash
+# Astro 개발 서버 시작
+pnpm dev
+
+# 프로덕션 빌드
+pnpm build
+
+# 빌드 결과물 미리보기
+pnpm preview
+```
+
+---
+
+## 앞으로 다룰 주제들
+
+<Alert type="success" title="연재 예정 시리즈">
+  아래 주제들을 시리즈로 정리할 예정입니다. RSS를 구독하시면 새 포스트를 바로 받아볼 수 있습니다.
+</Alert>
+
+1. **Java 모던 문법 시리즈** — Java 17 / 21 실무 적용 가이드
+2. **Spring Boot 마이그레이션** — 2.x → 3.x 업그레이드 노하우
+3. **투자 기록** — 미국 주식 포트폴리오 월간 리뷰
+4. **영화 리뷰** — 극장·OTT 신작 감상
+5. **개발 환경 세팅** — macOS 터미널, IDE 플러그인 추천
+
+---
+
+## 마치며
+
+<Alert type="tip" title="피드백은 언제나 환영합니다">
+  각 포스트 하단의 댓글(Giscus)로 질문이나 의견을 남겨주세요. GitHub 계정으로 바로 댓글을 달 수 있습니다.
+</Alert>
+
+방문해주셔서 감사합니다. **일취월장**, 함께 성장합시다.

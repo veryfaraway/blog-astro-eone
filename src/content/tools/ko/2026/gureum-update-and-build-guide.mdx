@@ -77,7 +77,7 @@ make init
 - `xcpretty` 루비 젬 설치 (빌드 로그 포매터)
 - `libhangul` 서브모듈 클론 및 초기화 (한글 조합 엔진)
 
-5~10분 정도 걸린다. 중간에 macOS 암호를 묻는 경우 잠금 해제 암호를 입력하면 된다.
+각 도구는 이미 설치된 경우 자동으로 건너뛴다. `shellcheck`, `swiftformat`, `xcpretty`가 모두 설치되어 있다면 `git submodule update` 한 줄만 실행되고 바로 끝난다. 처음 세팅하는 환경이라면 5~10분 정도 걸리며, 중간에 macOS 암호를 묻는 경우 잠금 해제 암호를 입력하면 된다.
 
 ### 3단계: 빌드 & 자동 설치
 
@@ -119,6 +119,18 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 ```
 
 이후 `make init` 또는 `./tools/install_debug.sh` 를 다시 실행한다.
+
+### `unable to resolve module dependency: 'SwiftIOKit'`
+
+`Preferences` 타깃에 `SwiftUp` 패키지 의존성이 빠져 있을 때 발생한다. `SwiftIOKit`은 별도 패키지가 아니라 `SwiftUp` 안에 포함된 모듈이기 때문에, `SwiftUp`을 직접 링크해야 한다.
+
+1. Xcode에서 `Gureum.xcodeproj` 열기
+2. 좌측 Project Navigator에서 **Gureum** 프로젝트 선택
+3. **TARGETS → Preferences** 선택
+4. **General** 탭 → **Frameworks, Libraries, and Embedded Content**
+5. `+` 클릭 → **SwiftUp** 선택 → Add
+
+이후 `./tools/install_debug.sh`를 다시 실행한다.
 
 ### `xcpretty: command not found`
 

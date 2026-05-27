@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import { colorTheme } from '../config/theme';
 
 const sections = [
   { name: 'Life',    href: '/life',    color: 'oklch(0.72 0.18 145)' },
@@ -13,7 +14,7 @@ const sections = [
 ---
 
 <!doctype html>
-<html lang="ko" class="antialiased">
+<html lang="ko" class="antialiased" data-color-theme={colorTheme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
