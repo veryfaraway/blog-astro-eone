@@ -1,0 +1,112 @@
+---
+title: "클라우드별 최적 JDK 선택 가이드 (AWS·Azure·GCP)"
+description: "AWS는 Corretto, Azure는 MS Build of OpenJDK, GCP는 Temurin — 클라우드마다 공식 지원 JDK가 다릅니다. 각 플랫폼의 배포판 현황과 실무 선택 기준을 한눈에 비교합니다."
+date: 2026-05-27
+category: Backend
+tags:
+  - "java"
+  - "jdk"
+  - "aws"
+  - "azure"
+  - "gcp"
+  - "cloud"
+draft: false
+lang: ko
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1779880591/library/logo/java_logo_clean_n3kzav.webp"
+---
+
+import Alert from '@/components/Alert.astro';
+
+Java 프로젝트를 클라우드에 올릴 때, JDK 배포판 선택은 생각보다 중요한 문제입니다. OpenJDK는 무료지만, 배포판마다 **지원 기간, 패치 주기, 클라우드 통합 수준**이 다릅니다. 특히 AWS·Azure·GCP는 각자 공식 추천 또는 자체 배포판을 내놓고 있어서, "그냥 아무거나 쓰면 되지"가 통하지 않는 상황이 됐습니다.
+
+이 포스트에서는 클라우드 3사의 JDK 지원 현황을 비교하고, 실무에서 어떤 기준으로 선택하면 좋을지 정리해 봤습니다.
+
+## AWS: Amazon Corretto
+
+AWS는 **Amazon Corretto**라는 자체 OpenJDK 배포판을 2019년부터 운영하고 있습니다. Amazon 내부에서 수천 개의 프로덕션 서비스를 돌리는 데 쓰고 있는 JDK라고 공식적으로 밝히고 있어서, 실전 검증 면에서는 상당한 신뢰를 줍니다.
+
+### Corretto의 주요 특징
+
+- **무료 + 장기 지원(LTS)**: Java 8, 11, 17, 21 모두 무료 LTS 제공. Oracle 유료 지원 없이도 오랫동안 패치를 받을 수 있음
+- **TCK 통과**: Java SE 표준 호환성 검증(TCK)을 통과해서 호환성 걱정이 없음
+- **플랫폼 폭**: Linux, Windows, macOS, Docker 이미지까지 지원
+- **AWS 서비스 통합**: Elastic Beanstalk, Lambda(Java 런타임), CodeBuild 등에서 Corretto가 기본 또는 권장 런타임으로 사용됨
+
+<Alert type="tip">
+Lambda Java 런타임을 사용할 때 Corretto 기반 이미지를 쓰면 콜드 스타트 특성이 AWS 환경에 맞게 최적화되어 있습니다.
+</Alert>
+
+### 실무 팁
+
+EC2나 ECS에서 직접 JDK를 설치할 때도 Corretto를 선택하면 AWS 지원팀과 커뮤니케이션이 훨씬 원활합니다. AWS 공식 문서와 지원 케이스 대부분이 Corretto 기준으로 작성되어 있기 때문입니다.
+
+```bash
+# Amazon Linux 2023에서 Corretto 21 설치
+sudo dnf install java-21-amazon-corretto
+```
+
+## Azure: Microsoft Build of OpenJDK / Azul Zulu
+
+Azure는 자체 배포판인 **Microsoft Build of OpenJDK**와, 파트너사인 Azul의 **Zulu** 두 가지를 공식 지원합니다. 둘 다 Azure Marketplace에서 바로 쓸 수 있고, Microsoft가 직접 지원을 보장하는 배포판입니다.
+
+### 어느 걸 써야 할까?
+
+|  | Microsoft Build of OpenJDK | Azul Zulu |
+|---|---|---|
+| 관리 주체 | Microsoft | Azul Systems |
+| 주요 타깃 | Azure 네이티브 환경 | 멀티클라우드/온프레미스 |
+| 무료 여부 | 무료 | 커뮤니티 버전 무료, 엔터프라이즈 유료 |
+| LTS 지원 | Java 11, 17, 21 | Java 8, 11, 17, 21 외 다수 |
+
+- **Azure 중심으로만 운영**한다면: Microsoft Build of OpenJDK가 Azure App Service, Azure Functions와 깊게 통합되어 있어서 편리합니다.
+- **멀티클라우드 또는 온프레미스 혼용**이라면: Azul Zulu가 환경을 가리지 않고 동작해서 이식성이 좋습니다.
+
+<Alert type="info">
+Azure App Service에서 Java 런타임을 선택하면 내부적으로 Microsoft Build of OpenJDK 또는 Zulu 중에서 선택할 수 있습니다. 명시적으로 지정하지 않으면 Microsoft가 권장 버전으로 자동 설정합니다.
+</Alert>
+
+## GCP: Adoptium Temurin (공식 권장)
+
+GCP는 AWS나 Azure처럼 자체 브랜드 JDK를 만들지 않았습니다. 대신 **Eclipse Adoptium**의 **Temurin**(구 AdoptOpenJDK)을 공식 권장합니다.
+
+### Temurin의 주요 특징
+
+- **Eclipse Foundation 관리**: 벤더 중립적인 오픈소스 재단에서 관리
+- **TCK 통과**: Java SE 호환성 인증 완료
+- **Cloud Run / GKE 기본**: GCP 공식 Java 컨테이너 이미지는 Temurin 기반
+- **광범위한 버전 지원**: Java 8부터 최신 버전까지 폭넓은 지원
+
+### GCP에서 Java 컨테이너 만들기
+
+```dockerfile
+# GCP 권장 Temurin 기반 이미지
+FROM eclipse-temurin:21-jre-alpine AS runtime
+COPY --from=build /app/target/app.jar /app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+```
+
+<Alert type="warning" title="GKE Autopilot 주의">
+GKE Autopilot 환경에서는 컨테이너 이미지의 JVM 옵션 중 일부(특히 네이티브 메모리 관련)가 제한될 수 있습니다. `-XX:+UseContainerSupport`는 기본 활성화되어 있으니 별도 설정 불필요합니다.
+</Alert>
+
+## 클라우드별 한눈에 비교
+
+| 클라우드 | 공식 권장 JDK | 자체 배포 여부 | 무료 LTS | 주요 통합 서비스 |
+|---------|-------------|-------------|---------|----------------|
+| AWS | Amazon Corretto | ✅ 자체 배포 | Java 8/11/17/21 | Lambda, Beanstalk, CodeBuild |
+| Azure | MS Build of OpenJDK, Azul Zulu | ✅ 자체 배포 | Java 11/17/21 | App Service, Functions, AKS |
+| GCP | Adoptium Temurin | ❌ 파트너 권장 | Java 8/11/17/21 | Cloud Run, GKE, App Engine |
+
+## 선택 기준 요약
+
+클라우드별로 딱 하나씩 고르는 게 이상적이지만, 현실은 멀티클라우드 환경이거나 팀마다 다른 클라우드를 쓰는 경우가 많습니다.
+
+1. **AWS 단독 사용** → Amazon Corretto — 고민 없이 선택
+2. **Azure 단독, Microsoft 통합 중요** → Microsoft Build of OpenJDK
+3. **Azure + 멀티클라우드** → Azul Zulu
+4. **GCP 또는 클라우드 중립** → Adoptium Temurin
+5. **온프레미스 포함 어디서나** → Adoptium Temurin 또는 Azul Zulu
+
+> JDK 배포판 선택은 "성능 차이"보다 **"지원 정책과 운영 편의성"** 의 문제입니다. 클라우드 공식 지원 배포판을 쓰면 문제가 생겼을 때 Support 케이스 대응이 훨씬 빠릅니다.
+
+각 클라우드의 공식 지원 배포판을 기본으로 삼되, 멀티클라우드 운영이라면 Temurin이나 Zulu처럼 벤더 중립적인 배포판으로 통일하는 전략도 유효합니다. Oracle JDK 유료 라이선스 걱정 없이 안정적인 LTS를 원한다면, 세 클라우드 모두 충분한 무료 대안을 제공하고 있으니 참고하세요.
