@@ -25,7 +25,9 @@ thumbnail: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=
 가장 먼저 할 일은 `main` 브랜치가 오염되기 전, 내 로컬에서 정상적으로 동작했던 마지막 커밋 해시를 찾는 것입니다.
 
 ### git reflog 활용
+
 `git log`에는 나오지 않는 로컬의 포인터 이동 이력을 확인합니다.
+
 ```bash
 git reflog main
 

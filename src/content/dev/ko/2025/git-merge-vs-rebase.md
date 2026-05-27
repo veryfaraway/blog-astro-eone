@@ -26,6 +26,7 @@ Git을 사용하면서 `merge`와 `rebase` 중에 어떤 것을 써야 할지 �
 **Merge**는 두 개의 브랜치를 하나의 커밋으로 통합하는 방식입니다. 원본 브랜치의 히스토리는 보존되며, 모든 변경사항을 하나의 "머지 커밋"으로 묶어서 기록합니다.
 
 **특징:**
+
 - ✅ 원본 브랜치의 히스토리가 완전히 보존됨
 - ✅ 작업 흐름을 명확하게 추적 가능
 - ⚠️ 커밋 히스토리가 복잡해질 수 있음
@@ -35,6 +36,7 @@ Git을 사용하면서 `merge`와 `rebase` 중에 어떤 것을 써야 할지 �
 **Rebase**는 한 브랜치의 베이스(기반)를 다른 브랜치의 최신 커밋으로 변경하는 방식입니다. 커밋 히스토리를 "재작성"하여 선형적인 히스토리를 만듭니다.
 
 **특징:**
+
 - ✅ 선형적이고 깔끔한 커밋 히스토리
 - ✅ 히스토리 추적이 쉬움
 - ⚠️ 공유 브랜치에서는 위험할 수 있음
@@ -47,13 +49,14 @@ Git을 사용하면서 `merge`와 `rebase` 중에 어떤 것을 써야 할지 �
 
 작업을 시작할 때의 브랜치 구조를 살펴봅시다.
 
-```
+```text
 main    A---B---C
          \
 feature   D---E
 ```
 
 **설명:**
+
 - `main` 브랜치: A, B, C 커밋이 있음
 - `feature` 브랜치: D, E 커밋이 있음 (A를 기반으로 생성됨)
 
@@ -61,20 +64,22 @@ feature   D---E
 
 `main` 브랜치에서 `git merge feature` 실행:
 
-```
+```text
 main    A---B---C---M (머지 커밋)
          \       /
 feature   D-----E
 ```
 
 **결과:**
+
 - 새로운 **머지 커밋 M**이 생성됨
 - 모든 커밋의 순서가 보존됨
 - 브랜치의 존재가 히스토리에 기록됨
 - 순환 구조(diamond pattern)가 형성됨
 
 **커밋 로그:**
-```
+
+```text
 M - Merge branch 'feature' into 'main'
 C - Commit C
 E - Commit E
@@ -87,7 +92,7 @@ A - Commit A
 
 `feature` 브랜치에서 `git rebase main` 실행:
 
-```
+```text
 main    A---B---C
          \
 feature   D'--E'
@@ -95,18 +100,20 @@ feature   D'--E'
 
 그 다음 `main`에서 `git merge feature`:
 
-```
+```text
 main    A---B---C---D'---E'
 ```
 
 **결과:**
+
 - **새로운 커밋 D', E'**이 생성됨 (원본 D, E와 다른 해시)
 - 선형적인 히스토리 형성
 - 모든 커밋이 한 줄로 정렬됨
 - 브랜치 통합이 전혀 보이지 않음
 
 **커밋 로그:**
-```
+
+```text
 E' - Commit E (rebased)
 D' - Commit D (rebased)
 C - Commit C
@@ -121,6 +128,7 @@ A - Commit A
 ### 3.1 Merge 사용법
 
 #### 기본 merge
+
 ```bash
 # feature 브랜치를 현재 브랜치(main)에 병합
 git merge feature
@@ -130,7 +138,7 @@ git merge feature
 
 만약 main 브랜치에 새로운 커밋이 없다면:
 
-```
+```text
 main    A---B
          \
 feature   C---D
@@ -138,13 +146,14 @@ feature   C---D
 
 이 경우 `git merge feature`는 자동으로 fast-forward merge를 수행합니다:
 
-```
+```text
 main    A---B---C---D
 ```
 
 **새로운 머지 커밋이 생성되지 않음**
 
 #### Fast-Forward 방지
+
 ```bash
 # 항상 머지 커밋을 생성
 git merge --no-ff feature
@@ -152,7 +161,7 @@ git merge --no-ff feature
 
 #### 3-way Merge (일반적인 merge)
 
-```
+```text
 main    A---B---C
          \     /
 feature   D---E
@@ -163,12 +172,14 @@ feature   D---E
 ### 3.2 Rebase 사용법
 
 #### 기본 rebase
+
 ```bash
 # feature 브랜치를 main 브랜치 위에 재배치
 git rebase main feature
 ```
 
 또는:
+
 ```bash
 # feature 브랜치에서 실행
 git checkout feature
@@ -185,7 +196,8 @@ git rebase -i HEAD~3
 ```
 
 **가능한 옵션:**
-```
+
+```text
 pick   ef12345  Commit message 1
 reword d4a6789  Commit message 2
 squash a2b3456  Commit message 3
@@ -221,6 +233,7 @@ git push origin feature
 ```
 
 **이유:**
+
 - 공유 브랜치에서 히스토리를 재작성하면 다른 사람들의 작업과 충돌
 - `git push --force`는 다른 사람의 변경사항을 덮어쓸 수 있음
 
@@ -237,6 +250,7 @@ git merge --ff-only feature
 ```
 
 **이유:**
+
 - 자신의 작업만 영향을 받음
 - 메인 브랜치의 히스토리가 깔끔함
 
@@ -251,6 +265,7 @@ git push origin release/v1.0
 ```
 
 **이유:**
+
 - 여러 사람이 함께 작업할 가능성 높음
 - 브랜치 통합 과정이 명확해야 함
 
@@ -267,7 +282,8 @@ git merge --no-ff feature
 ```
 
 결과:
-```
+
+```text
 main    A---B---C---M
                  \  /
 feature           D'---E'
@@ -287,6 +303,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 ```
 
 **충돌 표시:**
+
 ```javascript
 // file.txt 내용
 function example() {
@@ -299,6 +316,7 @@ function example() {
 ```
 
 **해결 방법:**
+
 ```bash
 # 1. 충돌 해결
 # file.txt를 수정하여 원하는 버전 선택
@@ -321,6 +339,7 @@ hint: Resolve all conflicts manually
 ```
 
 **충돌 표시:**
+
 ```javascript
 // 충돌은 merge와 동일하게 표시됨
 <<<<<<< HEAD
@@ -331,6 +350,7 @@ hint: Resolve all conflicts manually
 ```
 
 **해결 방법:**
+
 ```bash
 # 1. 충돌 해결 (파일 수정)
 
@@ -344,6 +364,7 @@ git rebase --continue
 ```
 
 **Rebase 취소:**
+
 ```bash
 # Rebase 중단
 git rebase --abort
@@ -382,7 +403,8 @@ git branch -d feature/new-auth
 ```
 
 **결과:**
-```
+
+```text
 main    A---B---C---M (PR merge commit)
 ```
 
@@ -411,7 +433,8 @@ git merge --ff-only feature/optimization
 ```
 
 **결과:**
-```
+
+```text
 main    A---B---C---D' (한 개의 최적화 커밋)
 ```
 
@@ -420,6 +443,7 @@ main    A---B---C---D' (한 개의 최적화 커밋)
 ## 7. 베스트 프랙티스
 
 ### ✅ Merge를 사용해야 할 때
+
 1. **공유 브랜치에서 작업할 때** (main, develop, release)
 2. **여러 개발자가 함께 작업하는 브랜치**
 3. **브랜치 통합 과정을 기록해야 할 때**
@@ -427,6 +451,7 @@ main    A---B---C---D' (한 개의 최적화 커밋)
 5. **장기간 운영되는 브랜치** (release, hotfix)
 
 ### ✅ Rebase를 사용해야 할 때
+
 1. **로컬 개인 브랜치에서만 작업할 때**
 2. **공개되지 않은 커밋들을 정리할 때**
 3. **선형적인 히스토리를 원할 때**
@@ -436,6 +461,7 @@ main    A---B---C---D' (한 개의 최적화 커밋)
 ### ⚠️ Rebase 할 때 주의사항
 
 **절대 하지 말 것:**
+
 ```bash
 # 공유 브랜치를 rebase 후 강제 푸시
 git rebase main
@@ -443,6 +469,7 @@ git push --force  # 위험!
 ```
 
 **안전한 방식:**
+
 ```bash
 # 로컬 브랜치만 rebase
 git push --force-with-lease  # 더 안전함
@@ -484,20 +511,26 @@ git lg  # 간단히 사용 가능
 ## 9. 자주 묻는 질문 (FAQ)
 
 ### Q1: Merge와 Rebase 중 뭘 써야 하나요?
+
 **A:** 공유 브랜치에서는 **merge**, 개인 브랜치에서는 **rebase**를 사용하세요.
 
 ### Q2: 이미 Rebase한 커밋을 되돌릴 수 있나요?
+
 **A:** `git reflog`로 원래 커밋을 찾아 되돌릴 수 있습니다:
+
 ```bash
 git reflog
 git checkout <원래-커밋-해시>
 ```
 
 ### Q3: Merge와 Rebase를 섞어서 써도 되나요?
+
 **A:** 가능하지만 복잡해집니다. 팀과 규칙을 정하고 일관되게 사용하세요.
 
 ### Q4: 공개 저장소에 rebase한 내용을 푸시했어요. 어떻게 하나요?
+
 **A:** `git revert`를 사용하여 되돌리세요:
+
 ```bash
 git revert <원본-커밋-해시>
 git push origin main

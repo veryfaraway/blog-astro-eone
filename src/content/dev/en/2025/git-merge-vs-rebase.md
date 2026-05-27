@@ -11,7 +11,7 @@ tags:
   - "version-control"
   - "devops"
 draft: false
-lang: ko
+lang: en
 thumbnail: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2676&auto=format&fit=crop"
 ---
 
@@ -26,6 +26,7 @@ Have you ever wondered when to use `merge` vs `rebase` in Git? Both commands int
 **Merge** integrates two branches by creating a new "merge commit" that combines all changes. The original branch history is completely preserved.
 
 **Characteristics:**
+
 - ✅ Complete preservation of original branch history
 - ✅ Clear tracking of the integration process
 - ⚠️ Commit history can become complex
@@ -35,6 +36,7 @@ Have you ever wondered when to use `merge` vs `rebase` in Git? Both commands int
 **Rebase** changes the base of one branch to the latest commit of another branch. It "rewrites" the commit history to create a linear timeline.
 
 **Characteristics:**
+
 - ✅ Clean, linear commit history
 - ✅ Easier to follow the development flow
 - ⚠️ Can be dangerous on shared branches
@@ -47,13 +49,14 @@ Have you ever wondered when to use `merge` vs `rebase` in Git? Both commands int
 
 Let's look at the branch structure before integration:
 
-```
+```text
 main    A---B---C
          \
 feature   D---E
 ```
 
 **Explanation:**
+
 - `main` branch: contains commits A, B, C
 - `feature` branch: contains commits D, E (created from A)
 
@@ -61,20 +64,22 @@ feature   D---E
 
 Running `git merge feature` from the `main` branch:
 
-```
+```text
 main    A---B---C---M (merge commit)
          \       /
 feature   D-----E
 ```
 
 **Result:**
+
 - Creates a new **merge commit M**
 - Preserves the order of all commits
 - Records the branch's existence in history
 - Creates a diamond-shaped pattern
 
 **Commit Log:**
-```
+
+```text
 M - Merge branch 'feature' into 'main'
 C - Commit C
 E - Commit E
@@ -87,7 +92,7 @@ A - Commit A
 
 Running `git rebase main` from the `feature` branch:
 
-```
+```text
 main    A---B---C
          \
 feature   D'--E'
@@ -95,18 +100,20 @@ feature   D'--E'
 
 Then running `git merge feature` from `main`:
 
-```
+```text
 main    A---B---C---D'---E'
 ```
 
 **Result:**
+
 - Creates **new commits D', E'** (different hashes from original D, E)
 - Creates a linear history
 - All commits appear in a single line
 - Branch integration is completely invisible
 
 **Commit Log:**
-```
+
+```text
 E' - Commit E (rebased)
 D' - Commit D (rebased)
 C - Commit C
@@ -121,6 +128,7 @@ A - Commit A
 ### 3.1 Merge Usage
 
 #### Basic merge
+
 ```bash
 # Merge feature branch into current branch (main)
 git merge feature
@@ -130,7 +138,7 @@ git merge feature
 
 If the main branch has no new commits:
 
-```
+```text
 main    A---B
          \
 feature   C---D
@@ -138,13 +146,14 @@ feature   C---D
 
 In this case, `git merge feature` automatically performs a fast-forward merge:
 
-```
+```text
 main    A---B---C---D
 ```
 
 **No merge commit is created**
 
 #### Prevent Fast-Forward
+
 ```bash
 # Always create a merge commit
 git merge --no-ff feature
@@ -152,7 +161,7 @@ git merge --no-ff feature
 
 #### 3-way Merge (typical merge)
 
-```
+```text
 main    A---B---C
          \     /
 feature   D---E
@@ -163,12 +172,14 @@ This automatically performs a 3-way merge and creates a merge commit.
 ### 3.2 Rebase Usage
 
 #### Basic rebase
+
 ```bash
 # Rebase feature branch on top of main
 git rebase main feature
 ```
 
 Or:
+
 ```bash
 # From feature branch
 git checkout feature
@@ -185,7 +196,8 @@ git rebase -i HEAD~3
 ```
 
 **Available Options:**
-```
+
+```text
 pick   ef12345  Commit message 1
 reword d4a6789  Commit message 2
 squash a2b3456  Commit message 3
@@ -221,6 +233,7 @@ git push origin feature
 ```
 
 **Why:**
+
 - Rewriting history on shared branches conflicts with others' work
 - `git push --force` can overwrite other developers' changes
 
@@ -237,6 +250,7 @@ git merge --ff-only feature
 ```
 
 **Why:**
+
 - Only your work is affected
 - Main branch history stays clean
 
@@ -251,6 +265,7 @@ git push origin release/v1.0
 ```
 
 **Why:**
+
 - Multiple developers may work on the branch
 - Branch integration process should be clear
 
@@ -267,7 +282,8 @@ git merge --no-ff feature
 ```
 
 Result:
-```
+
+```text
 main    A---B---C---M
                  \  /
 feature           D'---E'
@@ -287,6 +303,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 ```
 
 **Conflict Markers:**
+
 ```javascript
 // Contents of file.txt
 function example() {
@@ -299,6 +316,7 @@ function example() {
 ```
 
 **Resolution:**
+
 ```bash
 # 1. Resolve conflict
 # Edit file.txt to choose the desired version
@@ -321,6 +339,7 @@ hint: Resolve all conflicts manually
 ```
 
 **Conflict Markers:**
+
 ```javascript
 // Conflicts are marked the same as in merge
 <<<<<<< HEAD
@@ -331,6 +350,7 @@ hint: Resolve all conflicts manually
 ```
 
 **Resolution:**
+
 ```bash
 # 1. Resolve conflict (edit files)
 
@@ -344,6 +364,7 @@ git rebase --continue
 ```
 
 **Abort Rebase:**
+
 ```bash
 # Cancel the rebase
 git rebase --abort
@@ -382,7 +403,8 @@ git branch -d feature/new-auth
 ```
 
 **Result:**
-```
+
+```text
 main    A---B---C---M (PR merge commit)
 ```
 
@@ -411,7 +433,8 @@ git merge --ff-only feature/optimization
 ```
 
 **Result:**
-```
+
+```text
 main    A---B---C---D' (single optimization commit)
 ```
 
@@ -420,6 +443,7 @@ main    A---B---C---D' (single optimization commit)
 ## 7. Best Practices
 
 ### ✅ Use Merge When:
+
 1. **Working on shared branches** (main, develop, release)
 2. **Multiple developers work on the branch**
 3. **Integration history must be preserved**
@@ -427,6 +451,7 @@ main    A---B---C---D' (single optimization commit)
 5. **Working with long-lived branches** (release, hotfix)
 
 ### ✅ Use Rebase When:
+
 1. **Working only on a local personal branch**
 2. **Cleaning up commits that haven't been shared**
 3. **You want a linear history**
@@ -436,6 +461,7 @@ main    A---B---C---D' (single optimization commit)
 ### ⚠️ Important Rebase Safety Tips
 
 **Never do this:**
+
 ```bash
 # Rebase a shared branch and force push
 git rebase main
@@ -443,6 +469,7 @@ git push --force  # Dangerous!
 ```
 
 **Safer approach:**
+
 ```bash
 # Only rebase local branches
 git push --force-with-lease  # Safer
@@ -484,20 +511,26 @@ git lg  # Use it simply
 ## 9. Frequently Asked Questions (FAQ)
 
 ### Q1: Should I use merge or rebase?
+
 **A:** Use **merge** on shared branches, **rebase** on personal branches.
 
 ### Q2: Can I undo a rebase?
+
 **A:** Yes, use `git reflog` to find the original commit:
+
 ```bash
 git reflog
 git checkout <original-commit-hash>
 ```
 
 ### Q3: Can I mix merge and rebase?
+
 **A:** Possible but complicated. Establish and follow team rules for consistency.
 
 ### Q4: I pushed rebased commits to a public repository. What should I do?
+
 **A:** Use `git revert` to undo:
+
 ```bash
 git revert <original-commit-hash>
 git push origin main
