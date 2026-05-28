@@ -10,7 +10,7 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1535726858289-9ffe2dff6f52?q=80&w=2938&auto=format&fit=crop"
 ---
 
-![](https://d.pr/i/dYyQYo+)
+![Part 1](https://d.pr/i/dYyQYo+)
 
 1. 고객이 요구사항을 설명한 것
 
@@ -20,7 +20,7 @@ thumbnail: "https://images.unsplash.com/photo-1535726858289-9ffe2dff6f52?q=80&w=
 
 ---
 
-![](https://d.pr/i/UUk9fP+)
+![Part 2](https://d.pr/i/UUk9fP+)
 
 4. 프로그래머들이 만들어낸 것
 
@@ -30,7 +30,7 @@ thumbnail: "https://images.unsplash.com/photo-1535726858289-9ffe2dff6f52?q=80&w=
 
 ---
 
-![](https://d.pr/i/Ez8ylw+)
+![Part 3](https://d.pr/i/Ez8ylw+)
 
 7. 설치했을 때
 
@@ -40,6 +40,6 @@ thumbnail: "https://images.unsplash.com/photo-1535726858289-9ffe2dff6f52?q=80&w=
 
 ---
 
-![](https://d.pr/i/EFJtNp+)
+![Part 4](https://d.pr/i/EFJtNp+)
 
 10. 고객이 정말로 원했던 것

@@ -58,6 +58,7 @@ public class Java17ThreadExample {
 ```
 
 **문제점:**
+
 - Platform Thread는 OS 스레드와 1:1 매핑
 - 스레드 생성 비용이 크고 메모리 소비가 많음
 - 스레드 풀 크기 제한으로 동시성 제한
@@ -88,6 +89,7 @@ public class Java21VirtualThreadExample {
 ```
 
 **장점:**
+
 - 수백만 개의 가상 스레드 생성 가능
 - 메모리 사용량 극소 (KB 단위)
 - I/O 대기 시 자동으로 다른 작업 실행
@@ -724,16 +726,19 @@ public class ThreadBenchmark {
 ## 실무 적용 체크리스트
 
 ### 즉시 적용 가능
+
 - ✅ Virtual Threads (Spring Boot 3.2+)
 - ✅ Pattern Matching for switch
 - ✅ Record Patterns
 - ✅ Sequenced Collections
 
 ### 프리뷰 기능 (프로덕션 주의)
+
 - ⚠️ String Templates (--enable-preview 필요)
 - ⚠️ Unnamed Classes (--enable-preview 필요)
 
 ### 마이그레이션 우선순위
+
 1. **높음**: Virtual Threads - 즉각적인 성능 개선
 2. **중간**: Pattern Matching - 코드 가독성 향상
 3. **낮음**: Sequenced Collections - 점진적 리팩토링
@@ -743,6 +748,7 @@ public class ThreadBenchmark {
 Java 21은 Java 17 이후 가장 큰 변화를 가져온 LTS 버전입니다. 특히 Virtual Threads는 동시성 프로그래밍의 패러다임을 바꿀 혁신적인 기능입니다.
 
 **핵심 정리:**
+
 - **Virtual Threads**: I/O 집약적 애플리케이션의 성능을 극적으로 개선
 - **Pattern Matching**: 타입 검사와 분해를 간결하게 처리
 - **Record Patterns**: 복잡한 데이터 구조를 쉽게 다룸
