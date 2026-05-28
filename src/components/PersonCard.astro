@@ -11,6 +11,29 @@ const { name, role, image, profileUrl, imdbId } = Astro.props;
 
 const href = profileUrl ?? (imdbId ? `https://www.imdb.com/name/${imdbId}/` : undefined);
 
+// imdbId로 TMDb에서 프로필 사진 빌드 타임 fetch (image prop이 없을 때)
+let fetchedImage: string | undefined;
+const tmdbKey = import.meta.env.TMDB_API_KEY;
+
+if (imdbId && !image && tmdbKey) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/find/${imdbId}?external_source=imdb_id&api_key=${tmdbKey}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      const profilePath = data.person_results?.[0]?.profile_path;
+      if (profilePath) {
+        fetchedImage = `https://image.tmdb.org/t/p/w185${profilePath}`;
+      }
+    }
+  } catch {
+    // fetch 실패 → initials fallback
+  }
+}
+
+const displayImage = image ?? fetchedImage;
+
 // 이름에서 이니셜 생성 (한국어·영어 모두 대응)
 const initials = name.includes(' ')
   ? name.split(' ').map(n => [...n][0]).join('').toUpperCase().slice(0, 2)
@@ -39,10 +62,10 @@ const linkProps = href
   <!-- 프로필 이미지 또는 이니셜 -->
   <div class:list={[
     'flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-semibold',
-    image ? 'bg-muted' : `${palette.bg} ${palette.text}`,
+    displayImage ? 'bg-muted' : `${palette.bg} ${palette.text}`,
   ]}>
-    {image
-      ? <img src={image} alt={name} class="h-full w-full object-cover" loading="lazy" />
+    {displayImage
+      ? <img src={displayImage} alt={name} class="h-full w-full object-cover" loading="lazy" />
       : initials
     }
   </div>
