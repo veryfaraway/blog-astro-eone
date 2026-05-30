@@ -13,6 +13,9 @@ lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/l_logo-coffee/fl_layer_apply,g_north,y_0.1,o_50/v1771500483/media/person/investors/The-Masters-of-Investment_iazict.png"
 ---
 
+import Alert from '@/components/Alert.astro';
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
+
 워런 버핏은 지금 어떤 주식을 들고 있을까? 레이 달리오의 포트폴리오는 어떻게 변했을까?  
 사실 이 정보는 누구에게나 무료로 공개되어 있습니다. 바로 **13F 공시** 덕분입니다.
 
@@ -79,7 +82,7 @@ timeline
 
 7,000여 개 기관 중 **장기투자 성향 + 검증된 장기 수익률**을 기준으로 압축한 10곳입니다.
 
-{/* hugo: {{< cldimg src="https://res.cloudinary.com/doal3ofyr/image/upload/v1771585820/media/person/investors/i_masters_dfp28f.webp" >}} */}
+<CloudinaryImage publicId="v1771585820/media/person/investors/i_masters_dfp28f.webp" alt="장기투자 대가" />
 
 ---
 
@@ -145,12 +148,9 @@ timeline
 
 ### 6위. 스탠리 드러켄밀러 — 듀케인 패밀리 오피스 (Duquesne Family Office)
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 주의</p>
-
+<Alert type="warning" title="주의">
 회전율이 높아 엄밀히는 장기투자자가 아님. 그러나 수익률이 워낙 탁월해 추적 가치가 높음
-
-</div>
+</Alert>
 
 - **투자 철학**: 매크로 기반 집중투자, 트렌드에 강하게 베팅
 - **포트폴리오 회전율**: 높음 (분기마다 포지션 변화 큼)
@@ -229,9 +229,6 @@ timeline
 - [예정] **브리지워터 편** — 레이 달리오의 올웨더는 지금 어디를 향하나?
 - [예정] **퍼싱 스퀘어 편** — 빌 애크먼, 행동주의의 다음 타깃은?
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 참고</p>
-
+<Alert type="danger" title="투자 경고">
 이 포스트는 투자 참고 자료이며, 특정 종목 매수·매도를 권유하지 않습니다. 투자 결정은 본인의 판단과 책임하에 이루어져야 합니다.
-
-</div>
+</Alert>
