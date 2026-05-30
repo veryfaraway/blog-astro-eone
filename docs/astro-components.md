@@ -45,6 +45,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 ```
 
 **규칙:**
+
 - import는 frontmatter 바로 아래, 본문 시작 전에 작성
 - `@/` 경로는 `src/` 디렉토리의 alias (`tsconfig.json`에 설정됨)
 - `.md` 파일에서는 컴포넌트 import 불가 → 컴포넌트가 필요하면 `.mdx`로 변환
@@ -191,6 +192,7 @@ import PersonInline from '@/components/PersonInline.astro';
 ---
 
 #### `CloudinaryImage.astro`
+
 Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성.
 
 > **환경변수**: `PUBLIC_CLOUDINARY_CLOUD_NAME` 필요.
@@ -221,6 +223,7 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 ---
 
 #### `Logo.astro`
+
 원형 틀 안에 e 스피너 형태의 SVG 로고. 헤더 및 브랜딩 용도.
 
 ```astro
