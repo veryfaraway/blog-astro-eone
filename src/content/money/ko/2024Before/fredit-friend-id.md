@@ -9,6 +9,7 @@ tags:
   - "프레딧"
 draft: false
 lang: ko
+affiliate: true
 thumbnail: "https://s3image.fredit.co.kr/webimg/2023/02/20/1676872604979.jpg"
 ---
 

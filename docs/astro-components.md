@@ -99,6 +99,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 ---
 
 #### `AffiliateLink.astro`
+
 제휴 링크 버튼 + 자동 면책 문구. 수익화 링크에 사용.
 
 ```mdx
@@ -118,6 +119,7 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 ---
 
 #### `AffiliateNotice.astro`
+
 포스트 상단에 표시되는 제휴 공시 박스. Props 없음. `PostLayout`에서 `affiliate: true`일 때 자동 렌더링되므로 MDX에서 직접 import할 필요 없음.
 
 ```yaml
@@ -128,6 +130,7 @@ affiliate: true
 ---
 
 #### `AdSlot.astro`
+
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.
 
 ```mdx

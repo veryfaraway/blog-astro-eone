@@ -17,12 +17,14 @@ thumbnail: "https://images.unsplash.com/photo-1598863505577-74750d3b4475?q=80&w=
 
 SCHD의 상위 10개 구성종목은 매년 리밸런싱을 통해 조정됩니다. 2023년과 2024년 사이의 주요 변화는 다음과 같습니다:
 
-#### 추가된 종목
+### 추가된 종목
+
 - **Pfizer Inc. (PFE)**: 헬스케어 분야에서 강력한 입지를 가진 제약회사로, SCHD의 포트폴리오에 새롭게 추가되었습니다.
 - **Bristol-Myers Squibb Company (BMY)**: 또 다른 주요 제약회사로, 안정적인 배당 성장을 보여주며 새롭게 포함되었습니다.
 - **Lockheed Martin Corporation (LMT)**: 방위산업 분야의 선두주자로, SCHD 포트폴리오에 포함되어 있습니다.
 
-#### 제외된 종목
+### 제외된 종목
+
 - **Amgen Inc. (AMGN)**: 이전에는 상위 종목 중 하나였으나, 이번 리밸런싱에서 제외되었습니다.
 - **PepsiCo, Inc. (PEP)**: 소비재 분야의 대표 기업이었으나, 이번 변화에서 빠졌습니다.
 - **Verizon Communications Inc. (VZ)**: 통신 분야에서 중요한 위치를 차지했으나, 이번 조정에서 제외되었습니다.
@@ -48,5 +50,6 @@ SCHD의 포트폴리오 변화는 시장 상황과 기업의 재무 상태를 �
 
 ---
 
-#### 관련글
-[1] [SCHD ETF 소개](/money/1016-etf-schd "SCHD ETF 소개")
+### 관련글
+
+[1] [SCHD ETF 소개](/money/etf-overview-schd "SCHD ETF 소개")

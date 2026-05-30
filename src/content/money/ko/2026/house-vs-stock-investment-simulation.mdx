@@ -14,12 +14,12 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1562596133-06ae520e8c7e?q=80&w=2371&auto=format&fit=crop"
 ---
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 면책 고지</p>
+import Alert from '@/components/Alert.astro';
+import Chart from '@/components/Chart.astro';
 
+<Alert type="warning" title="면책 고지">
 이 글은 과거 통계 데이터를 기반으로 한 **시뮬레이션**입니다. 미래 집값, 주식 수익률, 환율, 금리는 모두 불확실하며, 이 분석이 실제 투자 결과를 보장하지 않습니다. 투자 결정은 개인의 상황에 맞게 신중히 판단하시기 바랍니다.
-
-</div>
+</Alert>
 
 ---
 
@@ -109,34 +109,44 @@ flowchart TD
 시나리오 B에서는 매달 **252만 원**이 남고, 이 돈이 S&P500에 추가로 투자됩니다.
 집값 상승에 따라 재산세·유지비도 오르기 때문에 20년 후 집 매수의 월 지출은 약 498만 원까지 늘어납니다.
 
-{/* TODO:chartjs
-(function() {
-  const years = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-  const costA = [401,404,408,411,415,418,422,427,431,436,441,446,451,457,463,469,476,483,490,498];
-  const costB = [149,153,158,163,168,173,178,183,189,194,200,206,212,219,225,232,239,246,254,261];
-  new Chart(document.getElementById('monthlyChart'), {
-    type: 'line',
-    data: {
-      labels: years.map(y => y + '년'),
-      datasets: [
-        { label: '집 매수 월 지출 (만원)', data: costA, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.07)', fill: true, tension: 0.3, pointRadius: 3 },
-        { label: '월세 (만원)', data: costB, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.07)', fill: true, tension: 0.3, pointRadius: 3 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: { display: true, text: '월 주거 지출 비교: 집 매수 vs 월세 (20년)', font: { size: 15 } },
-        legend: { position: 'bottom' }
+<Chart
+  type="line"
+  data={{
+    labels: ['1년','2년','3년','4년','5년','6년','7년','8년','9년','10년','11년','12년','13년','14년','15년','16년','17년','18년','19년','20년'],
+    datasets: [
+      {
+        label: '집 매수 월 지출 (만원)',
+        data: [401,404,408,411,415,418,422,427,431,436,441,446,451,457,463,469,476,483,490,498],
+        borderColor: '#e74c3c',
+        backgroundColor: 'rgba(231,76,60,0.07)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
       },
-      scales: {
-        x: { title: { display: true, text: '경과 연수' } },
-        y: { title: { display: true, text: '월 지출 (만원)' }, min: 0, max: 600 }
-      }
-    }
-  });
-})();
-*/}
+      {
+        label: '월세 (만원)',
+        data: [149,153,158,163,168,173,178,183,189,194,200,206,212,219,225,232,239,246,254,261],
+        borderColor: '#27ae60',
+        backgroundColor: 'rgba(39,174,96,0.07)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+      },
+    ],
+  }}
+  options={{
+    plugins: {
+      title: { display: true, text: '월 주거 지출 비교: 집 매수 vs 월세 (20년)', font: { size: 15 } },
+      legend: { position: 'bottom' },
+    },
+    scales: {
+      x: { title: { display: true, text: '경과 연수' } },
+      y: { title: { display: true, text: '월 지출 (만원)' }, min: 0, max: 600 },
+    },
+  }}
+  height={350}
+  caption="월 주거 지출 비교: 집 매수 vs 월세 (20년)"
+/>
 
 ---
 
@@ -159,38 +169,60 @@ flowchart LR
 
 ---
 
-{/* TODO:chartjs
-(function() {
-  const years = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-  const nwA3 = [8.85,9.64,10.46,11.32,12.22,13.16,14.14,15.17,16.25,17.38,18.57,19.81,21.12,22.49,23.93,25.44,27.03,28.69,30.44,32.27];
-  const nwA5 = [9.33,10.23,11.18,12.17,13.22,14.31,15.47,16.68,17.96,19.30,20.71,22.19,23.75,25.39,27.11,28.92,30.82,32.82,34.92,37.13];
-  const nwA7 = [9.82,10.85,11.95,13.12,14.37,15.70,17.12,18.63,20.24,21.96,23.80,25.76,27.85,30.08,32.47,35.02,37.74,40.64,43.73,47.03];
-  const nwB  = [10.24,11.62,13.16,14.88,16.80,18.94,21.33,24.00,26.98,30.30,34.02,38.16,42.79,47.95,53.72,60.16,67.36,75.39,84.37,94.39];
-  new Chart(document.getElementById('netWorthChart'), {
-    type: 'line',
-    data: {
-      labels: years.map(y => y + '년'),
-      datasets: [
-        { label: '집매수 (집값 +3%)', data: nwA3, borderColor: '#e67e22', borderDash: [6,3], tension: 0.3, pointRadius: 2 },
-        { label: '집매수 (집값 +5%)', data: nwA5, borderColor: '#e74c3c', tension: 0.3, pointRadius: 2, borderWidth: 2.5 },
-        { label: '집매수 (집값 +7%)', data: nwA7, borderColor: '#922b21', borderDash: [3,3], tension: 0.3, pointRadius: 2 },
-        { label: '월세+S&P500 투자', data: nwB, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.08)', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 3 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: { display: true, text: '집 매수 vs 월세+S&P500 순자산 비교 (20년)', font: { size: 15 } },
-        legend: { position: 'bottom' }
+<Chart
+  type="line"
+  data={{
+    labels: ['1년','2년','3년','4년','5년','6년','7년','8년','9년','10년','11년','12년','13년','14년','15년','16년','17년','18년','19년','20년'],
+    datasets: [
+      {
+        label: '집매수 (집값 +3%)',
+        data: [8.85,9.64,10.46,11.32,12.22,13.16,14.14,15.17,16.25,17.38,18.57,19.81,21.12,22.49,23.93,25.44,27.03,28.69,30.44,32.27],
+        borderColor: '#e67e22',
+        borderDash: [6,3],
+        tension: 0.3,
+        pointRadius: 2,
       },
-      scales: {
-        x: { title: { display: true, text: '경과 연수' } },
-        y: { title: { display: true, text: '순자산 (억원)' }, min: 0 }
-      }
-    }
-  });
-})();
-*/}
+      {
+        label: '집매수 (집값 +5%)',
+        data: [9.33,10.23,11.18,12.17,13.22,14.31,15.47,16.68,17.96,19.30,20.71,22.19,23.75,25.39,27.11,28.92,30.82,32.82,34.92,37.13],
+        borderColor: '#e74c3c',
+        tension: 0.3,
+        pointRadius: 2,
+        borderWidth: 2.5,
+      },
+      {
+        label: '집매수 (집값 +7%)',
+        data: [9.82,10.85,11.95,13.12,14.37,15.70,17.12,18.63,20.24,21.96,23.80,25.76,27.85,30.08,32.47,35.02,37.74,40.64,43.73,47.03],
+        borderColor: '#922b21',
+        borderDash: [3,3],
+        tension: 0.3,
+        pointRadius: 2,
+      },
+      {
+        label: '월세+S&P500 투자',
+        data: [10.24,11.62,13.16,14.88,16.80,18.94,21.33,24.00,26.98,30.30,34.02,38.16,42.79,47.95,53.72,60.16,67.36,75.39,84.37,94.39],
+        borderColor: '#27ae60',
+        backgroundColor: 'rgba(39,174,96,0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 2,
+        borderWidth: 3,
+      },
+    ],
+  }}
+  options={{
+    plugins: {
+      title: { display: true, text: '집 매수 vs 월세+S&P500 순자산 비교 (20년)', font: { size: 15 } },
+      legend: { position: 'bottom' },
+    },
+    scales: {
+      x: { title: { display: true, text: '경과 연수' } },
+      y: { title: { display: true, text: '순자산 (억원)' }, min: 0 },
+    },
+  }}
+  height={400}
+  caption="집 매수 vs 월세+S&P500 순자산 비교 (20년)"
+/>
 
 ---
 
