@@ -1,0 +1,270 @@
+---
+title: "Building a Free Stock Alert Bot with GitHub Actions — DeReel Dev Log 1-A"
+description: "Server $0, operating cost $0. How I built a crawler with GitHub Actions and Playwright to monitor Apple Refurbished inventory and get instant Telegram alerts."
+date: 2026-05-30
+category: "Backend"
+tags: ["Python", "GitHub Actions", "Crawling", "Playwright", "Telegram", "BeautifulSoup"]
+series: "DeReel Dev Log"
+series_order: 1
+lang: en
+draft: false
+---
+
+import Alert from '@/components/Alert.astro';
+
+## Introduction
+
+Have you heard of the Apple Refurbished Store? It's Apple's official channel that sells returned and display items at 15–20% off retail — but inventory **appears and disappears without notice**. I found myself refreshing the page several times a day looking for a specific item, which led to one thought:
+
+> "Why not just automate this?"
+
+That's how **DeReel** was born. Short for Data Extraction & REEL Engine, it's a personal monitoring bot that tracks prices and inventory in real time and sends alerts via Telegram.
+
+This post covers Phase 1-A — how I implemented the Apple Refurbished stock monitoring feature.
+
+---
+
+## Design Goal: No Server, No Cost
+
+My first principle was **Phase 1 costs $0/month**. Running a persistent server like AWS EC2 for a personal project means paying even on idle days. Looking for alternatives, I landed on GitHub Actions.
+
+- Public repositories get GitHub Actions **completely free with unlimited minutes**
+- Supports cron scheduling for periodic execution
+- The runner environment fully supports Python and Playwright
+
+There was one problem to solve. The crawler needs to remember the previous inventory state to detect "newly stocked" items, but GitHub Actions spins up a fresh VM on every run — there's no persistent state.
+
+The solution turned out to be simple: **save state as a JSON file and have GHA auto-commit it**. The repository itself acts as the database.
+
+```text
+⏰ GitHub Actions (runs every hour)
+        ↓
+🐍 Python crawler (runs on runner)
+        ↓
+💾 data/apple_refurb_state.json  ← previous stock snapshot
+        ↓
+📱 Telegram alert (on change only)
+        ↓
+🤖 GHA bot auto-commits changed data/
+```
+
+---
+
+## Apple Refurbished Crawler Implementation
+
+### The Problem: JavaScript Rendering
+
+The Apple Refurbished page is React-rendered. `requests` + BeautifulSoup only gets you empty HTML. Playwright is needed to spin up a real browser.
+
+```python
+from playwright.async_api import async_playwright
+
+async with async_playwright() as pw:
+    browser = await pw.chromium.launch(headless=True)
+    page = await browser.new_page()
+    await page.goto(url, wait_until="networkidle", timeout=60_000)
+    html = await page.content()
+```
+
+The `wait_until="networkidle"` option is critical — the page must fully settle before React finishes rendering data.
+
+### Discovery: Bootstrap JSON
+
+I was about to parse the DOM directly when I spotted something far better while analyzing the page source.
+
+```html
+<script>
+window.REFURB_GRID_BOOTSTRAP = {"tiles": [...], "totalResults": 42, ...};
+</script>
+```
+
+This is JSON Apple embeds for page initialization — far more reliable than DOM parsing.
+
+```python
+import re, json
+
+_BOOTSTRAP_RE = re.compile(
+    r"window\.REFURB_GRID_BOOTSTRAP\s*=\s*(\{.+?\});\s*\n",
+    re.DOTALL
+)
+
+def _parse(self, html: str) -> list[StockResult]:
+    m = _BOOTSTRAP_RE.search(html)
+    if not m:
+        raise ValueError("REFURB_GRID_BOOTSTRAP not found — possible page structure change")
+
+    tiles = json.loads(m.group(1)).get("tiles") or []
+    results = []
+    for tile in tiles:
+        results.append(StockResult(
+            site="apple_refurb",
+            product_id=tile["partNumber"],
+            name=tile["title"],
+            url="https://www.apple.com" + tile["productDetailsUrl"].split("?")[0],
+            price=float(tile["price"]["currentPrice"]["raw_amount"]),
+            currency=tile["price"].get("priceCurrency", "KRW"),
+            in_stock=True,
+        ))
+    return results
+```
+
+<Alert type="tip" title="Regex vs. BeautifulSoup">
+When extracting JSON embedded inside a script tag, regex is simpler than BeautifulSoup. That said, if Apple changes the format the regex will silently break — always raise a clear error on parse failure so you know immediately.
+</Alert>
+
+---
+
+## Stock Change Detection Logic
+
+Once the crawler returns the current inventory list, the Comparator checks it against the previous snapshot.
+
+```python
+async def compare_stock(self, site: str, current: list[StockResult]) -> None:
+    previous = self._storage.load_state(site)  # load previous snapshot
+
+    newly_stocked = [
+        r for r in current
+        if r.in_stock and not previous.get(r.product_id, False)
+    ]
+
+    for result in newly_stocked:
+        alert_key = f"{site}:{result.product_id}:stock"
+        if self._alert_history.can_alert(alert_key):
+            await self._notifier.send(self._format_message(result))
+            self._alert_history.record(alert_key)
+
+    # save current state for the next comparison
+    self._storage.save_state(site, {r.product_id: r.in_stock for r in current})
+```
+
+The key condition is **"currently in stock AND was not in stock before"**. Without this check, you'd get an alert every single hour for items that are already available.
+
+---
+
+## 24-Hour Alert Deduplication
+
+Sometimes an item goes in stock → out of stock → back in stock all within the same day. Repeated alerts for this would be exhausting. `AlertHistory` manages a 24-hour cooldown.
+
+```python
+def can_alert(self, alert_key: str) -> bool:
+    record = self._storage.get_alert_record(alert_key)
+    if record is None:
+        return True  # first-ever alert
+
+    last_sent = record.get("last_sent_at")
+    elapsed = datetime.now(UTC) - last_sent
+    return elapsed >= timedelta(hours=24)
+```
+
+Cooldown records are also persisted in a JSON file (`data/apple_refurb_alerts.json`), so they survive across GHA runs.
+
+---
+
+## interval_hours: Controlling Crawl Frequency
+
+The GHA cron runs every hour (`0 * * * *`), but I only wanted to actually crawl Apple Refurbished every 4 hours. This is controlled via `targets.yaml` and `interval_hours`.
+
+```yaml
+# config/stock.yaml
+targets:
+  - site: apple_refurb
+    interval_hours: 4
+    url: "https://www.apple.com/kr/shop/refurbished/airpods"
+    enabled: true
+```
+
+```python
+last_crawled = storage.get_last_crawled_at(schedule_key)
+if last_crawled:
+    elapsed_hours = (datetime.now(UTC) - last_crawled).total_seconds() / 3600
+    if elapsed_hours < interval_hours:
+        logger.debug(f"[{site}] {elapsed_hours:.1f}h/{interval_hours}h — skipping")
+        continue
+```
+
+<Alert type="info" title="Why GHA cron + interval_hours together?">
+Different sites warrant different crawl intervals: apple_refurb every 4 hours, steam every 3, gog every 6. Since GHA can't have multiple cron schedules in a single workflow, the approach is to run at the shortest interval (1 hour) and check elapsed time internally per site.
+</Alert>
+
+---
+
+## GitHub Actions Setup
+
+### Workflow Essentials
+
+```yaml
+# .github/workflows/crawl.yml
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:        # manual trigger also available
+
+concurrency:
+  group: dereel-crawlers
+  cancel-in-progress: false # never cancel in-progress runs (prevents state corruption)
+```
+
+`cancel-in-progress: false` matters here. If the next cron fires while the previous run is still going, it should not cancel it — a mid-run cancellation during JSON reads/writes can corrupt state.
+
+### Auto-committing State Files
+
+```yaml
+- name: Commit state files
+  run: |
+    git config user.name  "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add data/
+    git diff --cached --quiet || (
+      git commit -m "chore: update state [skip ci]" &&
+      git pull --rebase origin main &&
+      git push
+    )
+```
+
+`[skip ci]` is a convention to prevent the commit from triggering another GHA run.
+
+---
+
+## Consecutive Failure Detection
+
+If the crawler fails 3 times in a row, a Telegram alert fires.
+
+```python
+except Exception as e:
+    failures_count = storage.increment_failures(site, str(e))
+    logger.error(f"[{site}] crawl failed ({failures_count} consecutive) — {e}")
+
+    if failures_count >= 3:
+        await notifier.send(
+            f"🚨 [DeReel Alert] Consecutive crawler failures\n"
+            f"Site: {site}\nError: {e}\nCount: {failures_count}"
+        )
+```
+
+Failure counts are stored in `data/crawl_schedule.json`, so the system self-monitors without any external service.
+
+---
+
+## Results
+
+In practice, I got a Telegram notification at 6 AM that AirPods refurbished stock had dropped, and was able to buy immediately. Mission accomplished.
+
+One thing worth noting from production: the `REFURB_GRID_BOOTSTRAP` data has been remarkably stable. As long as Apple doesn't make major page structure changes, the parser holds up.
+
+**Phase 1-A Summary:**
+
+| Item | Details |
+|---|---|
+| Infrastructure cost | $0 / month |
+| Crawl interval | 4 hours |
+| Alert channel | Telegram |
+| State storage | GitHub repo JSON |
+| Alert deduplication | 24-hour cooldown |
+
+---
+
+## Up Next
+
+In Phase 1-B, I added Steam, GOG, and Epic price monitoring. I'll share how I worked around Steam's bundle API returning 403 with HTML scraping, and the `NoneType` runtime error I hit in Epic's free game API.
+
+Source code is available on [GitHub](https://github.com/veryfaraway/DeReel).

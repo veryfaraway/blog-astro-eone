@@ -1,0 +1,271 @@
+---
+title: "GitHub Actions로 무료 재고 감시 봇 만들기 — DeReel 개발기 1-A"
+description: "서버 $0, 운영비 $0. GitHub Actions와 Playwright로 Apple 리퍼비시 재고를 감시하고 Telegram으로 즉시 알림을 받는 크롤러를 만드는 과정을 공유합니다."
+thumbnail: "https://images.unsplash.com/photo-1723847186337-92e4c4c0e54a?q=80&w=2779&auto=format&fit=crop"
+date: 2026-05-29
+category: "Backend"
+tags: ["Python", "GitHub Actions", "크롤링", "Playwright", "Telegram", "BeautifulSoup"]
+series: "DeReel 개발기"
+series_order: 1
+lang: ko
+draft: false
+---
+
+import Alert from '@/components/Alert.astro';
+
+## 들어가며
+
+Apple 리퍼비시 스토어를 아시나요? 반품·전시 제품을 정가 대비 15~20% 저렴하게 파는 공식 채널인데, 문제는 재고가 **예고 없이 올라왔다가 금방 사라진다**는 점입니다. 원하는 제품이 입고됐는지 하루에도 몇 번씩 새로 고침하는 자신을 발견하면서 이런 생각이 들었습니다.
+
+> "이걸 자동화하면 되는 거 아닌가?"
+
+그렇게 시작된 게 **DeReel**입니다. Data Extraction & REEL Engine의 약자로, 가격과 재고를 실시간 추적해 Telegram으로 알림을 보내주는 개인용 감시 봇입니다.
+
+이 포스트에서는 Phase 1-A — Apple 리퍼비시 재고 감시 기능을 어떻게 구현했는지 공유합니다.
+
+---
+
+## 설계 목표: 서버 없이, 비용 없이
+
+가장 먼저 정한 원칙은 **Phase 1은 월 $0**입니다. 개인 프로젝트에 AWS EC2 같은 상시 서버를 붙이면 쓰지 않는 날도 비용이 나갑니다. 대안을 찾다가 GitHub Actions에 주목했습니다.
+
+- 공개 저장소는 GitHub Actions **무제한 무료**
+- cron 스케줄로 정기 실행 가능
+- Runner 환경에서 Python, Playwright 모두 실행 가능
+
+대신 해결해야 할 문제가 있었습니다. 크롤러가 이전 재고 상태를 기억해야 "새로 입고된 것"을 판단할 수 있는데, GitHub Actions Runner는 매 실행마다 새로운 VM입니다. 상태 유지가 안 됩니다.
+
+해결책은 의외로 단순했습니다. **상태를 JSON 파일로 저장하고, GHA가 자동으로 커밋**하면 됩니다. 저장소 자체가 데이터베이스 역할을 합니다.
+
+```text
+⏰ GitHub Actions (매시간 실행)
+        ↓
+🐍 Python 크롤러 (Runner에서 실행)
+        ↓
+💾 data/apple_refurb_state.json  ← 이전 재고 스냅샷
+        ↓
+📱 Telegram 알림 (변동 시에만)
+        ↓
+🤖 GHA Bot이 변경된 data/ 자동 커밋
+```
+
+---
+
+## Apple 리퍼비시 크롤러 구현
+
+### 문제: JavaScript 렌더링
+
+Apple 리퍼비시 페이지는 React로 렌더링됩니다. `requests` + BeautifulSoup으로는 빈 HTML만 받아옵니다. Playwright로 실제 브라우저를 띄워야 합니다.
+
+```python
+from playwright.async_api import async_playwright
+
+async with async_playwright() as pw:
+    browser = await pw.chromium.launch(headless=True)
+    page = await browser.new_page()
+    await page.goto(url, wait_until="networkidle", timeout=60_000)
+    html = await page.content()
+```
+
+`wait_until="networkidle"` 옵션이 중요합니다. 네트워크 요청이 완전히 멈출 때까지 기다려야 React가 데이터를 렌더링합니다.
+
+### 발견: Bootstrap JSON
+
+DOM을 직접 파싱할까 생각했지만, 페이지 소스를 분석하다가 훨씬 나은 것을 찾았습니다.
+
+```html
+<script>
+window.REFURB_GRID_BOOTSTRAP = {"tiles": [...], "totalResults": 42, ...};
+</script>
+```
+
+Apple이 페이지 초기화용으로 심어둔 JSON 데이터입니다. DOM 파싱보다 훨씬 안정적입니다.
+
+```python
+import re, json
+
+_BOOTSTRAP_RE = re.compile(
+    r"window\.REFURB_GRID_BOOTSTRAP\s*=\s*(\{.+?\});\s*\n",
+    re.DOTALL
+)
+
+def _parse(self, html: str) -> list[StockResult]:
+    m = _BOOTSTRAP_RE.search(html)
+    if not m:
+        raise ValueError("REFURB_GRID_BOOTSTRAP 미발견 — 페이지 구조 변경 가능성")
+
+    tiles = json.loads(m.group(1)).get("tiles") or []
+    results = []
+    for tile in tiles:
+        results.append(StockResult(
+            site="apple_refurb",
+            product_id=tile["partNumber"],
+            name=tile["title"],
+            url="https://www.apple.com" + tile["productDetailsUrl"].split("?")[0],
+            price=float(tile["price"]["currentPrice"]["raw_amount"]),
+            currency=tile["price"].get("priceCurrency", "KRW"),
+            in_stock=True,
+        ))
+    return results
+```
+
+<Alert type="tip" title="정규식 vs. BeautifulSoup">
+Bootstrap JSON처럼 스크립트 태그 안의 JSON을 추출할 때는 정규식이 BeautifulSoup보다 간단합니다. 단, Apple이 포맷을 변경하면 정규식이 깨질 수 있으므로 파싱 실패 시 명확한 에러 메시지를 남기는 것이 중요합니다.
+</Alert>
+
+---
+
+## 재고 변동 감지 로직
+
+크롤러가 현재 재고 목록을 반환하면, Comparator가 이전 스냅샷과 비교합니다.
+
+```python
+async def compare_stock(self, site: str, current: list[StockResult]) -> None:
+    previous = self._storage.load_state(site)  # 이전 스냅샷 로드
+
+    newly_stocked = [
+        r for r in current
+        if r.in_stock and not previous.get(r.product_id, False)
+    ]
+
+    for result in newly_stocked:
+        alert_key = f"{site}:{result.product_id}:stock"
+        if self._alert_history.can_alert(alert_key):
+            await self._notifier.send(self._format_message(result))
+            self._alert_history.record(alert_key)
+
+    # 현재 상태를 다음 비교를 위해 저장
+    self._storage.save_state(site, {r.product_id: r.in_stock for r in current})
+```
+
+핵심은 **"현재 있음 AND 이전에 없었음"** 조건입니다. 이미 입고된 제품을 매 시간 알림하지 않으려면 이 조건이 필수입니다.
+
+---
+
+## 24시간 중복 알림 방지
+
+입고 → 품절 → 재입고가 하루 안에 반복되는 경우가 있습니다. 이때마다 알림이 오면 피로해집니다. AlertHistory가 24시간 쿨다운을 관리합니다.
+
+```python
+def can_alert(self, alert_key: str) -> bool:
+    record = self._storage.get_alert_record(alert_key)
+    if record is None:
+        return True  # 최초 알림
+
+    last_sent = record.get("last_sent_at")
+    elapsed = datetime.now(UTC) - last_sent
+    return elapsed >= timedelta(hours=24)
+```
+
+쿨다운 기록도 JSON 파일(`data/apple_refurb_alerts.json`)에 저장되어 GHA 재실행 후에도 유지됩니다.
+
+---
+
+## interval_hours: 크롤링 주기 제어
+
+GHA cron은 `0 * * * *`으로 매시간 실행되지만, 실제 Apple 리퍼비시 크롤링은 4시간마다만 하고 싶었습니다. 이를 `targets.yaml`과 `interval_hours`로 제어합니다.
+
+```yaml
+# config/stock.yaml
+targets:
+  - site: apple_refurb
+    interval_hours: 4
+    url: "https://www.apple.com/kr/shop/refurbished/airpods"
+    enabled: true
+```
+
+```python
+last_crawled = storage.get_last_crawled_at(schedule_key)
+if last_crawled:
+    elapsed_hours = (datetime.now(UTC) - last_crawled).total_seconds() / 3600
+    if elapsed_hours < interval_hours:
+        logger.debug(f"[{site}] {elapsed_hours:.1f}h/{interval_hours}h — 스킵")
+        continue
+```
+
+<Alert type="info" title="왜 GHA cron과 interval_hours를 함께?">
+사이트마다 적절한 크롤링 주기가 다릅니다. apple_refurb는 4시간, steam은 3시간, gog는 6시간. GHA는 여러 cron 스케줄을 하나의 워크플로우에 지정할 수 없으므로, 가장 짧은 단위(1시간)로 실행하고 내부에서 경과 시간을 체크하는 방식을 택했습니다.
+</Alert>
+
+---
+
+## GitHub Actions 배포
+
+### 워크플로우 핵심
+
+```yaml
+# .github/workflows/crawl.yml
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:        # 수동 실행도 가능
+
+concurrency:
+  group: dereel-crawlers
+  cancel-in-progress: false # 실행 중 취소 금지 (상태 손상 방지)
+```
+
+`cancel-in-progress: false`가 중요합니다. 실행 중에 다음 cron이 트리거되면 이전 실행을 취소하지 않습니다. JSON 파일 읽기/쓰기 중에 취소되면 상태가 손상될 수 있기 때문입니다.
+
+### 상태 파일 자동 커밋
+
+```yaml
+- name: Commit state files
+  run: |
+    git config user.name  "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add data/
+    git diff --cached --quiet || (
+      git commit -m "chore: update state [skip ci]" &&
+      git pull --rebase origin main &&
+      git push
+    )
+```
+
+`[skip ci]`는 커밋이 다시 GHA를 트리거하지 않도록 하는 관례입니다.
+
+---
+
+## 연속 장애 감지
+
+크롤러가 3회 연속 실패하면 Telegram으로 경보를 보냅니다.
+
+```python
+except Exception as e:
+    failures_count = storage.increment_failures(site, str(e))
+    logger.error(f"[{site}] 크롤링 실패 ({failures_count}회 연속) — {e}")
+
+    if failures_count >= 3:
+        await notifier.send(
+            f"🚨 [DeReel 경보] 크롤러 연속 실패\n"
+            f"사이트: {site}\n오류: {e}\n횟수: {failures_count}회"
+        )
+```
+
+실패 횟수도 `data/crawl_schedule.json`에 저장됩니다. 외부 모니터링 서비스 없이 자체적으로 장애를 감지합니다.
+
+---
+
+## 결과
+
+실제로 사용해보니 오전 6시에 에어팟 리퍼비시가 입고됐다는 알림이 왔고, 바로 구매할 수 있었습니다. 목표 달성입니다.
+
+운영 중 주목할 점은 `REFURB_GRID_BOOTSTRAP` 데이터가 꽤 안정적이라는 것입니다. Apple이 페이지 구조를 크게 바꾸지 않는 한 파싱이 깨지지 않았습니다.
+
+**Phase 1-A 요약:**
+
+| 항목 | 내용 |
+|---|---|
+| 인프라 비용 | $0 / 월 |
+| 크롤링 주기 | 4시간 |
+| 알림 채널 | Telegram |
+| 상태 저장 | GitHub repo JSON |
+| 중복 알림 방지 | 24시간 쿨다운 |
+
+---
+
+## 다음 편에서는
+
+Phase 1-B에서는 Steam, GOG, Epic 가격 감시를 추가했습니다. Steam 번들 API가 403을 반환하는 문제를 HTML 스크래핑으로 해결한 이야기, Epic 무료 게임 API에서 마주친 `NoneType` 런타임 오류 등 실제 트러블슈팅 과정도 함께 공유하겠습니다.
+
+소스 코드는 [GitHub](https://github.com/veryfaraway/DeReel)에 공개되어 있습니다.

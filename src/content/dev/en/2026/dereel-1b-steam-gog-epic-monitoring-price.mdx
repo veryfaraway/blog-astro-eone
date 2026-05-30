@@ -1,0 +1,355 @@
+---
+title: "Building a Steam/GOG/Epic Price & Free Game Monitor — DeReel Dev Log 1-B"
+description: "How I worked around Steam's bundle API 403 error with HTML scraping, implemented Epic free game detection, and fixed a NoneType runtime bug in production."
+date: 2026-05-30
+category: "Backend"
+tags: ["Python", "Steam API", "Crawling", "BeautifulSoup", "GitHub Actions"]
+series: "DeReel Dev Log"
+series_order: 2
+lang: en
+draft: false
+---
+
+import Alert from '@/components/Alert.astro';
+
+## Introduction
+
+[Last time](/en/dev/dereel-1a-github-actions-crawling-bot), I built the Apple Refurbished stock monitor. This time I expanded the scope to add **game price monitoring**.
+
+Three goals:
+
+1. **Steam**: alert when a wishlist game drops to or below a target price
+2. **GOG**: same price monitoring
+3. **Epic**: detect free game giveaway events
+
+Each platform required a different API strategy, and there were unexpected roadblocks along the way.
+
+---
+
+## Price Monitoring Model Design
+
+Stock monitoring is straightforward — just track "available / unavailable" changes. Price monitoring is a bit different.
+
+- Each user has their own target price
+- Alerts should only fire when `current price ≤ target price`
+- Repeated alerts while a sale is ongoing must be suppressed (24-hour cooldown)
+
+To handle this, I added a `PriceResult` model and `compare_price` logic.
+
+```python
+class PriceResult(BaseModel):
+    site: str
+    product_id: str
+    name: str
+    original_price: float
+    current_price: float
+    currency: str
+    url: str
+
+    @property
+    def is_free(self) -> bool:
+        return self.current_price == 0
+
+    def should_notify(self, target_price: float) -> bool:
+        if self.is_free:
+            return True
+        return self.current_price <= target_price
+```
+
+```yaml
+# config/games.yaml
+targets:
+  - site: steam
+    type: price
+    interval_hours: 3
+    currency: KRW
+    products:
+      - app_id: "1245620"
+        name: "Elden Ring"
+        target_price: 33000
+```
+
+---
+
+## Steam Crawler: Three Product Types
+
+Steam has three product types.
+
+| Type | Description | API |
+|---|---|---|
+| App | Single game | `/api/appdetails?appids=` |
+| Package (Sub) | Bundled package | `/api/packagedetails?packageids=` |
+| Bundle | Bundle discount | ??? |
+
+App and Package have official APIs.
+
+```python
+# App
+resp = await client.get(
+    "https://store.steampowered.com/api/appdetails",
+    params={"appids": app_id, "cc": cc, "filters": "price_overview"}
+)
+price_data = data[app_id]["data"]["price_overview"]
+
+# Package
+resp = await client.get(
+    "https://store.steampowered.com/api/packagedetails",
+    params={"packageids": package_id, "cc": cc}
+)
+price_data = data[package_id]["data"]["price"]
+```
+
+<Alert type="info" title="price_overview vs price">
+The App API uses a `price_overview` key; the Package API uses `price`. I spent a while confused about why Package responses always returned None when I was looking for `price_overview`.
+</Alert>
+
+### Bundle: No API Available
+
+The problem is bundles. I tried tracking the Monkey Island Collection (bundle_id: 6588), but calling `/api/bundledetails` returned **403 Forbidden**.
+
+It's not a publicly available endpoint. Time to find another way.
+
+Analyzing the HTML of the bundle store page (`store.steampowered.com/bundle/6588/`), I found this structure:
+
+```html
+<div data-ds-bundleid="6588"
+     data-ds-bundle-data='{"m_rgItems": [
+       {"m_nBasePriceInCents": 1100000, ...},
+       {"m_nBasePriceInCents": 1100000, ...},
+       ...
+     ]}'>
+  <div class="game_purchase_discount"
+       data-price-final="5814000"
+       data-bundlediscount="10">
+  </div>
+</div>
+```
+
+`data-ds-bundle-data` JSON holds the individual game base prices; `data-price-final` holds the bundle's final price. Parse it with BeautifulSoup.
+
+```python
+from bs4 import BeautifulSoup
+import json
+
+async def _fetch_bundle(self, bundle_id, name, currency, cc):
+    resp = await self._client.get(
+        f"https://store.steampowered.com/bundle/{bundle_id}/",
+        params={"cc": cc, "l": "english"}
+    )
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    bundle_div = soup.find("div", {"data-ds-bundleid": bundle_id})
+    if bundle_div is None:
+        return None
+
+    bundle_data = json.loads(str(bundle_div.get("data-ds-bundle-data", "{}")))
+    items = bundle_data.get("m_rgItems", [])
+    original_cents = sum(item.get("m_nBasePriceInCents", 0) for item in items)
+
+    price_div = bundle_div.find(attrs={"data-price-final": True})
+    final_cents = int(str(price_div["data-price-final"]))
+
+    return self._build_price_result(bundle_id, name,
+        {"initial": original_cents, "final": final_cents}, currency)
+```
+
+### App → Package Fallback
+
+Sometimes a user inputs an `app_id` but the product is actually a package. If the App API returns `success: false`, it automatically retries with the Package API.
+
+```python
+if app_id:
+    result = await self._fetch_app(app_id_str, name, currency, cc)
+    if result is None:
+        # App lookup failed → fallback to Package
+        result = await self._fetch_package(app_id_str, name, currency, cc)
+```
+
+---
+
+## GOG Crawler: Unofficial REST API
+
+GOG doesn't provide an official API, but the REST endpoints the store uses internally are publicly known.
+
+```
+GET https://api.gog.com/products/{product_id}/prices?countryCode=KR
+```
+
+The response structure is clean.
+
+```json
+{
+  "_embedded": {
+    "prices": [{
+      "currency": {"code": "KRW"},
+      "basePrice": "4990 KRW",
+      "finalPrice": "0 KRW"
+    }]
+  }
+}
+```
+
+The price format is unusual: `"4990 KRW"` — an integer + currency code string. GOG uses 1/100 unit notation.
+
+```python
+@staticmethod
+def _parse_price(price_str: str) -> float:
+    """'4990 KRW' → 49.90"""
+    amount_cents = int(price_str.split()[0])
+    return round(amount_cents / 100, 2)
+```
+
+---
+
+## Epic Crawler: Free Game Detection
+
+Epic Games has no price API. Instead, the core value from the PRD was **detecting free game giveaway events**.
+
+Epic exposes the current free game list via a public endpoint.
+
+```
+GET https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions
+    ?locale=en-US&country=US&allowCountries=US
+```
+
+<Alert type="tip" title="Why the promotions API instead of GraphQL">
+Epic Store uses GraphQL internally, and you can query specific game prices through it. But each game requires knowing its `namespace` and `offerId` in advance, and it's unofficial and subject to change at any time. The promotions API is public, and it maps exactly to our use case — free game detection.
+</Alert>
+
+The condition for "currently free" is whether `promotionalOffers` contains an entry with `discountPercentage: 0`. (On Epic, 0% of original price means fully free.)
+
+```python
+@staticmethod
+def _is_currently_free(item: dict) -> bool:
+    for offer_group in (item.get("promotions") or {}).get("promotionalOffers") or []:
+        for offer in offer_group.get("promotionalOffers") or []:
+            setting = offer.get("discountSetting") or {}
+            if (setting.get("discountType") == "PERCENTAGE"
+                    and setting.get("discountPercentage") == 0):
+                return True
+    return False
+```
+
+Supplying a `slug` under `products` filters alerts to your watchlist. Leave it empty to get notified about every free game.
+
+```yaml
+- site: epic
+  type: price
+  interval_hours: 6
+  products:
+    - slug: "baldurs-gate-2-enhanced-edition"
+      name: "Baldur's Gate II: Enhanced Edition"
+      target_price: 0
+```
+
+### A Bug Found in Production
+
+After deploying, I spotted this in the logs:
+
+```
+ERROR - [epic] crawl failed (3 consecutive) — 'NoneType' object has no attribute 'get'
+```
+
+The offending code looked like this:
+
+```python
+# buggy code
+elements = (
+    data.get("data", {})
+        .get("Catalog", {})
+        ...
+)
+```
+
+Python's `dict.get(key, default)` only returns the default when the key is **absent**. If the key exists but the value is `null`, it returns `None`. Epic's API had responded with `{"data": null}`.
+
+```python
+# fixed — or {} pattern handles both missing keys and null values
+catalog = (data.get("data") or {}).get("Catalog") or {}
+search_store = catalog.get("searchStore") or {}
+elements = search_store.get("elements") or []
+```
+
+The `or {}` pattern handles both a missing key and an explicit `null` value uniformly, making it safe at every nesting level.
+
+<Alert type="warning" title="The dict.get(key, default) trap">
+`get(key, default)` only kicks in for absent keys. When working with external APIs that can return explicit nulls, use the `or default` pattern instead.
+
+```python
+# not safe
+data.get("key", {}).get("nested")  # AttributeError if key is null
+
+# safe
+(data.get("key") or {}).get("nested")
+```
+</Alert>
+
+---
+
+## Config File Separation
+
+Initially I managed everything in a single `config/targets.yaml`. As the number of crawlers grew, problems emerged.
+
+- Stock monitoring (apple_refurb) and price monitoring (steam, gog, epic) were mixed together
+- Adding Amazon and Coupang would make the file unreadable
+- Filtering with `--type stock|price` flags felt unintuitive
+
+**Split by domain.**
+
+```
+config/
+  stock.yaml      # stock monitoring (apple_refurb)
+  games.yaml      # game price / free game monitoring (steam, gog, epic)
+  shopping.yaml   # shopping price monitoring (amazon, coupang — planned)
+```
+
+`run.py` auto-discovers all `config/*.yaml` files.
+
+```python
+config_files = [args.config] if args.config else sorted(glob.glob("config/*.yaml"))
+
+for config_path in config_files:
+    await run(config_path)
+```
+
+Adding a new domain means dropping in a new file — no touching existing ones.
+
+---
+
+## Consolidating GitHub Actions
+
+Previously, stock and price workflows ran separately. With the config file split, I merged them into one workflow.
+
+```yaml
+# .github/workflows/crawl.yml
+on:
+  schedule:
+    - cron: "0 * * * *"   # hourly; interval_hours controls actual per-site frequency
+```
+
+Playwright is only needed for apple_refurb, but the unified workflow installs it unconditionally. For a personal project, the ~2 minute install overhead is acceptable.
+
+---
+
+## Results
+
+Active crawlers after Phase 1-B:
+
+| Crawler | Method | Interval |
+|---|---|---|
+| apple_refurb | Playwright + Bootstrap JSON | 4 hours |
+| steam | Official API (app/package/bundle) | 3 hours |
+| gog | Unofficial REST API | 6 hours |
+| epic | Free promotions API | 6 hours |
+
+All 34 tests passing, and sale alerts and free game notifications are landing in Telegram as expected.
+
+---
+
+## Up Next
+
+In Phase 2-A, I'll introduce AWS DynamoDB to store price history. Right now the system only asks "is the current price at or below the target?" — with history, it can answer "is this an all-time low?"
+
+Coupang (Partners API) and Amazon (Playwright) crawlers are also on the roadmap.
+
+Source code is on [GitHub](https://github.com/veryfaraway/DeReel).

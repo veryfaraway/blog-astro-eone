@@ -1,0 +1,358 @@
+---
+title: "Steam/GOG/Epic 가격·무료 게임 감시 크롤러 만들기 — DeReel 개발기 1-B"
+description: "Steam 번들 API의 403 오류를 HTML 스크래핑으로 우회하고, Epic 무료 게임 감지를 구현한 과정을 공유합니다. 실제 운영에서 마주친 null 오류 트러블슈팅도 포함합니다."
+thumbnail: "https://images.unsplash.com/photo-1708807472445-d33589e6b090?q=80&w=2148&auto=format&fit=crop"
+date: 2026-05-30
+category: "Backend"
+tags: ["Python", "Steam API", "크롤링", "BeautifulSoup", "GitHub Actions"]
+series: "DeReel 개발기"
+series_order: 2
+lang: ko
+draft: false
+---
+
+import Alert from '@/components/Alert.astro';
+
+## 들어가며
+
+[지난 편](/dev/dereel-1a-github-actions-crawling-bot)에서 Apple 리퍼비시 재고 감시를 만들었습니다. 이번엔 범위를 넓혀 **게임 가격 감시**를 추가했습니다.
+
+목표는 세 가지입니다.
+
+1. **Steam**: 원하는 게임이 목표가 이하로 세일할 때 알림
+2. **GOG**: 동일한 가격 감시
+3. **Epic**: 무료 게임 배포 이벤트 감지
+
+각 플랫폼마다 API 전략이 달랐고, 예상치 못한 장애물도 있었습니다. 그 과정을 공유합니다.
+
+---
+
+## 가격 감시 모델 설계
+
+재고 감시는 단순합니다. "있다/없다"의 변화만 보면 됩니다. 가격 감시는 조금 다릅니다.
+
+- 사용자마다 목표 가격이 다릅니다
+- "현재 가격 ≤ 목표 가격"일 때만 알림을 보내야 합니다
+- 세일이 지속되는 동안 매번 알림하면 안 됩니다 (24시간 쿨다운)
+
+이를 위해 `PriceResult` 모델과 `compare_price` 로직을 추가했습니다.
+
+```python
+class PriceResult(BaseModel):
+    site: str
+    product_id: str
+    name: str
+    original_price: float
+    current_price: float
+    currency: str
+    url: str
+
+    @property
+    def is_free(self) -> bool:
+        return self.current_price == 0
+
+    def should_notify(self, target_price: float) -> bool:
+        if self.is_free:
+            return True
+        return self.current_price <= target_price
+```
+
+```yaml
+# config/games.yaml
+targets:
+  - site: steam
+    type: price
+    interval_hours: 3
+    currency: KRW
+    products:
+      - app_id: "1245620"
+        name: "Elden Ring"
+        target_price: 33000
+```
+
+---
+
+## Steam 크롤러: 세 가지 제품 유형
+
+Steam에는 세 가지 제품 유형이 있습니다.
+
+| 유형 | 설명 | API |
+|---|---|---|
+| App | 단일 게임 | `/api/appdetails?appids=` |
+| Package (Sub) | 묶음 패키지 | `/api/packagedetails?packageids=` |
+| Bundle | 번들 (묶음 할인) | ??? |
+
+App과 Package는 공식 API가 있습니다.
+
+```python
+# App
+resp = await client.get(
+    "https://store.steampowered.com/api/appdetails",
+    params={"appids": app_id, "cc": cc, "filters": "price_overview"}
+)
+price_data = data[app_id]["data"]["price_overview"]
+
+# Package
+resp = await client.get(
+    "https://store.steampowered.com/api/packagedetails",
+    params={"packageids": package_id, "cc": cc}
+)
+price_data = data[package_id]["data"]["price"]
+```
+
+<Alert type="info" title="price_overview vs price">
+App API는 `price_overview` 키를, Package API는 `price` 키를 사용합니다. 처음에 Package 응답에서 `price_overview`를 찾다가 항상 None이 나와 당황했습니다.
+</Alert>
+
+### Bundle: API가 없다
+
+문제는 번들입니다. Monkey Island Collection(bundle_id: 6588)을 추적하려 했는데, `/api/bundledetails` 엔드포인트를 호출하자 **403 Forbidden**이 떨어졌습니다.
+
+공식적으로 공개된 API가 아닌 겁니다. 방법을 찾아야 했습니다.
+
+번들 스토어 페이지(`store.steampowered.com/bundle/6588/`)의 HTML을 분석했더니 이런 구조가 있었습니다.
+
+```html
+<div data-ds-bundleid="6588"
+     data-ds-bundle-data='{"m_rgItems": [
+       {"m_nBasePriceInCents": 1100000, ...},
+       {"m_nBasePriceInCents": 1100000, ...},
+       ...
+     ]}'>
+  <div class="game_purchase_discount"
+       data-price-final="5814000"
+       data-bundlediscount="10">
+  </div>
+</div>
+```
+
+`data-ds-bundle-data` JSON에 개별 게임 원가가, `data-price-final`에 번들 최종 가격이 있습니다. BeautifulSoup으로 파싱합니다.
+
+```python
+from bs4 import BeautifulSoup
+import json
+
+async def _fetch_bundle(self, bundle_id, name, currency, cc):
+    resp = await self._client.get(
+        f"https://store.steampowered.com/bundle/{bundle_id}/",
+        params={"cc": cc, "l": "english"}
+    )
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    bundle_div = soup.find("div", {"data-ds-bundleid": bundle_id})
+    if bundle_div is None:
+        return None
+
+    # 개별 게임 원가 합산
+    bundle_data = json.loads(str(bundle_div.get("data-ds-bundle-data", "{}")))
+    items = bundle_data.get("m_rgItems", [])
+    original_cents = sum(item.get("m_nBasePriceInCents", 0) for item in items)
+
+    # 번들 최종 가격
+    price_div = bundle_div.find(attrs={"data-price-final": True})
+    final_cents = int(str(price_div["data-price-final"]))
+
+    return self._build_price_result(bundle_id, name,
+        {"initial": original_cents, "final": final_cents}, currency)
+```
+
+### App → Package Fallback
+
+사용자가 `app_id`로 입력했지만 실제로는 패키지인 경우도 있습니다. App API가 `success: false`를 반환하면 자동으로 Package API로 재시도합니다.
+
+```python
+if app_id:
+    result = await self._fetch_app(app_id_str, name, currency, cc)
+    if result is None:
+        # App 조회 실패 → Package로 fallback
+        result = await self._fetch_package(app_id_str, name, currency, cc)
+```
+
+---
+
+## GOG 크롤러: 비공식 REST API
+
+GOG는 공식 API를 제공하지 않지만, 스토어가 내부적으로 사용하는 REST 엔드포인트가 알려져 있습니다.
+
+```
+GET https://api.gog.com/products/{product_id}/prices?countryCode=KR
+```
+
+응답 구조가 깔끔합니다.
+
+```json
+{
+  "_embedded": {
+    "prices": [{
+      "currency": {"code": "KRW"},
+      "basePrice": "4990 KRW",
+      "finalPrice": "0 KRW"
+    }]
+  }
+}
+```
+
+가격 형식이 특이합니다. `"4990 KRW"` — 정수 + 통화 코드 문자열로, GOG는 1/100 단위 표기를 씁니다. (`4990` → 49.90)
+
+```python
+@staticmethod
+def _parse_price(price_str: str) -> float:
+    """'4990 KRW' → 49.90"""
+    amount_cents = int(price_str.split()[0])
+    return round(amount_cents / 100, 2)
+```
+
+---
+
+## Epic 크롤러: 무료 게임 감지
+
+Epic Games는 가격 API가 없습니다. 대신 PRD에서 Epic의 핵심 가치는 **무료 게임 배포 이벤트 감지**였습니다.
+
+Epic은 현재 무료 배포 중인 게임 목록을 공개 엔드포인트로 제공합니다.
+
+```
+GET https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions
+    ?locale=ko&country=KR&allowCountries=KR
+```
+
+<Alert type="tip" title="GraphQL 대신 프로모션 API를 선택한 이유">
+Epic Store는 내부적으로 GraphQL을 사용하며, 이를 통해 특정 게임 가격도 조회할 수 있습니다. 하지만 게임마다 `namespace`와 `offerId`를 사전에 파악해야 하고, 비공식이라 언제든 변경될 수 있습니다. 프로모션 API는 공개 엔드포인트이고, 우리 목적(무료 게임 감지)에 정확히 맞습니다.
+</Alert>
+
+현재 무료인지 판별하는 조건은 `promotionalOffers`에 `discountPercentage: 0`인 항목이 있는지입니다. (Epic에서 0%는 "원가의 0%", 즉 완전 무료를 의미합니다.)
+
+```python
+@staticmethod
+def _is_currently_free(item: dict) -> bool:
+    for offer_group in (item.get("promotions") or {}).get("promotionalOffers") or []:
+        for offer in offer_group.get("promotionalOffers") or []:
+            setting = offer.get("discountSetting") or {}
+            if (setting.get("discountType") == "PERCENTAGE"
+                    and setting.get("discountPercentage") == 0):
+                return True
+    return False
+```
+
+`products`에 `slug`를 입력하면 관심 있는 게임만 watchlist로 필터링합니다. 비워두면 모든 무료 게임에 알림이 옵니다.
+
+```yaml
+- site: epic
+  type: price
+  interval_hours: 6
+  products:
+    - slug: "baldurs-gate-2-enhanced-edition"
+      name: "Baldur's Gate II: Enhanced Edition"
+      target_price: 0
+```
+
+### 실제 운영 중 마주친 오류
+
+배포 후 로그를 보다가 이런 에러를 발견했습니다.
+
+```
+ERROR - [epic] 크롤링 실패 (3회 연속) — 'NoneType' object has no attribute 'get'
+```
+
+코드를 보면 이런 부분이 있었습니다.
+
+```python
+# 문제 코드
+elements = (
+    data.get("data", {})
+        .get("Catalog", {})
+        ...
+)
+```
+
+Python의 `dict.get(key, default)`는 키가 **없을 때만** 기본값을 반환합니다. 키가 존재하지만 값이 `null`이면 `None`을 반환합니다. Epic API가 `{"data": null}` 형태로 응답한 것입니다.
+
+```python
+# 수정 코드 — or {} 패턴으로 null-safe 처리
+catalog = (data.get("data") or {}).get("Catalog") or {}
+search_store = catalog.get("searchStore") or {}
+elements = search_store.get("elements") or []
+```
+
+`or {}` 패턴은 값이 `None`이든 키가 없든 모두 `{}`로 처리합니다. API 응답의 어느 레벨에서든 null이 오더라도 안전합니다.
+
+<Alert type="warning" title="dict.get(key, default)의 함정">
+`get(key, default)`는 키 부재 시에만 동작합니다. 외부 API 응답처럼 null이 명시적으로 올 수 있는 경우엔 `or default` 패턴을 사용하세요.
+
+```python
+# 안전하지 않음
+data.get("key", {}).get("nested")  # key가 null이면 AttributeError
+
+# 안전함
+(data.get("key") or {}).get("nested")
+```
+</Alert>
+
+---
+
+## 설정 파일 분리
+
+처음엔 `config/targets.yaml` 하나에 모든 타겟을 관리했습니다. 크롤러가 늘어나면서 문제가 생겼습니다.
+
+- 재고 감시(apple_refurb)와 가격 감시(steam, gog, epic)가 한 파일에 섞임
+- Amazon, 쿠팡이 추가될수록 파악이 어려워짐
+- `--type stock|price` 플래그로 필터링하는 구조가 직관적이지 않음
+
+**도메인별로 파일을 분리**했습니다.
+
+```
+config/
+  stock.yaml      # 재고 감시 (apple_refurb)
+  games.yaml      # 게임 가격/무료 감시 (steam, gog, epic)
+  shopping.yaml   # 쇼핑몰 가격 감시 (amazon, 쿠팡 — 예정)
+```
+
+`run.py`는 `config/*.yaml`을 자동으로 탐색합니다.
+
+```python
+config_files = [args.config] if args.config else sorted(glob.glob("config/*.yaml"))
+
+for config_path in config_files:
+    await run(config_path)
+```
+
+새 도메인을 추가할 때 기존 파일을 건드리지 않고 새 파일만 추가하면 됩니다.
+
+---
+
+## GitHub Actions 단일화
+
+기존엔 재고/가격 워크플로우가 분리되어 있었습니다. 설정 파일을 분리하면서 워크플로우도 하나로 합쳤습니다.
+
+```yaml
+# .github/workflows/crawl.yml
+on:
+  schedule:
+    - cron: "0 * * * *"   # 매시간 한 번, interval_hours가 실제 주기 제어
+```
+
+Playwright는 apple_refurb에만 필요하지만, 통합 워크플로우에서 항상 설치합니다. 개인 프로젝트 기준으로 설치 시간(약 2분)은 허용 범위입니다.
+
+---
+
+## 결과
+
+Phase 1-B 완료 후 동작 중인 크롤러 목록입니다.
+
+| 크롤러 | 방식 | 주기 |
+|---|---|---|
+| apple_refurb | Playwright + Bootstrap JSON | 4시간 |
+| steam | 공식 API (app/package/bundle) | 3시간 |
+| gog | 비공식 REST API | 6시간 |
+| epic | 무료 프로모션 API | 6시간 |
+
+전체 테스트 34개가 통과하고 있으며, 실제로 세일 알림과 무료 게임 알림을 받고 있습니다.
+
+---
+
+## 다음 편에서는
+
+Phase 2-A에서는 AWS DynamoDB를 도입해 가격 이력을 쌓습니다. 현재는 "지금 가격이 목표가 이하인가"만 판단하지만, 이력이 쌓이면 "역대 최저가인가"도 판단할 수 있게 됩니다.
+
+쿠팡(파트너스 API)과 Amazon(Playwright) 크롤러도 추가할 예정입니다.
+
+소스 코드는 [GitHub](https://github.com/veryfaraway/DeReel)에서 확인하실 수 있습니다.
