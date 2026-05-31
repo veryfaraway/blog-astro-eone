@@ -1,0 +1,305 @@
+---
+title: "yt-dlp 완전 정복 — 터미널 하나로 유튜브 다운로드 제대로 쓰기"
+description: "yt-dlp 설치부터 화질 선택, MP3 추출, 플레이리스트 일괄 다운로드, 자막, 설정 파일, alias 등록까지. 터미널이 익숙하다면 이게 가장 강력한 정답입니다."
+thumbnail: "https://images.unsplash.com/photo-1746608943026-e56ff017cd71?q=80&w=2370&auto=format&fit=crop"
+date: 2026-05-31
+draft: false
+lang: ko
+series: "유튜브 무료 다운로드 가이드"
+series_order: 2
+category: Media
+tags:
+  - "yt-dlp"
+  - "YouTube"
+  - "터미널"
+  - "macOS"
+  - "ffmpeg"
+  - "CLI"
+  - "다운로드"
+  - "Homebrew"
+---
+
+import Alert from '@/components/Alert.astro';
+
+`yt-dlp`는 유튜브 다운로더 중 사실상 표준입니다. 전 세계 개발자들이 유튜브 정책 변경에 실시간으로 대응하고, YouTube 외에 수백 개 사이트도 지원합니다. 터미널이 익숙하다면 유료 앱보다 훨씬 빠르고 강력하게 쓸 수 있습니다. 자주 쓰는 명령어를 alias로 등록해 두면 클릭 한 번과 다를 바 없어집니다.
+
+## 설치
+
+Mac에 Homebrew가 있다면 두 줄로 끝납니다.
+
+```bash
+brew install yt-dlp ffmpeg
+```
+
+<Alert type="info">
+`ffmpeg`는 분리 저장된 고화질 영상 트랙과 오디오 트랙을 하나의 파일로 합치는 데 사용됩니다. 함께 설치하지 않으면 최고 화질 다운로드가 안 될 수 있습니다.
+</Alert>
+
+설치 확인:
+
+```bash
+yt-dlp --version
+ffmpeg -version
+```
+
+---
+
+## 기본 다운로드
+
+가장 단순한 사용법입니다. URL만 넘기면 화질과 오디오를 자동으로 합쳐 최적 파일로 저장합니다.
+
+```bash
+yt-dlp "https://www.youtube.com/watch?v=영상ID"
+```
+
+큰따옴표는 URL에 `&` 같은 특수문자가 포함될 때 오류를 방지합니다. 습관적으로 붙이는 걸 권장합니다.
+
+---
+
+## 화질 선택
+
+### 사용 가능한 포맷 목록 확인
+
+```bash
+yt-dlp -F "URL"
+```
+
+이 명령을 실행하면 해당 영상에서 받을 수 있는 포맷 목록이 출력됩니다. 각 줄 맨 앞의 숫자가 포맷 ID입니다.
+
+```
+ID  EXT   RESOLUTION  FPS  │ SIZE
+─────────────────────────────────
+251 webm  audio only       │ 4.2MiB
+140 m4a   audio only       │ 5.1MiB
+137 mp4   1920x1080   30   │ 120MiB
+248 webm  1920x1080   30   │ 97MiB
+271 webm  2560x1440   30   │ 230MiB
+```
+
+### 특정 화질로 다운로드
+
+```bash
+# 포맷 ID 직접 지정 (영상+오디오 합치기)
+yt-dlp -f "137+140" "URL"
+
+# 1080p 이하 최고 화질을 mp4로 자동 선택
+yt-dlp -f "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]" "URL"
+
+# 그냥 최고 화질 (포맷 자동 선택)
+yt-dlp -f "bestvideo+bestaudio" "URL"
+```
+
+<Alert type="tip">
+일상적으로는 `-f "bestvideo[height<=1080]+bestaudio"` 정도면 충분합니다. 4K 영상은 파일 크기가 매우 크고, 인터넷 속도에 따라 다운로드도 오래 걸립니다.
+</Alert>
+
+---
+
+## 오디오만 추출 (MP3)
+
+팟캐스트나 음악 영상에서 음원만 빼고 싶을 때 유용합니다.
+
+```bash
+# MP3로 추출
+yt-dlp -x --audio-format mp3 "URL"
+
+# 오디오 품질 지정 (0=최고, 9=최저, 기본값 5)
+yt-dlp -x --audio-format mp3 --audio-quality 0 "URL"
+
+# m4a (파일 크기 작고 품질 좋음, 별도 변환 없이 빠름)
+yt-dlp -x --audio-format m4a "URL"
+```
+
+---
+
+## 플레이리스트 일괄 다운로드
+
+재생 목록 URL을 그대로 넣으면 전체를 순서대로 받습니다.
+
+```bash
+# 플레이리스트 전체 다운로드
+yt-dlp "https://www.youtube.com/playlist?list=플레이리스트ID"
+
+# 특정 범위만 (1번~5번)
+yt-dlp --playlist-items 1-5 "플레이리스트URL"
+
+# 특정 항목만 (1번, 3번, 5번)
+yt-dlp --playlist-items 1,3,5 "플레이리스트URL"
+```
+
+<Alert type="tip">
+플레이리스트 다운로드 시 `-o` 옵션으로 폴더와 파일명을 지정하면 정리가 편합니다. 아래 출력 파일명 설정 섹션을 참고하세요.
+</Alert>
+
+---
+
+## 자막 다운로드
+
+```bash
+# 사용 가능한 자막 목록 확인
+yt-dlp --list-subs "URL"
+
+# 한국어 자막과 함께 영상 다운로드
+yt-dlp --write-sub --sub-lang ko "URL"
+
+# 자동 생성 자막 포함 (Auto-generated)
+yt-dlp --write-auto-sub --sub-lang ko "URL"
+
+# 자막만 다운로드 (영상 제외)
+yt-dlp --write-sub --skip-download --sub-lang ko "URL"
+
+# 자막을 SRT 형식으로 변환
+yt-dlp --write-sub --sub-lang ko --convert-subs srt "URL"
+```
+
+---
+
+## 출력 파일명 설정
+
+`-o` 옵션으로 저장 경로와 파일명 형식을 지정할 수 있습니다. `%(변수명)s` 형태로 메타데이터를 활용합니다.
+
+```bash
+# 제목으로 저장 (기본값과 유사)
+yt-dlp -o "%(title)s.%(ext)s" "URL"
+
+# 업로더_제목 형식
+yt-dlp -o "%(uploader)s_%(title)s.%(ext)s" "URL"
+
+# 연도/월 폴더 아래 저장
+yt-dlp -o "~/Downloads/YouTube/%(upload_date>%Y/%m)s/%(title)s.%(ext)s" "URL"
+
+# 플레이리스트 번호 포함
+yt-dlp -o "%(playlist_index)s_%(title)s.%(ext)s" "플레이리스트URL"
+```
+
+자주 쓰는 변수:
+
+| 변수 | 의미 |
+|------|------|
+| `%(title)s` | 영상 제목 |
+| `%(uploader)s` | 채널명 |
+| `%(upload_date)s` | 업로드 날짜 (`YYYYMMDD`) |
+| `%(ext)s` | 파일 확장자 |
+| `%(id)s` | 영상 ID |
+| `%(playlist_index)s` | 플레이리스트 내 순서 |
+
+---
+
+## 유용한 추가 옵션
+
+```bash
+# 이미 다운로드한 파일은 건너뜀 (재다운로드 방지)
+yt-dlp --download-archive downloaded.txt "URL"
+
+# 다운로드 속도 제한 (네트워크 배려)
+yt-dlp -r 2M "URL"
+
+# 썸네일(Thumbnail)도 함께 저장
+yt-dlp --write-thumbnail "URL"
+
+# 영상 정보만 출력 (다운로드 안 함)
+yt-dlp --dump-json "URL"
+
+# 로그인이 필요한 영상 (브라우저 쿠키 사용)
+yt-dlp --cookies-from-browser chrome "URL"
+```
+
+---
+
+## 설정 파일로 매번 입력 생략하기
+
+자주 쓰는 옵션은 설정 파일에 저장해 두면 매번 입력할 필요가 없습니다.
+
+```bash
+mkdir -p ~/.config/yt-dlp
+nano ~/.config/yt-dlp/config
+```
+
+설정 파일 예시:
+
+```
+# 기본 화질: 1080p 이하 최고 화질
+-f bestvideo[height<=1080]+bestaudio/best
+
+# 저장 경로와 파일명 형식
+-o ~/Downloads/YouTube/%(upload_date>%Y)s/%(title)s.%(ext)s
+
+# ffmpeg 경로 (Homebrew 기본 경로)
+--ffmpeg-location /opt/homebrew/bin/ffmpeg
+
+# 썸네일 저장
+--write-thumbnail
+
+# 이미 받은 파일 기록
+--download-archive ~/Downloads/YouTube/downloaded.txt
+```
+
+설정 파일에 저장한 옵션은 `yt-dlp "URL"` 만 입력해도 자동으로 적용됩니다.
+
+---
+
+## 쉘 Alias 등록
+
+자주 쓰는 명령어 조합을 짧은 이름으로 등록해 두면 훨씬 빠릅니다. `~/.zshrc` 파일에 추가하세요.
+
+```bash
+# ~/.zshrc 에 추가
+
+# 최고 화질 다운로드
+alias ytdl='yt-dlp -f "bestvideo[height<=1080]+bestaudio" -o "~/Downloads/YouTube/%(title)s.%(ext)s"'
+
+# MP3 추출
+alias ytmp3='yt-dlp -x --audio-format mp3 --audio-quality 0 -o "~/Downloads/YouTube/%(title)s.%(ext)s"'
+
+# 자막 포함 다운로드
+alias ytsub='yt-dlp --write-auto-sub --sub-lang ko -o "~/Downloads/YouTube/%(title)s.%(ext)s"'
+```
+
+저장 후 터미널을 재시작하거나 `source ~/.zshrc` 를 실행하면 바로 사용할 수 있습니다.
+
+```bash
+ytdl "https://www.youtube.com/watch?v=영상ID"
+ytmp3 "https://www.youtube.com/watch?v=영상ID"
+```
+
+---
+
+## 업데이트
+
+유튜브는 자주 내부 구조를 바꿉니다. 다운로드가 갑자기 안 된다면 먼저 업데이트부터 해보세요.
+
+```bash
+brew upgrade yt-dlp
+```
+
+또는 yt-dlp 자체 업데이트 기능:
+
+```bash
+yt-dlp -U
+```
+
+---
+
+## 자주 만나는 오류
+
+| 오류 메시지 | 원인 | 해결 |
+|------------|------|------|
+| `ERROR: Sign in to confirm you're not a bot` | 유튜브 봇 차단 | `--cookies-from-browser chrome` 추가 |
+| `ffmpeg not found` | ffmpeg 미설치 | `brew install ffmpeg` |
+| `Requested format is not available` | 해당 화질 없음 | `-F` 로 가능한 포맷 확인 후 재시도 |
+| `HTTP Error 429` | 너무 빠른 요청 | `-r 1M` 으로 속도 제한 |
+| `Video unavailable` | 지역 차단 또는 삭제된 영상 | VPN 사용 또는 해결 불가 |
+
+<Alert type="warning" title="저작권 주의">
+다운로드한 영상은 개인 감상 목적으로만 사용하세요. 재업로드나 상업적 이용은 저작권법 위반이 될 수 있습니다.
+</Alert>
+
+---
+
+## 정리
+
+`yt-dlp`는 한 번 세팅해 두면 유료 앱보다 훨씬 강력하고 빠릅니다. 설정 파일과 alias까지 잡아두면 `ytdl "URL"` 한 번으로 모든 게 끝납니다. 처음 진입 장벽이 조금 있을 뿐, 익숙해지면 다시는 GUI 앱으로 돌아가기 싫어질 겁니다.
+
+GUI가 필요하다면 yt-dlp를 내부 엔진으로 쓰는 **Reel** 이나 **Stacher** 앱을 먼저 써보는 것도 좋은 출발점입니다.
+
+→ **[Mac에서 유튜브 영상 무료로 받는 법 — 3가지 방법 비교](/tools/ko/2026/youtube-downloader-mac-free)**
