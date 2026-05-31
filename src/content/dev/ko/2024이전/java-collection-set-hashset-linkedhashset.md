@@ -71,7 +71,7 @@ public class SetComparisonExample {
 
 이 코드를 실행하면 다음과 같은 결과를 얻을 수 있습니다:
 
-```
+```text
 
 HashSet:
 포도

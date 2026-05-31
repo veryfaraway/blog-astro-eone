@@ -78,6 +78,7 @@ public record Person(String name, int age) {}
 ```
 
 이 한 줄이 자동으로 생성해주는 것들:
+
 - private final 필드
 - 생성자
 - getter 메서드 (getName()이 아닌 name()으로 생성)
@@ -537,6 +538,7 @@ public final class Person {
 Java Record는 데이터 중심 클래스를 작성할 때 코드를 극적으로 줄여주는 훌륭한 기능입니다. 특히 Spring Boot에서 DTO를 작성할 때 매우 유용합니다.
 
 **핵심 정리:**
+
 - Record는 불변 데이터 클래스를 간결하게 작성
 - 불변성으로 스레드 안전성과 예측 가능성 확보
 - Spring Boot의 DTO, 응답 객체로 최적

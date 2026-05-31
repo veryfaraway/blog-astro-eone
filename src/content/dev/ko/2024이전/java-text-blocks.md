@@ -13,7 +13,6 @@ thumbnail: "https://images.unsplash.com/photo-1552508744-1696d4464960?q=80&w=294
 
 이 글에서는 Java 15 텍스트 블록 기능을 사용하여 여러 줄 문자열을 가장 효율적으로 선언하는 방법을 자세히 살펴보겠습니다.
 
-
 ## 사용법
 
 Java 15부터는 텍스트 블록이 표준 기능으로 제공됩니다. Java 13 및 14에서는 미리보기 기능으로 활성화해야 했습니다.
@@ -30,7 +29,6 @@ String example = """
 텍스트 블록 안에서는 줄 바꿈 이스케이프 없이도 개행과 따옴표를 자유롭게 사용할 수 있습니다. 이를 통해 HTML, JSON, SQL 또는 필요한 모든 리터럴 조각을 보다 우아하고 읽기 쉬운 방식으로 포함할 수 있습니다.
 
 결과 문자열에는 (기본) 들여쓰기와 첫 번째 줄 바꿈이 포함되지 않습니다. 다음 섹션에서 들여쓰기 처리에 대해 살펴보겠습니다.
-
 
 ## 들여쓰기
 
@@ -89,7 +87,6 @@ void givenAnIndentedString_thenMatchesIndentedOldStyle() {
 ```
 
 또한 다음 섹션에서 살펴볼 것처럼 텍스트 블록 내부에서 이스케이프 이스케이프를 사용할 수도 있습니다.
-
 
 ## Escaping
 
@@ -177,7 +174,6 @@ void givenAStringWithEscapesSpaces_thenTheResultHasLinesEndingWithSpaces() {
 
 컴파일러는 첫 번째 줄에서 공백을 제거합니다. 그러나 두 번째 줄은 이스케이프된 공백으로 종료되므로 모든 공백이 유지됩니다.
 
-
 ### 서식 지정
 
 변수 치환을 지원하기 위해 문자열 리터럴에서 직접 String.format 메서드를 호출할 수 있는 새로운 메서드가 추가되었습니다:
@@ -189,7 +185,6 @@ public String getFormattedText(String parameter) {
             """.formatted(parameter);
 }
 ```
-
 
 ## 마무리
 

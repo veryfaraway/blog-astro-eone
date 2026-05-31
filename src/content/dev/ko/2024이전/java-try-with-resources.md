@@ -12,9 +12,11 @@ thumbnail: "https://images.unsplash.com/photo-1542318421-fc3d0f423551?q=80&w=294
 ---
 
 ## 개요
+
 안녕하세요! 오늘은 Java의 Try-with-Resources 구문에 대해 자세히 알아보겠습니다. 이 기능은 Java 7에서 도입되어 try 블록 안에 선언된 자원에 대해서 자원의 자동 닫힘을 지원해서 자원 관리를 훨씬 더 쉽고 안전하게 만들어 주었습니다.
 
 ### 1. try-with-resources 사용하기
+
 자원 자동 닫힘 기능을 사용하려면, 간단하게, try 안에서 자원을 생성하면 됩니다.
 
 ```java
@@ -56,7 +58,6 @@ try (Scanner scanner = new Scanner(new File("test.txt"))) {
 }
 ```
 
-
 ### 3. 다수의 자원에 대해서 try-with-resources 사용하기
 
 try-with-resources 블록에서 여러 리소스를 세미콜론으로 구분하여 리소스를 선언할 수 있습니다:
@@ -70,8 +71,7 @@ try (Scanner scanner = new Scanner(new File("testRead.txt"));
 }
 ```
 
-
-### 4. 자동 닫힘을 지원하는 사용자 정의 리소스 
+### 4. 자동 닫힘을 지원하는 사용자 정의 리소스
 
 try-with-resources 블록에서 올바르게 처리되는 사용자 정의 리소스를 만들려면 클래스가 Closeable 또는 AutoCloseable 인터페이스를 구현하고 close 메서드를 재정의해야 합니다:
 
@@ -84,13 +84,13 @@ public class MyResource implements AutoCloseable {
 }
 ```
 
-
 ### 5. 자원이 닫히는 순서
 
 먼저 정의/획득된 리소스가 마지막에 닫힙니다. 이런 동작은 아래의 예제로 확인할 수 있습니다.
 
 **Resource 1:**
-```java 
+
+```java
 public class AutoCloseableResourcesFirst implements AutoCloseable {
 
     public AutoCloseableResourcesFirst() {
@@ -109,6 +109,7 @@ public class AutoCloseableResourcesFirst implements AutoCloseable {
 ```
 
 **Resource 2:**
+
 ```java
 public class AutoCloseableResourcesSecond implements AutoCloseable {
 
@@ -128,6 +129,7 @@ public class AutoCloseableResourcesSecond implements AutoCloseable {
 ```
 
 **Test:**
+
 ```java
 private void orderOfClosingResources() throws Exception {
     try (AutoCloseableResourcesFirst af = new AutoCloseableResourcesFirst();
@@ -142,8 +144,8 @@ private void orderOfClosingResources() throws Exception {
 **Results:**
 
 > Constructor -> AutoCloseableResources_First
-> 
-> Constructor -> AutoCloseableResources_Second 
+>
+> Constructor -> AutoCloseableResources_Second
 >
 > Something -> AutoCloseableResources_First
 >
@@ -153,12 +155,9 @@ private void orderOfClosingResources() throws Exception {
 >
 > Closed AutoCloseableResources_First
 
-
-
 ### 6. catch, finally 블록
 
 try-with-resource 구문에서도 기존 try 구문에서처럼 catch, finally 블록을 동일한 방식으로 사용할 수 있습니다.
-
 
 ### 7. Java 9 - Effectively Final Variables
 
@@ -170,6 +169,7 @@ try (Scanner scanner = new Scanner(new File("testRead.txt"));
     // 생략
 }
 ```
+
 위에 표시된 것처럼 다수의 리소스를 선언하는 부분에서 특히 장황합니다. Java 9 및 JEP 213부터는 이제 try-with-resources 블록 내에서 final 변수 혹은 effectively final 변수를 사용할 수 있습니다:
 
 ```java
@@ -185,7 +185,6 @@ try (scanner;writer) {
 위와 같이 스캐너 변수는 명시적으로 final로 선언되었으므로 try-with-resource 블록과 함께 사용할 수 있습니다. writer 변수는 명시적으로 final 변수는 아니지만 첫 번째 할당 후에는 변경되지 않습니다. 따라서 writer 변수도 사용할 수 있습니다.
 
 이렇게 Java 9부터는 이미 선언된 effectively final 변수를 try-with-Resources 구문에서 직접 사용할 수 있어, 코드가 더욱 간결해졌습니다.
-
 
 ## 마무리
 

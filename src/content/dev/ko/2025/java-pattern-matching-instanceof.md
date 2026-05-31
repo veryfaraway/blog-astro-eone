@@ -365,6 +365,7 @@ String result = switch (obj) {
 Pattern Matching for instanceof는 Java 코드를 더 간결하고 읽기 쉽게 만들어주는 훌륭한 기능입니다. Java 16 이상을 사용한다면 적극적으로 활용하여 불필요한 타입 캐스팅을 제거하고, 더 안전하고 깔끔한 코드를 작성해보세요!
 
 주요 장점을 정리하면:
+
 - 코드 간결성 향상
 - 타입 안정성 보장
 - 실수로 인한 ClassCastException 방지
