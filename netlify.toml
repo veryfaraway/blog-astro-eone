@@ -2,13 +2,6 @@
   command = "pnpm build"
   publish = "dist"
 
-# trailing slash 정규화 — GSC 중복 URL 방지
-[[redirects]]
-  from = "/*/"
-  to = "/:splat"
-  status = 301
-  force = true
-
 [build.environment]
   NODE_VERSION = "22"
 

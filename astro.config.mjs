@@ -7,7 +7,6 @@ import tailwindcss from '@tailwindcss/vite';
 import pagefind from 'astro-pagefind';
 export default defineConfig({
   site: 'https://blog.eone.one',
-  trailingSlash: 'never',
   integrations: [
     mdx(),
     react(),
