@@ -12,11 +12,11 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1649180556628-9ba704115795?q=80&w=2362&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
-# Python으로 시작하는 데이터 분석
+## Python으로 시작하는 데이터 분석
 
 Python은 데이터 분석에 가장 많이 사용되는 언어입니다. Pandas와 NumPy를 활용하면 강력한 데이터 분석이 가능합니다.
 
-## Pandas 기초
+### Pandas 기초
 
 Pandas는 데이터 조작과 분석을 위한 라이브러리입니다.
 
@@ -34,7 +34,7 @@ df = pd.DataFrame({
 print(df)
 ```
 
-## 데이터 읽기
+### 데이터 읽기
 
 CSV 파일을 읽어오는 것은 매우 간단합니다.
 
@@ -48,7 +48,7 @@ print(df.info())        # 데이터 타입과 null 값
 print(df.describe())    # 통계 정보
 ```
 
-## 데이터 필터링
+### 데이터 필터링
 
 조건에 맞는 데이터를 쉽게 필터링할 수 있습니다.
 
@@ -63,7 +63,7 @@ seoul_adults = df[(df['age'] >= 30) & (df['city'] == 'Seoul')]
 selected_cities = df[df['city'].isin(['Seoul', 'Busan'])]
 ```
 
-## 데이터 집계
+### 데이터 집계
 
 그룹별로 데이터를 집계할 수 있습니다.
 
@@ -78,7 +78,7 @@ city_stats = df.groupby('city').agg({
 })
 ```
 
-## 데이터 시각화
+### 데이터 시각화
 
 Matplotlib과 함께 사용하면 데이터를 시각화할 수 있습니다.
 
@@ -93,7 +93,7 @@ plt.ylabel('평균 나이')
 plt.show()
 ```
 
-## 실전 예제: 데이터 정제
+### 실전 예제: 데이터 정제
 
 실제 데이터는 항상 깨끗하지 않습니다. 데이터 정제가 필요합니다.
 
@@ -115,6 +115,6 @@ IQR = Q3 - Q1
 df = df[(df['age'] >= Q1 - 1.5*IQR) & (df['age'] <= Q3 + 1.5*IQR)]
 ```
 
-## 마치며
+### 마치며
 
 Pandas는 데이터 분석의 필수 도구입니다. 이 기초를 바탕으로 더 복잡한 분석을 시도해보세요!

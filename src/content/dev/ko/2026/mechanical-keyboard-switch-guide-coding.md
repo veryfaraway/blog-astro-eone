@@ -15,7 +15,7 @@ thumbnail: "https://images.unsplash.com/photo-1595044426077-d36d9236d54a?q=80&w=
 
 기계식 키보드 시장은 이제 '체리 MX'라는 거인의 그늘을 완전히 벗어났습니다. 특허 만료 이후 수많은 제조사가 등장하며 시작된 **스위치 춘추전국시대**는 사용자들에게 끝없는 선택지와 즐거움을 선사하고 있죠.
 
-![스위치 춘추전국시대](https://www.daskeyboard.com/blog/wp-content/uploads/cherry-mx-switch-comparison.jpg)
+![스위치 춘추전국시대](https://www.zdnet.com/a/img/resize/39889404491063f1ad92b7cdce326f69cec63774/2022/04/21/9e89b0fb-7113-4e4c-aefc-49e394ea687f/numerous-mechanical-keyboard-switches.jpg?auto=webp&width=1280)
 
 오늘은 변화된 스위치 시장의 흐름을 짚어보고, 특히 **알루미늄 바디 키보드**를 사용하는 분들을 위한 **코딩용 스위치와 키캡**을 추천해 드립니다.
 

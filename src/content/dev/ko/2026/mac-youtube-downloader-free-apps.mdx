@@ -11,6 +11,8 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2148&auto=format&fit=crop"
 ---
 
+import Alert from '@/components/Alert.astro';
+
 유튜브 영상을 가끔 오프라인으로 보관하고 싶을 때, 유료 구독 없이 사용할 수 있는  
 Mac용 무료 다운로더 앱들을 비교해 봤습니다.  
 **소량 다운로드(하루 1~5개)** 기준으로 추천합니다.
@@ -130,9 +132,6 @@ yt-dlp --write-sub --sub-lang ko "유튜브URL"
 
 ---
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 저작권 안내</p>
-
+<Alert type="warning" title="저작권 안내">
 다운로드한 영상은 개인 학습 및 오프라인 감상 목적으로만 사용하시고, 재배포나 상업적 이용은 삼가세요.
-
-</div>
+</Alert>

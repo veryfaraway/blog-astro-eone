@@ -18,9 +18,9 @@ thumbnail: "https://images.unsplash.com/photo-1602763288580-927cfda37a72?q=80&w=
 
 ## 🔍 왜 지금 업그레이드해야 할까?
 
-- **Spring Boot 2.x EOL** — Spring Boot 2.7은 2023년 11월 공식 지원 종료 [dev](https://dev.to/nichetti/migrating-to-spring-boot-30-and-java-17-a-comprehensive-guide-2pbn)
-- **Spring Boot 3.x 최소 요건** — Java 17 미만은 아예 실행 불가 [atlantbh](https://www.atlantbh.com/java-17-and-spring-boot-3-upgrade-roadmap/)
-- **Java 17 LTS** — Oracle 기준 **2029년 9월까지** 장기 지원 보장 [javaspring](https://www.javaspring.net/blog/spring-boot-version-for-java-17/)
+- **Spring Boot 2.x EOL** — Spring Boot 2.7은 2023년 11월 공식 지원 종료
+- **Spring Boot 3.x 최소 요건** — Java 17 미만은 아예 실행 불가
+- **Java 17 LTS** — Oracle 기준 **2029년 9월까지** 장기 지원 보장
 
 ***
 
@@ -28,15 +28,15 @@ thumbnail: "https://images.unsplash.com/photo-1602763288580-927cfda37a72?q=80&w=
 
 ### 1단계: 현재 버전 파악 및 점진적 업그레이드
 
-갑자기 Boot 2.x → 3.x로 건너뛰면 충돌이 많습니다. **먼저 Spring Boot 2.7로 올린 뒤** 3.x로 마이그레이션하는 것이 정석입니다. [dev](https://dev.to/nichetti/migrating-to-spring-boot-30-and-java-17-a-comprehensive-guide-2pbn)
+갑자기 Boot 2.x → 3.x로 건너뛰면 충돌이 많습니다. **먼저 Spring Boot 2.7로 올린 뒤** 3.x로 마이그레이션하는 것이 정석입니다.
 
-```
+```text
 Spring Boot 1.x / 2.x → Spring Boot 2.7 → Spring Boot 3.x
 ```
 
 ### 2단계: 핵심 Breaking Change — `javax` → `jakarta`
 
-Spring Boot 3.x는 **Jakarta EE 9+** 기반으로 전환되었습니다. 가장 많이 마주치는 변경 사항입니다. [openlogic](https://www.openlogic.com/blog/planning-spring-boot-upgrade)
+Spring Boot 3.x는 **Jakarta EE 9+** 기반으로 전환되었습니다. 가장 많이 마주치는 변경 사항입니다.
 
 ```java
 // Before (Spring Boot 2.x)
@@ -52,7 +52,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 ### 3단계: 의존성 호환성 확인 — 연쇄 업그레이드 주의
 
-Spring Boot를 올리면 **연쇄 업그레이드(butterfly effect)** 가 발생합니다. 주요 라이브러리 호환 버전을 미리 확인하세요. [atlantbh](https://www.atlantbh.com/java-17-and-spring-boot-3-upgrade-roadmap/)
+Spring Boot를 올리면 **연쇄 업그레이드(butterfly effect)** 가 발생합니다. 주요 라이브러리 호환 버전을 미리 확인하세요.
 
 | 라이브러리 | Spring Boot 2.7 | Spring Boot 3.x |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ Spring Boot를 올리면 **연쇄 업그레이드(butterfly effect)** 가 발생
 
 ### 4단계: Properties Migrator 적용
 
-설정 파일(application.yml/properties)의 deprecated 키를 자동으로 분석해줍니다. 마이그레이션 후 반드시 제거해야 합니다. [dev](https://dev.to/nichetti/migrating-to-spring-boot-30-and-java-17-a-comprehensive-guide-2pbn)
+설정 파일(application.yml/properties)의 deprecated 키를 자동으로 분석해줍니다. 마이그레이션 후 반드시 제거해야 합니다.
 
 ```xml
 <!-- pom.xml에 임시 추가 -->
@@ -77,7 +77,7 @@ Spring Boot를 올리면 **연쇄 업그레이드(butterfly effect)** 가 발생
 
 ### 5단계: Spring Security 6.x 변경 대응
 
-`WebSecurityConfigurerAdapter`가 **완전 삭제**되었습니다. 컴포넌트 기반 방식으로 전환해야 합니다. [linkedin](https://www.linkedin.com/pulse/upgrading-spring-boot-projects-3x-jdk-17-rakesh-upadhayaya-xtckc)
+`WebSecurityConfigurerAdapter`가 **완전 삭제**되었습니다. 컴포넌트 기반 방식으로 전환해야 합니다.
 
 ```java
 // Before
@@ -102,7 +102,7 @@ public class SecurityConfig {
 
 ## 🚀 Java 17 신기능으로 코드 품질 높이기
 
-업그레이드를 완료했다면, 이제 Java 17의 장점을 적극 활용할 차례입니다. [linkedin](https://www.linkedin.com/pulse/exploring-new-features-java-17-spring-boot-developers-ioexc)
+업그레이드를 완료했다면, 이제 Java 17의 장점을 적극 활용할 차례입니다.
 
 ### ① Record — DTO 코드 대폭 간소화
 
@@ -142,7 +142,7 @@ String query = """
 
 ### ③ Sealed Class — 도메인 계층 설계 강화
 
-결제 수단처럼 **확장을 제한해야 하는 도메인 모델**에 매우 유용합니다. [linkedin](https://www.linkedin.com/pulse/exploring-new-features-java-17-spring-boot-developers-ioexc)
+결제 수단처럼 **확장을 제한해야 하는 도메인 모델**에 매우 유용합니다.
 
 ```java
 public sealed interface PaymentMethod
@@ -182,7 +182,7 @@ public String process(Object request) {
 
 ## 📊 마이그레이션 로드맵 요약
 
-```
+```text
 [현재 상태 분석]
   └─ javax → jakarta 영향 범위 파악
   └─ 의존성 호환 버전 매핑
