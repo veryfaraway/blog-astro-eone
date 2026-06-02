@@ -8,6 +8,7 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://d.pr/i/1lpBU+"
+affiliate: true
 ---
 
 ## 소개
