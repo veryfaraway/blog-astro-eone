@@ -11,7 +11,9 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1678697892687-b81b68612eeb?q=80&w=2764&auto=format&fit=crop"
 ---
 
-> 이 글은 **[이전 포스팅: 구 시스템을 Spring Boot 3.x + Java 17로 업그레이드하기]** 의 심화편입니다. 업그레이드를 완료했다면, 이제 Spring Boot 3.x만이 제공하는 두 가지 강력한 무기를 제대로 활용해봅시다.
+import Alert from '@/components/Alert.astro';
+
+> 이 글은 **[이전 포스팅: 구 시스템을 Spring Boot 3.x + Java 17로 업그레이드하기](/dev/java17-spring-boot3-upgrade)** 의 심화편입니다. 업그레이드를 완료했다면, 이제 Spring Boot 3.x만이 제공하는 두 가지 강력한 무기를 제대로 활용해봅시다.
 
 ***
 
@@ -82,13 +84,10 @@ plugins {
 
  [docs.spring](https://docs.spring.io/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html)
 
-<div class="alert alert-success">
-<p class="alert-title">✅ 어디에 써야 할까?</p>
-
+<Alert type="success" title="어디에 써야 할까?">
 - **적합**: AWS Lambda, Google Cloud Run 등 서버리스/컨테이너 환경, 빠른 스케일아웃이 필요한 마이크로서비스
 - **비적합**: 장시간 실행되는 모놀리식 서비스 (JIT 최적화의 이점이 Native Image를 앞서는 경우)
-
-</div>
+</Alert>
 
 ***
 
@@ -148,12 +147,9 @@ Spring Boot 2.x에서는 **메트릭(Micrometer)** 과 **분산 추적(Spring Cl
 메트릭 + 분산 추적 + 로그 → Micrometer Observation API (통합)
 ```
 
-<div class="alert alert-info">
-<p class="alert-title">💡 정보</p>
-
+<Alert type="info">
 Micrometer는 `관찰 가능성의 SLF4J`라고 이해하면 됩니다 — 구체적인 모니터링 벤더(Prometheus, Zipkin, Datadog 등)와 무관하게 동일한 API로 계측합니다. [micrometer](https://micrometer.io)
-
-</div>
+</Alert>
 
 ***
 
@@ -254,16 +250,11 @@ public class PaymentService {
 }
 ```
 
-<div class="alert alert-success">
-<p class="alert-title">✅ lowCardinality VS highCardinality</p>
-
+<Alert type="success" title="실전 팁: lowCardinality VS highCardinality">
 - `lowCardinality`: 값의 종류가 적은 태그 (예: `method=CARD`, `status=SUCCESS`) → **메트릭과 트레이스 모두에 추가**
-
 - `highCardinality`: 값이 무한히 다양한 태그 (예: `orderId=12345`) → **트레이스에만 추가** (메트릭에 추가 시 카디널리티 폭발 위험)
-
 - 참고: [spring](https://spring.academy/guides/microservices-observability-reactive-spring-boot-3)
-
-</div>
+</Alert>
 
 ***
 
@@ -332,12 +323,9 @@ scrape_configs:
         └── MDC 자동 연동 → 로그에 traceId/spanId 자동 삽입
 ```
 
-<div class="alert alert-info">
-<p class="alert-title">💡 정보</p>
-
+<Alert type="info" title="정보">
 MDC 자동 연동 덕분에 Grafana에서 `메트릭 이상 감지 → 해당 트레이스 조회 → 연관 로그 검색`까지 하나의 흐름으로 연결됩니다. [baeldung](https://www.baeldung.com/spring-boot-3-observability)
-
-</div>
+</Alert>
 
 ***
 

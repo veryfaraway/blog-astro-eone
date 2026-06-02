@@ -11,13 +11,14 @@ lang: ko
 thumbnail: "https://media.dev.to/cdn-cgi/image/width=1600,height=900,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F1bjcy5dhfmaac3dxcxz5.png"
 ---
 
-# Spring Boot와 Thymeleaf를 사용한 첫 번째 웹 애플리케이션 만들기
+## Spring Boot와 Thymeleaf를 사용한 첫 번째 웹 애플리케이션 만들기
 
 Spring Boot는 Java로 간단하고 신속하게 웹 애플리케이션을 개발할 수 있게 도와주는 프레임워크입니다. Thymeleaf는 서버사이드 템플릿 엔진으로, Spring MVC와 통합하여 HTML을 동적으로 생성하는 데 사용됩니다. 이 튜토리얼에서는 Spring Boot와 Thymeleaf를 사용하여 간단한 웹 애플리케이션을 만드는 방법을 단계별로 설명합니다.
 
 ### 1. 프로젝트 설정
 
 #### 1.1 Spring Initializr 사용
+
 Spring Boot 프로젝트를 시작하는 가장 쉬운 방법은 [Spring Initializr](https://start.spring.io/)를 사용하는 것입니다.
 
 ![Spring Initializer](/images/spring-boot-thymeleaf/spring-initializer.png)
@@ -39,14 +40,16 @@ Spring Boot 프로젝트를 시작하는 가장 쉬운 방법은 [Spring Initial
 3. "Generate" 버튼을 눌러 프로젝트를 생성하고, 다운로드된 압축 파일을 해제합니다.
 
 #### 1.2 IDE에서 프로젝트 열기
+
 선호하는 IDE(Eclipse, IntelliJ IDEA 등)에서 생성된 프로젝트를 엽니다.
 
 ### 2. Spring Boot 애플리케이션 개발
 
 #### 2.1 기본 구조 설명
+
 프로젝트가 생성되면 기본적인 디렉토리 구조는 다음과 같습니다:
 
-```
+```text
 springboot-thymeleaf-demo/
 ├── src/
 │   ├── main/
@@ -137,6 +140,7 @@ IDE에서 `SpringbootThymeleafDemoApplication.java` 파일을 실행하거나, �
 ```bash
 ./gradlew bootRun
 ```
+
 또는
 
 ```bash
@@ -146,7 +150,6 @@ IDE에서 `SpringbootThymeleafDemoApplication.java` 파일을 실행하거나, �
 브라우저에서 `http://localhost:8080`에 접속하면 "Hello, Thymeleaf!" 메시지가 포함된 간단한 웹 페이지를 볼 수 있습니다.
 
 ![Hello Thymeleaf](/images/spring-boot-thymeleaf/hello-thymeleaf.png)
-
 
 ### 3. 결론
 

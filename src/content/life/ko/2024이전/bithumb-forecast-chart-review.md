@@ -26,10 +26,9 @@ thumbnail: "https://images.unsplash.com/photo-1650959828226-f9d53a7c1f64?q=80&w=
 
 ### 2. **차트 설정 방법**
 
-![](https://feed-content.bithumb.com/cms/a116c2fb-8269-42f9-9beb-5289ea081176.jpg)
+![차트 설정](https://feed-content.bithumb.com/cms/a116c2fb-8269-42f9-9beb-5289ea081176.jpg)
 
 예측 차트 사용은 차트 화면에서 `이용 안내`에 동의를 하면 예측 차트가 활성화 됩니다.
-
 
 ### 3. **사용성 개선**
 
