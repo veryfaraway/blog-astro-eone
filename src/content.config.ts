@@ -12,9 +12,6 @@ const postSchema = z.object({
   lang: z.enum(['ko', 'en']).default('ko'),
   series: z.string().optional(),
   series_order: z.number().optional(),
-});
-
-const moneySchema = postSchema.extend({
   affiliate: z.boolean().default(false),
 });
 
@@ -25,7 +22,7 @@ export const collections = {
   }),
   money: defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/money' }),
-    schema: moneySchema,
+    schema: postSchema,
   }),
   culture: defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/culture' }),

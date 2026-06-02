@@ -2,7 +2,7 @@
 title: 볼보 XC40/C40 Recharge OTA 소프트웨어 업데이트(v2.2)
 description: 소프트웨어 V2.2 업데이트 내역
 date: 2022-07-13
-category: ""
+category: 마굿간
 tags:
   - "전기차"
   - "OTA"
@@ -26,15 +26,14 @@ thumbnail: "https://www.volvocars.com/images/cs/v3/assets/blt0feaa88e629251fc/bl
 
 ## Apple CarPlay
 
-![](https://www.volvocars.com/images/support/img98797429cf1dd292c0a80152623cea26_2_--_--_VOICEpnghigh.png)
+![Apple CarPlay](https://www.volvocars.com/images/support/img98797429cf1dd292c0a80152623cea26_2_--_--_VOICEpnghigh.png)
 
 CarPlay는 유선만 지원되는데 위 그림에서 흰색 테두리가 있는 포트에 연결해서 사용할 수 있습니다.
-
 
 ## AUTO HOLD
 
 오토 홀드 기능은 차량 정차 후 브레이크를 꾹 밟아 주시면 아래와 같이 Ⓗ 표시가 생기면서 오토 홀드가 작동합니다.
 
-![](/images/IMG_0903.jpeg)
+![AUTO HOLD](/images/IMG_0903.jpeg)
 
 액셀러레이터를 밟으면 차가 출발하면서 오토 홀드 기능이 해제됩니다. 오토 홀드는 신호 대기 등 짧은 정차시에만 사용하는 것이 좋습니다.

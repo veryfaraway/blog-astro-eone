@@ -2,7 +2,7 @@
 title: 볼보 XC40/C40 Recharge OTA 소프트웨어 업데이트(v2.4)
 description: 소프트웨어 V2.4 업데이트 내역
 date: 2022-10-24
-category: ""
+category: 마굿간
 tags:
   - "전기차"
   - "OTA"
@@ -27,4 +27,4 @@ thumbnail: "https://www.volvocars.com/images/cs/v3/assets/blt0feaa88e629251fc/bl
 
 참고로 2.3 버전은 문제가 있어서 다운로드 센터에서 제거가 된 상태라고 하며 v2.2에서 v2.4로 바로 업그레이드하시면 됩니다.
 
-> 이 소프트웨어 릴리스는 서비스 센터에서만 제공되며, OTA로 제공되지 않습니다. V2.4의 내용은 [다음 OTA 릴리스](/life/1121-software-update-v25 "2.5 버전")에 포함될 예정입니다.
+> 이 소프트웨어 릴리스는 서비스 센터에서만 제공되며, OTA로 제공되지 않습니다. V2.4의 내용은 [다음 OTA 릴리스](/life/volvo-software-update-v25 "2.5 버전")에 포함될 예정입니다.
