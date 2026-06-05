@@ -173,7 +173,6 @@
         { "ticker": "UBER",  "shares": 2,   "sector": "Technology" },
         { "ticker": "UNH",   "shares": 15,  "sector": "Healthcare" },
         { "ticker": "UPS",   "shares": 1,   "sector": "Industrials" },
-        { "ticker": "USB",   "shares": 1,   "sector": "Financial Services" },
         { "ticker": "VLO",   "shares": 2,   "sector": "Energy" },
         { "ticker": "VRT",   "shares": 6,   "sector": "Technology" },
         { "ticker": "VTR",   "shares": 4,   "sector": "Real Estate" },
@@ -193,7 +192,6 @@
         { "ticker": "CINF",  "shares": 2,   "sector": "Financial Services" },
         { "ticker": "COST",  "shares": 2,   "sector": "Consumer Staples" },
         { "ticker": "EXPE",  "shares": 3,   "sector": "Consumer Discretionary" },
-        { "ticker": "FITB",  "shares": 1,   "sector": "Financial Services" },
         { "ticker": "GILD",  "shares": 3,   "sector": "Healthcare" },
         { "ticker": "GOOGL", "shares": 6,   "sector": "Communication" },
         { "ticker": "GPIQ",  "shares": 14,  "sector": "ETF" },
@@ -223,7 +221,7 @@
         { "ticker": "GDX",   "shares": 4,   "sector": "ETF" },
         { "ticker": "ITA",   "shares": 1,   "sector": "ETF" },
         { "ticker": "SVM",   "shares": 3,   "sector": "Materials" },
-        { "ticker": "XLF",   "shares": 3,   "sector": "ETF" }
+        { "ticker": "XLF",   "shares": 4,   "sector": "ETF" }
       ]
     }
   }
