@@ -11,6 +11,8 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1625236239092-8d15fbff5420?q=80&w=2148&auto=format&fit=crop"
 ---
 
+import ClockChart from '@/components/ClockChart.astro';
+
 ## 한국에서 미국 주식 거래 가능 시간 안내 (2026년 1월 기준)
 
 2025년 11월 4일부터 재개된 미국 주식 주간거래 서비스로 인해 한국 투자자들은 하루 중 대부분의 시간에 미국 주식을 거래할 수 있게 되었습니다. 한국 시간 기준으로 평일에는 오전 10시부터 익일 오전 6~7시까지, 실질적으로 약 20시간 가량 거래가 가능합니다.
@@ -24,14 +26,16 @@ thumbnail: "https://images.unsplash.com/photo-1625236239092-8d15fbff5420?q=80&w=
 - **정규장 거래**: 오후 11시 30분 ~ 익일 오전 6시 (비서머타임 기준)
 - **애프터마켓(장후 거래)**: 정규장 종료 후 약 1시간 추가 거래 가능
 
-{/* TODO:clock24
-# 한국시간 기준
-23.5-6: 본장, #22c55e
-6-7: 애프터마켓, #f97316
-7-10: 휴장, #6b7280
-10-18: 주간거래, #3b82f6
-18-23.5: 프리마켓, #eab308
-*/}
+<ClockChart
+  caption="한국 시간 기준 미국 주식 거래 시간대 (비서머타임)"
+  segments={[
+    { start: 23.5, end: 6,    label: '본장',       color: '#22c55e' },
+    { start: 6,    end: 7,    label: '애프터마켓', color: '#f97316' },
+    { start: 7,    end: 10,   label: '휴장',       color: '#6b7280' },
+    { start: 10,   end: 18,   label: '주간거래',   color: '#3b82f6' },
+    { start: 18,   end: 23.5, label: '프리마켓',   color: '#eab308' },
+  ]}
+/>
 
 결과적으로 거래가 불가능한 시간은 오전 7시부터 오전 10시까지 단 3시간뿐입니다
 

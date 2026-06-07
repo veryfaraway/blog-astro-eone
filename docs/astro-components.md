@@ -129,6 +129,35 @@ affiliate: true
 
 ---
 
+#### `ClockChart.astro`
+
+24시간 원형 시계 형태의 시간대 시각화. 자정을 가로지르는 구간 자동 처리. JS 없이 빌드 타임 SVG 생성.
+
+```mdx
+import ClockChart from '@/components/ClockChart.astro';
+
+<ClockChart
+  caption="한국 시간 기준 미국 주식 거래 시간대"
+  segments={[
+    { start: 23.5, end: 6,    label: '본장',       color: '#22c55e' },
+    { start: 6,    end: 7,    label: '애프터마켓', color: '#f97316' },
+    { start: 7,    end: 10,   label: '휴장',       color: '#6b7280' },
+    { start: 10,   end: 18,   label: '주간거래',   color: '#3b82f6' },
+    { start: 18,   end: 23.5, label: '프리마켓',   color: '#eab308' },
+  ]}
+/>
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `segments` | `Segment[]` | — | 시간대 배열 |
+| `caption` | `string` | — | 하단 캡션 (생략 가능) |
+
+`Segment`: `{ start: number, end: number, label: string, color: string }`  
+`start`/`end`는 0–24 소수 허용 (예: `23.5` = 23:30). `end < start`이면 자정을 넘는 구간으로 자동 처리.
+
+---
+
 #### `AdSlot.astro`
 
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.

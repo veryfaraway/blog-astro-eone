@@ -27,8 +27,7 @@ thumbnail: "https://play-lh.googleusercontent.com/o1CiIOLqrAkPdgMbZr9TRJ-MAdEjT7
 * **집단지성:** 한 종목에 대해 '매수' 의견과 '매도' 의견을 동시에 읽으며 균형 잡힌 시각을 가질 수 있습니다.
 * **방대한 데이터:** 10년 치 이상의 재무제표, 실적 발표 대본(Transcripts), 배당 기록 등을 한눈에 볼 수 있습니다.
 
-{/* [![메인화면](/images/seeking-alpha-main.png)](./seeking-alpha-main.png "Seeking Alpha 메인화면") */}
-![메인화면](/images/seeking-alpha-main.png)
+![Seeking Alpha 메인화면](/images/seeking-alpha-main.png)
 
 ---
 
@@ -51,11 +50,12 @@ thumbnail: "https://play-lh.googleusercontent.com/o1CiIOLqrAkPdgMbZr9TRJ-MAdEjT7
 제가 프리미엄을 구독하는 가장 큰 이유는 바로 **'퀀트 레이팅'** 때문입니다. 알고리즘이 수익성, 성장성, 가치 등을 종합해 점수를 매기는데, 이 점수만 잘 활용해도 큰 실수를 줄일 수 있습니다.
 
 ### ✅ 이런 기능을 꼭 써보세요!
-1.  **Strong Buy 종목 발굴:** 퀀트 점수가 높은 종목들만 모아서 보여주는 스크리너 기능을 통해 숨겨진 보석을 찾을 수 있습니다.
-2.  **Portfolio Health Check:** 내 포트폴리오를 연동하면, 현재 내가 보유한 종목들의 건강 상태(점수)를 실시간으로 모니터링해 줍니다.
-3.  **Dividend Grades:** 배당주 투자자라면 해당 기업의 배당이 얼마나 안전한지(Safety), 앞으로 늘어날 가능성(Growth)이 있는지 등급으로 확인하세요.
 
-![메인화면](/images/seeking-alpha-rating.png)
+1. **Strong Buy 종목 발굴:** 퀀트 점수가 높은 종목들만 모아서 보여주는 스크리너 기능을 통해 숨겨진 보석을 찾을 수 있습니다.
+2. **Portfolio Health Check:** 내 포트폴리오를 연동하면, 현재 내가 보유한 종목들의 건강 상태(점수)를 실시간으로 모니터링해 줍니다.
+3. **Dividend Grades:** 배당주 투자자라면 해당 기업의 배당이 얼마나 안전한지(Safety), 앞으로 늘어날 가능성(Growth)이 있는지 등급으로 확인하세요.
+
+![퀀트 레이팅](/images/seeking-alpha-rating.png)
 
 ---
 
@@ -74,6 +74,6 @@ thumbnail: "https://play-lh.googleusercontent.com/o1CiIOLqrAkPdgMbZr9TRJ-MAdEjT7
 
 ## 마치며
 
-미국 주식은 정보의 비대칭성이 큰 시장입니다. 시킹알파 프리미엄은 개미 투자자가 기관 투자자에 준하는 데이터를 가질 수 있게 해주는 가장 가성비 좋은 도구라고 생각합니다. 
+미국 주식은 정보의 비대칭성이 큰 시장입니다. 시킹알파 프리미엄은 개미 투자자가 기관 투자자에 준하는 데이터를 가질 수 있게 해주는 가장 가성비 좋은 도구라고 생각합니다.
 
 여러분의 성투를 기원하며, 궁금한 점은 댓글로 남겨주세요!

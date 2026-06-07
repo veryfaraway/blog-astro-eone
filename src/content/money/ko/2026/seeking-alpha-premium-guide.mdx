@@ -10,7 +10,10 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=2370&auto=format&fit=crop"
+affiliate: true
 ---
+
+import Alert from '@/components/Alert.astro';
 
 ## Seeking Alpha Premium이란?
 
@@ -20,14 +23,11 @@ thumbnail: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?q=80&w=
 퀀트 분석·배당 등급·고급 스크리너 등 의사결정에 필요한
 도구 대부분을 사용할 수 있습니다.
 
-<div class="alert alert-success">
-<p class="alert-title">✅ 무료체험</p>
-
-💡 **무료 체험**이 제공되므로 구독 전 직접 기능을 확인해 보는 것을 추천합니다.
+<Alert type="success" title="무료체험 정보">
+**무료 체험**이 제공되므로 구독 전 직접 기능을 확인해 보는 것을 추천합니다.
 
 👉 [**Seeking Alpha $25 할인 및 14일 무료체험 링크 클릭**](https://seekingalpha.com/subscriptions/refer-a-friend?source=refer_friend_link&user_referrer=91b2f66cc36855b50f4ed68b)
-
-</div>
+</Alert>
 
 ---
 
@@ -101,12 +101,9 @@ mindmap
 - **동일 섹터 내 종목 비교** 시 특히 유용 (e.g., 헬스케어 종목 5개 나란히 비교)
 - `Strong Sell` 등급이 **3개월 이상 지속**되면 매도 검토 신호로 활용
 
-<div class="alert alert-info">
-<p class="alert-title">💡 Quant Rating</p>
-
-📌 Quant Rating의 `Strong Buy` 종목은 역사적으로 S&P500 수익률을 크게 상회하는 백테스트 결과가 있습니다.
-
-</div>
+<Alert type="info" title="Quant Rating">
+Quant Rating의 `Strong Buy` 종목은 역사적으로 S&P500 수익률을 크게 상회하는 백테스트 결과가 있습니다 📌 
+</Alert>
 
 ---
 
@@ -135,12 +132,9 @@ flowchart LR
     D -->|과도하게 높음| G[⚠️ Safety 재확인 필요]
 ```
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 고배당 함정</p>
-
-💡 Dividend Safety 등급이 `C+` 이하이면서 배당 수익률이 5%를 넘는 경우 배당 삭감 위험이 높습니다.
-
-</div>
+<Alert type="warning" title="고배당 함정">
+Dividend Safety 등급이 `C+` 이하이면서 배당 수익률이 5%를 넘는 경우 배당 삭감 위험이 높습니다.
+</Alert>
 
 ---
 
@@ -308,9 +302,6 @@ sequenceDiagram
 
 ---
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 경고</p>
-
+<Alert type="warning">
 본 포스트는 정보 제공 목적으로 작성되었으며, 특정 투자 상품의 매수·매도를 권유하지 않습니다.
-
-</div>
+</Alert>

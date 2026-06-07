@@ -2,7 +2,7 @@
 title: 스마트 플러그 티피링크 Tapo P100 할인
 description: "티피링크 Tapo P100 4개 세트 할인 ₩45,990 --> ₩32,420"
 date: 2022-11-05
-category: ""
+category: 자린고비
 tags:
   - "알뜰구매"
   - "쿠팡"
@@ -10,6 +10,7 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format"
+affliate: true
 ---
 
 ![가격정보](/images/coupang-tapo-p100.png)
@@ -27,6 +28,5 @@ thumbnail: "https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4
 쿠팡으로 구매하러 가기 👉 [링크](https://link.coupang.com/a/E1L6H)
 
 참고로 [2개 세트](https://link.coupang.com/a/E1Pv1)도 동일하게 할인 중이지만 할인율은 4개짜리가 더 큽니다.
-
 
 > 이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
