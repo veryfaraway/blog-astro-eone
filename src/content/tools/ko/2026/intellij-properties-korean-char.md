@@ -17,13 +17,13 @@ Java 개발을 하다 보면 `.properties` 설정 파일의 한글 주석이 `\u
 
 ---
 
-### 1. 원인: 왜 한글이 유니코드로 보일까?
+## 1. 원인: 왜 한글이 유니코드로 보일까?
 
 Java의 표준 설계 때문입니다. 전통적으로 Java의 `.properties` 파일은 **ISO-8859-1** 인코딩을 기본으로 사용합니다. 이 인코딩은 한글을 직접 표현할 수 없기 때문에, IntelliJ 같은 IDE가 한글을 저장할 때 자동으로 **유니코드 이스케이프 시퀀스(Unicode Escape Sequence)**로 변환하여 저장하는 것입니다.
 
 ---
 
-### 2. 해결 방법: IntelliJ 설정 변경
+## 2. 해결 방법: IntelliJ 설정 변경
 
 파일의 실제 데이터는 유니코드로 안전하게 저장하되, 우리 눈(에디터)에는 한글로 편하게 보이게 설정할 수 있습니다.
 
@@ -31,11 +31,9 @@ Java의 표준 설계 때문입니다. 전통적으로 Java의 `.properties` 파
 
 1. `Settings` (단축키: `Ctrl + Alt + S` / Mac: `Cmd + ,`) 창을 엽니다.
 2. **Editor > File Encodings** 메뉴로 이동합니다.
-3. **Properties Files (.properties)** 섹션에서 아래와 같이 설정합니다.
-* **Default encoding for properties files:** `UTF-8`로 변경
-* **Transparent native-to-ascii conversion:** **체크 (중요!)**
-
-
+3. **Properties Files (.properties)** 섹션에서 아래와 같이 설정합니다.  
+  - **Default encoding for properties files:** `UTF-8`로 변경
+  - **Transparent native-to-ascii conversion:** **체크 (중요!)**
 
 > **💡 핵심:** `Transparent native-to-ascii conversion` 옵션을 켜면, IDE가 백그라운드에서 유니코드 변환을 자동으로 처리해주어 에디터에서는 한글을 그대로 보고 편집할 수 있습니다.
 

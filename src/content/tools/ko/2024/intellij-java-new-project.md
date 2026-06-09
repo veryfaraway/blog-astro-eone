@@ -24,9 +24,9 @@ IntelliJ IDEA에서 Java 프로젝트를 구성할 때, 소스 디렉토리(Sour
 
 1. **IntelliJ IDEA 실행**: IntelliJ를 열고, `New Project`를 클릭하여 새 프로젝트를 생성합니다.
 2. **Java 프로젝트 선택**: Java를 선택하고, 프로젝트 이름과 위치, JDK를 지정한 후 `Create`를 클릭하여 프로젝트를 생성합니다.
-Build system은 default인 **IntelliJ**를 지정했습니다. 
+Build system은 default인 **IntelliJ**를 지정했습니다.
 
-![프로젝트 생성](/images/intellij-java-new-project/intellij1.png)
+![프로젝트 생성](/images/contents/intellij-java-new-project/intellij1.png)
 
 프로젝트가 생성되면 기본적인 디렉토리 구조가 만들어집니다. 이제 이 구조를 IntelliJ에서 적절히 설정해 보겠습니다.
 
@@ -75,7 +75,7 @@ IntelliJ는 이 디렉토리를 소스 코드의 루트로 인식하게 되며, 
 
 이 설정을 통해 IntelliJ는 이 디렉토리를 빌드나 검색 경로에 포함시키지 않으며, 불필요한 파일이 빌드 과정에 영향을 주지 않도록 합니다.
 
-![프로젝트 구조](/images/intellij-java-new-project/intellij2.png)
+![프로젝트 구조](/images/contents/intellij-java-new-project/intellij2.png)
 
 프로젝트 설정에서 위와 같이 지정해도 됩니다.
 
@@ -83,7 +83,7 @@ IntelliJ는 이 디렉토리를 소스 코드의 루트로 인식하게 되며, 
 
 이제 IntelliJ에서 각 디렉토리가 적절히 설정된 프로젝트 구조는 다음과 같아야 합니다:
 
-```
+```text
 MyFirstJavaProject/
 ├── src/
 │   ├── main/
@@ -101,6 +101,7 @@ MyFirstJavaProject/
 
 1. **소스 코드 작성**:
    `src/main/java/com/example/Main.java`
+
    ```java
    package com.example;
 
@@ -117,6 +118,7 @@ MyFirstJavaProject/
 
 2. **테스트 코드 작성**:
    `src/test/java/com/example/MainTest.java`
+
    ```java
    package com.example;
 
@@ -140,6 +142,6 @@ MyFirstJavaProject/
 
 이 블로그 글이 IntelliJ IDEA에서 프로젝트를 설정하는 데 유용한 가이드가 되었기를 바랍니다. 이제 직접 IntelliJ를 사용하여 다양한 Java 프로젝트를 생성하고, 효율적으로 관리해 보세요.
 
---- 
+---
 
-이 블로그 글을 통해 IntelliJ IDEA에서 Java 프로젝트의 디렉토리 구조를 어떻게 설정하고 관리할 수 있는지 도움을 받으셨기를 바랍니다. IntelliJ 기본 빌드 시스템과 Gradle과 차이점이 궁금하시면 [Intellij IDEA Java Build System 비교](/posts/2024/intellij-java-build-system/)를 참조하시기 바랍니다.
+이 블로그 글을 통해 IntelliJ IDEA에서 Java 프로젝트의 디렉토리 구조를 어떻게 설정하고 관리할 수 있는지 도움을 받으셨기를 바랍니다. IntelliJ 기본 빌드 시스템과 Gradle과 차이점이 궁금하시면 [Intellij IDEA Java Build System 비교](/tools/intellij-java-build-system-comparison)를 참조하시기 바랍니다.

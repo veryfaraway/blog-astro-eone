@@ -12,7 +12,7 @@ thumbnail: "https://images.unsplash.com/photo-1647166545674-ce28ce93bdca?q=80&w=
 
 Git은 버전 관리 시스템으로 널리 사용되며, 사용자의 환경에 맞게 설정할 수 있는 다양한 옵션을 제공합니다. 이를 위해 Git은 `git config` 명령어를 제공합니다. 이 명령어를 사용하여 사용자별로 또는 프로젝트별로 Git의 동작을 조정할 수 있습니다. 그 중에서도 `set`과 `unset` 옵션은 특히 중요한데요, 이 둘에 대해 자세히 알아보겠습니다.
 
-### `git config set`
+## `git config set`
 
 `git config set` 명령어는 Git의 설정을 변경하거나 새로운 설정을 추가하는 데 사용됩니다. 이 명령어를 사용하면 Git의 설정 파일에 값을 설정할 수 있습니다. 보통은 이를 통해 사용자 이름, 이메일 주소, 에디터 설정, 코어 설정 등을 변경합니다.
 
@@ -32,7 +32,7 @@ git config --local user.name "Your Name"
 
 이 명령어는 현재 작업 중인 Git 저장소에 대한 설정을 변경합니다.
 
-### `git config unset`
+## `git config unset`
 
 반면에, `git config unset` 명령어는 설정에서 값을 제거하는 데 사용됩니다. 이를 통해 이전에 설정한 값을 제거하고 기본값을 사용하거나 다른 값으로 설정할 수 있습니다.
 

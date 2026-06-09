@@ -9,7 +9,7 @@ tags:
   - "password-manager"
   - "macos"
 draft: false
-lang: ko
+lang: en
 thumbnail: "https://iterm2.com/img/logo2x.jpg"
 ---
 
