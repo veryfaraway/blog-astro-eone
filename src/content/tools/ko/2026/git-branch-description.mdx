@@ -11,7 +11,7 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2676&auto=format&fit=crop"
 ---
 
-# Git 브랜치, 이름만으론 부족하다면? 설명(Description) 활용법
+## Git 브랜치, 이름만으론 부족하다면? 설명(Description) 활용법
 
 수많은 `feature/` 브랜치 사이에서 어떤 브랜치가 무슨 작업을 위한 것이었는지 헷갈린 적 없으신가요? Git 브랜치에 직접 설명을 달고, 이를 효율적으로 확인하는 방법을 정리했습니다.
 
@@ -20,6 +20,7 @@ thumbnail: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=267
 Git은 개별 브랜치에 메타데이터 성격의 설명을 저장할 수 있는 기능을 제공합니다.
 
 - 설명 등록하기
+
 ```bash
 git config branch.<브랜치명>.description "로그인 페이지 리팩토링 및 검증 로직 추가"
 ```
@@ -34,7 +35,7 @@ git config --get-regexp "branch.*.description"
 
 ---
 
-##  2. 추천: 최신 커밋과 함께 보는 Alias 설정
+## 2. 추천: 최신 커밋과 함께 보는 Alias 설정
 
 실무에서는 일일이 설명을 등록하기보다, 브랜치명 옆에 최신 커밋 메시지가 바로 뜨게 만드는 것이 훨씬 직관적입니다.
 
@@ -43,7 +44,8 @@ git config --get-regexp "branch.*.description"
 터미널에 아래 명령어를 한 줄로 입력하세요.
 
 ```bash
-git config --global alias.br "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) (%(color:green)%(committerdate:relative)%(color:reset))'"
+git config --global alias.br \
+  "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) (%(color:green)%(committerdate:relative)%(color:reset))'"
 ```
 
 확인하기
@@ -52,7 +54,7 @@ git config --global alias.br "branch --format='%(HEAD) %(color:yellow)%(refname:
 
 • `* feature/login - 로그인 API 연동 완료 (2 hours ago)`
 
-• `  hotfix/a - 보안 취약점 패치 (3 days ago)`
+• `hotfix/a - 보안 취약점 패치 (3 days ago)`
 
 ---
 

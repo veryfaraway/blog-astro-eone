@@ -26,7 +26,139 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774927357/media/
 
 ## 용아맥이 특별한 이유
 
-용산 CGV IMAX, 일명 **용아맥**은 국내 유일의 **IMAX GT(레이저)** 상영관입니다. 화면 크기 31m × 22m, 화면비 1.43:1 — 일반 IMAX보다 세로가 훨씬 넓어서 영화 위아래가 잘리지 않습니다. 놀란 영화처럼 IMAX 카메라로 촬영한 장면은 여기서만 온전히 볼 수 있어요.
+용산 CGV IMAX, 일명 **용아맥**은 국내 유일의 **IMAX GT(레이저)** 상영관입니다.
+
+### IMAX 등급부터 이해하자
+
+"IMAX"라는 이름이 붙어 있다고 다 같은 게 아닙니다. 국내 CGV 기준으로 크게 세 등급으로 나뉩니다.
+
+| 등급 | 장비 | 해상도 | 화면비 |
+|------|------|--------|--------|
+| **IMAX GT 레이저** | GT 전용 듀얼 레이저 | 4K | **1.43:1** |
+| **IMAX 레이저** | 듀얼 레이저 | 4K | 1.90:1 |
+| **IMAX 제논** | 제논 프로젝터 | 2K | 1.90:1 |
+
+핵심 차이는 **화면비**입니다. 일반 IMAX(1.90:1)는 와이드스크린에 가까운 비율이지만, GT(1.43:1)는 세로가 훨씬 더 높습니다. 《오펜하이머》나 《인터스텔라》처럼 IMAX 카메라로 촬영한 장면은 원본 비율이 1.43:1인데 — 일반 IMAX에서는 이 장면이 위아래가 잘려 나옵니다. 용아맥에서는 그대로 꽉 차게 나오죠.
+
+### 국내 주요 IMAX 상영관 비교
+
+| 상영관 | 장비 | 화면 크기 | 화면비 |
+|--------|------|-----------|--------|
+| **CGV 용산** (용아맥) | IMAX GT 레이저 | **31m × 22m** | **1.43:1** |
+| CGV 왕십리 | IMAX 레이저 | 약 24m × 13m | 1.90:1 |
+| CGV 영등포 | IMAX 레이저 | 약 22m × 12m | 1.90:1 |
+| CGV 판교 | IMAX 레이저 | 약 22m × 12m | 1.90:1 |
+| CGV 광교 | IMAX 레이저 | 약 21m × 11m | 1.90:1 |
+| CGV 천호 | IMAX 레이저 | 약 20m × 11m | 1.90:1 |
+
+<div class="ym-sc-wrap">
+<style>
+.ym-sc-wrap {
+  background: #0d0f14;
+  border-radius: 12px;
+  padding: 1.25rem 1rem 1rem;
+  margin: 1.5rem 0;
+  color: #e8eaf0;
+  font-family: inherit;
+}
+.ym-sc-title {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #8a90a0;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.ym-sc-arena {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 248 / 176;
+  margin: 0 auto 1.25rem;
+}
+.ym-sc-screen {
+  position: absolute;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+.ym-sc-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #e53935;
+}
+.ym-sc-label small {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(229,57,53,0.7);
+}
+.ym-sc-legend {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ym-sc-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #8a90a0;
+}
+.ym-sc-leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+</style>
+
+<div class="ym-sc-title">IMAX 스크린 크기 비교 · 실제 비율 (1m = 8px 기준)</div>
+
+<div class="ym-sc-arena">
+  <div class="ym-sc-screen" style="inset:0;background:rgba(229,57,53,0.12);border:2.5px solid #e53935">
+    <div class="ym-sc-label">용산 CGV (용아맥)<small>31 × 22m · 1.43:1</small></div>
+  </div>
+  <div class="ym-sc-screen" style="left:11.3%;top:20.5%;width:77.4%;height:59.1%;background:rgba(244,105,42,0.07);border:1.5px dashed #f4692a"></div>
+  <div class="ym-sc-screen" style="left:14.5%;top:22.7%;width:71%;height:54.5%;background:rgba(245,159,0,0.05);border:1.5px dashed #f59f00"></div>
+  <div class="ym-sc-screen" style="left:17.7%;top:25%;width:64.5%;height:50%;background:rgba(76,175,80,0.04);border:1.5px dashed #4caf50"></div>
+</div>
+
+<div class="ym-sc-legend">
+  <div class="ym-sc-leg-item">
+    <div class="ym-sc-leg-dot" style="background:rgba(229,57,53,0.25);border:1.5px solid #e53935"></div>
+    <span><strong style="color:#e53935">용산 (용아맥)</strong>  31×22m · GT레이저 · 1.43:1 — IMAX 원본 화면비</span>
+  </div>
+  <div class="ym-sc-leg-item">
+    <div class="ym-sc-leg-dot" style="border:1.5px dashed #f4692a"></div>
+    <span><strong style="color:#f4692a">왕십리</strong>  24×13m · 레이저 · 1.90:1</span>
+  </div>
+  <div class="ym-sc-leg-item">
+    <div class="ym-sc-leg-dot" style="border:1.5px dashed #f59f00"></div>
+    <span><strong style="color:#f59f00">영등포·판교</strong>  22×12m · 레이저 · 1.90:1</span>
+  </div>
+  <div class="ym-sc-leg-item">
+    <div class="ym-sc-leg-dot" style="border:1.5px dashed #4caf50"></div>
+    <span><strong style="color:#4caf50">광교·천호</strong>  ~20×11m · 레이저 · 1.90:1</span>
+  </div>
+</div>
+
+</div>
+
+화면 크기 차이가 숫자보다 크게 느껴집니다. 31m × 22m는 **면적 기준으로 일반 IMAX의 약 2배** 수준입니다. 거기다 1.43:1 비율 덕분에 실제로 채워지는 화면량도 압도적으로 많습니다.
+
+### 그러면 다른 IMAX는 나쁜 건가?
+
+그렇지는 않습니다. 왕십리·판교 같은 4K 듀얼 레이저 상영관도 충분히 훌륭한 경험을 줍니다. **일반 블록버스터** — 어벤져스, 스파이더맨 등 — 는 원본 촬영 비율이 2.39:1이라 어느 IMAX에서 봐도 체감 차이가 크지 않습니다.
+
+용아맥의 진가는 **IMAX 카메라 비율(1.43:1)로 촬영된 영화**에서 납니다. 놀란·빌뇌브 감독 작품처럼 의도적으로 IMAX 화면비를 활용한 영화라면, 다른 상영관과의 차이는 단순한 화질 차이가 아니라 **다른 영화를 보는 수준**의 경험 차이입니다.
 
 그래서 블록버스터 개봉일마다 예매 전쟁이 벌어집니다. 오픈 동시에 접속해도 좋은 자리는 10분 안에 사라지는 경우가 허다하죠.
 

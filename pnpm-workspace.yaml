@@ -1,6 +1,8 @@
 allowBuilds:
+  "@img/sharp-darwin-arm64": true
+  "@img/sharp-libvips-darwin-arm64": true
   esbuild: true
-  msw: set this to true or false
+  msw: true
   sharp: true
 minimumReleaseAgeExclude:
   - astro@6.3.7
