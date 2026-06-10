@@ -2,7 +2,7 @@
 title: "맥 유저의 새로운 필수템, Raycast 완벽 가이드: Alfred와의 차이점부터 기능 통합까지"
 description: "Alfred를 넘어 맥 생산성 도구의 끝판왕으로 불리는 Raycast의 주요 기능과 사용법, 그리고 Alfred와의 차이점을 상세히 알아봅니다."
 date: 2026-01-26
-category: Tools
+category: macOS
 tags:
   - "macos"
   - "raycast"

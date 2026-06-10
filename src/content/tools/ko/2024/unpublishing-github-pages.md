@@ -2,7 +2,7 @@
 title: Github pages 사이트 게시를 취소하는 방법
 description: Github pages 사이트를 게시한 후에 다시 취소하는 방법을 설명합니다
 date: 2022-11-02
-category: Tools
+category: Development
 tags:
   - "github"
 draft: false

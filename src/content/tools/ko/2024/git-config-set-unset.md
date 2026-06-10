@@ -2,7 +2,7 @@
 title: "Git Configuration 명령어: set과 unset 옵션 설명"
 description: Git Configuration 값을 설정하고 해제하는 방법을 설명합니다.
 date: 2023-05-08
-category: Tools
+category: Development
 tags:
   - "git"
 draft: false

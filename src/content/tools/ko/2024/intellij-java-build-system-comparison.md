@@ -2,7 +2,7 @@
 title: Intellij IDEA Java Build System 비교(feat. Gradle vs IntelliJ)
 description: "IntelliJ IDEA는 Java 개발자들 사이에서 널리 사용되는 통합 개발 환경(IDE)으로, 다양한 빌드 시스템을 지원합니다. 그중에서도 IntelliJ와 Gradle은 가장 많이 사용되는 두 가지 빌드 시스템입니다. 이 글에서는 IntelliJ의 기본 빌드 시스템과 Gradle 빌드 시스템의 차이점, 그리고 각 빌드 시스템의 장단점에 대해 알아보겠습니다."
 date: 2024-08-23
-category: Tools
+category: Development
 tags:
   - "ide"
   - "intellij"

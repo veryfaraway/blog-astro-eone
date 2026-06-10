@@ -2,7 +2,7 @@
 title: IntelliJ IDEA에서 Java 프로젝트 설정하기
 description: IntelliJ IDEA에서 새로운 Java 프로젝트를 생성하고 샘플 코드 실행하는 방법을 설명합니다.
 date: 2024-08-22
-category: Tools
+category: Development
 tags:
   - "ide"
   - "intellij"

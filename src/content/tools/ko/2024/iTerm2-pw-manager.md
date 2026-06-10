@@ -2,7 +2,7 @@
 title: iTerm2 Password Manager 사용해보자
 description: iTerm2 3.0에 새로 추가된 Password Manager 사용방법을 설명합니다.
 date: 2022-02-07
-category: Tools
+category: Development
 tags:
   - "macos"
   - "terminal"

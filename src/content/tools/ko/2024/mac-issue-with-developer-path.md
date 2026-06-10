@@ -2,7 +2,7 @@
 title: macOS를 Ventura로 업그레이드 후 Git 오류 해결 방법
 description: macOS 업그레이 후 invalid active developer path (/Library/Developer/CommandLineTools) 에러가 발생할때 해결 방법
 date: 2022-12-28
-category: Tools
+category: Development
 tags:
   - "macos"
   - "command-line-tools"

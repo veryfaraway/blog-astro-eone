@@ -2,7 +2,7 @@
 title: "Raycast Pro AI 완전 정복: ChatGPT 탭을 닫아도 되는 이유"
 description: "Raycast Pro의 AI 기능을 제대로 활용하는 법. Ask AI부터 Custom AI Commands까지, 맥 워크플로우에 AI를 자연스럽게 녹이는 실전 세팅을 알려드립니다."
 date: 2026-01-28
-category: Tools
+category: macOS
 tags:
   - "macos"
   - "raycast"

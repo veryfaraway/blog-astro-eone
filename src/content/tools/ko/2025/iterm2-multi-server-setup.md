@@ -2,7 +2,7 @@
 title: "iTerm2로 여러 서버를 편하게 관리하기: Profiles · Toolbelt · Password Manager · SSH config · 1Password 연동"
 description: "iTerm2에서 Profiles, Toolbelt, Password Manager, SSH config를 활용해 여러 서버 SSH 접속을 효율적으로 관리하고, 3.5 버전의 1Password·LastPass 연동으로 비밀번호를 안전하게 자동 로그인하는 방법을 정리한 글입니다."
 date: 2025-12-31
-category: Tools
+category: Development
 tags:
   - "iterm2"
   - "ssh"

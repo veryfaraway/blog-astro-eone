@@ -2,7 +2,7 @@
 title: Homebrew 설치하기
 description: macOS Package 관리자인 Homebrew를 설치하고 사용하는 방법을 설명합니다
 date: 2022-05-08
-category: Tools
+category: macOS
 tags:
   - "homebrew"
   - "macos"
