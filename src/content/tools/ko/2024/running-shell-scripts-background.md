@@ -2,7 +2,7 @@
 title: 쉘 스크립트 백그라운드로 실행하는 방법
 description: Running Shell Script in Background
 date: 2022-04-07
-category: Tools
+category: Development
 tags:
   - "shell"
   - "bash"
@@ -25,7 +25,6 @@ nohup script.sh >script.out 2>script.err &
 ```sh
 nohup script.sh >script.out 2>&1 &
 ```
-
 
 경우에 따라서 output을 저장하고 싶지 않을 때도 있습니다. 그럴때는 아래와 같이 `/dev/null`로 출력을 redirect 하면 됩니다.
 

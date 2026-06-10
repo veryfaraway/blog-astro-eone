@@ -21,12 +21,11 @@ thumbnail: "https://images.unsplash.com/photo-1675266873434-5ba73c38ce6f?q=80&w=
 
 다행히 이런 에러는 `Command Line Tools`를 다시 설치함으로써 간단하게 해결할 수 있습니다. `Command Line Tools`은 콘솔에서 아래와 같은 명령을 실행해서 설치할 수 있습니다.
 
-```
+```bash
 xcode-select --install
 ```
 
 `Command Line Tools`를 다시 설치한 후 맥을 재부팅하거나 터미널 프로그램을 종료 후 다시 실행하면 됩니다.
-
 
 ## Command Line Tools 설치 실패 해결 방법
 

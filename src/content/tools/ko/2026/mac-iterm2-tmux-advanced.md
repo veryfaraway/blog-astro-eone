@@ -2,7 +2,7 @@
 title: "tmux 가이드 #4: Vim/Neovim 유저를 위한 심화 연동 (Seamless Navigation)"
 description: tmux 패널과 Neovim 창 사이를 마치 하나의 프로그램처럼 자유롭게 넘나드는 설정을 알아봅니다.
 date: 2026-01-13
-category: Tools
+category: Development
 tags:
   - "iterm2"
   - "tmux"
@@ -11,6 +11,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=2148&auto=format&fit=crop"
+series: "tmux 가이드"
+series_order: 4
 ---
 
 터미널 기반 개발자의 최종 목적지는 결국 **tmux + Neovim**의 조합입니다. 하지만 tmux 패널 사이를 이동할 때는 `Ctrl+a + 방향키`를 쓰고, Neovim 창 사이를 이동할 때는 `Ctrl+w + hjkl`을 쓰는 것은 매우 번거롭습니다.
@@ -18,9 +20,11 @@ thumbnail: "https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=
 오늘은 이 두 도구 사이의 벽을 허무는 방법을 소개합니다.
 
 ## 1. 목표: 동일한 단축키로 이동하기
+
 `Ctrl + hjkl` 단축키 하나로 Neovim의 분할 창과 tmux의 패널을 구분 없이 이동하는 설정을 구성합니다.
 
 ## 2. tmux 플러그인 설치
+
 먼저 `~/.tmux.conf`에 아래 플러그인을 추가하고 설치(`Prefix + I`)합니다.
 
 ```bash

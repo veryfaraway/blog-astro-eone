@@ -2,7 +2,7 @@
 title: "복잡한 브랜치 환경을 다스리는 비법: Main PR 선발행과 라벨 관리"
 description: 수많은 feature와 hotfix 브랜치 속에서 길을 잃지 않는 방법. Main 대상 PR을 미리 생성하고 라벨을 활용해 진척도를 한눈에 관리하는 효율적인 Git 워크플로우를 소개합니다.
 date: 2026-01-24
-category: Tools
+category: Development
 tags:
   - "git"
   - "workflow"

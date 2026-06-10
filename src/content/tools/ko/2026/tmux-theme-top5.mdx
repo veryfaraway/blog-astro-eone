@@ -2,7 +2,7 @@
 title: tmux 테마 TOP 5 추천 — 폰트·색상 조합까지
 description: "터미널에서 가장 오래 머무는 개발자를 위해, 생산성과 가독성을 동시에 잡을 수 있는 tmux 테마 5가지와 폰트·색상 조합을 소개합니다."
 date: 2026-05-01
-category: Tools
+category: Development
 tags:
   - "터미널"
   - "tmux"
@@ -11,6 +11,8 @@ draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1774901128215-3549cc686921?q=80&w=2371&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > 터미널 환경에 한 번 손을 대기 시작하면, 나중엔 테마 없이는 작업이 불가능한 몸이 된다.
 
@@ -65,12 +67,12 @@ set -g @catppuccin_flavour 'mocha'  # latte, frappe, macchiato, mocha 중 선택
 set -g @plugin 'janoamaral/tokyo-night-tmux'
 ```
 
-<div class="alert alert-success">
+<Alert type="success">
 
 `tmux-mem-cpu-load`를 함께 설치하면 상태 바에 시스템 리소스를 실시간으로 표시할 수 있습니다.
 `set -g status-right "#(tmux-mem-cpu-load --interval 2)"`
 
-</div>
+</Alert>
 
 ---
 
@@ -134,11 +136,11 @@ set -g status-right-length 60
 
 국내 개발자들에게는 한글 가독성까지 고려한 **D2CodingLigature Nerd Font**가 무난한 선택입니다. 리거처를 지원하는 버전을 설치하면 코드 에디터와 터미널 모두에서 활용할 수 있습니다.
 
-<div class="alert alert-info">
+<Alert type="info">
 
 Nerd Font 설치 후에는 터미널 에뮬레이터(Ghostty, iTerm2, Alacritty 등)의 폰트 설정도 동일하게 맞춰줘야 합니다. tmux 내부 설정만 바꿔서는 적용되지 않습니다.
 
-</div>
+</Alert>
 
 ### Karabiner로 Prefix 키 최적화
 

@@ -2,7 +2,7 @@
 title: Mac M 시리즈로 영상 업스케일링 — Neural Engine을 깨워라
 description: Rosetta 없이 Apple Silicon에 최적화된 Real-ESRGAN 업스케일링 환경을 구축하는 법. MLModel 변환 방식의 원리부터 Python 환경 세팅까지 단계별로 정리했다.
 date: 2026-05-02
-category: Tools
+category: Media
 tags:
   - "Apple Silicon"
   - "Real-ESRGAN"
@@ -12,6 +12,8 @@ draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=3540&auto=format&fit=crop"
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > 이 글은 macOS 15, Python 3.10, Miniconda 기준으로 작성되었다.
 
@@ -90,11 +92,9 @@ conda activate ~/upscale-env
 
 프롬프트 앞에 `(~/upscale-env)`가 표시되면 환경이 정상적으로 활성화된 것이다. 이후 모든 설치와 실행은 이 환경 안에서 진행한다.
 
-<div class="alert alert-info">
-
+<Alert type="info">
 `--prefix` 옵션으로 경로를 직접 지정하면 환경 이름 대신 경로로 관리된다. `conda env list`로 목록을 확인할 수 있다.
-
-</div>
+</Alert>
 
 ## 프로젝트 폴더 구성
 
@@ -138,12 +138,9 @@ python -c "import torch; print(torch.backends.mps.is_available())"
 
 `True`가 출력되면 GPU 가속 준비가 된 것이다.
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ RAM 주의</p>
-
+<Alert type="warning" title="RAM 주의">
 모델 변환 과정은 메모리를 많이 사용한다. 8GB RAM 환경에서는 동작이 불안정할 수 있다. 변환 작업 전에 브라우저, 코드 에디터 등 무거운 앱을 닫아두는 걸 권장한다.
-
-</div>
+</Alert>
 
 ## 사전 학습 모델 다운로드
 
@@ -159,11 +156,9 @@ wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-g
 wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-general-wdn-x4v3.pth
 ```
 
-<div class="alert alert-info">
-
+<Alert type="info">
 `wget`이 없다면 `brew install wget`으로 먼저 설치한다.
-
-</div>
+</Alert>
 
 두 모델의 차이는 이렇다.
 

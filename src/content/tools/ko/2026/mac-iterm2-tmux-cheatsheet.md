@@ -2,7 +2,7 @@
 title: "tmux 가이드 #3: 한 장으로 끝내는 핵심 단축키 요약 (Cheatsheet)"
 description: tmux를 쓰면서 매번 구글링하기 귀찮으셨죠? 가장 자주 쓰는 필수 단축키를 상황별로 정리했습니다.
 date: 2026-01-12
-category: Tools
+category: Development
 tags:
   - "iterm2"
   - "tmux"
@@ -11,12 +11,15 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1503551723145-6c040742065b-v2?q=80&w=2370&auto=format&fit=crop"
+series: "tmux 가이드"
+series_order: 3
 ---
 
 tmux는 강력하지만 단축키가 익숙해지기까지 시간이 걸립니다. 이 포스트를 즐겨찾기 해두고 필요할 때마다 꺼내 보세요! 
 *(모든 단축키는 본인의 설정에 따라 `Ctrl+b` 또는 `Ctrl+a`인 **Prefix**를 먼저 누른 후 입력해야 합니다.)*
 
 ## 1. 세션(Session) 관리 - 프로젝트 단위
+
 | 기능 | 단축키 / 명령어 |
 | :--- | :--- |
 | 새 세션 생성 | `tmux new -s [이름]` |

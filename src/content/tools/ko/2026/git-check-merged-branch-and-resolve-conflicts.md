@@ -2,7 +2,7 @@
 title: Git 브랜치 머지 여부 확인하고 충돌 안전하게 해결하기
 description: "오래된 feature 브랜치가 main과 stage 중 어디에 머지되었는지 확인하고, 로컬에서 안전하게 충돌을 해결하여 운영 배포하는 방법"
 date: 2026-02-03
-category: Tools
+category: Development
 tags:
   - "git"
 draft: false

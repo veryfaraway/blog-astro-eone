@@ -2,7 +2,7 @@
 title: .gitignore 수정 후 이미 올라간 파일 정리하는 네 가지 패턴
 description: ".gitignore를 뒤늦게 수정했는데 이미 GitHub에 올라간 파일이 있을 때, 가장 많이 쓰는 네 가지 정리 패턴을 예시와 함께 정리했습니다. 작은 개인 레포부터 협업 레포, 그리고 민감 정보가 섞인 경우까지 상황별로 어떤 방법을 써야 덜 위험하고 덜 귀찮은지 정리해 두면 나중에 삽질을 줄일 수 있습니다."
 date: 2026-01-04
-category: Tools
+category: Development
 tags:
   - "git"
   - "gitignore"

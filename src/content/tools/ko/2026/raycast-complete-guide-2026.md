@@ -1,6 +1,6 @@
 ---
 title: "맥 유저의 새로운 필수템, Raycast 완벽 가이드: Alfred와의 차이점부터 기능 통합까지"
-description: "Alfred를 넘어 맥 생산성 도구의 끝판왕으로 불리는 Raycast의 주요 기능과 사용법, 그리고 Alfred와의 차이점을 상세히 알아봅니다.Alfred를 넘어 맥 생산성 도구의 끝판왕으로 불리는 Raycast의 주요 기능과 사용법, 그리고 Alfred와의 차이점을 상세히 알아봅니다."
+description: "Alfred를 넘어 맥 생산성 도구의 끝판왕으로 불리는 Raycast의 주요 기능과 사용법, 그리고 Alfred와의 차이점을 상세히 알아봅니다."
 date: 2026-01-26
 category: Tools
 tags:
@@ -10,6 +10,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://www.raycast.com/uploads/redesign/navbar.png"
+series: "Raycast 완전 정복기"
+series_order: 1
 ---
 
 맥을 사용하면서 **Alfred**나 **Spotlight**에 익숙해진 분들이라면, 최근 가장 핫한 생산성 도구인 **Raycast(레이캐스트)** 를 반드시 주목해야 합니다. 단순한 앱 실행기를 넘어, 여러분의 맥에 흩어져 있는 수많은 앱의 기능을 하나로 묶어주는 '커맨드 센터' 역할을 하기 때문입니다.
@@ -45,18 +47,23 @@ Raycast의 가장 큰 장점은 여러 개의 앱을 따로 설치할 필요가 
 ## 3. 핵심 사용법 및 초기 세팅 가이드
 
 ### **Step 1: 실행 및 기본 앱 교체**
+
 1.  [Raycast 공식 홈페이지](https://www.raycast.com/)에서 앱을 설치합니다.
 2.  설정(Settings)에서 `Hotkey`를 설정하세요. (보통 Alfred나 Spotlight에서 쓰던 `Cmd + Space`나 `Option + Space`를 추천합니다.)
 3.  기본 Spotlight 기능을 끄거나 단축키를 해제하여 Raycast가 메인이 되도록 합니다.
 
 ### **Step 2: 스토어(Store) 활용하기**
+
 Raycast의 진가는 **Store**에 있습니다. `Cmd + Space`를 눌러 Raycast를 띄운 뒤 `store`를 검색해 보세요.
+
 * **Spotify Player:** 앱을 열지 않고도 음악을 넘기거나 플레이리스트를 검색합니다.
 * **Google Translate:** 즉석에서 번역 결과를 확인하고 복사합니다.
 * **Brew:** 터미널을 켜지 않고도 Homebrew 패키지를 관리합니다.
 
 ### **Step 3: 단축키(Hotkeys)와 별칭(Aliases) 지정**
+
 자주 쓰는 명령어나 앱에 별칭을 주면 훨씬 빨라집니다.
+
 * 예: `AppCleaner` 앱에 `ac`라는 별칭을 주면, `ac`만 쳐도 바로 앱이 실행됩니다.
 * 예: `Clipboard History`에 `Option + V` 같은 단축키를 지정해 즉각 호출할 수 있습니다.
 
@@ -76,6 +83,6 @@ Alfred에서 가장 유용했던 '실행 시 영문 고정' 기능, Raycast에�
 
 ## 마치며
 
-Raycast는 처음에는 단순히 앱 실행기로 시작하지만, 익숙해질수록 마우스에 손이 가는 횟수를 드라마틱하게 줄여줍니다. 특히 질문자님처럼 깔끔한 맥 세팅을 선호하시는 분들께는 **"여러 앱을 하나로 통합하는 마법"** 같은 경험을 선사할 것입니다.
+Raycast는 처음에는 단순히 앱 실행기로 시작하지만, 익숙해질수록 마우스에 손이 가는 횟수를 드라마틱하게 줄여줍니다. 특히 깔끔한 맥 세팅을 선호하시는 분들께는 **"여러 앱을 하나로 통합하는 마법"** 같은 경험을 선사할 것입니다.
 
 지금 바로 Alfred 대신 Raycast를 설치해 보세요. 여러분의 맥 라이프가 2026년형으로 업그레이드될 것입니다!

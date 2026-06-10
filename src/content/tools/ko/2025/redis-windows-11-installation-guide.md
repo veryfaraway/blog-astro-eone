@@ -2,7 +2,7 @@
 title: "Windows 11에서 Redis 설치하기: 2025년 최신 가이드"
 description: "Windows 11 환경에서 Redis를 설치하는 다양한 방법을 소개합니다. WSL2, Docker, Memurai, 네이티브 포트 등 각 방법의 장단점과 실무 활용법을 알아봅니다."
 date: 2025-12-20
-category: Tools
+category: Development
 tags:
   - "redis"
   - "windows"
@@ -18,9 +18,10 @@ thumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?q=80&w=
 
 ## 개요
 
-2년 전 작성한 [Redis on Windows 포스트](/posts/2023/redis-windows/)에서는 tporadowski의 비공식 포트를 주로 소개했습니다. 하지만 2025년 현재, Windows에서 Redis를 사용하는 환경이 크게 개선되었습니다. 
+2년 전 작성한 [Redis on Windows 포스트](/tools/redis-on-windows)에서는 tporadowski의 비공식 포트를 주로 소개했습니다. 하지만 2025년 현재, Windows에서 Redis를 사용하는 환경이 크게 개선되었습니다.
 
 **주요 변화:**
+
 - Redis 공식 파트너인 [Memurai](https://redis.io/blog/use-redis-natively-on-windows-with-memurai/)가 Windows 네이티브 지원 제공
 - WSL2의 안정화로 Linux 환경을 Windows에서 쉽게 사용 가능
 - Docker Desktop의 개선으로 컨테이너 기반 설치가 더욱 간편해짐
@@ -159,6 +160,7 @@ sudo service redis-server restart
 ```
 
 **장점:**
+
 - ✅ Redis 공식 최신 버전 사용 가능
 - ✅ Linux 환경 그대로 사용 (공식 문서 그대로 적용)
 - ✅ 성능이 우수함 (네이티브에 가까운 속도)
@@ -166,6 +168,7 @@ sudo service redis-server restart
 - ✅ Windows와 파일 시스템 공유 가능
 
 **단점:**
+
 - ❌ WSL2 설치 필요 (약 1GB 디스크 공간)
 - ❌ Linux 명령어에 익숙해야 함
 
@@ -304,6 +307,7 @@ networks:
 ```
 
 **장점:**
+
 - ✅ 환경 격리 (여러 버전 동시 실행 가능)
 - ✅ 설정 파일로 관리 (docker-compose.yml)
 - ✅ 쉬운 버전 변경 및 롤백
@@ -311,6 +315,7 @@ networks:
 - ✅ 무료
 
 **단점:**
+
 - ❌ Docker Desktop 설치 필요 (약 2GB)
 - ❌ 약간의 성능 오버헤드
 - ❌ Docker 개념 이해 필요
@@ -374,6 +379,7 @@ Restart-Service Memurai
 | 상업적 사용 | ✅ | ✅ |
 
 **장점:**
+
 - ✅ Windows 네이티브 (최고 성능)
 - ✅ Windows 서비스로 자동 시작
 - ✅ Redis 공식 파트너 (안정성 보장)
@@ -381,6 +387,7 @@ Restart-Service Memurai
 - ✅ 설치가 가장 간단함
 
 **단점:**
+
 - ❌ 프로덕션 사용 시 유료 (Enterprise Edition)
 - ❌ 일부 최신 Redis 기능 지연 반영 가능
 
@@ -406,11 +413,13 @@ Start-Service Redis
 ```
 
 **장점:**
+
 - ✅ 설치가 간단함
 - ✅ 무료
 - ✅ Windows 서비스로 실행 가능
 
 **단점:**
+
 - ❌ 비공식 포트 (보안 업데이트 지연)
 - ❌ 최신 버전 지원 느림 (현재 Redis 5.0 기반)
 - ❌ 프로덕션 사용 비추천
@@ -419,6 +428,7 @@ Start-Service Redis
 ## 상황별 추천 방법
 
 ### 개발 환경 (로컬 개발)
+
 **추천: WSL2 또는 Docker**
 
 ```powershell
@@ -431,11 +441,13 @@ docker run -d --name redis -p 6379:6379 redis:latest
 ```
 
 **이유:**
+
 - 무료이고 최신 버전 사용 가능
 - 실제 프로덕션 환경(Linux)과 동일한 환경
 - 팀원들과 동일한 환경 공유 가능
 
 ### 테스트 환경
+
 **추천: Docker Compose**
 
 ```yaml
@@ -449,19 +461,23 @@ services:
 ```
 
 **이유:**
+
 - 버전 관리 용이
 - CI/CD 파이프라인과 통합 쉬움
 - 여러 버전 동시 테스트 가능
 
 ### Windows 프로덕션 서버
+
 **추천: Memurai Enterprise**
 
 **이유:**
+
 - Windows 네이티브 성능
 - 공식 지원 및 보안 업데이트
 - 클러스터링 및 고가용성 지원
 
 ### 간단한 학습/테스트
+
 **추천: Docker 또는 비공식 포트**
 
 ```powershell
@@ -706,12 +722,14 @@ taskkill /PID <PID> /F
 2025년 현재 Windows 11에서 Redis를 사용하는 방법은 다양하고 성숙해졌습니다. 2년 전과 비교하면:
 
 **주요 변화:**
+
 - ✅ Redis 공식 파트너 Memurai 등장
 - ✅ WSL2 안정화로 Linux 환경 사용 용이
 - ✅ Docker Desktop 개선으로 컨테이너 사용 간편화
 - ✅ 모든 방법이 실무에서 충분히 사용 가능한 수준
 
 **최종 추천:**
+
 - **개발 환경**: WSL2 (가장 안정적이고 최신 버전)
 - **테스트 환경**: Docker (버전 관리 및 격리)
 - **프로덕션**: Memurai Enterprise (Windows 서버) 또는 Linux 서버 사용

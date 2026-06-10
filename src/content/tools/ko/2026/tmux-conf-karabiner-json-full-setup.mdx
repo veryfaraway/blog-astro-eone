@@ -2,7 +2,7 @@
 title: tmux.conf 전체 공개 + Karabiner JSON 실전 세팅
 description: "atppuccin 테마, TPM 플러그인, Hyper Key 기반 tmux 윈도우 이동, 세션 자동화 스크립트, dotfiles 동기화까지. 복붙해서 바로 쓸 수 있는 실전 설정 파일 모음."
 date: 2026-03-29
-category: Tools
+category: Development
 tags:
   - "macos"
   - "터미널"
@@ -12,7 +12,11 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1549605659-32d82da3a059?q=80&w=2370&auto=format&fit=crop"
+series: "터미널 환경 구축"
+series_order: 2
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > 지난 편에서 세 도구의 개념과 연결 방식을 다뤘다. 이번 편은 실제로 쓰는 설정 파일을 그대로 공개한다. 복붙해서 바로 쓸 수 있게.
 
@@ -159,11 +163,11 @@ run '~/.tmux/plugins/tpm/tpm'
 
 설정 파일 저장 후 tmux를 새로 시작하고, `Prefix + I`로 플러그인을 설치하면 된다.
 
-<div class="alert alert-success">
+<Alert type="success">
 
 `tmux-resurrect`는 tmux를 완전히 종료했다가 다시 켜도 세션을 복구해준다. 맥북을 재시작한 뒤에도 `tmux`를 실행하면 어제 상태 그대로 돌아온다. `tmux-continuum`과 함께 쓰면 자동 저장까지 되어 아무것도 신경 안 써도 된다.
 
-</div>
+</Alert>
 
 ---
 
@@ -480,9 +484,3 @@ dotfiles 레포는 private으로 올려도 되고, Karabiner JSON처럼 민감�
 2편에 걸쳐서 개념부터 실제 설정 파일까지 다뤘다. 한 번 세팅해두면 맥을 바꿔도 새 맥 셋업이 30분이면 끝나고, 매일 아침 `work` 커맨드 하나로 모든 개발 환경이 올라온다.
 
 처음엔 설정 파일이 낯설게 느껴질 수 있지만, 한 줄씩 이해하면서 자기 환경에 맞게 고쳐 나가는 과정 자체가 꽤 즐겁다. 키보드에서 손을 떼는 횟수가 줄어드는 게 눈에 보일 때 특히.
-
----
-
-**이 글은 시리즈의 2편입니다.**
-
-- 이전 편: [Ghostty + tmux + Karabiner로 구축하는 극강의 터미널 환경](/posts/2026/macos-terminal-ghostty-tmux-karabiner)

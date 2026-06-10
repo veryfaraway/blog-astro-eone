@@ -2,7 +2,7 @@
 title: Ghostty + tmux + Karabiner로 구축하는 극강의 터미널 환경
 description: "MacBook에서 손가락 동선을 최소화하는 터미널 세팅. Ghostty 렌더링 엔진, tmux 세션 관리, Karabiner Hyper Key를 유기적으로 연결하는 실전 가이드."
 date: 2026-03-28
-category: Tools
+category: Development
 tags:
   - "macos"
   - "터미널"
@@ -12,7 +12,11 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1608452964553-9b4d97b2752f?q=80&w=2370&auto=format&fit=crop"
+series: "터미널 환경 구축"
+series_order: 1
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > Frontend, Backend, Infrastructure를 동시에 다루는 요즘 엔지니어에게 터미널은 단순한 입력창이 아니다. 세 도구를 유기적으로 연결하면 맥락 전환 비용이 거의 사라진다.
 
@@ -51,11 +55,11 @@ macos-titlebar-style = hidden
 
 `macos-option-as-alt = left` 설정은 중요하다. macOS는 기본적으로 `Option` 키를 특수문자 입력에 사용하는데, 이를 그대로 두면 tmux나 vim에서 `Alt` 조합 단축키가 동작하지 않는다. `left`로 설정하면 왼쪽 Option만 Alt로 인식하고, 오른쪽 Option은 기존 macOS 특수문자 입력에 그대로 쓸 수 있다.
 
-<div class="alert alert-info">
+<Alert type="info">
 
 JetBrains Mono Nerd Font가 없다면 `brew install --cask font-jetbrains-mono-nerd-font`로 설치할 수 있다.
 
-</div>
+</Alert>
 
 ---
 
@@ -242,9 +246,3 @@ flowchart TD
 도구는 거들 뿐이지만, 잘 정돈된 도구는 엔지니어의 사고 흐름을 끊지 않는다. Ghostty가 렌더링 병목을 없애고, tmux가 컨텍스트를 보존하고, Karabiner가 둘 사이의 이동 비용을 0에 가깝게 만든다. 세 도구가 제 역할을 분담하면서 하나처럼 동작하는 게 이 세팅의 핵심이다.
 
 다음 편에서는 실제로 사용하는 `tmux.conf` 전체 설정과 Karabiner JSON 파일을 통째로 공유한다. 테마, 상태바 구성, 세션 자동화 스크립트까지 더할 예정이다.
-
----
-
-**다음 편:**
-
-- [tmux.conf 전체 공개 + Karabiner JSON 실전 세팅](/posts/2026/tmux-conf-karabiner-json-full-setup)

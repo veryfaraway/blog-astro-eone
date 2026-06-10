@@ -2,7 +2,7 @@
 title: Mac에서 링크 하나로 브라우저를 자동 분기하는 Finicky 완벽 가이드
 description: macOS에서 URL 패턴에 따라 브라우저를 자동으로 선택해주는 무료 오픈소스 앱 Finicky의 설치부터 설정까지 완벽하게 알아봅니다.
 date: 2026-03-06
-category: Tools
+category: macOS
 tags:
   - "finicky"
   - "macos"
@@ -10,6 +10,8 @@ draft: false
 lang: ko
 thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/l_logo-coffee/o_70/fl_layer_apply,g_center,x_-50,y_150/v1772790687/library/meme/web_browsers_mizud3.png"
 ---
+
+import Alert from '@/components/Alert.astro';
 
 개발을 하다 보면 여러 브라우저를 동시에 사용하는 경우가 많습니다. 로컬 개발 서버는 Arc에서, Google 서비스는 Chrome에서, 그 외 링크는 Safari에서 열고 싶은데 매번 복사해서 붙여넣기 하거나 브라우저를 수동으로 전환하는 게 번거롭지 않으셨나요?
 
@@ -61,12 +63,11 @@ export default {
 };
 ```
 
-<div class="alert alert-warning">
-<p class="alert-title">⚠️ 주의</p>
+<Alert type="warning" title="주의">
 
 Finicky 4.x 버전부터 `module.exports` 대신 `export default`, `rules` 대신 `handlers`를 사용해야 합니다. 구버전 문법을 사용하면 설정 파일이 로드되더라도 규칙이 적용되지 않습니다.
 
-</div>
+</Alert>
 
 ### 실전 예시: 개발자를 위한 브라우저 분기 설정
 

@@ -2,7 +2,7 @@
 title: "tmux 가이드 #2: 플러그인 매니저(tpm)로 터미널에 날개 달기"
 description: 단조로운 tmux는 잊으세요. tpm을 이용한 플러그인 설치와 테마 적용으로 나만의 멋진 터미널 환경을 구축하는 방법을 소개합니다.
 date: 2026-01-11
-category: Tools
+category: Development
 tags:
   - "iterm2"
   - "tmux"
@@ -12,6 +12,8 @@ tags:
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1601467450590-8c3d11cde2fd?q=80&w=2370&auto=format&fit=crop"
+series: "tmux 가이드"
+series_order: 2
 ---
 
 지난 포스팅에서는 tmux의 기초와 iTerm2 연동법을 알아봤습니다. 하지만 기본 tmux 화면은 왠지 투박하고 90년대 개발자 환경처럼 보이죠. 
@@ -25,7 +27,9 @@ thumbnail: "https://images.unsplash.com/photo-1601467450590-8c3d11cde2fd?q=80&w=
 tpm은 마치 맥의 Homebrew나 Python의 pip처럼 tmux 플러그인을 관리해주는 도구입니다.
 
 ### 저장소 복제
+
 먼저 GitHub에서 tpm 소스 코드를 내 맥의 설정 폴더로 가져옵니다.
+
 ```bash
 git clone [https://github.com/tmux-plugins/tpm](https://github.com/tmux-plugins/tpm) ~/.tmux/plugins/tpm
 

@@ -2,7 +2,7 @@
 title: "macOS에서 여러 버전의 JDK를 설치하고 관리하는 방법: SDKMAN! 사용 가이드"
 description: SDKMAN 소개 및 사용 방법을 알려드립니다.
 date: 2024-08-30
-category: Tools
+category: Development
 tags:
   - "sdkman"
   - "java"
@@ -84,17 +84,20 @@ sdk default java 17.0.8-tem
 설치된 JDK 버전을 확인하거나 관리하려면 다음 명령어를 사용합니다:
 
 - **현재 사용 중인 JDK 버전 확인**:
+
   ```bash
   sdk current java
   ```
 
 - **설치된 모든 JDK 버전 확인**:
+
   ```bash
   sdk list java
   ```
 
 - **JDK 버전 제거**:
   특정 버전의 JDK를 더 이상 사용하지 않으려면 다음 명령어로 제거할 수 있습니다:
+  
   ```bash
   sdk uninstall java 11.0.20-tem
   ```

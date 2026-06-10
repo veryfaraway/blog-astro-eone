@@ -2,14 +2,18 @@
 title: "Karabiner 완전 정복기 2편 — Complex Modifications & Hyper Key"
 description: "Caps Lock을 수십 개의 단축키로 만드는 Hyper Key, 한/영 전환 딜레이 제거, 백틱·원화 문제 해결까지. Karabiner의 진짜 힘을 꺼내쓰는 방법."
 date: 2026-03-26
-category: Tools
+category: macOS
 tags:
   - "macos"
   - "karabiner"
 draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1767489697894-3b3a177070eb?q=80&w=2148&auto=format&fit=crop"
+series: "Karabiner 완전 정복기"
+series_order: 2
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > Caps Lock은 한 번도 쓴 적 없는 키 1위다. 이걸 가장 강력한 단축키 레이어로 바꿔보자.
 
@@ -175,11 +179,11 @@ Karabiner (Caps Lock → F18) + 구름 입력기 (F18에 한/영 전환 매핑)
 
 `input_source_if` 조건으로 한국어 입력 상태일 때만 동작하도록 제한한 것이다. 3편에서 이런 JSON 구조를 직접 작성하는 법을 자세히 다룬다.
 
-<div class="alert alert-info">
+<Alert type="info">
 
 백틱 문제는 Karabiner 없이도 `~/Library/KeyBindings/DefaultKeyBinding.dict` 파일을 수정해서 해결할 수 있다. 하지만 이미 Karabiner를 쓰고 있다면 한 곳에서 관리하는 게 편하다.
 
-</div>
+</Alert>
 
 ---
 
@@ -188,10 +192,3 @@ Karabiner (Caps Lock → F18) + 구름 입력기 (F18에 한/영 전환 매핑)
 Complex Modifications와 Hyper Key를 적용하고 나면 키보드 사용 방식이 진짜로 달라진다. 창 배치, 앱 전환, 한/영 전환, 백틱 입력 — 이 네 가지만 해결해도 하루 타이핑 흐름이 눈에 띄게 매끄러워진다.
 
 다음 편에서는 JSON을 직접 작성해서 **나만의 룰**을 만드는 법을 다룬다. 앱별 조건, 기기별 조건, 그리고 실전에서 쓰는 세팅을 통째로 공유할 예정이다.
-
----
-
-**이 글은 시리즈의 2편입니다.**
-  
-- 이전 편: [Karabiner 완전 정복기 1편 — 설치부터 기본 리매핑까지](/posts/2026/karabiner-elements-guide-1)
-- 다음 편: [Karabiner 완전 정복기 3편 — 나만의 룰 만들기](/posts/2026/karabiner-elements-guide-3)

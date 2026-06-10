@@ -15,7 +15,7 @@ thumbnail: "https://images.unsplash.com/photo-1654277041218-84424c78f0ae?q=80&w=
 1. Github.com에 접속 후 해당 repository로 이동
 2. 상단 `⚙️ Settings`를 클릭
 3. 좌측 `Pages` 클릭
-4. Your site is live at 메시지 옆에 `...` 클릭 
+4. Your site is live at 메시지 옆에 `...` 클릭
 ![unpublish](https://docs.github.com/assets/cb-50834/images/help/pages/unpublish-site.png)
 
 5. `Unpublish site` 클릭

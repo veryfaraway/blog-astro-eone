@@ -2,7 +2,7 @@
 title: "앱 없이 아이폰·맥 광고 차단하기: NextDNS 프로필 완전 가이드"
 description: "브라우저 확장 프로그램 없이 아이폰, 아이패드, 맥 전체의 광고와 트래커를 차단하는 방법. NextDNS 계정 생성부터 프로필 설치, 한국 필터 설정, 공용 와이파이 대처법까지 단계별로 정리했다."
 date: 2026-04-23
-category: Tools
+category: macOS
 tags:
   - "macos"
   - "DNS"
@@ -13,6 +13,8 @@ draft: false
 lang: ko
 thumbnail: "https://images.unsplash.com/photo-1511268559489-34b624fbfcf5?q=80&w=2370&auto=format&fit=crop"
 ---
+
+import Alert from '@/components/Alert.astro';
 
 > DNS 차단은 광고 데이터가 기기에 도달하기 전, 길목에서 막는다. 브라우저 확장 프로그램보다 가볍고, 앱 내 광고까지 잡는다.
 
@@ -39,12 +41,11 @@ thumbnail: "https://images.unsplash.com/photo-1511268559489-34b624fbfcf5?q=80&w=
 
 DNS(Domain Name System)는 도메인 이름을 IP 주소로 바꿔주는 전화번호부 같은 시스템이다. NextDNS는 이 과정에서 광고·트래커 도메인 주소 요청 자체를 차단해버린다. 광고 데이터가 기기에 도달하기도 전에 막는 구조라 가볍고 빠르다.
 
-<div class="alert alert-info">
-<p class="alert-title">💡 정보</p>
+<Alert type="info" title="정보">
 
 애플은 iOS 14, macOS Big Sur부터 **네이티브 암호화 DNS(DoH/DoT)** 를 공식 지원한다. 덕분에 별도 앱 없이 설정 프로필 하나만으로 적용이 가능하다.
 
-</div>
+</Alert>
 
 ---
 
@@ -72,11 +73,11 @@ DNS(Domain Name System)는 도메인 이름을 IP 주소로 바꿔주는 전화�
 | **YousList** | 한국 웹 환경 특화 필터 | ✅ 필수 |
 | NextDNS Ads & Trackers Blocklist | HaGeZi와 많이 겹침 | ❌ 제거 권장 |
 
-<div class="alert alert-warning">
+<Alert type="warning" title="주의">
 
 필터를 너무 많이 추가하면 일부 사이트·앱이 정상 작동하지 않을 수 있다. 처음엔 위 두 개만 추가하고, 문제가 생기면 로그에서 원인 도메인을 찾아 허용 목록에 추가하는 방식이 낫다.
 
-</div>
+</Alert>
 
 ### Privacy 탭 추가 설정
 
@@ -108,12 +109,11 @@ Device Name      : 관리 편의를 위한 기기 이름 (예: Hanseob-iPhone)
 
 입력 후 **Download** 버튼을 누르면 `.mobileconfig` 파일이 다운로드된다.
 
-<div class="alert alert-info">
-<p class="alert-title">💡 정보</p>
+<Alert type="info" title="정보">
 
 `사파리`에서만 다운로드해야 한다. 크롬이나 파이어폭스에서는 프로필 파일이 제대로 설치되지 않는다.
 
-</div>
+</Alert>
 
 ### 아이폰 / 아이패드 설치
 
@@ -132,11 +132,11 @@ Device Name      : 관리 편의를 위한 기기 이름 (예: Hanseob-iPhone)
 → 다운로드된 항목 클릭 → [설치] 완료
 ```
 
-<div class="alert alert-warning">
+<Alert type="warning" title="주의">
 
 macOS Ventura(13) 이상에서는 `시스템 설정 → 개인정보 보호 및 보안 → 프로필` 경로를 사용한다. 구버전 macOS는 `시스템 환경설정 → 프로필`에서 찾으면 된다.
 
-</div>
+</Alert>
 
 ---
 

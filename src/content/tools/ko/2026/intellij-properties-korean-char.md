@@ -2,7 +2,7 @@
 title: IntelliJ .properties 한글 깨짐(\\uXXXX) 원인과 해결 방법 (유니코드 복원 팁)
 description: IntelliJ에서 .properties 파일의 한글이 \\uXXXX 형태로 깨지는 문제의 원인과 이를 해결하는 방법을 알아봅니다.
 date: 2026-01-13
-category: Tools
+category: Development
 tags:
   - "intellij"
   - "unicode"
