@@ -159,7 +159,7 @@
         { "ticker": "NKE",   "shares": 6,   "sector": "Consumer Discretionary" },
         { "ticker": "NOC",   "shares": 2,   "sector": "Defense" },
         { "ticker": "NRG",   "shares": 5,   "sector": "Utilities" },
-        { "ticker": "ORCL",  "shares": 13,  "sector": "Technology" },
+        { "ticker": "ORCL",  "shares": 14,  "sector": "Technology" },
         { "ticker": "PM",    "shares": 8,   "sector": "Consumer Staples" },
         { "ticker": "PNC",   "shares": 1,   "sector": "Financial Services" },
         { "ticker": "PSX",   "shares": 3,   "sector": "Energy" },
