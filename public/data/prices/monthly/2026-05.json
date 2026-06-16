@@ -1,0 +1,70 @@
+{
+  "month": "2026-05",
+  "days": [
+    {
+      "date": "2026-05-16",
+      "prices": {
+        "AAPL": {
+          "close": 213.5,
+          "change": 1.23,
+          "changePercent": 0.58
+        },
+        "NVDA": {
+          "close": 135.2,
+          "change": -2.1,
+          "changePercent": -1.53
+        },
+        "MSFT": {
+          "close": 452.3,
+          "change": 3.8,
+          "changePercent": 0.85
+        },
+        "GOOGL": {
+          "close": 178.9,
+          "change": 0.5,
+          "changePercent": 0.28
+        },
+        "META": {
+          "close": 612.4,
+          "change": -8.2,
+          "changePercent": -1.32
+        },
+        "AMZN": {
+          "close": 227.1,
+          "change": 4.3,
+          "changePercent": 1.93
+        },
+        "TSLA": {
+          "close": 340.6,
+          "change": -12.5,
+          "changePercent": -3.54
+        },
+        "SCHD": {
+          "close": 82.4,
+          "change": 0.3,
+          "changePercent": 0.37
+        },
+        "VYM": {
+          "close": 131.2,
+          "change": 0.8,
+          "changePercent": 0.61
+        },
+        "JEPI": {
+          "close": 58.9,
+          "change": 0.1,
+          "changePercent": 0.17
+        },
+        "O": {
+          "close": 57.3,
+          "change": -0.4,
+          "changePercent": -0.69
+        },
+        "ABBV": {
+          "close": 198.7,
+          "change": 2.1,
+          "changePercent": 1.07
+        }
+      }
+    }
+  ]
+}
