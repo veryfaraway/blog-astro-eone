@@ -158,6 +158,35 @@ import ClockChart from '@/components/ClockChart.astro';
 
 ---
 
+#### `Chart.astro`
+
+Chart.js 기반 차트. 빌드 타임에 데이터를 `data-*` 속성으로 직렬화하고, 클라이언트에서 hydration하여 렌더링. 다크모드 색상 자동 대응. 직렬화 실패 또는 JS 미실행 시 **폴백 테이블**을 자동 표시(접근성·SEO).
+
+```mdx
+import Chart from '@/components/Chart.astro';
+
+<Chart
+  type="bar"
+  caption="분기별 매출 (억 원)"
+  data={{
+    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+    datasets: [{ label: '매출', data: [10, 20, 15, 30] }],
+  }}
+/>
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `type` | `'bar' \| 'line' \| 'pie' \| 'doughnut' \| 'radar'` | — | 차트 종류 |
+| `data` | `object` | — | Chart.js `data` 객체 (`labels` + `datasets`) |
+| `options` | `object` | `{}` | Chart.js `options` (responsive·다크모드는 자동 적용됨) |
+| `height` | `number` | `300` | 차트 높이(px) |
+| `caption` | `string` | — | 하단 캡션 (생략 가능) |
+
+> `data`는 JSON 직렬화 가능해야 함 — 함수(tick 콜백 등)는 넣지 말 것. 폴백 테이블은 `data.labels` / `datasets[].data`로 자동 생성된다.
+
+---
+
 #### `AdSlot.astro`
 
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.
