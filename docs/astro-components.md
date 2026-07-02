@@ -283,6 +283,36 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
 ---
 
+#### `ImageRow.astro`
+
+이미지 2~4개를 한 줄(그리드)로 나란히 배치. 모바일에서는 자동으로 1열(4열 지정 시 2열)로 접힘.
+
+```mdx
+import ImageRow from '@/components/ImageRow.astro';
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
+
+<ImageRow>
+  ![왼쪽 사진](https://example.com/a.jpg)
+  ![오른쪽 사진](https://example.com/b.jpg)
+</ImageRow>
+
+<ImageRow cols={3} caption="제주도 여행 3일차">
+  <CloudinaryImage publicId="v123/a.jpg" alt="아침" />
+  <CloudinaryImage publicId="v123/b.jpg" alt="점심" />
+  <CloudinaryImage publicId="v123/c.jpg" alt="저녁" />
+</ImageRow>
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `cols` | `2 \| 3 \| 4` | `2` | 데스크톱 기준 열 수 |
+| `caption` | `string` | — | 그리드 아래 중앙 정렬 캡션 |
+
+> 마크다운 이미지(`![]()`), `<img>`, `CloudinaryImage` 모두 자식으로 사용 가능.
+> 내부 이미지는 `w-full` + `rounded-lg`가 자동 적용되므로 `MovieCard` 같은 카드 컴포넌트는 넣지 말 것 (카드 배치는 `<div class="grid gap-4 md:grid-cols-2">` 직접 사용).
+
+---
+
 #### `Logo.astro`
 
 원형 틀 안에 e 스피너 형태의 SVG 로고. 헤더 및 브랜딩 용도.

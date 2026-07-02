@@ -113,6 +113,14 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 <CloudinaryImage publicId="v123/photo.jpg" alt="설명" width={1200} height={800} />
 <!-- width+height 함께 지정 시 CLS 방지. PUBLIC_CLOUDINARY_CLOUD_NAME 필요 -->
 
+import ImageRow from '@/components/ImageRow.astro';
+<ImageRow cols={3} caption="캡션(선택)">
+  ![사진1](https://example.com/a.jpg)
+  ![사진2](https://example.com/b.jpg)
+  ![사진3](https://example.com/c.jpg)
+</ImageRow>
+<!-- cols: 2(기본)|3|4, 모바일 자동 1열. 이미지 전용 — MovieCard 등 카드는 넣지 말 것 -->
+
 import Chart from '@/components/Chart.astro';
 <Chart
   type="bar"  /* bar | line | pie | doughnut | radar */

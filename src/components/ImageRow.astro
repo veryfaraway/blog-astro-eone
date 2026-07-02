@@ -1,0 +1,35 @@
+---
+interface Props {
+  cols?: 2 | 3 | 4;
+  caption?: string;
+}
+const { cols = 2, caption } = Astro.props;
+
+// Tailwind는 정적 클래스 문자열만 인식하므로 동적 조합 대신 매핑 사용
+const colsClass = {
+  2: 'grid-cols-1 sm:grid-cols-2',
+  3: 'grid-cols-1 sm:grid-cols-3',
+  4: 'grid-cols-2 sm:grid-cols-4',
+}[cols];
+---
+
+<figure class="not-prose my-6">
+  <div
+    class:list={[
+      'grid items-start gap-3',
+      colsClass,
+      // MDX가 이미지를 <p>로 감싸도 grid 아이템이 되도록 래퍼를 무시
+      '[&>p]:contents',
+      '[&_img]:w-full [&_img]:rounded-lg',
+    ]}
+  >
+    <slot />
+  </div>
+  {
+    caption && (
+      <figcaption class="mt-2 text-center text-sm text-muted-foreground">
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>

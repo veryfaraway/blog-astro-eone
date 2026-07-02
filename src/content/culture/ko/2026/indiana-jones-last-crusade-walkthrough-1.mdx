@@ -18,6 +18,7 @@ series_order: 2
 ---
 
 import Alert from '@/components/Alert.astro';
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
 import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 > 채찍과 그라알 다이어리만 들고, 인디아나 존스는 아버지를 찾아 떠난다. 그 여정의 시작은 언제나 그렇듯 — 학교 복도다.
@@ -50,6 +51,8 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 캠퍼스에서 사무실로 들어간다. 여기서 챙겨야 할 것은 하나뿐이다.
 
+<CloudinaryImage publicId="v1782927911/media/games/lucas/Indiana%20Jones%20Last%20Crusade/1_Barnett_College_rf7bai.png" alt="Barnett College" />
+
 <details>
 <summary>💡 사무실에서 뭘 해야 하지?</summary>
 
@@ -62,7 +65,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 책상 위 편지들 아래에 **패키지**가 있다. 집어들어 **열면(Open)** 그라알 다이어리가 나온다. 이게 게임 전체를 통틀어 가장 중요한 아이템이다.
 
-그 다음엔 선반 중간의 **유리병(jar of solvent)** 도 집어야 한다. 아직은 쓸 데가 없지만, 잠시 후 헨리의 집에서 반드시 필요하다.
+선반 중간의 **유리병(Jar of Solvent)** 이 눈에 띄지만, 지금은 집을 수 없다. 이 병은 선반에 그대로 둔 채 나중에 다시 돌아와서 쓰게 되니 위치만 기억해두자.
 
 </details>
 
@@ -71,8 +74,9 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 1. 책상 위 **Letters**를 들어 아래의 **Package** 꺼내기
 2. Package를 **Open** → **Grail Diary** 획득
-3. 선반 중간의 **Jar of Solvent** 획득
-4. 사무실에서 나와 헨리의 집으로 Travel
+3. 사무실에서 나와 헨리의 집으로 Travel
+
+선반의 **Jar of Solvent**는 첫 방문에는 획득할 수 없다. 헨리의 집에서 단서를 찾은 뒤 이곳으로 다시 돌아오게 된다.
 
 </details>
 
@@ -94,9 +98,9 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 <details>
 <summary>🗺️ 조금 더 알려줘</summary>
 
-**책장을 잡아당기면(Pull)** 뒤쪽에 끈적한 테이프(Sticky Tape)가 붙어 있다. 이걸 **당겨서(Pull)** 떼어낸다.
+**책장을 잡아당기면(Pull)** 뒤쪽에 끈적한 테이프(Sticky Tape)가 붙어 있다. 이걸 **당겨서(Pull)** 떼어낸다. 테이프 안에 뭔가 끼어 있는데, 손으로는 떼어낼 수 없다.
 
-테이프를 인디 사무실의 용제 병(Jar of Solvent)과 사용하면 **소형 열쇠(Small Key)** 가 나온다 — 테이프 안에 끼어 있던 것이다.
+여기서 인디 사무실로 다시 돌아간다. 첫 방문 때 집을 수 없었던 선반 위 **용제 병(Jar of Solvent)** 이 이제야 제 역할을 한다 — 테이프를 병에 **사용(Use)** 하면 용제가 접착제를 녹이면서 **소형 열쇠(Small Key)** 가 나온다.
 
 화분 아래 테이블보를 걷으면 **잠긴 상자**가 드러난다. 소형 열쇠로 열면 **낡은 책(Old Book)**, 즉 가짜 그라알 다이어리가 나온다.
 
@@ -106,7 +110,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 <summary>🔍 전체 정답</summary>
 
 1. 책장 **Pull** → 뒤에 붙은 **Sticky Tape Pull**
-2. 사무실로 돌아가 Sticky Tape를 **Jar of Solvent**에 Use → **Small Key** 획득
+2. 인디 사무실로 돌아가 Sticky Tape를 선반 위 **Jar of Solvent**에 Use → **Small Key** 획득 (병은 선반에 그대로 둔 채 사용)
 3. 헨리 집으로 돌아와 화분 집어 테이블 위에 내려놓기
 4. **Table Cloth** 들어내기 → 잠긴 상자 노출
 5. Small Key로 상자 열기 → **Old Book(가짜 다이어리)** 획득
@@ -338,8 +342,8 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 | 단계 | 장소 | 핵심 획득 |
 |:---:|---|---|
-| 1 | 바네트 칼리지 사무실 | 그라알 다이어리, 용제 병 |
-| 2 | 헨리의 집 | 그림, 가짜 다이어리(Old Book) |
+| 1 | 바네트 칼리지 사무실 | 그라알 다이어리 |
+| 2 | 헨리의 집 ↔ 사무실 재방문 | Sticky Tape → Small Key, 가짜 다이어리(Old Book), 그림 |
 | 3 | 베니스 도서관 | Book of Maps, Mein Kampf, Manual, Red Cordon, Metal Post |
 | 4 | 카타콤 상층 | Hook, Wine Bottle → 물 배수, 하층 입구 개방 |
 | 5 | 카타콤 하층 | **비문 2개 메모** (랜덤 — 반드시 기록) |

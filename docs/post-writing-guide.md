@@ -157,6 +157,22 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
 ---
 
+### ImageRow — 이미지 나란히 배치
+
+```mdx
+import ImageRow from '@/components/ImageRow.astro';
+
+<ImageRow cols={3} caption="캡션 (선택)">
+  ![사진1](https://example.com/a.jpg)
+  ![사진2](https://example.com/b.jpg)
+  ![사진3](https://example.com/c.jpg)
+</ImageRow>
+```
+
+`cols`: `2`(기본) | `3` | `4`. 모바일에서 자동 1열 폴백. 자식으로 마크다운 이미지·`<img>`·`CloudinaryImage` 사용 가능 (카드 컴포넌트는 넣지 말 것).
+
+---
+
 ### AffiliateLink — 제휴 링크 버튼 (money 섹션)
 
 ```mdx
