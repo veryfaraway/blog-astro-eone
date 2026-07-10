@@ -229,6 +229,19 @@ export const colorTheme: ColorTheme = 'ocean'; // 👈 여기만 수정
 
 ---
 
+## 💖 후원 (Support)
+
+이 프로젝트가 도움이 되셨다면 후원을 통해 개발자를 응원해주세요!
+
+<a href="https://github.com/sponsors/veryfaraway">
+  <img src="https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white" alt="GitHub Sponsors" />
+</a>
+<a href="https://ko-fi.com/eoneone">
+  <img src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_blue.png" alt="Buy Me a Coffee at ko-fi.com" height="36" />
+</a>
+
+---
+
 ## 라이선스
 
 개인 블로그 프로젝트입니다. 코드는 참고 자유, 콘텐츠(포스트) 무단 복제 금지.
