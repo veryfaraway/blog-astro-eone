@@ -1,0 +1,175 @@
+---
+title: "텔레그램 알림 봇 만들기: BOT_TOKEN·CHAT_ID 발급부터 curl 테스트까지"
+description: "서버 모니터링이나 배치 작업 알림에 자주 쓰는 TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID 발급 방법 정리. BotFather로 봇 만들고, getUpdates API로 chat_id 확인하고, curl로 실제 메시지까지 보내본다."
+date: 2026-07-10
+category: Development
+tags:
+  - "telegram"
+  - "bot"
+  - "notification"
+  - "api"
+  - "devtools"
+draft: false
+lang: ko
+thumbnail: "https://images.unsplash.com/photo-1611606063065-ee7946f0787a?q=80&w=2370&auto=format&fit=crop"
+---
+
+import Alert from '@/components/Alert.astro';
+
+> 매번 검색해서 찾아보는 게 지겨워서 정리한다. `TELEGRAM_BOT_TOKEN`과 `TELEGRAM_CHAT_ID`만 있으면 어떤 스크립트에서든 텔레그램으로 알림을 쏠 수 있다.
+
+## 이 글에서 다루는 내용
+
+- BotFather로 봇을 생성하고 `BOT_TOKEN` 발급받기
+- `getUpdates` API로 내 `CHAT_ID` 알아내기
+- `curl` 한 줄로 실제 알림 테스트하기
+- 그룹 채팅방 `CHAT_ID`가 왜 음수인지, 자주 겪는 오류
+
+---
+
+## STEP 1. BotFather로 봇 만들고 토큰 받기
+
+텔레그램에서 봇을 만드는 창구는 **BotFather**라는 공식 봇 하나뿐이다.
+
+1. 텔레그램 앱에서 **[@BotFather](https://t.me/BotFather)** 검색 후 대화 시작
+2. `/newbot` 명령 입력
+3. 봇의 **표시 이름**(공백 가능) 입력 — 예: `My Server Alerts`
+4. 봇의 **username** 입력 — 반드시 `bot`으로 끝나야 함 — 예: `my_server_alerts_bot`
+5. 생성이 완료되면 아래와 같은 메시지와 함께 토큰이 발급된다
+
+```text
+Use this token to access the HTTP API:
+123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw
+
+Keep your token secure and store it safely,
+it can be used by anyone to control your bot.
+```
+
+이 문자열(`123456789:AAHdq...`)이 바로 `TELEGRAM_BOT_TOKEN`이다.
+
+<Alert type="warning" title="토큰 보안">
+
+이 토큰만 있으면 누구든 내 봇을 대신 조작할 수 있다. 코드에 하드코딩하지 말고 `.env` 파일이나 시크릿 매니저에 저장하고, 절대 깃허브 공개 저장소에 커밋하지 않는다. 실수로 노출됐다면 BotFather에서 `/token` → `Revoke current token`으로 즉시 재발급받는다.
+
+</Alert>
+
+---
+
+## STEP 2. getUpdates API로 CHAT_ID 확인하기
+
+봇을 만들었다고 바로 메시지를 보낼 수 있는 건 아니다. 텔레그램 봇은 **먼저 말을 걸어온 상대에게만** 메시지를 보낼 수 있어서, 내 쪽에서 봇에게 먼저 메시지를 보내야 `CHAT_ID`를 알아낼 수 있다.
+
+### 1) 봇에게 아무 메시지나 보내기
+
+방금 만든 봇(`my_server_alerts_bot`)과의 대화창을 열고 `/start` 또는 아무 텍스트나 한 번 보낸다.
+
+### 2) getUpdates 호출하기
+
+브라우저 주소창이나 `curl`로 아래 URL을 호출한다. `<BOT_TOKEN>` 자리에 STEP 1에서 받은 토큰을 넣는다.
+
+```bash
+curl "https://api.telegram.org/bot<BOT_TOKEN>/getUpdates"
+```
+
+응답은 다음과 비슷한 JSON이다.
+
+```json
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 100000001,
+      "message": {
+        "message_id": 1,
+        "from": { "id": 987654321, "first_name": "YOUR_NAME" },
+        "chat": { "id": 987654321, "first_name": "YOUR_NAME", "type": "private" },
+        "date": 1752100000,
+        "text": "/start"
+      }
+    }
+  ]
+}
+```
+
+`result[0].message.chat.id` 값(`987654321`)이 `TELEGRAM_CHAT_ID`다.
+
+<Alert type="info" title="개인 채팅 vs 그룹 채팅">
+
+- **개인 채팅**: `chat.id`가 양수 (예: `987654321`)
+- **그룹/슈퍼그룹 채팅**: `chat.id`가 음수 (예: `-1001234567890`)
+
+봇을 그룹에 초대한 뒤 그룹 안에서 아무 메시지나 보내고 `getUpdates`를 호출하면 음수 `chat.id`를 확인할 수 있다. 코드에서 이 값을 문자열로 다룰 때 부호를 빠뜨리지 않도록 주의한다.
+
+</Alert>
+
+`result`가 빈 배열 `[]`로 온다면 STEP 2의 1번(봇에게 먼저 메시지 보내기)을 빼먹었을 가능성이 크다. 다시 메시지를 보내고 호출해본다.
+
+---
+
+## STEP 3. curl로 실제 알림 테스트하기
+
+`BOT_TOKEN`과 `CHAT_ID`를 모두 확보했다면 `sendMessage` 엔드포인트로 바로 테스트할 수 있다.
+
+```bash
+BOT_TOKEN="123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+CHAT_ID="987654321"
+
+curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+  -d chat_id="${CHAT_ID}" \
+  -d text="배포 완료 알림 테스트 🚀"
+```
+
+정상적으로 실행되면 응답으로 `"ok": true`가 오고, 텔레그램 앱에 메시지가 도착한다.
+
+### 마크다운 서식이 필요할 때
+
+`parse_mode`를 추가하면 굵게, 링크 등을 사용할 수 있다.
+
+```bash
+curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+  -d chat_id="${CHAT_ID}" \
+  -d parse_mode="Markdown" \
+  -d text="*배포 완료*: \`v1.2.3\` 정상 배포됨"
+```
+
+### 셸 스크립트에 그대로 넣어 쓰기
+
+CI 스크립트나 cron job 끝에 붙여서 성공/실패 알림용으로 바로 활용할 수 있다.
+
+```bash
+#!/bin/bash
+set -e
+
+TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
+TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
+
+notify() {
+  curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+    -d chat_id="${TELEGRAM_CHAT_ID}" \
+    -d text="$1" > /dev/null
+}
+
+# 실제 작업
+if some_batch_job; then
+  notify "✅ 배치 작업 성공"
+else
+  notify "❌ 배치 작업 실패"
+fi
+```
+
+---
+
+## 자주 겪는 오류
+
+| 오류 메시지 | 원인 | 해결 |
+|---|---|---|
+| `Unauthorized` | 토큰 오타, 또는 토큰이 재발급되어 무효화됨 | BotFather에서 토큰 재확인 |
+| `chat not found` | `CHAT_ID`가 틀렸거나, 봇이 해당 채팅에 먼저 메시지를 받은 적 없음 | STEP 2의 1번부터 다시 |
+| `Forbidden: bot was blocked by the user` | 사용자가 봇을 차단함 | 차단 해제 후 재시도 |
+| 그룹에서 응답이 안 옴 | 그룹 프라이버시 설정 때문에 봇이 일반 메시지를 못 읽음 | BotFather → `/mybots` → 해당 봇 → `Bot Settings` → `Group Privacy` → `Turn off` |
+
+---
+
+## 마치며
+
+`BotFather`에서 토큰 받고, `getUpdates`로 `chat_id` 한 번 확인해두면 그다음부터는 `curl` 한 줄로 어디서든 알림을 보낼 수 있다. 서버 배치 작업, GitHub Actions, 홈서버 모니터링처럼 "끝나면 알려줘" 가 필요한 모든 곳에 이 두 값만 환경 변수로 넣어두면 된다.

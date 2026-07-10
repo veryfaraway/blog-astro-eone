@@ -43,7 +43,7 @@ const { container, icon, iconClass } = config[type];
     </span>
     <div class="min-w-0 flex-1">
       {title && <p class="font-semibold mb-1.5">{title}</p>}
-      <div class="[&>p]:mb-2 [&>p:last-child]:mb-0">
+      <div class="[&>p]:mb-2 [&>p:last-child]:mb-0 [&_a]:underline [&_a]:underline-offset-4 [&_a]:font-semibold [&_a]:decoration-2 hover:[&_a]:opacity-75">
         <slot />
       </div>
     </div>

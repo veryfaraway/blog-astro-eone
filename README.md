@@ -2,6 +2,9 @@
 
 > 일상 · 경제 · 문화 · 개발 · 도구에 관한 이야기
 
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=flat-square&logo=github-sponsors)](https://github.com/sponsors/veryfaraway)
+[![Ko-fi](https://img.shields.io/badge/Support-Ko--fi-ff5e5b?style=flat-square&logo=kofi&logoColor=white)](https://ko-fi.com/eoneone)
+
 **[blog.eone.one](https://blog.eone.one)**
 
 ---
