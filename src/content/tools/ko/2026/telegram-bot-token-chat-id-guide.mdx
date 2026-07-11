@@ -39,13 +39,13 @@ import Alert from '@/components/Alert.astro';
 
 ```text
 Use this token to access the HTTP API:
-123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw
+123456789:<발급받은_실제_토큰_35자리>
 
 Keep your token secure and store it safely,
 it can be used by anyone to control your bot.
 ```
 
-이 문자열(`123456789:AAHdq...`)이 바로 `TELEGRAM_BOT_TOKEN`이다.
+이 문자열(`123456789:<토큰>`)이 바로 `TELEGRAM_BOT_TOKEN`이다.
 
 <Alert type="warning" title="토큰 보안">
 
@@ -111,7 +111,7 @@ curl "https://api.telegram.org/bot<BOT_TOKEN>/getUpdates"
 `BOT_TOKEN`과 `CHAT_ID`를 모두 확보했다면 `sendMessage` 엔드포인트로 바로 테스트할 수 있다.
 
 ```bash
-BOT_TOKEN="123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+BOT_TOKEN="123456789:<발급받은_실제_토큰_35자리>"
 CHAT_ID="987654321"
 
 curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
