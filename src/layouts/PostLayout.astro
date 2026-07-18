@@ -6,6 +6,7 @@ import SeriesTOC from '../components/SeriesTOC.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import AffiliateNotice from '../components/AffiliateNotice.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
+import { getLocalizedPath } from '../lib/i18n';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -175,7 +176,7 @@ const breadcrumbJsonLd = {
 
       <!-- Series TOC -->
       {hasSeries && (
-        <SeriesTOC seriesName={series!} posts={seriesPosts!} currentSlug={currentSlug!} />
+        <SeriesTOC seriesName={series!} posts={seriesPosts!} currentSlug={currentSlug!} lang={lang} />
       )}
 
       <!-- Thumbnail -->
@@ -220,7 +221,7 @@ const breadcrumbJsonLd = {
 
       <!-- Series Nav -->
       {hasSeries && (
-        <SeriesNav posts={seriesPosts!} currentSlug={currentSlug!} />
+        <SeriesNav posts={seriesPosts!} currentSlug={currentSlug!} lang={lang} />
       )}
 
       <!-- Prev / Next navigation -->
@@ -228,7 +229,7 @@ const breadcrumbJsonLd = {
         <div class="mt-12 pt-8 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4">
           {prevPost ? (
             <a
-              href={`/${prevPost.section}/${prevPost.slug}`}
+              href={getLocalizedPath(lang, `${prevPost.section}/${prevPost.slug}`)}
               class="group flex flex-col gap-1 p-4 rounded-lg border border-border hover:border-foreground/30 transition-colors"
             >
               <span class="text-xs text-muted-foreground">← 이전 글</span>
@@ -239,7 +240,7 @@ const breadcrumbJsonLd = {
           ) : <div />}
           {nextPost && (
             <a
-              href={`/${nextPost.section}/${nextPost.slug}`}
+              href={getLocalizedPath(lang, `${nextPost.section}/${nextPost.slug}`)}
               class="group flex flex-col gap-1 p-4 rounded-lg border border-border hover:border-foreground/30 transition-colors sm:text-right"
             >
               <span class="text-xs text-muted-foreground">다음 글 →</span>

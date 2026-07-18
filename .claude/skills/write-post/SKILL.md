@@ -91,6 +91,23 @@ affiliate: false          # money 섹션 전용. true 시 상단 제휴 공시 �
 
 ---
 
+## 코드 블록 언어 태그 (Shiki)
+
+코드펜스(` ``` `) 언어 태그는 Shiki가 인식하는 소문자 표준 식별자를 써야 한다. 틀린 표기를 쓰면 문법 강조 없이 plaintext로 조용히 폴백되고, `pnpm dev`/`pnpm build` 시 `[Shiki] The language "X" doesn't exist` 경고가 뜬다.
+
+**틀리기 쉬운 것들 (실제로 반복 발생):**
+
+| 쓰기 쉬운 잘못된 태그 | 올바른 태그 | 비고 |
+|---|---|---|
+| ` ```Dockerfile ` | ` ```dockerfile ` | 대소문자 구분함 — 반드시 소문자 |
+| ` ```ApacheConf ` | ` ```apache ` | |
+| ` ```gradle ` | ` ```groovy ` | gradle 전용 문법이 없음. Gradle 기본 DSL은 Groovy 기반이라 groovy로 대체 |
+| ` ```gitignore ` | (대안 없음, 그대로 두거나 태그 생략) | gitignore 전용 문법 자체가 Shiki에 없어 경고는 피할 수 없음 |
+
+일반 규칙: 언어 태그는 **소문자**로 쓰고, 확신이 없으면 실제 언어 정체성(예: Gradle 빌드 파일 → groovy/kotlin)으로 태그를 단다. plaintext로 폴백돼도 빌드는 깨지지 않지만, 강조가 필요한 코드는 정확한 태그를 쓸 것.
+
+---
+
 ## MDX 컴포넌트 빠른 참조
 
 > `.md`에서는 컴포넌트 import 불가 → 컴포넌트가 필요하면 `.mdx`로 작성.
@@ -184,3 +201,4 @@ import ClockChart from '@/components/ClockChart.astro';
 - [ ] 완성 전이면 `draft: true`로 두었는가
 - [ ] money 제휴 글이면 `affiliate: true`인가
 - [ ] `series` 사용 시 `series_order`도 함께 지정했는가
+- [ ] 코드 블록 언어 태그가 Shiki 표준 소문자 식별자인가 (`Dockerfile`→`dockerfile`, `ApacheConf`→`apache`, `gradle`→`groovy` 등)

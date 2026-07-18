@@ -33,7 +33,7 @@ my-codeigniter-project/
 
 `Dockerfile`을 프로젝트 루트 디렉토리에 작성합니다.
 
-```Dockerfile
+```dockerfile
 # 베이스 이미지 설정 (PHP 7.4 및 Apache)
 FROM php:7.4-apache
 
@@ -74,7 +74,7 @@ RUN service apache2 restart
 
 `apache.conf` 파일을 프로젝트 루트 디렉토리에 작성합니다.
 
-```ApacheConf
+```apache
 <VirtualHost *:80>
     DocumentRoot /var/www/html/public
     <Directory /var/www/html/public>

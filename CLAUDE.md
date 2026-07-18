@@ -166,6 +166,7 @@ GitHub Actions (cron: 매일 오전 9시 KST)
 |------|------|
 | **포스트 작성 / frontmatter / 파일 경로** | [`docs/post-writing-guide.md`](docs/post-writing-guide.md) — frontmatter 스키마, 파일 경로 규칙, 섹션·카테고리 구조, 컴포넌트 사용법 요약. **포스트 신규 작성 또는 frontmatter 수정 전 반드시 확인** |
 | **Astro 컴포넌트 / MDX 작성** | [`docs/astro-components.md`](docs/astro-components.md) — 전체 컴포넌트 목록, Props, MDX 사용법. **컴포넌트 신규 제작 또는 MDX 파일 작성 전 반드시 확인** |
+| **영문(en) 버전 포스트 작성** | [`docs/bilingual-post-guide.md`](docs/bilingual-post-guide.md) — ko/en slug 일치 규칙, hreflang/canonical 연결 원리, frontmatter·본문 링크 번역 규칙. **포스트에 en 버전을 함께 작성할 때 반드시 확인** |
 | Vault / 주식 히트맵 | [`docs/heatmap-spec.md`](docs/heatmap-spec.md) — 파일 구조, 데이터 스키마, 알려진 버그, UX 개선 옵션 포함 |
 | 마이그레이션 배경 | [`docs/migration.md`](docs/migration.md) — 기존 블로그 통합 이력, 슬러그 정책, 리다이렉트 |
 | 디자인 시스템 | [`docs/design-system.md`](docs/design-system.md) |

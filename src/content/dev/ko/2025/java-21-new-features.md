@@ -627,7 +627,7 @@ void main() {
 </properties>
 ```
 
-```gradle
+```groovy
 // build.gradle
 java {
     sourceCompatibility = JavaVersion.VERSION_21

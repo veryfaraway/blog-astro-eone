@@ -111,7 +111,7 @@ spring:
 
 #### Gradle (build.gradle)
 
-```gradle
+```groovy
 // Before: Spring Boot 3
 plugins {
     id 'org.springframework.boot' version '3.2.5'

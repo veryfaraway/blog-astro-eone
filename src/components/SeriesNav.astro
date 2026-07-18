@@ -1,12 +1,14 @@
 ---
 import type { SeriesPost } from '@/components/SeriesTOC.astro';
+import { getLocalizedPath, type Locale } from '@/lib/i18n';
 
 interface Props {
   posts: SeriesPost[];
   currentSlug: string;
+  lang?: Locale;
 }
 
-const { posts, currentSlug } = Astro.props;
+const { posts, currentSlug, lang = 'ko' } = Astro.props;
 const currentIndex = posts.findIndex(p => p.slug === currentSlug);
 const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
 const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
@@ -37,7 +39,7 @@ const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : nul
 
     {prevPost ? (
       <a
-        href={`/${prevPost.section}/${prevPost.slug}`}
+        href={getLocalizedPath(lang, `${prevPost.section}/${prevPost.slug}`)}
         class="group flex items-center gap-3 p-4 rounded-xl border border-border bg-card no-underline hover:border-muted-foreground/30 hover:bg-muted/40 transition-all"
       >
         <div class="shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/70 transition-colors">
@@ -58,7 +60,7 @@ const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : nul
 
     {nextPost ? (
       <a
-        href={`/${nextPost.section}/${nextPost.slug}`}
+        href={getLocalizedPath(lang, `${nextPost.section}/${nextPost.slug}`)}
         class="group flex items-center gap-3 p-4 rounded-xl border border-border bg-card no-underline hover:border-muted-foreground/30 hover:bg-muted/40 transition-all sm:flex-row-reverse sm:text-right"
       >
         <div class="shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/70 transition-colors">

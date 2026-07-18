@@ -30,6 +30,10 @@ const canonicalUrl = Astro.url?.pathname
   : siteUrl;
 const ogImageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : `${siteUrl}/og-default.png`;
 const fullTitle = title === 'eone blog' ? title : `${title} — eone blog`;
+const alternateAbsoluteUrl = alternateUrl ? new URL(alternateUrl, siteUrl).toString() : undefined;
+// x-default must always point at the same (default-locale) target regardless of which
+// locale is currently rendering, per Google's hreflang spec — it is not "self".
+const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
 ---
 
 <!doctype html>
@@ -45,8 +49,8 @@ const fullTitle = title === 'eone blog' ? title : `${title} — eone blog`;
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="alternate" hreflang={lang} href={canonicalUrl} />
-    {alternateUrl && <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={new URL(alternateUrl, siteUrl).toString()} />}
-    {alternateUrl && <link rel="alternate" hreflang="x-default" href={canonicalUrl} />}
+    {alternateAbsoluteUrl && <link rel="alternate" hreflang={lang === 'ko' ? 'en' : 'ko'} href={alternateAbsoluteUrl} />}
+    {defaultLocaleUrl && <link rel="alternate" hreflang="x-default" href={defaultLocaleUrl} />}
 
     <!-- OG / Social -->
     <meta property="og:type" content="website" />

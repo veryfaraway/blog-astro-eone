@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import PostLayout from '../../../layouts/PostLayout.astro';
 import { readingTime } from '../../../lib/utils';
+import { getLocalizedPath } from '../../../lib/i18n';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -22,7 +23,7 @@ export async function getStaticPaths() {
       enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       return enPosts.map((post, index) => {
         const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
-        const alternateUrl = koSlugs.has(slug) ? `/${section}/${slug}` : undefined;
+        const alternateUrl = koSlugs.has(slug) ? getLocalizedPath('ko', `${section}/${slug}`) : undefined;
         return {
           params: { section, slug },
           props: {

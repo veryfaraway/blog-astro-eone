@@ -13,11 +13,16 @@ export default defineConfig({
     pagefind(),
     sitemap({
       filter: (page) => !page.includes('/vault'),
+      i18n: {
+        defaultLocale: 'ko',
+        locales: { ko: 'ko', en: 'en' },
+      },
     }),
   ],
   vite: {
     plugins: [tailwindcss()],
   },
+  trailingSlash: 'always',
   i18n: {
     locales: ['ko', 'en'],
     defaultLocale: 'ko',

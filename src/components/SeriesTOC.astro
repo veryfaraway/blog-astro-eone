@@ -1,4 +1,6 @@
 ---
+import { getLocalizedPath, type Locale } from '@/lib/i18n';
+
 export interface SeriesPost {
   title: string;
   slug: string;
@@ -10,9 +12,10 @@ interface Props {
   seriesName: string;
   posts: SeriesPost[];
   currentSlug: string;
+  lang?: Locale;
 }
 
-const { seriesName, posts, currentSlug } = Astro.props;
+const { seriesName, posts, currentSlug, lang = 'ko' } = Astro.props;
 ---
 
 <div class="not-prose mb-10 rounded-xl overflow-hidden border border-border shadow-sm">
@@ -74,7 +77,7 @@ const { seriesName, posts, currentSlug } = Astro.props;
             </Fragment>
           ) : (
             <a
-              href={`/${post.section}/${post.slug}`}
+              href={getLocalizedPath(lang, `${post.section}/${post.slug}`)}
               class="flex-1 text-sm text-muted-foreground hover:text-foreground transition-colors leading-snug line-clamp-1"
             >
               {post.title}

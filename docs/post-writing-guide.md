@@ -41,6 +41,7 @@ src/content/{섹션}/en/{연도}/{slug}.mdx   # 영어 버전
 - **slug**: kebab-case 영문, 2~5단어 (예: `claude-code-tips`, `japanese-spa-trip`)
 - 컴포넌트 사용 시 반드시 `.mdx`
 - 연도 폴더(`2026/`) 사용 권장
+- **영어(en) 버전도 함께 작성할 경우**: ko/en의 slug가 완전히 동일해야 한다. frontmatter 번역 규칙, 본문 내부 링크 규칙 등은 [`docs/bilingual-post-guide.md`](bilingual-post-guide.md) 참고.
 
 ---
 
