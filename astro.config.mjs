@@ -22,7 +22,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  trailingSlash: 'always',
   i18n: {
     locales: ['ko', 'en'],
     defaultLocale: 'ko',
