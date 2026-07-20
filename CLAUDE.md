@@ -170,6 +170,7 @@ GitHub Actions (cron: 매일 오전 9시 KST)
 | Vault / 주식 히트맵 | [`docs/heatmap-spec.md`](docs/heatmap-spec.md) — 파일 구조, 데이터 스키마, 알려진 버그, UX 개선 옵션 포함 |
 | 마이그레이션 배경 | [`docs/migration.md`](docs/migration.md) — 기존 블로그 통합 이력, 슬러그 정책, 리다이렉트 |
 | 디자인 시스템 | [`docs/design-system.md`](docs/design-system.md) |
+| 후속 포스트 기획 백로그 | [`docs/content-follow-up-plan.md`](docs/content-follow-up-plan.md) — GSC 유입 데이터 기반 후속 포스트 아이디어(커피후원 시리즈, tmux 테마 등). 새 아이디어가 생기면 이 문서에 추가 |
 
 ---
 
