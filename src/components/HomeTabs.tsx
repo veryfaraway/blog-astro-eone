@@ -26,14 +26,6 @@ const sectionLabel: Record<Section, string> = {
   dev: 'Dev',
 };
 
-const sectionAccent: Record<Section, string> = {
-  life:    'var(--section-accent)',
-  money:   'var(--section-accent)',
-  culture: 'var(--section-accent)',
-  tools:   'var(--section-accent)',
-  dev:     'var(--section-accent)',
-};
-
 const tabs = [
   { id: 'all', label: 'All' },
   { id: 'life',    label: 'Life' },

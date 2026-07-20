@@ -158,6 +158,8 @@ function HeatMapCell({ ticker, shares, price, weightPercent, flexBasisPercent }:
             </span>
             <br />
             <span style={{ color: '#888fa0' }}>보유비중 </span>{weightPercent.toFixed(1)}%
+            <br />
+            <span style={{ color: '#888fa0' }}>보유수량 </span>{shares.toLocaleString()}주
           </div>
           <div
             style={{
