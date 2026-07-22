@@ -43,6 +43,7 @@ const allPosts = (await Promise.all(
 <BaseLayout
   title={`#${tag} — eone blog`}
   description={`'${tag}' 태그가 붙은 포스트 ${allPosts.length}개`}
+  noindex
 >
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
     <div class="max-w-5xl mx-auto py-12">
