@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Astro
 .astro/
+
+# ETC
+temp/
