@@ -46,17 +46,25 @@ thumbnail: "https://images.unsplash.com/photo-1577897113292-3b95936e5206?q=80&w=
 
 ## 토끼와 거북이 (1979)
 
+![Hare & Tortoise](https://opinionatedgamers.com/wp-content/uploads/2015/05/hase-board.jpg)
+
 SdJ 1회 수상작. 앞서갈수록 오히려 불리해지는 역설적인 규칙이 특징이라, 지금 봐도 "이런 아이디어를 그때 벌써?" 싶은 게임이다. 순위 다툼 게임의 원형 같은 작품.
 
 ## 스코틀랜드 야드 (1983)
+
+![Scotland Yard](https://brightenuptoysandgames.ca/cdn/shop/files/27514_3_1024x1024.webp)
 
 한 명이 몰래 도망 다니고 나머지가 힘을 합쳐 추적하는 협력 추격전. 런던 지도 위에서 벌어지는 숨바꼭질의 원조 격이라, 이후 나온 수많은 "정체를 숨긴 한 명 vs 다수" 게임들이 이 게임의 자손이라 봐도 된다.
 
 ## 셜록 홈즈 컨설팅 디텍티브 (1985)
 
+![Sherlock Holmes Consulting Detective](https://i5.walmartimages.com/asr/81fd269a-2bb4-4c76-8621-a1e5067fc9e8.38b9f5d3366f25e670f485a07ac8dc8a.jpeg)
+
 주사위나 말판 이동 없이, 신문·지도·인명록 같은 자료를 뒤져가며 사건을 추리하는 협동 게임. 승패보다 "얼마나 적은 단서로 사건을 풀었나"가 중요해서, 40년 가까이 지난 지금도 확장판이 계속 나올 만큼 꾸준히 사랑받는다.
 
 ## 카탄의 개척자들 (1995)
+
+![Settlers of Catan](https://geppettostoys.com/cdn/shop/files/tgtg_ho25_cn3081_1.jpg)
 
 이른바 '유로게임' 붐을 연 게임. 주사위로 자원을 얻고, 협상하고, 배신하고, 길을 놓고 마을을 세운다. 이미 많은 사람들에게 익숙하겠지만, 보드게임 입문서 첫 페이지에 이 게임이 빠지지 않는 데는 이유가 있다.
 
