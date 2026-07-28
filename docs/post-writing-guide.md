@@ -181,6 +181,7 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 
 <AffiliateLink href="https://link.coupang.com/..." provider="coupang" />
 <AffiliateLink href="https://amzn.to/..." provider="amazon" text="Amazon에서 보기" />
+<AffiliateLink href="https://11st.co.kr/..." provider="11st" />
 <AffiliateLink href="https://example.com" provider="other" text="구매 링크" />
 ```
 

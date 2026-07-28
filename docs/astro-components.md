@@ -107,6 +107,7 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 
 <AffiliateLink href="https://link.coupang.com/..." provider="coupang" />
 <AffiliateLink href="https://amzn.to/..." provider="amazon" text="Amazon에서 확인" />
+<AffiliateLink href="https://11st.co.kr/..." provider="11st" />
 <AffiliateLink href="https://example.com" provider="other" text="구매 링크" />
 ```
 
@@ -114,7 +115,7 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 |------|------|--------|------|
 | `href` | `string` | — | 제휴 링크 URL |
 | `text` | `string` | 제공사별 자동 | 버튼 텍스트 |
-| `provider` | `'coupang' \| 'amazon' \| 'other'` | `'other'` | 면책 문구 자동 결정 |
+| `provider` | `'coupang' \| 'amazon' \| '11st' \| 'other'` | `'other'` | 면책 문구 자동 결정 (`11st`는 11번가 파트너스 문구) |
 
 ---
 

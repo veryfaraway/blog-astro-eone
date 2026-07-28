@@ -2,7 +2,7 @@
 interface Props {
   href: string;
   text?: string;
-  provider?: 'coupang' | 'amazon' | 'other';
+  provider?: 'coupang' | 'amazon' | '11st' | 'other';
 }
 
 const { href, text, provider = 'other' } = Astro.props;
@@ -10,12 +10,14 @@ const { href, text, provider = 'other' } = Astro.props;
 const label = {
   coupang: '쿠팡에서 보기',
   amazon: 'Amazon에서 보기',
+  '11st': '11번가에서 보기',
   other: '구매하기',
 }[provider];
 
 const disclaimer = {
   coupang: '이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.',
   amazon: '이 링크는 Amazon 제휴 링크이며, 구매 시 일정 수수료를 받을 수 있습니다.',
+  '11st': '이 포스팅은 11번가 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.',
   other: '',
 }[provider];
 ---
