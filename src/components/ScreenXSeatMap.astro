@@ -1,0 +1,216 @@
+---
+// CGV 용산아이파크몰 4관(SCREENX) 좌석 판단 지도.
+// 등급은 CGV 공식 데이터가 아니라 실제 좌석 배치(열·번호)와 관람 후기를 종합한 자체 판단.
+---
+
+<div class="sx-map-wrap">
+  <div class="sx-title">CGV 용산아이파크몰 4관 — SCREENX Seat Guide</div>
+
+  <div class="sx-screen-box">SCREEN · 20m · 4면 SCREENX + Dolby Atmos</div>
+  <div class="sx-proj-line"></div>
+
+  <div class="sx-legend">
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-s)"></div>S — 최우선 명당</div>
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-a)"></div>A — 추천</div>
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-b)"></div>B — 볼만함</div>
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-c)"></div>C — 볼만함(목 뻐근함 감수)</div>
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-avoid)"></div>피하는 게 낫다</div>
+    <div class="sx-li"><div class="sx-dot" style="background:var(--grade-wc)"></div>장애인석</div>
+  </div>
+
+  <div class="sx-map-container">
+    <div class="sx-row-labels" id="sx-row-labels"></div>
+    <div class="sx-grid-wrap">
+      <div class="sx-col-nums" id="sx-col-nums"></div>
+      <div class="sx-seat-grid" id="sx-seat-grid"></div>
+    </div>
+  </div>
+
+  <div class="sx-tooltip" id="sx-tooltip">좌석에 마우스를 올려보세요.</div>
+</div>
+
+<style is:global>
+  .sx-map-wrap {
+    --grade-s: #e53935;
+    --grade-a: #f4692a;
+    --grade-b: #4caf50;
+    --grade-c: #f59f00;
+    --grade-avoid: #5a6070;
+    --grade-wc: #2196f3;
+    background: #0d0f14;
+    border-radius: 12px;
+    padding: 1.5rem 1rem 1.25rem;
+    margin: 1.5rem 0;
+    color: #e8eaf0;
+    font-family: inherit;
+  }
+  .sx-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #8a90a0;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .sx-screen-box {
+    width: 68%;
+    background: linear-gradient(180deg, #1e3a5f 0%, #0d2040 100%);
+    border: 1px solid rgba(100, 160, 255, 0.35);
+    border-radius: 3px 3px 40% 40% / 3px 3px 18px 18px;
+    padding: 6px 0 13px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #90b8e8;
+    text-transform: uppercase;
+    margin: 0 auto 0;
+  }
+  .sx-proj-line {
+    width: 1px;
+    height: 20px;
+    border-left: 1px dashed rgba(100, 160, 255, 0.2);
+    margin: 0 auto 6px;
+  }
+  .sx-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+    margin: 0 0 10px;
+    font-size: 10px;
+    color: #8a90a0;
+  }
+  .sx-li { display: flex; align-items: center; gap: 4px; }
+  .sx-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .sx-map-container { display: flex; gap: 4px; justify-content: center; }
+  .sx-row-labels { display: flex; flex-direction: column; gap: 2px; padding-top: 14px; }
+  .sx-row-label {
+    height: 15px;
+    width: 14px;
+    font-size: 9px;
+    font-weight: 600;
+    color: #4a5060;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sx-grid-wrap { flex: 0 1 auto; min-width: 0; overflow-x: auto; }
+  .sx-col-nums { display: flex; gap: 2px; margin-bottom: 2px; }
+  .sx-col-num { width: 15px; font-size: 7px; text-align: center; color: #4a5060; flex-shrink: 0; }
+  .sx-col-num-gap { width: 8px; flex-shrink: 0; }
+  .sx-seat-grid { display: flex; flex-direction: column; gap: 2px; }
+  .sx-seat-row { display: flex; gap: 2px; align-items: center; }
+  .sx-gap-block { width: 8px; flex-shrink: 0; }
+  .sx-seat {
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    flex-shrink: 0;
+  }
+  .sx-seat:hover { transform: scale(1.4); z-index: 10; }
+  .sx-s { background: var(--grade-s); }
+  .sx-a { background: var(--grade-a); }
+  .sx-b { background: var(--grade-b); }
+  .sx-c { background: var(--grade-c); }
+  .sx-avoid { background: var(--grade-avoid); }
+  .sx-wc { background: var(--grade-wc); }
+  .sx-tooltip {
+    margin-top: 10px;
+    background: #161920;
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #8a90a0;
+    min-height: 44px;
+  }
+  .sx-tooltip :global(strong) { color: #e8eaf0; }
+</style>
+
+<script>
+  const ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+  const SIDE_L = [1, 2, 3, 4];
+  const CTR = Array.from({ length: 13 }, (_, i) => i + 5);
+  const SIDE_R = [18, 19, 20, 21];
+
+  function grade(row: string, col: number) {
+    if (row === 'I' && (col === 6 || col === 7)) return 'wc';
+    const isSide = col <= 4 || col >= 18;
+    if (['A', 'B', 'C'].includes(row)) return isSide ? 'avoid' : 'c';
+    if (['D', 'E', 'F'].includes(row)) return isSide ? 'b' : 'a';
+    if (['G', 'H'].includes(row)) return isSide ? 'a' : 's';
+    return isSide ? 'b' : 'a';
+  }
+
+  const info: Record<string, { l: string; d: string }> = {
+    s: { l: 'S — 최우선 명당', d: '정면과 좌우 SCREENX 화면이 시야에 고르게 들어오는 구간입니다. 예매 오픈과 동시에 가장 먼저 사라집니다.' },
+    a: { l: 'A — 추천', d: '화면·사운드 밸런스가 좋은 자리입니다. 명당(S)이 없다면 주저 없이 선택하세요.' },
+    b: { l: 'B — 볼만함', d: '걱정했던 것보다 괜찮은 경우가 많은 자리입니다. 뒷줄 사이드는 각도가 완만해서 앞줄 사이드보다 낫습니다.' },
+    c: { l: 'C — 볼만함 (목 뻐근함 감수)', d: '화면이 가깝지만 리클라이너 덕분에 견딜 만합니다. IMAX GT만큼 극단적이진 않습니다.' },
+    avoid: { l: '피하는 게 낫다', d: '화면과 너무 가까운데 각도까지 꺾여 있어 불리한 조건이 겹칩니다. 다른 선택지가 있다면 피하는 걸 추천합니다.' },
+    wc: { l: '장애인석', d: 'I열 중앙에 배치된 휠체어 이용 좌석입니다.' },
+  };
+
+  const tooltip = document.getElementById('sx-tooltip')!;
+  const rowLabels = document.getElementById('sx-row-labels')!;
+  const colNums = document.getElementById('sx-col-nums')!;
+  const grid = document.getElementById('sx-seat-grid')!;
+
+  function addColNum(n: number) {
+    const d = document.createElement('div');
+    d.className = 'sx-col-num';
+    d.textContent = String(n);
+    colNums.appendChild(d);
+  }
+  function addGap() {
+    const d = document.createElement('div');
+    d.className = 'sx-col-num-gap';
+    colNums.appendChild(d);
+  }
+
+  SIDE_L.forEach(addColNum);
+  addGap();
+  CTR.forEach(addColNum);
+  addGap();
+  SIDE_R.forEach(addColNum);
+
+  ROWS.forEach((row) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'sx-row-label';
+    lbl.textContent = row;
+    rowLabels.appendChild(lbl);
+
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'sx-seat-row';
+
+    function addSeat(col: number) {
+      const g = grade(row, col);
+      const el = document.createElement('div');
+      el.className = 'sx-seat sx-' + g;
+      el.addEventListener('mouseenter', () => {
+        const i = info[g];
+        tooltip.innerHTML = `<strong>${row}열 ${col}번</strong> &nbsp;·&nbsp; <strong>${i.l}</strong><br>${i.d}`;
+      });
+      el.addEventListener('mouseleave', () => {
+        tooltip.textContent = '좌석에 마우스를 올려보세요.';
+      });
+      rowDiv.appendChild(el);
+    }
+
+    SIDE_L.forEach(addSeat);
+    const g1 = document.createElement('div');
+    g1.className = 'sx-gap-block';
+    rowDiv.appendChild(g1);
+    CTR.forEach(addSeat);
+    const g2 = document.createElement('div');
+    g2.className = 'sx-gap-block';
+    rowDiv.appendChild(g2);
+    SIDE_R.forEach(addSeat);
+
+    grid.appendChild(rowDiv);
+  });
+</script>
