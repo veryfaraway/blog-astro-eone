@@ -4,6 +4,8 @@ description: 용산 CGV IMAX(용아맥) 좌석 등급을 S~E까지 명당 순으
 date: 2026-07-20
 category: 아는 척하기 딱 좋은
 tags:
+  - "용산"
+  - "CGV"
   - "용아맥"
   - "IMAX"
   - "좌석 배치도"
