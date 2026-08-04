@@ -84,7 +84,7 @@ const articleJsonLd = {
   "datePublished": date.toISOString(),
   "dateModified": date.toISOString(),
   "author": { "@type": "Person", "name": "eone", "url": siteUrl },
-  "publisher": { "@type": "Organization", "name": "eone blog", "url": siteUrl },
+  "publisher": { "@type": "Organization", "name": "일취월장", "url": siteUrl },
   "url": postUrl,
   ...(thumbnail && { "image": thumbnail }),
   "keywords": tags.join(', '),
@@ -95,7 +95,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "eone blog", "item": siteUrl },
+    { "@type": "ListItem", "position": 1, "name": "일취월장", "item": siteUrl },
     { "@type": "ListItem", "position": 2, "name": sectionLabel[section], "item": `${siteUrl}/${section}` },
     { "@type": "ListItem", "position": 3, "name": title, "item": postUrl },
   ],
