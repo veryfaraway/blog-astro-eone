@@ -162,6 +162,15 @@ import PersonInline from '@/components/PersonInline.astro';
 <PersonCard name="봉준호" role="감독" imdbId="nm0188744" />
 <PersonInline name="송강호" role="주연" imdbId="nm1817631" />가 출연한 작품.
 <!-- 인물 imdbId는 nm으로 시작 -->
+
+import BookCard from '@/components/BookCard.astro';
+<BookCard title="나미야 잡화점의 기적" isbn13="9788901194492" comment="추천 이유 한두 줄" coupangHref="https://link.coupang.com/..." />
+<!-- isbn13은 하이픈 없이 13자리. 빌드 타임 알라딘 Open API fetch (PUBLIC_ALADIN_TTB_KEY, includeKey=1로 제휴 링크 자동 생성 — 따로 링크 안 만들어도 됨). 도서 소개 글에서 사용.
+     comment는 카드 안에 들어가는 짧은 추천 코멘트 — 목록에서 "1. 『제목』 — 설명"처럼 따로 서술하지 말고 comment로 통일할 것 (중복 방지).
+     정확한 ISBN13을 모르면 isbn13=""로 비워둘 것 — 알라딘 API가 없는 ISBN에도 엉뚱한 책을 반환하는 경우가 있어, 비워야 title만 표시하는 안전한 폴백으로 동작함.
+     알라딘/쿠팡 버튼은 오른쪽 고정폭 컬럼에 세로로 쌓이고, 동일한 스타일 + 브랜드 컬러 배지로 대등하게 표시됨(어느 한쪽이 우선순위처럼 보이지 않게).
+     카드 자체엔 면책 문구 없음 → 구매 링크를 실제로 쓰는 포스트는 frontmatter에 affiliate: true 설정할 것.
+     상/하, 1권/2권처럼 분권된 책은 <div class="grid gap-3 md:grid-cols-2">로 감싸 BookCard 두 개를 나란히 배치 (comment는 대표 권에만) -->
 ```
 
 ### money 섹션 (수익화)

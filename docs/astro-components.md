@@ -100,7 +100,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 #### `AffiliateLink.astro`
 
-제휴 링크 버튼 + 자동 면책 문구. 수익화 링크에 사용.
+제휴 링크 버튼. 카드/버튼 자체에는 면책 문구가 없다 — 공시는 포스트 상단 `AffiliateNotice`(frontmatter `affiliate: true`) 하나로 통일한다. 수익화 링크에 사용.
 
 ```mdx
 import AffiliateLink from '@/components/AffiliateLink.astro';
@@ -115,13 +115,15 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 |------|------|--------|------|
 | `href` | `string` | — | 제휴 링크 URL |
 | `text` | `string` | 제공사별 자동 | 버튼 텍스트 |
-| `provider` | `'coupang' \| 'amazon' \| '11st' \| 'other'` | `'other'` | 면책 문구 자동 결정 (`11st`는 11번가 파트너스 문구) |
+| `provider` | `'coupang' \| 'amazon' \| '11st' \| 'other'` | `'other'` | 버튼 라벨 자동 결정 |
+
+> **`AffiliateLink`·`BookCard` 등 제휴 링크가 들어간 포스트는 frontmatter에 `affiliate: true`를 반드시 설정할 것** — 컴포넌트별 문구 대신 `AffiliateNotice`가 상단에 한 번 뜨는 방식으로 공시를 통일했다.
 
 ---
 
 #### `AffiliateNotice.astro`
 
-포스트 상단에 표시되는 제휴 공시 박스. Props 없음. `PostLayout`에서 `affiliate: true`일 때 자동 렌더링되므로 MDX에서 직접 import할 필요 없음.
+포스트 상단에 표시되는 제휴 공시 박스. Props 없음. `PostLayout`에서 `affiliate: true`일 때 자동 렌더링되므로 MDX에서 직접 import할 필요 없음. money 섹션 전용이 아니라 `affiliate` prop만 보고 동작하므로 어느 섹션에서든 쓸 수 있다.
 
 ```yaml
 # frontmatter에서 활성화
@@ -250,6 +252,43 @@ import PersonInline from '@/components/PersonInline.astro';
 | `profileUrl` | `string` | — | 외부 링크 (imdbId보다 우선) |
 
 **PersonInline Props** — PersonCard와 동일, `role`이 선택(optional)으로만 다름.
+
+---
+
+#### `BookCard.astro`
+
+도서 정보 카드. 알라딘 Open API로 표지·저자·출판사·가격·평점을 빌드 타임에 fetch. API 요청에 `includeKey=1`을 붙여 응답 `link`에 TTBKey가 자동 포함된 제휴 링크를 그대로 받아오므로, 대시보드에서 책마다 수동으로 "링크 만들기"를 할 필요가 없다. API 키 없거나 fetch 실패 시 title만 표시(폴백).
+
+레이아웃은 표지(왼쪽) · 제목/평점/가격/comment(가운데, 가변폭) · 구매 버튼(오른쪽, 폭 고정 컬럼에 세로 스택)의 3열 구성이다 — 버튼이 최대 2개뿐이라 기존처럼 하단에 별도 행으로 두면 여백이 휑해서, 오른쪽 고정폭 컬럼으로 옮기고 그 자리(가운데 열 하단)를 `comment`가 채우도록 했다. 알라딘/쿠팡 버튼은 동일한 아웃라인 스타일로 대등하게 배치하고, 배지 색상만 각사 실제 브랜드 컬러(알라딘 `#2F9DDC`, 쿠팡 `#E94B22`)로 구분해 어느 한쪽이 "주" 버튼처럼 보이지 않게 했다 — 두 링크를 나란히 두면 독자가 이미 쓰던 플랫폼으로 갈 수 있어 전환율에 유리하다 (도서정가제로 가격은 어느 쪽이든 동일). 카드 자체에는 면책 문구가 없으므로, 구매 링크를 실제로 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것 (money 섹션이 아니어도 동작함).
+
+`comment` prop으로 "왜 이 책을 추천하는지" 짧은 코멘트를 카드 안에 넣을 수 있다 — 목록에서 책 소개를 반복 서술하지 않고 카드 하나로 정보를 통일할 때 유용하다 (예: "1. 『제목』" + 그 아래 `comment`로 추천 이유가 담긴 `BookCard`).
+
+**분권(상/하, 1권/2권) 도서**는 BookCard 하나로 표현할 수 없으므로, `<div class="grid gap-3 md:grid-cols-2">`로 감싸 두 개를 나란히 배치한다. `comment`는 대표(1권) 카드에만 넣고 나머지는 짧게 안내만 하면 중복을 피할 수 있다.
+
+> **주의**: 알라딘 API는 존재하지 않는 ISBN13을 넣어도 검증 없이 관련 없는 상품을 반환하는 경우가 있다(예: `0000000000000` → 전혀 다른 중고책). 아직 정확한 ISBN13을 모를 때는 값을 넣지 말고 **비워둘 것**(`isbn13=""`) — 컴포넌트가 fetch 자체를 건너뛰고 `title`만 표시하는 안전한 폴백으로 동작한다.
+
+> **환경변수**: `PUBLIC_ALADIN_TTB_KEY` 필요. 알라딘 회원가입 후 '나의 계정 > TTB/API > TTB 사이트/블로그 등록관리'에서 발급 (승인 1~2일 소요).
+
+```mdx
+import BookCard from '@/components/BookCard.astro';
+
+<BookCard title="나미야 잡화점의 기적" isbn13="9788901194492" />
+<BookCard
+  title="나미야 잡화점의 기적"
+  isbn13="9788901194492"
+  comment="추리물이라기보다 따뜻한 판타지에 가까워 입문용으로 좋다."
+  aladinHref="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=...&partner=TTBKey"
+  coupangHref="https://link.coupang.com/..."
+/>
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `title` | `string` | — | 도서 제목 (API 실패 시 폴백으로 사용) |
+| `isbn13` | `string` | — | ISBN13 (하이픈 없이 13자리). 모르면 빈 문자열로 두면 fetch를 건너뛰고 title만 표시(안전한 폴백) |
+| `comment` | `string` | — | 카드 안에 표시할 짧은 추천 코멘트 (2줄까지, 초과 시 말줄임) |
+| `aladinHref` | `string` | API의 `link`(TTBKey 자동 포함) | 특정 링크로 강제 지정하고 싶을 때만 사용. 보통 비워두면 API가 반환하는 제휴 링크가 그대로 쓰임 |
+| `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (선택) |
 
 ---
 

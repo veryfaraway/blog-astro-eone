@@ -13,28 +13,16 @@ const label = {
   '11st': '11번가에서 보기',
   other: '구매하기',
 }[provider];
-
-const disclaimer = {
-  coupang: '이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.',
-  amazon: '이 링크는 Amazon 제휴 링크이며, 구매 시 일정 수수료를 받을 수 있습니다.',
-  '11st': '이 포스팅은 11번가 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.',
-  other: '',
-}[provider];
 ---
 
-<span class="affiliate-link not-prose inline-flex flex-col gap-1">
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer nofollow"
-    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-  >
-    {text ?? label}
-    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-    </svg>
-  </a>
-  {disclaimer && (
-    <span class="text-[11px] text-muted-foreground">{disclaimer}</span>
-  )}
-</span>
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer nofollow"
+  class="affiliate-link not-prose inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+>
+  {text ?? label}
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+</a>

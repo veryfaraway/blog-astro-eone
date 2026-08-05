@@ -1,0 +1,122 @@
+---
+interface Props {
+  title: string;
+  isbn13: string;
+  comment?: string;
+  aladinHref?: string;
+  coupangHref?: string;
+}
+
+interface AladinItem {
+  title: string;
+  author: string;
+  publisher: string;
+  cover: string;
+  priceSales: number;
+  customerReviewRank: number;
+  link: string;
+}
+
+interface AladinResponse {
+  item?: AladinItem[];
+}
+
+const { title, isbn13, comment, aladinHref, coupangHref } = Astro.props;
+
+const ttbKey = import.meta.env.PUBLIC_ALADIN_TTB_KEY;
+let book: AladinItem | null = null;
+
+// 알라딘 API는 존재하지 않는 ISBN13에도 검증 없이 엉뚱한 상품을 반환하는 경우가 있어
+// isbn13이 비어 있으면(자리만 잡아둔 상태) fetch 자체를 건너뛴다.
+if (ttbKey && isbn13) {
+  try {
+    // includeKey=1 → 응답 link 필드에 TTBKey가 자동 포함되어 그 자체로 제휴 링크가 됨
+    const url = `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${ttbKey}&itemIdType=ISBN13&ItemId=${isbn13}&output=js&Version=20131101&Cover=Big&includeKey=1`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data: AladinResponse = await res.json();
+      if (data.item?.length) book = data.item[0];
+    }
+  } catch {
+    // fetch 실패 → graceful degradation
+  }
+}
+
+const displayTitle = book?.title ?? title;
+const author        = book?.author;
+const publisher     = book?.publisher;
+const cover         = book?.cover;
+const price         = book?.priceSales;
+// 알라딘 customerReviewRank는 0~10(0.5 단위) 스케일 → 5점 만점으로 환산
+const rating = book?.customerReviewRank ? (book.customerReviewRank / 2).toFixed(1) : undefined;
+// 알라딘 API는 JSON 응답에서도 link의 '&'를 '&amp;'로 잘못 이스케이프해서 내려줌
+// → 그대로 쓰면 ttbkey/partner 파라미터명이 깨져 제휴 추적이 안 되므로 복원 필요
+const purchaseLink = aladinHref ?? book?.link?.replace(/&amp;/g, '&');
+---
+
+<div class="not-prose my-6 flex items-stretch gap-4 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
+  <!-- Cover -->
+  <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
+    {cover
+      ? <img src={cover} alt={`${displayTitle} 표지`} class="h-full w-full object-cover" loading="lazy" />
+      : '📖'
+    }
+  </div>
+
+  <!-- Info -->
+  <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+    <h3 class="line-clamp-2 font-semibold leading-snug text-foreground">{displayTitle}</h3>
+
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+      {rating && (
+        <span class="flex items-center gap-0.5 font-semibold text-amber-500 dark:text-amber-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          {rating}
+        </span>
+      )}
+      {author && <span>{author}</span>}
+      {publisher && <span>{publisher}</span>}
+    </div>
+
+    {price !== undefined && price > 0 && (
+      <p class="text-sm font-semibold text-foreground">{price.toLocaleString()}원</p>
+    )}
+
+    {comment && (
+      <p class="mt-1 line-clamp-3 border-t border-border pt-1.5 text-sm leading-relaxed text-foreground">
+        {comment}
+      </p>
+    )}
+  </div>
+
+  <!-- Buttons: 폭 고정 컬럼으로 오른쪽에 세로 배치 (버튼 2개뿐이라 하단 여백을 채우는 대신 옆으로) -->
+  {(purchaseLink || coupangHref) && (
+    <div class="flex w-24 shrink-0 flex-col justify-center gap-2 border-l border-border pl-4">
+      {/* 두 버튼은 동일한 스타일(아웃라인)로 대등하게 배치 — 배지 색상만 브랜드사 실제 컬러를 반영해 구분 */}
+      {purchaseLink && (
+        <a
+          href={purchaseLink}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+        >
+          <span class="rounded bg-[#2F9DDC] px-1.5 py-0.5 text-[9px] font-bold text-white">알라딘</span>
+          구매하기
+        </a>
+      )}
+      {coupangHref && (
+        <a
+          href={coupangHref}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+        >
+          <span class="rounded bg-[#E94B22] px-1.5 py-0.5 text-[9px] font-bold text-white">쿠팡</span>
+          구매하기
+        </a>
+      )}
+    </div>
+  )}
+</div>
