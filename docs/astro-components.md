@@ -138,11 +138,47 @@ affiliate: true
 
 쿠팡 상품 카드. 쿠팡파트너스 Open API에는 알라딘의 ISBN 조회 같은 공식 "상품 ID 직접 조회" 엔드포인트가 없고 `/products/search`(키워드 검색)만 제공하지만, **`productId`+`itemId`를 공백으로 이어붙여 키워드로 넘기면 검색 결과가 정확히 그 상품 1개로 좁혀지는 동작을 실제 API 호출로 확인**했다(쿠팡 사이트 자체 검색에서도 동일하게 동작 — 사용자 제보로 발견, 공식 문서화된 동작은 아니므로 향후 바뀔 수 있음). 그래서 `productId`+`itemId`를 주면 이 조합으로 정확 매칭을 시도하고, 응답의 `productId`가 실제로 요청한 값과 일치하는 항목만 신뢰한다(불일치 시 폴백). 두 값이 없으면 기존처럼 `keyword` 텍스트 검색 + `pickIndex`로 동작한다 — 이 경우는 호출 시점마다 검색 순위가 흔들릴 수 있으므로 **포스트 미리보기에서 실제로 맞는 상품이 나오는지 반드시 확인할 것**.
 
-이미지·상품명·가격·트래킹 링크(`productUrl`, 이미 제휴 추적 포함)를 빌드 타임에 가져온다. 응답에 평점 정보는 없고 대신 `isRocket`(로켓배송)·`isFreeShipping`(무료배송) 뱃지를 보여준다.
+이미지·상품명·가격·트래킹 링크(`productUrl`, 이미 제휴 추적 포함)를 보여준다. 응답에 평점 정보는 없고 대신 `isRocket`(로켓배송)·`isFreeShipping`(무료배송) 뱃지를 보여준다.
+
+##### ⚠️ 상품 정보는 캐시에서만 읽는다 — 렌더링 시 API를 호출하지 않는다
+
+컴포넌트는 `src/data/coupang-products.json`(커밋 대상)만 읽는다. **빌드/렌더링 중 API 호출은 0회다.**
+
+검색 API의 호출 한도가 극단적으로 낮기 때문이다. 실측 결과:
+
+- 한도는 분당이 아니라 **시간당**이고, 초과하면 리셋까지 **약 24시간** 걸린다. 누적 44회에서 차단됐다.
+- 초과 응답이 **HTTP 200 + `rCode: 403`**으로 온다. `res.ok`만 검사하면 조용히 통과해 **모든 카드가 빈 껍데기인 채로 빌드가 성공한다.**
+- **한도 초과 3회가 누적되면 파트너스 계정 이용이 제한된다.** (응답 메시지에 명시)
+
+렌더링마다 호출하던 이전 구조에서는 dev 서버 새로고침 3번(카드 17개 기준 51회)이면 한도가 날아갔다. 그래서 조회를 빌드에서 완전히 분리했다.
+
+캐시 갱신은 수동 실행한다:
+
+```bash
+make coupang          # 캐시에 없는 상품만 조회 (평소 이것만)
+make coupang-dry      # 조회 대상만 출력, API 호출 없음
+make coupang-retry    # '검색 결과 없음'이었던 항목만 재시도
+make coupang-refresh  # 전체 가격/정보 갱신 (확인 프롬프트 있음, 한도 주의)
+```
+
+`pnpm coupang [--dry-run|--retry-missing|--refresh]`로 직접 실행해도 동일하다. `make` 쪽은 `coupang-refresh`에 확인 프롬프트가 붙어 있어 실수로 한도를 태우는 걸 막아준다.
+
+`scripts/fetch-coupang.mjs`가 `src/content`의 모든 `.mdx`를 스캔해 카드 사용처를 찾고, **캐시에 없는 것만** 순차 조회한다. 한도 초과를 감지하면 즉시 중단하고 그때까지 받은 결과를 저장한다(남은 개수를 로그로 알려준다). `href`를 직접 지정한 카드는 조회 대상에서 제외된다.
+
+새 카드를 추가하면 `pnpm coupang`을 실행하고 **캐시 JSON을 반드시 함께 커밋**해야 한다. 안 하면 Netlify 빌드에서 그 카드가 렌더링되지 않는다.
+
+캐시 키 규칙은 컴포넌트와 스크립트 양쪽에 있고 **서로 일치해야 한다**(한쪽만 바꾸면 전체 캐시 미스):
+정확 매칭은 `"{productId}"`, 키워드 모드는 `"keyword:{keyword}:{pickIndex}"`.
+
+##### 빈 카드 방지
+
+캐시 미스이고 `title`·`href` 폴백도 없으면 **카드를 아예 렌더링하지 않고** 빌드 로그에 경고를 남긴다. 제목도 링크도 없는 빈 박스가 배포되는 것보다 낫다는 판단. 로그에 `[CoupangProductCard] 캐시 미스로 카드를 건너뜁니다: <키>`가 보이면 `pnpm coupang`을 실행하면 된다.
+
+검색 인덱스에 없는 상품도 있다(판매중지·파트너스 노출 제외 등). 실제로 `productId=7386347444`(아그리콜라)는 조합 키워드로도, `아그리콜라` 검색으로도 결과에 나오지 않았다. 이 경우 조합 키워드가 매칭에 실패하면서 쿠팡이 **무관한 추천 상품 10개를 폴백으로 내려주기** 때문에, 응답이 비어 보이지 않는데도 원하는 상품은 없는 상태가 된다. 스크립트는 이런 항목을 `notFound`로 기록해 매번 재조회하지 않는다. 해결하려면 `keyword` 방식으로 바꾸거나 다른 상품으로 교체할 것.
 
 인증 방식이 알라딘과 다르다: 단순 쿼리스트링 키가 아니라 **HMAC-SHA256 서명**(`CEA algorithm=HmacSHA256` 스킴)이 필요하다. Secret Key는 서명 계산에만 쓰이고 절대 클라이언트에 노출되면 안 되므로 `PUBLIC_` 접두사를 쓰지 않는다.
 
-> **환경변수**: `COUPANG_ACCESS_KEY`, `COUPANG_SECRET_KEY` 필요. 쿠팡파트너스(partners.coupang.com) Open API 메뉴에서 발급 — **누적 판매액이 일정 금액을 넘어야 API가 활성화**된다(파트너스 정책 확인 필요).
+> **환경변수**: `COUPANG_ACCESS_KEY`, `COUPANG_SECRET_KEY` 필요 — 이제 `scripts/fetch-coupang.mjs`에서만 쓰이므로 **Netlify에는 설정하지 않아도 된다**(로컬 `.env`만 있으면 된다). 쿠팡파트너스(partners.coupang.com) Open API 메뉴에서 발급 — **누적 판매액이 일정 금액을 넘어야 API가 활성화**된다(파트너스 정책 확인 필요).
 
 ```mdx
 import CoupangProductCard from '@/components/CoupangProductCard.astro';
@@ -161,10 +197,11 @@ import CoupangProductCard from '@/components/CoupangProductCard.astro';
 | `productId` | `string \| number` | — | 쿠팡 상품 ID. `itemId`와 함께 줘야 정확 매칭 모드로 동작 |
 | `itemId` | `string \| number` | — | 쿠팡 상품 옵션(itemId). `productId`와 세트로 사용 |
 | `keyword` | `string` | — | `productId`+`itemId`가 없을 때 쓰는 검색 키워드 (구체적일수록 원하는 상품이 상위에 나올 확률이 높음) |
-| `title` | `string` | — | API 실패 시 폴백 표시용 |
-| `pickIndex` | `number` | `0` | keyword 모드에서 검색 결과(최대 10개) 중 몇 번째를 쓸지 |
-| `href` | `string` | 검색 결과의 `productUrl` | 특정 링크로 강제 지정하고 싶을 때만 사용 |
-| `subId` | `string` | — | 파트너스 채널 ID (정산 트래킹용, 파트너스 계정에 등록된 값이어야 정산에 반영됨) |
+| `title` | `string` | — | 캐시 미스 시 폴백 표시용. 없으면 `keyword`를 제목으로 대신 쓴다 |
+| `pickIndex` | `number` | `0` | keyword 모드에서 검색 결과(최대 10개) 중 몇 번째를 쓸지. **캐시 키에 포함되므로** 바꾸면 재조회가 필요하다 |
+| `href` | `string` | 캐시된 `productUrl` | 특정 링크로 강제 지정하고 싶을 때만 사용. 지정하면 API 조회 대상에서 제외된다 |
+
+> `subId`(파트너스 채널 ID) prop은 제거됐다. 검색 API 호출 파라미터였는데 렌더링 시 API를 호출하지 않게 되면서 의미가 없어졌다.
 
 ---
 

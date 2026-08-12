@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "coupang": "node scripts/fetch-coupang.mjs",
     "migrate": "node scripts/migrate.mjs",
     "migrate:hugo": "node scripts/migrate.mjs --source=hugo",
     "migrate:popcorn": "node scripts/migrate.mjs --source=popcorn",

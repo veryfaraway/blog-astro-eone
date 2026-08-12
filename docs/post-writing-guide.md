@@ -203,7 +203,13 @@ import CoupangProductCard from '@/components/CoupangProductCard.astro';
 <CoupangProductCard keyword="Seachem Tidal 55 걸이식 여과기" />
 ```
 
-`productId`+`itemId`를 주면 쿠팡파트너스 Open API에서 정확히 그 상품 하나의 이미지·이름·가격·제휴 링크를 가져온다. 둘 다 없으면 `keyword` 텍스트 검색으로 대체되는데, 이건 **ISBN처럼 정확한 ID 조회가 아니라서** 추가한 뒤 반드시 미리보기에서 원하는 상품이 맞는지 확인할 것 — 다르면 키워드를 더 구체적으로 쓰거나 `pickIndex`로 다른 검색 결과를 선택한다. Props·인증 상세는 [`docs/astro-components.md`](astro-components.md) 참조.
+`productId`+`itemId`를 주면 정확히 그 상품 하나의 이미지·이름·가격·제휴 링크를 보여준다. 둘 다 없으면 `keyword` 텍스트 검색으로 대체되는데, 이건 **ISBN처럼 정확한 ID 조회가 아니라서** 추가한 뒤 반드시 미리보기에서 원하는 상품이 맞는지 확인할 것 — 다르면 키워드를 더 구체적으로 쓰거나 `pickIndex`로 다른 검색 결과를 선택한다.
+
+> **⚠️ 카드를 추가하면 `pnpm coupang`을 실행하고 `src/data/coupang-products.json`을 함께 커밋할 것.**
+> 상품 정보는 이 캐시 파일에서만 읽는다(빌드 중 API 호출 없음). 캐시에 없는 카드는 **아예 렌더링되지 않는다**(빌드 로그에 경고가 뜬다).
+> 쿠팡 검색 API는 한도가 시간당 수십 회로 매우 낮고, **초과 3회 누적 시 파트너스 계정이 제한된다.** `--refresh`는 전체 상품을 재조회하므로 꼭 필요할 때만 쓸 것.
+
+Props·캐시 구조·인증 상세는 [`docs/astro-components.md`](astro-components.md) 참조.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-import crypto from 'node:crypto';
+import cacheData from '../data/coupang-products.json';
 
 interface Props {
   productId?: string | number;
@@ -8,81 +8,56 @@ interface Props {
   title?: string;
   pickIndex?: number;
   href?: string;
-  subId?: string;
 }
 
 interface CoupangProduct {
-  productId: number;
-  productImage: string;
-  productName: string;
-  productPrice: number;
-  productUrl: string;
-  isRocket: boolean;
-  isFreeShipping: boolean;
+  productId?: number;
+  productImage?: string;
+  productName?: string;
+  productPrice?: number;
+  productUrl?: string;
+  isRocket?: boolean;
+  isFreeShipping?: boolean;
+  notFound?: boolean;
 }
 
-const { productId, itemId, keyword, title, pickIndex = 0, href, subId } = Astro.props;
+const { productId, itemId, keyword, title, pickIndex = 0, href } = Astro.props;
 
-// productId+itemId가 있으면 "정확히 그 상품 1개"만 검색되는 조합 키워드로 대체한다.
-// (쿠팡 검색엔진이 "productId itemId" 조합 문자열을 사실상 유일 식별자처럼 취급 —
-//  공식 문서에는 없는 경험적 동작이라, 만약 향후 이 동작이 바뀌면 keyword+pickIndex로 폴백할 것)
-const exactMatch = productId && itemId;
-const effectiveKeyword = exactMatch ? `${productId} ${itemId}` : keyword;
-const effectivePickIndex = exactMatch ? 0 : pickIndex;
+// 상품 정보는 빌드 중 API로 조회하지 않고 커밋된 캐시에서만 읽는다.
+// 쿠팡 검색 API는 호출 한도가 매우 낮아(시간당 수십 회, 초과 시 약 24시간 봉인)
+// 페이지 렌더링마다 호출하면 dev 새로고침 몇 번으로도 한도가 소진된다.
+// 캐시 갱신은 `pnpm coupang` (scripts/fetch-coupang.mjs)으로 수행한다.
+//
+// 캐시 키 규칙은 scripts/fetch-coupang.mjs의 cacheKey()와 반드시 동일해야 한다.
+const cacheKey = productId && itemId
+  ? String(productId)
+  : keyword
+    ? `keyword:${keyword}:${pickIndex}`
+    : null;
 
-const accessKey = import.meta.env.COUPANG_ACCESS_KEY;
-const secretKey = import.meta.env.COUPANG_SECRET_KEY;
+const products = cacheData.products as Record<string, CoupangProduct>;
+const cached = cacheKey ? products[cacheKey] : undefined;
+const product = cached && !cached.notFound ? cached : null;
 
-let product: CoupangProduct | null = null;
-
-// 쿠팡파트너스 Open API는 HMAC-SHA256 서명 인증(CEA 스킴)을 요구함.
-// signed-date 포맷은 yyMMdd'T'HHmmss'Z'(UTC), 서명 대상 메시지는 signed-date+method+path+query.
-if (accessKey && secretKey && effectiveKeyword) {
-  try {
-    const method = 'GET';
-    const path = '/v2/providers/affiliate_open_api/apis/openapi/v1/products/search';
-    const params = new URLSearchParams({
-      keyword: effectiveKeyword,
-      limit: String(Math.max(effectivePickIndex + 1, 5)),
-    });
-    if (subId) params.set('subId', subId);
-    const query = params.toString();
-
-    const now = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const datetime =
-      `${String(now.getUTCFullYear()).slice(-2)}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}` +
-      `T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
-
-    const message = `${datetime}${method}${path}${query}`;
-    const signature = crypto.createHmac('sha256', secretKey).update(message).digest('hex');
-    const authorization =
-      `CEA algorithm=HmacSHA256, access-key=${accessKey}, signed-date=${datetime}, signature=${signature}`;
-
-    const res = await fetch(`https://api-gateway.coupang.com${path}?${query}`, {
-      headers: { Authorization: authorization },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const list: CoupangProduct[] = data?.data?.productData ?? [];
-      if (exactMatch) {
-        // 정확 매칭 모드에서는 productId가 실제로 일치하는 항목만 신뢰한다.
-        product = list.find((p) => String(p.productId) === String(productId)) ?? null;
-      } else {
-        product = list[effectivePickIndex] ?? null;
-      }
-    }
-  } catch {
-    // fetch/서명 실패 → graceful degradation
-  }
-}
-
-const displayTitle = product?.productName ?? title ?? '';
+// href를 직접 지정한 카드는 API 조회 없이 쓰이므로 title이 없을 수 있다.
+// 이때는 keyword를 제목으로 대신 쓴다 (없으면 아래 renderable 가드에서 걸러진다).
+const displayTitle = product?.productName ?? title ?? keyword ?? '';
 const image = product?.productImage;
 const price = product?.productPrice;
 const purchaseLink = href ?? product?.productUrl;
+
+// 캐시 미스 + 수동 폴백(title/href)도 없으면 빈 껍데기 카드가 배포되므로 렌더링하지 않는다.
+// 빌드 로그에 남겨서 조용히 사라지지 않게 한다.
+const renderable = Boolean(displayTitle && purchaseLink);
+if (!renderable && cacheKey) {
+  console.warn(
+    `[CoupangProductCard] 캐시 미스로 카드를 건너뜁니다: ${cacheKey}` +
+    ` — \`pnpm coupang\`을 실행하거나 title/href를 직접 지정하세요.`
+  );
+}
 ---
 
+{renderable && (
 <div class="not-prose my-6 flex items-stretch gap-4 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
   <!-- Image -->
   <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
@@ -137,3 +112,4 @@ const purchaseLink = href ?? product?.productUrl;
     </div>
   )}
 </div>
+)}
