@@ -102,6 +102,8 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 제휴 링크 버튼. 카드/버튼 자체에는 면책 문구가 없다 — 공시는 포스트 상단 `AffiliateNotice`(frontmatter `affiliate: true`) 하나로 통일한다. 수익화 링크에 사용.
 
+`provider`는 버튼 라벨(`text` 미지정 시)뿐 아니라 **버튼 배경색과 파비콘 아이콘**도 결정한다 — 한 포스트에 쿠팡·Amazon 링크가 섞여 있을 때 텍스트를 안 읽어도 어느 쇼핑몰로 가는지 한눈에 구분되도록 하기 위함이다. 배경색은 실제 브랜드 컬러(쿠팡 공식 가이드라인 `#E94B22`, 11번가 공식 디자인시스템 `#FF0038`, Amazon 공식 브랜드 컬러 `#FF9900`)를 쓰고, 텍스트는 세 색상 모두 흰 글씨가 WCAG AA(4.5:1) 대비 기준에 못 미쳐 진한 텍스트(`#171717`)로 통일했다. 파비콘은 Google 파비콘 서비스(`https://www.google.com/s2/favicons?domain=...`)에서 각 사이트 아이콘을 그대로 가져와 흰 배경 칩 안에 표시한다 — 실제 로고 이미지를 직접 호스팅하지 않아 상표 이슈를 피한다. `provider="other"`는 브랜드 색상/아이콘 없이 사이트 기본 `bg-primary` 스타일로 폴백.
+
 ```mdx
 import AffiliateLink from '@/components/AffiliateLink.astro';
 
@@ -115,7 +117,7 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 |------|------|--------|------|
 | `href` | `string` | — | 제휴 링크 URL |
 | `text` | `string` | 제공사별 자동 | 버튼 텍스트 |
-| `provider` | `'coupang' \| 'amazon' \| '11st' \| 'other'` | `'other'` | 버튼 라벨 자동 결정 |
+| `provider` | `'coupang' \| 'amazon' \| '11st' \| 'other'` | `'other'` | 버튼 라벨·배경색·파비콘을 함께 결정 |
 
 > **`AffiliateLink`·`BookCard` 등 제휴 링크가 들어간 포스트는 frontmatter에 `affiliate: true`를 반드시 설정할 것** — 컴포넌트별 문구 대신 `AffiliateNotice`가 상단에 한 번 뜨는 방식으로 공시를 통일했다.
 
@@ -129,6 +131,40 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 # frontmatter에서 활성화
 affiliate: true
 ```
+
+---
+
+#### `CoupangProductCard.astro`
+
+쿠팡 상품 카드. 쿠팡파트너스 Open API에는 알라딘의 ISBN 조회 같은 공식 "상품 ID 직접 조회" 엔드포인트가 없고 `/products/search`(키워드 검색)만 제공하지만, **`productId`+`itemId`를 공백으로 이어붙여 키워드로 넘기면 검색 결과가 정확히 그 상품 1개로 좁혀지는 동작을 실제 API 호출로 확인**했다(쿠팡 사이트 자체 검색에서도 동일하게 동작 — 사용자 제보로 발견, 공식 문서화된 동작은 아니므로 향후 바뀔 수 있음). 그래서 `productId`+`itemId`를 주면 이 조합으로 정확 매칭을 시도하고, 응답의 `productId`가 실제로 요청한 값과 일치하는 항목만 신뢰한다(불일치 시 폴백). 두 값이 없으면 기존처럼 `keyword` 텍스트 검색 + `pickIndex`로 동작한다 — 이 경우는 호출 시점마다 검색 순위가 흔들릴 수 있으므로 **포스트 미리보기에서 실제로 맞는 상품이 나오는지 반드시 확인할 것**.
+
+이미지·상품명·가격·트래킹 링크(`productUrl`, 이미 제휴 추적 포함)를 빌드 타임에 가져온다. 응답에 평점 정보는 없고 대신 `isRocket`(로켓배송)·`isFreeShipping`(무료배송) 뱃지를 보여준다.
+
+인증 방식이 알라딘과 다르다: 단순 쿼리스트링 키가 아니라 **HMAC-SHA256 서명**(`CEA algorithm=HmacSHA256` 스킴)이 필요하다. Secret Key는 서명 계산에만 쓰이고 절대 클라이언트에 노출되면 안 되므로 `PUBLIC_` 접두사를 쓰지 않는다.
+
+> **환경변수**: `COUPANG_ACCESS_KEY`, `COUPANG_SECRET_KEY` 필요. 쿠팡파트너스(partners.coupang.com) Open API 메뉴에서 발급 — **누적 판매액이 일정 금액을 넘어야 API가 활성화**된다(파트너스 정책 확인 필요).
+
+```mdx
+import CoupangProductCard from '@/components/CoupangProductCard.astro';
+
+<!-- 정확 매칭: 쿠팡 상품 URL의 productId/itemId를 알고 있을 때 (권장) -->
+<CoupangProductCard productId="7778899675" itemId="15996113423" />
+
+<!-- 키워드 검색: 정확한 ID를 모를 때. 결과가 흔들릴 수 있어 미리보기 확인 필수 -->
+<CoupangProductCard keyword="Seachem Tidal 55 걸이식 여과기" />
+<CoupangProductCard keyword="AquaClear 걸이식 여과기" pickIndex={1} title="AquaClear 50" />
+<CoupangProductCard keyword="..." href="https://link.coupang.com/a/직접만든링크로강제지정" />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `productId` | `string \| number` | — | 쿠팡 상품 ID. `itemId`와 함께 줘야 정확 매칭 모드로 동작 |
+| `itemId` | `string \| number` | — | 쿠팡 상품 옵션(itemId). `productId`와 세트로 사용 |
+| `keyword` | `string` | — | `productId`+`itemId`가 없을 때 쓰는 검색 키워드 (구체적일수록 원하는 상품이 상위에 나올 확률이 높음) |
+| `title` | `string` | — | API 실패 시 폴백 표시용 |
+| `pickIndex` | `number` | `0` | keyword 모드에서 검색 결과(최대 10개) 중 몇 번째를 쓸지 |
+| `href` | `string` | 검색 결과의 `productUrl` | 특정 링크로 강제 지정하고 싶을 때만 사용 |
+| `subId` | `string` | — | 파트너스 채널 ID (정산 트래킹용, 파트너스 계정에 등록된 값이어야 정산에 반영됨) |
 
 ---
 
@@ -259,11 +295,11 @@ import PersonInline from '@/components/PersonInline.astro';
 
 도서 정보 카드. 알라딘 Open API로 표지·저자·출판사·가격·평점을 빌드 타임에 fetch. API 요청에 `includeKey=1`을 붙여 응답 `link`에 TTBKey가 자동 포함된 제휴 링크를 그대로 받아오므로, 대시보드에서 책마다 수동으로 "링크 만들기"를 할 필요가 없다. API 키 없거나 fetch 실패 시 title만 표시(폴백).
 
-레이아웃은 표지(왼쪽) · 제목/평점/가격/comment(가운데, 가변폭) · 구매 버튼(오른쪽, 폭 고정 컬럼에 세로 스택)의 3열 구성이다 — 버튼이 최대 2개뿐이라 기존처럼 하단에 별도 행으로 두면 여백이 휑해서, 오른쪽 고정폭 컬럼으로 옮기고 그 자리(가운데 열 하단)를 `comment`가 채우도록 했다. 알라딘/쿠팡 버튼은 동일한 아웃라인 스타일로 대등하게 배치하고, 배지 색상만 각사 실제 브랜드 컬러(알라딘 `#2F9DDC`, 쿠팡 `#E94B22`)로 구분해 어느 한쪽이 "주" 버튼처럼 보이지 않게 했다 — 두 링크를 나란히 두면 독자가 이미 쓰던 플랫폼으로 갈 수 있어 전환율에 유리하다 (도서정가제로 가격은 어느 쪽이든 동일). 카드 자체에는 면책 문구가 없으므로, 구매 링크를 실제로 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것 (money 섹션이 아니어도 동작함).
+레이아웃은 **2행 구성**이다. 1행은 표지(왼쪽) · 제목/평점/저자/가격(가운데, 가변폭) · 구매 버튼(오른쪽, 폭 고정 컬럼에 세로 스택), 2행은 `comment`가 카드 전체 폭을 가로지른다(1행의 모든 컬럼을 span하는 효과). 버튼이 최대 2개뿐이라 하단에 별도 행으로 두면 여백이 휑해서 오른쪽 고정폭 컬럼으로 옮겼고, `comment`는 좁은 가운데 컬럼에 두면 3줄로 접히며 잘리는 반면 버튼 컬럼 아래는 비어 보여서 아예 행을 분리했다. `comment`가 없으면 1행만 렌더링되므로 기존과 동일한 한 줄짜리 카드다. 알라딘/쿠팡 버튼은 동일한 아웃라인 스타일로 대등하게 배치하고, 배지 색상만 각사 실제 브랜드 컬러(알라딘 `#2F9DDC`, 쿠팡 `#E94B22`)로 구분해 어느 한쪽이 "주" 버튼처럼 보이지 않게 했다 — 두 링크를 나란히 두면 독자가 이미 쓰던 플랫폼으로 갈 수 있어 전환율에 유리하다 (도서정가제로 가격은 어느 쪽이든 동일). 카드 자체에는 면책 문구가 없으므로, 구매 링크를 실제로 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것 (money 섹션이 아니어도 동작함).
 
 `comment` prop으로 "왜 이 책을 추천하는지" 짧은 코멘트를 카드 안에 넣을 수 있다 — 목록에서 책 소개를 반복 서술하지 않고 카드 하나로 정보를 통일할 때 유용하다 (예: "1. 『제목』" + 그 아래 `comment`로 추천 이유가 담긴 `BookCard`).
 
-**분권(상/하, 1권/2권) 도서**는 BookCard 하나로 표현할 수 없으므로, `<div class="grid gap-3 md:grid-cols-2">`로 감싸 두 개를 나란히 배치한다. `comment`는 대표(1권) 카드에만 넣고 나머지는 짧게 안내만 하면 중복을 피할 수 있다.
+**분권(상/하, 1권/2권) 도서**는 BookCard 하나로 표현할 수 없으므로, `<div class="grid gap-3 md:grid-cols-2 items-start">`로 감싸 두 개를 나란히 배치한다. `comment`는 대표(1권) 카드에만 넣고 나머지는 짧게 안내만 하면 중복을 피할 수 있다. 이때 `items-start`가 없으면 comment가 있는 카드의 높이에 맞춰 옆 카드가 늘어나면서 아래쪽에 빈 공간이 생기므로 반드시 함께 붙일 것.
 
 > **주의**: 알라딘 API는 존재하지 않는 ISBN13을 넣어도 검증 없이 관련 없는 상품을 반환하는 경우가 있다(예: `0000000000000` → 전혀 다른 중고책). 아직 정확한 ISBN13을 모를 때는 값을 넣지 말고 **비워둘 것**(`isbn13=""`) — 컴포넌트가 fetch 자체를 건너뛰고 `title`만 표시하는 안전한 폴백으로 동작한다.
 
@@ -286,7 +322,7 @@ import BookCard from '@/components/BookCard.astro';
 |------|------|--------|------|
 | `title` | `string` | — | 도서 제목 (API 실패 시 폴백으로 사용) |
 | `isbn13` | `string` | — | ISBN13 (하이픈 없이 13자리). 모르면 빈 문자열로 두면 fetch를 건너뛰고 title만 표시(안전한 폴백) |
-| `comment` | `string` | — | 카드 안에 표시할 짧은 추천 코멘트 (2줄까지, 초과 시 말줄임) |
+| `comment` | `string` | — | 카드 하단 행에 카드 전체 폭으로 표시할 짧은 추천 코멘트 (말줄임 없이 전부 노출되므로 2~3문장 이내로) |
 | `aladinHref` | `string` | API의 `link`(TTBKey 자동 포함) | 특정 링크로 강제 지정하고 싶을 때만 사용. 보통 비워두면 API가 반환하는 제휴 링크가 그대로 쓰임 |
 | `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (선택) |
 

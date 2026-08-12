@@ -1,0 +1,139 @@
+---
+import crypto from 'node:crypto';
+
+interface Props {
+  productId?: string | number;
+  itemId?: string | number;
+  keyword?: string;
+  title?: string;
+  pickIndex?: number;
+  href?: string;
+  subId?: string;
+}
+
+interface CoupangProduct {
+  productId: number;
+  productImage: string;
+  productName: string;
+  productPrice: number;
+  productUrl: string;
+  isRocket: boolean;
+  isFreeShipping: boolean;
+}
+
+const { productId, itemId, keyword, title, pickIndex = 0, href, subId } = Astro.props;
+
+// productId+itemId가 있으면 "정확히 그 상품 1개"만 검색되는 조합 키워드로 대체한다.
+// (쿠팡 검색엔진이 "productId itemId" 조합 문자열을 사실상 유일 식별자처럼 취급 —
+//  공식 문서에는 없는 경험적 동작이라, 만약 향후 이 동작이 바뀌면 keyword+pickIndex로 폴백할 것)
+const exactMatch = productId && itemId;
+const effectiveKeyword = exactMatch ? `${productId} ${itemId}` : keyword;
+const effectivePickIndex = exactMatch ? 0 : pickIndex;
+
+const accessKey = import.meta.env.COUPANG_ACCESS_KEY;
+const secretKey = import.meta.env.COUPANG_SECRET_KEY;
+
+let product: CoupangProduct | null = null;
+
+// 쿠팡파트너스 Open API는 HMAC-SHA256 서명 인증(CEA 스킴)을 요구함.
+// signed-date 포맷은 yyMMdd'T'HHmmss'Z'(UTC), 서명 대상 메시지는 signed-date+method+path+query.
+if (accessKey && secretKey && effectiveKeyword) {
+  try {
+    const method = 'GET';
+    const path = '/v2/providers/affiliate_open_api/apis/openapi/v1/products/search';
+    const params = new URLSearchParams({
+      keyword: effectiveKeyword,
+      limit: String(Math.max(effectivePickIndex + 1, 5)),
+    });
+    if (subId) params.set('subId', subId);
+    const query = params.toString();
+
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const datetime =
+      `${String(now.getUTCFullYear()).slice(-2)}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}` +
+      `T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+
+    const message = `${datetime}${method}${path}${query}`;
+    const signature = crypto.createHmac('sha256', secretKey).update(message).digest('hex');
+    const authorization =
+      `CEA algorithm=HmacSHA256, access-key=${accessKey}, signed-date=${datetime}, signature=${signature}`;
+
+    const res = await fetch(`https://api-gateway.coupang.com${path}?${query}`, {
+      headers: { Authorization: authorization },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const list: CoupangProduct[] = data?.data?.productData ?? [];
+      if (exactMatch) {
+        // 정확 매칭 모드에서는 productId가 실제로 일치하는 항목만 신뢰한다.
+        product = list.find((p) => String(p.productId) === String(productId)) ?? null;
+      } else {
+        product = list[effectivePickIndex] ?? null;
+      }
+    }
+  } catch {
+    // fetch/서명 실패 → graceful degradation
+  }
+}
+
+const displayTitle = product?.productName ?? title ?? '';
+const image = product?.productImage;
+const price = product?.productPrice;
+const purchaseLink = href ?? product?.productUrl;
+---
+
+<div class="not-prose my-6 flex items-stretch gap-4 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
+  <!-- Image -->
+  <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
+    {image
+      ? <img src={image} alt={`${displayTitle} 상품 이미지`} class="h-full w-full object-cover" loading="lazy" />
+      : '📦'
+    }
+  </div>
+
+  <!-- Info -->
+  <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+    <h3 class="line-clamp-2 font-semibold leading-snug text-foreground">{displayTitle}</h3>
+
+    {(product?.isRocket || product?.isFreeShipping) && (
+      <div class="flex flex-wrap items-center gap-1.5 text-xs">
+        {product?.isRocket && (
+          <span class="rounded bg-sky-500/15 px-1.5 py-0.5 font-semibold text-sky-600 dark:text-sky-400">로켓배송</span>
+        )}
+        {product?.isFreeShipping && (
+          <span class="rounded bg-emerald-500/15 px-1.5 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">무료배송</span>
+        )}
+      </div>
+    )}
+
+    {price !== undefined && price > 0 && (
+      <p class="text-sm font-semibold text-foreground">
+        {price.toLocaleString()}원
+        <span class="ml-1 text-[11px] font-normal text-muted-foreground">(실시간 가격은 클릭 후 확인해 주세요)</span>
+      </p>
+    )}
+  </div>
+
+  <!-- Button -->
+  {purchaseLink && (
+    <div class="flex w-24 shrink-0 flex-col justify-center border-l border-border pl-4">
+      <a
+        href={purchaseLink}
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        class="flex w-full flex-col items-center gap-1 rounded-md px-2 py-1.5 text-xs font-medium transition-opacity hover:opacity-90"
+        style="background-color:#E94B22; color:#171717;"
+      >
+        <img
+          src="https://www.google.com/s2/favicons?domain=coupang.com&sz=32"
+          alt=""
+          width="16"
+          height="16"
+          class="rounded-sm bg-white/90 p-0.5"
+        />
+        구매하기
+      </a>
+    </div>
+  )}
+</div>

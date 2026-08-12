@@ -187,6 +187,24 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 
 `affiliate: true` frontmatter 설정 시 포스트 상단 제휴 공시 박스(`AffiliateNotice`)는 자동 렌더링 — MDX에서 직접 import 불필요.
 
+`provider`에 따라 버튼 배경색(브랜드 컬러)과 파비콘 아이콘이 자동으로 붙는다 — 한 글에 쿠팡·Amazon 링크가 섞여 있어도 색으로 바로 구분된다. 상세 근거는 [`docs/astro-components.md`](astro-components.md) 참조.
+
+---
+
+### CoupangProductCard — 쿠팡 상품 카드 (money 섹션)
+
+```mdx
+import CoupangProductCard from '@/components/CoupangProductCard.astro';
+
+<!-- 권장: 쿠팡 상품 URL에서 확인한 productId+itemId로 정확히 그 상품만 지정 -->
+<CoupangProductCard productId="7778899675" itemId="15996113423" />
+
+<!-- productId/itemId를 모르면 keyword 검색으로 폴백 (결과가 흔들릴 수 있어 미리보기 확인 필수) -->
+<CoupangProductCard keyword="Seachem Tidal 55 걸이식 여과기" />
+```
+
+`productId`+`itemId`를 주면 쿠팡파트너스 Open API에서 정확히 그 상품 하나의 이미지·이름·가격·제휴 링크를 가져온다. 둘 다 없으면 `keyword` 텍스트 검색으로 대체되는데, 이건 **ISBN처럼 정확한 ID 조회가 아니라서** 추가한 뒤 반드시 미리보기에서 원하는 상품이 맞는지 확인할 것 — 다르면 키워드를 더 구체적으로 쓰거나 `pickIndex`로 다른 검색 결과를 선택한다. Props·인증 상세는 [`docs/astro-components.md`](astro-components.md) 참조.
+
 ---
 
 ### AdSlot — 광고 슬롯

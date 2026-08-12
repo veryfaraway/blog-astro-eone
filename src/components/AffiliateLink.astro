@@ -13,14 +13,34 @@ const label = {
   '11st': '11번가에서 보기',
   other: '구매하기',
 }[provider];
+
+// 실제 브랜드 컬러 (쿠팡 공식 가이드라인, 11번가 공식 디자인시스템, Amazon 공식 브랜드 컬러 기준).
+// 세 색상 모두 흰 글씨는 WCAG AA(4.5:1) 미달이라 진한 텍스트(#171717)로 대비를 맞춤.
+const brand = {
+  coupang: { bg: '#E94B22', domain: 'coupang.com' },
+  amazon: { bg: '#FF9900', domain: 'amazon.com' },
+  '11st': { bg: '#FF0038', domain: '11st.co.kr' },
+  other: null,
+}[provider];
+
+const faviconUrl = brand
+  ? `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=32`
+  : undefined;
 ---
 
 <a
   href={href}
   target="_blank"
   rel="noopener noreferrer nofollow"
-  class="affiliate-link not-prose inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+  class:list={[
+    'affiliate-link not-prose inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-opacity hover:opacity-90',
+    !brand && 'bg-primary text-primary-foreground',
+  ]}
+  style={brand ? `background-color:${brand.bg}; color:#171717;` : undefined}
 >
+  {faviconUrl && (
+    <img src={faviconUrl} alt="" width="16" height="16" class="rounded-sm bg-white/90 p-0.5" />
+  )}
   {text ?? label}
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>

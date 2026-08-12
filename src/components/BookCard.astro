@@ -54,69 +54,74 @@ const rating = book?.customerReviewRank ? (book.customerReviewRank / 2).toFixed(
 const purchaseLink = aladinHref ?? book?.link?.replace(/&amp;/g, '&');
 ---
 
-<div class="not-prose my-6 flex items-stretch gap-4 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
-  <!-- Cover -->
-  <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
-    {cover
-      ? <img src={cover} alt={`${displayTitle} 표지`} class="h-full w-full object-cover" loading="lazy" />
-      : '📖'
-    }
-  </div>
-
-  <!-- Info -->
-  <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
-    <h3 class="line-clamp-2 font-semibold leading-snug text-foreground">{displayTitle}</h3>
-
-    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-      {rating && (
-        <span class="flex items-center gap-0.5 font-semibold text-amber-500 dark:text-amber-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-          {rating}
-        </span>
-      )}
-      {author && <span>{author}</span>}
-      {publisher && <span>{publisher}</span>}
+<div class="not-prose my-6 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
+  <!-- 1행: (표지 + 정보) | 구매 버튼 -->
+  <div class="flex items-stretch gap-4">
+    <!-- Cover -->
+    <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
+      {cover
+        ? <img src={cover} alt={`${displayTitle} 표지`} class="h-full w-full object-cover" loading="lazy" />
+        : '📖'
+      }
     </div>
 
-    {price !== undefined && price > 0 && (
-      <p class="text-sm font-semibold text-foreground">{price.toLocaleString()}원</p>
-    )}
+    <!-- Info -->
+    <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+      <h3 class="line-clamp-2 font-semibold leading-snug text-foreground">{displayTitle}</h3>
 
-    {comment && (
-      <p class="mt-1 line-clamp-3 border-t border-border pt-1.5 text-sm leading-relaxed text-foreground">
-        {comment}
-      </p>
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+        {rating && (
+          <span class="flex items-center gap-0.5 font-semibold text-amber-500 dark:text-amber-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            {rating}
+          </span>
+        )}
+        {author && <span>{author}</span>}
+        {publisher && <span>{publisher}</span>}
+      </div>
+
+      {price !== undefined && price > 0 && (
+        <p class="text-sm font-semibold text-foreground">{price.toLocaleString()}원</p>
+      )}
+    </div>
+
+    <!-- Buttons: 폭 고정 컬럼으로 오른쪽에 세로 배치 (버튼 2개뿐이라 하단 여백을 채우는 대신 옆으로) -->
+    {(purchaseLink || coupangHref) && (
+      <div class="flex w-24 shrink-0 flex-col justify-center gap-2 border-l border-border pl-4">
+        {/* 두 버튼은 동일한 스타일(아웃라인)로 대등하게 배치 — 배지 색상만 브랜드사 실제 컬러를 반영해 구분 */}
+        {purchaseLink && (
+          <a
+            href={purchaseLink}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            <span class="rounded bg-[#2F9DDC] px-1.5 py-0.5 text-[9px] font-bold text-white">알라딘</span>
+            구매하기
+          </a>
+        )}
+        {coupangHref && (
+          <a
+            href={coupangHref}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            <span class="rounded bg-[#E94B22] px-1.5 py-0.5 text-[9px] font-bold text-white">쿠팡</span>
+            구매하기
+          </a>
+        )}
+      </div>
     )}
   </div>
 
-  <!-- Buttons: 폭 고정 컬럼으로 오른쪽에 세로 배치 (버튼 2개뿐이라 하단 여백을 채우는 대신 옆으로) -->
-  {(purchaseLink || coupangHref) && (
-    <div class="flex w-24 shrink-0 flex-col justify-center gap-2 border-l border-border pl-4">
-      {/* 두 버튼은 동일한 스타일(아웃라인)로 대등하게 배치 — 배지 색상만 브랜드사 실제 컬러를 반영해 구분 */}
-      {purchaseLink && (
-        <a
-          href={purchaseLink}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-        >
-          <span class="rounded bg-[#2F9DDC] px-1.5 py-0.5 text-[9px] font-bold text-white">알라딘</span>
-          구매하기
-        </a>
-      )}
-      {coupangHref && (
-        <a
-          href={coupangHref}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-        >
-          <span class="rounded bg-[#E94B22] px-1.5 py-0.5 text-[9px] font-bold text-white">쿠팡</span>
-          구매하기
-        </a>
-      )}
-    </div>
+  <!-- 2행: comment — 카드 전체 폭을 가로지른다(1행 전체 컬럼을 span하는 효과).
+       좁은 가운데 컬럼에 두면 3줄로 접히면서 잘리고 버튼 컬럼 아래는 비어 보여서 행을 분리했다. -->
+  {comment && (
+    <p class="mt-3 border-t border-border pt-3 text-sm leading-relaxed text-foreground">
+      {comment}
+    </p>
   )}
 </div>

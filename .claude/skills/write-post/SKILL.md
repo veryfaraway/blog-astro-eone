@@ -169,8 +169,10 @@ import BookCard from '@/components/BookCard.astro';
      comment는 카드 안에 들어가는 짧은 추천 코멘트 — 목록에서 "1. 『제목』 — 설명"처럼 따로 서술하지 말고 comment로 통일할 것 (중복 방지).
      정확한 ISBN13을 모르면 isbn13=""로 비워둘 것 — 알라딘 API가 없는 ISBN에도 엉뚱한 책을 반환하는 경우가 있어, 비워야 title만 표시하는 안전한 폴백으로 동작함.
      알라딘/쿠팡 버튼은 오른쪽 고정폭 컬럼에 세로로 쌓이고, 동일한 스타일 + 브랜드 컬러 배지로 대등하게 표시됨(어느 한쪽이 우선순위처럼 보이지 않게).
+     레이아웃은 2행 — 1행(표지 | 정보 | 버튼) + 2행(comment가 카드 전체 폭). comment가 없으면 1행만 나오므로 카드 높이가 그대로다. comment는 잘리지 않고 전부 노출되니 2~3문장 이내로 쓸 것.
      카드 자체엔 면책 문구 없음 → 구매 링크를 실제로 쓰는 포스트는 frontmatter에 affiliate: true 설정할 것.
-     상/하, 1권/2권처럼 분권된 책은 <div class="grid gap-3 md:grid-cols-2">로 감싸 BookCard 두 개를 나란히 배치 (comment는 대표 권에만) -->
+     상/하, 1권/2권처럼 분권된 책은 <div class="grid gap-3 md:grid-cols-2 items-start">로 감싸 BookCard 두 개를 나란히 배치 (comment는 대표 권에만).
+     items-start를 빼면 comment 있는 카드 높이에 맞춰 옆 카드가 늘어나 빈 공간이 생김 -->
 ```
 
 ### money 섹션 (수익화)
@@ -178,7 +180,15 @@ import BookCard from '@/components/BookCard.astro';
 ```mdx
 import AffiliateLink from '@/components/AffiliateLink.astro';
 <AffiliateLink href="https://link.coupang.com/..." provider="coupang" />
-<!-- provider: coupang | amazon | other. 제휴 글은 frontmatter에 affiliate: true -->
+<!-- provider: coupang | amazon | 11st | other. 제휴 글은 frontmatter에 affiliate: true.
+     provider별로 버튼 배경색(실제 브랜드 컬러)과 파비콘이 자동으로 붙어서, 한 글에 쿠팡/Amazon이 섞여도 색으로 구분됨. other는 색상 없이 사이트 기본 스타일 -->
+
+import CoupangProductCard from '@/components/CoupangProductCard.astro';
+<CoupangProductCard productId="7778899675" itemId="15996113423" />
+<!-- 권장: productId+itemId를 알면 정확히 그 상품 1개만 가져옴(쿠팡 상품 URL에서 확인 가능).
+     둘 다 없으면 keyword 텍스트 검색으로 폴백하는데, 이건 호출마다 순위가 흔들릴 수 있어
+     추가한 뒤 미리보기에서 실제로 맞는 상품이 나오는지 꼭 확인하고 필요하면 pickIndex로 조정하거나 href로 링크 직접 지정.
+     인증에 COUPANG_ACCESS_KEY/COUPANG_SECRET_KEY 필요(HMAC 서명, PUBLIC_ 접두사 금지) -->
 
 import AdSlot from '@/components/AdSlot.astro';
 <AdSlot slot="inArticle" />
