@@ -235,3 +235,15 @@ import AdSlot from '@/components/AdSlot.astro';
 - `series` + `series_order` 함께 지정 시 시리즈 TOC·이전/다음 네비게이션 자동 생성
 - `draft: true` 설정 시 빌드 결과에서 제외
 - 컴포넌트 전체 목록 및 Props 상세: [`docs/astro-components.md`](astro-components.md)
+
+---
+
+## 설치/설정 가이드 재사용 (링크 참조)
+
+특정 도구의 설치 절차가 이미 별도 포스트로 정리되어 있으면, 다른 포스트 본문에서 그 절차를 다시 설명하지 말고 링크로 참조한다. 중복 설명은 버전이 바뀔 때마다 여러 포스트를 따로 갱신해야 하는 문제를 만든다.
+
+| 도구 | 참조할 포스트 |
+|------|--------------|
+| Homebrew 설치 | `/tools/install-homebrew-2026` (`src/content/tools/ko/2026/install-homebrew-2026.md`) — Apple Silicon(`/opt/homebrew`)/Intel(`/usr/local`) 경로 차이, PATH(`brew shellenv`) 설정 포함. `brew install ...`로 패키지 설치가 필요한 포스트를 쓸 때는 설치 과정을 다시 쓰지 말고 이 글을 링크로 안내할 것 |
+
+새로 이런 "레퍼런스 포스트"가 생기면 이 표에 추가한다.

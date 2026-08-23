@@ -11,6 +11,8 @@ lang: ko
 thumbnail: "https://images.unsplash.com/photo-1530346460498-48afc564f57a?q=80&w=2940&auto=format&fit=crop"
 ---
 
+> **업데이트 안내**: 이 글은 Intel Mac 기준으로 작성되었습니다. Apple Silicon(M1~M4) Mac을 쓰고 있다면 설치 경로(`/opt/homebrew`)와 PATH 설정이 다르니 [최신 Homebrew 설치 가이드](/tools/install-homebrew-2026)를 참고하세요.
+
 [Homebrew](http://brew.sh)는 macOS용 패키지 관리자입니다. Debian 계열의 apt-get, RedHat 계열의 yum을 생각하면 이해하기가 쉽겠네요.
 
 git, gradle, python, scala 등의 패키지를 설치하려고 할때 해당 패키지의 홈페이지에서 다운로드 받아 설치해도 되지만 Homebrew를 이용하면 간단하게 설치할 수 있고, 또 패키지가 버전이 올라갔을 때 업그레이드도 쉽게 할 수 있습니다.

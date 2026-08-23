@@ -210,6 +210,14 @@ import ClockChart from '@/components/ClockChart.astro';
 
 ---
 
+## 설치/설정 가이드 재사용
+
+특정 도구의 설치 절차가 이미 레퍼런스 포스트로 정리되어 있으면, 본문에 설치 과정을 다시 쓰지 말고 링크로 참조한다 (`docs/post-writing-guide.md`의 "설치/설정 가이드 재사용" 표 참고).
+
+- **Homebrew 설치**가 필요한 포스트(예: `brew install ...`로 패키지를 설치하는 글)를 쓸 때는 설치 절차를 설명하지 말고 [`/tools/install-homebrew-2026`](../../src/content/tools/ko/2026/install-homebrew-2026.md)를 링크로 안내할 것.
+
+---
+
 ## 검증 체크리스트
 
 - [ ] 파일 경로가 `src/content/{섹션}/{lang}/{연도}/{slug}.{md|mdx}` 규칙에 맞는가
@@ -223,3 +231,4 @@ import ClockChart from '@/components/ClockChart.astro';
 - [ ] `series` 사용 시 `series_order`도 함께 지정했는가
 - [ ] 코드 블록 언어 태그가 Shiki 표준 소문자 식별자인가 (`Dockerfile`→`dockerfile`, `ApacheConf`→`apache`, `gradle`→`groovy` 등)
 - [ ] `CoupangProductCard`를 썼다면 `href`(파트너스 사이트에서 변환한 링크)+`title` 방식을 우선 사용했는가 — `productId`/`itemId`/`keyword`는 API 호출이 필요해 href로 안 될 때만
+- [ ] Homebrew 설치가 필요한 글이면 설치 절차를 다시 쓰지 않고 `/tools/install-homebrew-2026`을 링크했는가
