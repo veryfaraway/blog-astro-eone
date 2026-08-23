@@ -196,18 +196,25 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
 ```mdx
 import CoupangProductCard from '@/components/CoupangProductCard.astro';
 
-<!-- 권장: 쿠팡 상품 URL에서 확인한 productId+itemId로 정확히 그 상품만 지정 -->
+<!-- 권장: 쿠팡파트너스(partners.coupang.com) 사이트에서 상품을 직접 검색해 "링크 생성"으로
+     변환한 URL을 href로 지정. API 호출이 전혀 발생하지 않아 가장 안전하다. -->
+<CoupangProductCard href="https://link.coupang.com/a/파트너스사이트에서변환한링크" title="Seachem Tidal 55 걸이식 여과기" />
+
+<!-- href로 해결이 안 될 때만: 쿠팡 상품 URL에서 확인한 productId+itemId로 정확히 그 상품만 지정.
+     pnpm coupang 실행 시 API를 호출하므로 신중히 사용할 것 -->
 <CoupangProductCard productId="7778899675" itemId="15996113423" />
 
-<!-- productId/itemId를 모르면 keyword 검색으로 폴백 (결과가 흔들릴 수 있어 미리보기 확인 필수) -->
+<!-- productId/itemId도 모르면 keyword 검색으로 폴백 (결과가 흔들릴 수 있어 미리보기 확인 필수, API 호출 발생 — 가장 비권장) -->
 <CoupangProductCard keyword="Seachem Tidal 55 걸이식 여과기" />
 ```
 
-`productId`+`itemId`를 주면 정확히 그 상품 하나의 이미지·이름·가격·제휴 링크를 보여준다. 둘 다 없으면 `keyword` 텍스트 검색으로 대체되는데, 이건 **ISBN처럼 정확한 ID 조회가 아니라서** 추가한 뒤 반드시 미리보기에서 원하는 상품이 맞는지 확인할 것 — 다르면 키워드를 더 구체적으로 쓰거나 `pickIndex`로 다른 검색 결과를 선택한다.
+**포스트에 쿠팡 상품 카드를 추가할 때는 `href` 방식을 기본으로 쓴다.** 쿠팡파트너스 사이트에서 직접 상품을 검색하고 그 사이트가 만들어주는 변환된 링크(제휴 추적 포함)를 그대로 `href`에 넣으면 된다. 캐시에 상품명이 없으므로 `title`도 함께 지정할 것.
 
-> **⚠️ 카드를 추가하면 `pnpm coupang`을 실행하고 `src/data/coupang-products.json`을 함께 커밋할 것.**
-> 상품 정보는 이 캐시 파일에서만 읽는다(빌드 중 API 호출 없음). 캐시에 없는 카드는 **아예 렌더링되지 않는다**(빌드 로그에 경고가 뜬다).
-> 쿠팡 검색 API는 한도가 시간당 수십 회로 매우 낮고, **초과 3회 누적 시 파트너스 계정이 제한된다.** `--refresh`는 전체 상품을 재조회하므로 꼭 필요할 때만 쓸 것.
+`productId`+`itemId` 또는 `keyword` 방식은 검색 API를 호출해야 해서(아래 참고) `href`로 원하는 상품을 못 찾을 때만 예외적으로 사용한다. 특히 `keyword`는 **ISBN처럼 정확한 ID 조회가 아니라서** 결과가 흔들릴 수 있으니, 쓰게 되면 반드시 미리보기에서 원하는 상품이 맞는지 확인할 것.
+
+> **⚠️ `productId`+`itemId`/`keyword` 방식을 쓴다면 `pnpm coupang`을 실행하고 `src/data/coupang-products.json`을 함께 커밋할 것.**
+> 상품 정보는 이 캐시 파일에서만 읽는다(빌드 중 API 호출 없음 — API는 `pnpm coupang` 실행 시에만 호출된다). 캐시에 없는 카드는 **아예 렌더링되지 않는다**(빌드 로그에 경고가 뜬다).
+> 쿠팡 검색 API는 한도가 시간당 수십 회로 매우 낮고, **초과 3회 누적 시 파트너스 계정이 제한된다**(이미 초과 이력 1회 있음). `--refresh`는 전체 상품을 재조회하므로 꼭 필요할 때만 쓸 것.
 
 Props·캐시 구조·인증 상세는 [`docs/astro-components.md`](astro-components.md) 참조.
 

@@ -136,7 +136,12 @@ affiliate: true
 
 #### `CoupangProductCard.astro`
 
-쿠팡 상품 카드. 쿠팡파트너스 Open API에는 알라딘의 ISBN 조회 같은 공식 "상품 ID 직접 조회" 엔드포인트가 없고 `/products/search`(키워드 검색)만 제공하지만, **`productId`+`itemId`를 공백으로 이어붙여 키워드로 넘기면 검색 결과가 정확히 그 상품 1개로 좁혀지는 동작을 실제 API 호출로 확인**했다(쿠팡 사이트 자체 검색에서도 동일하게 동작 — 사용자 제보로 발견, 공식 문서화된 동작은 아니므로 향후 바뀔 수 있음). 그래서 `productId`+`itemId`를 주면 이 조합으로 정확 매칭을 시도하고, 응답의 `productId`가 실제로 요청한 값과 일치하는 항목만 신뢰한다(불일치 시 폴백). 두 값이 없으면 기존처럼 `keyword` 텍스트 검색 + `pickIndex`로 동작한다 — 이 경우는 호출 시점마다 검색 순위가 흔들릴 수 있으므로 **포스트 미리보기에서 실제로 맞는 상품이 나오는지 반드시 확인할 것**.
+쿠팡 상품 카드.
+
+> **⚠️ 권장 방법: `href`로 직접 링크 지정 (API 호출 0회)**
+> 쿠팡파트너스(partners.coupang.com) 사이트에서 상품을 직접 검색해 "링크 생성"으로 변환된 URL(제휴 추적 포함)을 받아 `href`로 넘기는 방식을 **우선 사용한다.** 이 경우 `pnpm coupang` 실행도, 검색 API 호출도 전혀 발생하지 않는다. `href`를 쓸 때는 캐시에 상품명이 없으므로 `title`도 함께 지정할 것. 아래 `productId`+`itemId` / `keyword` 방식은 **API 호출이 필요한 경우에만(href로 해결이 안 될 때) 신중히 사용한다** — 한도가 극단적으로 낮고 초과 이력이 이미 있어(누적 3회 시 계정 제한) 반복 사용은 위험하다.
+
+쿠팡파트너스 Open API에는 알라딘의 ISBN 조회 같은 공식 "상품 ID 직접 조회" 엔드포인트가 없고 `/products/search`(키워드 검색)만 제공하지만, **`productId`+`itemId`를 공백으로 이어붙여 키워드로 넘기면 검색 결과가 정확히 그 상품 1개로 좁혀지는 동작을 실제 API 호출로 확인**했다(쿠팡 사이트 자체 검색에서도 동일하게 동작 — 사용자 제보로 발견, 공식 문서화된 동작은 아니므로 향후 바뀔 수 있음). 그래서 `productId`+`itemId`를 주면 이 조합으로 정확 매칭을 시도하고, 응답의 `productId`가 실제로 요청한 값과 일치하는 항목만 신뢰한다(불일치 시 폴백). 이 방식은 캐시에 없으면 `pnpm coupang` 실행 시 API를 호출하므로, **href로 대체할 수 없을 때만** 사용할 것. 두 값이 없으면 기존처럼 `keyword` 텍스트 검색 + `pickIndex`로 동작한다 — 이 경우는 호출 시점마다 검색 순위가 흔들릴 수 있고 API 호출도 필요해 가장 권장하지 않는 방식이다. 쓰게 되면 **포스트 미리보기에서 실제로 맞는 상품이 나오는지 반드시 확인할 것**.
 
 이미지·상품명·가격·트래킹 링크(`productUrl`, 이미 제휴 추적 포함)를 보여준다. 응답에 평점 정보는 없고 대신 `isRocket`(로켓배송)·`isFreeShipping`(무료배송) 뱃지를 보여준다.
 
@@ -183,23 +188,25 @@ make coupang-refresh  # 전체 가격/정보 갱신 (확인 프롬프트 있음,
 ```mdx
 import CoupangProductCard from '@/components/CoupangProductCard.astro';
 
-<!-- 정확 매칭: 쿠팡 상품 URL의 productId/itemId를 알고 있을 때 (권장) -->
+<!-- 권장: 쿠팡파트너스 사이트에서 검색 → "링크 생성"으로 변환한 URL을 직접 지정 (API 호출 0회) -->
+<CoupangProductCard href="https://link.coupang.com/a/파트너스사이트에서변환한링크" title="Seachem Tidal 55 걸이식 여과기" />
+
+<!-- 정확 매칭: 쿠팡 상품 URL의 productId/itemId를 알고 있을 때. href로 안 될 때만 사용 (API 호출 발생) -->
 <CoupangProductCard productId="7778899675" itemId="15996113423" />
 
-<!-- 키워드 검색: 정확한 ID를 모를 때. 결과가 흔들릴 수 있어 미리보기 확인 필수 -->
+<!-- 키워드 검색: 정확한 ID를 모를 때. 결과가 흔들릴 수 있어 미리보기 확인 필수 (API 호출 발생, 가장 비권장) -->
 <CoupangProductCard keyword="Seachem Tidal 55 걸이식 여과기" />
 <CoupangProductCard keyword="AquaClear 걸이식 여과기" pickIndex={1} title="AquaClear 50" />
-<CoupangProductCard keyword="..." href="https://link.coupang.com/a/직접만든링크로강제지정" />
 ```
 
 | Prop | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
-| `productId` | `string \| number` | — | 쿠팡 상품 ID. `itemId`와 함께 줘야 정확 매칭 모드로 동작 |
+| `href` | `string` | 캐시된 `productUrl` | **권장.** 쿠팡파트너스 사이트에서 변환한 링크를 직접 지정. API 조회 대상에서 제외되어 호출이 전혀 발생하지 않는다 |
+| `title` | `string` | — | `href` 사용 시 상품명 표시용(캐시가 없어 자동으로 못 채움). 캐시 미스 시 폴백 표시로도 쓰이며, 없으면 `keyword`를 제목으로 대신 쓴다 |
+| `productId` | `string \| number` | — | 쿠팡 상품 ID. `itemId`와 함께 줘야 정확 매칭 모드로 동작. `href`로 해결 안 될 때만 사용 — `pnpm coupang` 실행 시 API 호출 발생 |
 | `itemId` | `string \| number` | — | 쿠팡 상품 옵션(itemId). `productId`와 세트로 사용 |
-| `keyword` | `string` | — | `productId`+`itemId`가 없을 때 쓰는 검색 키워드 (구체적일수록 원하는 상품이 상위에 나올 확률이 높음) |
-| `title` | `string` | — | 캐시 미스 시 폴백 표시용. 없으면 `keyword`를 제목으로 대신 쓴다 |
+| `keyword` | `string` | — | `productId`+`itemId`가 없을 때 쓰는 검색 키워드. API 호출이 발생하고 결과도 흔들릴 수 있어 가장 비권장 |
 | `pickIndex` | `number` | `0` | keyword 모드에서 검색 결과(최대 10개) 중 몇 번째를 쓸지. **캐시 키에 포함되므로** 바꾸면 재조회가 필요하다 |
-| `href` | `string` | 캐시된 `productUrl` | 특정 링크로 강제 지정하고 싶을 때만 사용. 지정하면 API 조회 대상에서 제외된다 |
 
 > `subId`(파트너스 채널 ID) prop은 제거됐다. 검색 API 호출 파라미터였는데 렌더링 시 API를 호출하지 않게 되면서 의미가 없어졌다.
 

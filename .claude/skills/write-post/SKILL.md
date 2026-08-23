@@ -184,11 +184,12 @@ import AffiliateLink from '@/components/AffiliateLink.astro';
      provider별로 버튼 배경색(실제 브랜드 컬러)과 파비콘이 자동으로 붙어서, 한 글에 쿠팡/Amazon이 섞여도 색으로 구분됨. other는 색상 없이 사이트 기본 스타일 -->
 
 import CoupangProductCard from '@/components/CoupangProductCard.astro';
-<CoupangProductCard productId="7778899675" itemId="15996113423" />
-<!-- 권장: productId+itemId를 알면 정확히 그 상품 1개만 가져옴(쿠팡 상품 URL에서 확인 가능).
-     둘 다 없으면 keyword 텍스트 검색으로 폴백하는데, 이건 호출마다 순위가 흔들릴 수 있어
-     추가한 뒤 미리보기에서 실제로 맞는 상품이 나오는지 꼭 확인하고 필요하면 pickIndex로 조정하거나 href로 링크 직접 지정.
-     인증에 COUPANG_ACCESS_KEY/COUPANG_SECRET_KEY 필요(HMAC 서명, PUBLIC_ 접두사 금지) -->
+<CoupangProductCard href="https://link.coupang.com/a/파트너스사이트에서변환한링크" title="상품명" />
+<!-- 권장: 쿠팡파트너스(partners.coupang.com) 사이트에서 상품을 직접 검색해 "링크 생성"으로
+     변환한 URL을 href로 지정. API 호출이 전혀 발생하지 않아 가장 안전함. title도 함께 지정할 것(캐시가 없어 자동 표시 불가).
+     productId+itemId(쿠팡 상품 URL에서 확인 가능)나 keyword 검색은 pnpm coupang 실행 시 API를 호출하므로
+     href로 해결이 안 될 때만 예외적으로 사용 — 검색 API 호출 한도가 시간당 수십 회로 매우 낮고 초과 3회 누적 시 파트너스 계정이 제한됨.
+     인증에 COUPANG_ACCESS_KEY/COUPANG_SECRET_KEY 필요(HMAC 서명, PUBLIC_ 접두사 금지, pnpm coupang 스크립트 전용) -->
 
 import AdSlot from '@/components/AdSlot.astro';
 <AdSlot slot="inArticle" />
@@ -221,3 +222,4 @@ import ClockChart from '@/components/ClockChart.astro';
 - [ ] money 제휴 글이면 `affiliate: true`인가
 - [ ] `series` 사용 시 `series_order`도 함께 지정했는가
 - [ ] 코드 블록 언어 태그가 Shiki 표준 소문자 식별자인가 (`Dockerfile`→`dockerfile`, `ApacheConf`→`apache`, `gradle`→`groovy` 등)
+- [ ] `CoupangProductCard`를 썼다면 `href`(파트너스 사이트에서 변환한 링크)+`title` 방식을 우선 사용했는가 — `productId`/`itemId`/`keyword`는 API 호출이 필요해 href로 안 될 때만
