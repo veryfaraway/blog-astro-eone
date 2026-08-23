@@ -9,7 +9,7 @@ tags:
   - "apple-silicon"
 draft: false
 lang: ko
-thumbnail: ""
+thumbnail: "https://images.unsplash.com/photo-1758857088018-821209605077?q=80&w=2728&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
 [Homebrew](https://brew.sh)는 macOS(및 Linux)용 패키지 관리자입니다. Debian 계열의 apt-get, RedHat 계열의 yum을 생각하면 이해하기 쉽습니다.
