@@ -15,7 +15,7 @@ series: "Raycast 완전 정복기"
 series_order: 3
 ---
 
-[1편](./raycast-complete-guide-2026)에서 Alfred와의 차이를, [2편](./raycast-advanced-guide-2026)에서 윈도우 관리와 웹 검색 통합을 다뤘습니다. 마지막 3편의 주제는 많은 분이 손꼽아 기다리셨을 **Raycast AI**입니다. "굳이 Raycast에서 AI를 쓸 이유가 있나?" 싶으셨다면, 이 글을 다 읽고 나서 생각이 바뀌실 겁니다.
+[1편](/tools/raycast-complete-guide-2026)에서 Alfred와의 차이를, [2편](/tools/raycast-advanced-guide-2026)에서 윈도우 관리와 웹 검색 통합을 다뤘습니다. 마지막 3편의 주제는 많은 분이 손꼽아 기다리셨을 **Raycast AI**입니다. "굳이 Raycast에서 AI를 쓸 이유가 있나?" 싶으셨다면, 이 글을 다 읽고 나서 생각이 바뀌실 겁니다.
 
 ---
 
