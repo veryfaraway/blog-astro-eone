@@ -1,0 +1,289 @@
+---
+title: "Best Mac Window Manager 2026: Is Raycast's Free Plan Enough?"
+description: "A comparison of Mac window managers — how far macOS native tiling and Raycast's free Window Management actually go, when Rectangle, Magnet, Moom, Loop or Swish are worth it, and eight tips to get the most out of Raycast without installing anything else."
+date: 2026-08-29
+category: macOS
+tags:
+  - "macOS"
+  - "Window Manager"
+  - "Raycast"
+  - "Rectangle"
+  - "Productivity"
+draft: false
+lang: en
+thumbnail: ""
+---
+
+import Alert from '@/components/Alert.astro';
+
+There's a motion you repeat dozens of times a day on a Mac. Grab the browser window, drag it to the left half, snap the editor to the right, then nudge both because they never quite line up. Anyone coming from Windows snapping searches for a fix in their first week.
+
+A **window manager** collapses that whole routine into one keystroke. But the same question from the [clipboard manager comparison](/en/tools/mac-clipboard-manager-apps) comes back here: **if you already run [Raycast](/tools/raycast-complete-guide-2026), do you need another app?** Especially now that macOS tiles windows on its own.
+
+Short answer: **Raycast's free plan already replaces Rectangle and Magnet.** But there are exactly three things it won't do for free. Let's draw that line precisely.
+
+---
+
+## The 30-second answer
+
+| Your situation | The answer |
+| :--- | :--- |
+| You split a window in half once or twice a day | **macOS native tiling** is enough |
+| You already use Raycast | **Install nothing.** Just assign hotkeys |
+| No launcher, but you want keyboard snapping | **Rectangle** — free, open source |
+| You need sizes and positions you define yourself | **Rectangle Pro** or **Raycast Pro** |
+| You want to save and restore multi-app arrangements | **Moom** — saved layouts are unmatched |
+| You'd rather use the mouse or trackpad | **Magnet** or **Swish** |
+| You want windows tiled automatically | **AeroSpace** — i3-style |
+
+---
+
+## Mac window managers at a glance
+
+| App | Price | Approach | Saved layouts | Open source | Character |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **macOS native tiling** | Free | Drag + shortcuts | ✗ | ✗ | Built into the OS, minimal |
+| **Raycast** (free) | Free | Hotkeys + search | ✗ | ✗ | Built into the launcher |
+| **Raycast Pro** | $8–10/mo | Above + custom commands | ✓ | ✗ | Plus AI, unlimited clipboard |
+| **Rectangle** | Free | Hotkeys + edge snapping | ✗ | ✓ | The de facto standard |
+| **Rectangle Pro** | $9.99 once | Above + snap targets, throw | ✓ | ✗ | 3 Macs · 10-day trial |
+| **Magnet** | $4.99 once | Drag-to-snap first | ✗ | ✗ | Best seller on the App Store |
+| **Moom 4** | $15 once | Grid palette | ✓ | ✗ | The king of saved layouts |
+| **Loop** | Free | Radial menu | ✗ | ✓ | Hold a key, pick a direction |
+| **Swish** | $16 once | Trackpad gestures | ✗ | ✗ | Swipe on the title bar |
+| **AeroSpace** | Free | Automatic tiling (i3-style) | ✓ (config file) | ✓ | Plain text config, CLI-first |
+| **yabai** | Free | Automatic tiling | ✓ (config file) | ✓ | Some features need SIP off |
+
+<Alert type="info" title="One thing they all need">
+Every app here requires **System Settings → Privacy & Security → Accessibility** permission, because moving another app's windows is a privileged operation. Only macOS native tiling is exempt.
+</Alert>
+
+---
+
+## First: how far does macOS native tiling go?
+
+Check this before installing anything. Window tiling arrived in macOS Sequoia and is still there in Tahoe, and a surprising number of people go app-shopping without ever trying it.
+
+**There are three ways to use it.**
+
+- **Drag** a window to a screen edge and a placement preview appears
+- **Hover** over the green button for a left/right/top/bottom/quarters menu
+- Use a **keyboard shortcut** directly
+
+The built-in shortcuts:
+
+| Action | Shortcut |
+| :--- | :--- |
+| Fill | `fn` + `⌃` + `F` |
+| Center | `fn` + `⌃` + `C` |
+| Left / Right half | `fn` + `⌃` + `←` / `→` |
+| Top / Bottom half | `fn` + `⌃` + `↑` / `↓` |
+| Return to previous size | `fn` + `⌃` + `R` |
+| Two windows side by side | `fn` + `⌃` + `⇧` + `←` / `→` |
+| One window plus quarters | `fn` + `⌃` + `⌥` + `⇧` + `←` / `→` |
+
+**The limits are just as clear.** There are no thirds or sixths, the modifier stacks are finger-twisters, and there's no command to move a window to another display. Above all, **you can't remap any of it.**
+
+<Alert type="tip" title="This is the fork in the road">
+If halving a window once or twice a day is your whole workflow, you don't need an app. The rest of this post is for people who do it **dozens of times a day**, and for anyone who needs thirds and multi-monitor moves.
+</Alert>
+
+---
+
+## What Raycast's free Window Management actually covers
+
+This is the most misunderstood part. Raycast's window management is **a free core feature, not a Pro one**. The official pricing page lists it right alongside Clipboard History, Quicklinks and Snippets under the free plan's core features.
+
+The line between free and Pro is exactly one thing: **whether you define it yourself.**
+
+| Capability | Free | Pro |
+| :--- | :---: | :---: |
+| Halves / thirds / quarters / sixths presets | ✓ | ✓ |
+| Maximize / Almost Maximize / Center / Reasonable Size | ✓ | ✓ |
+| Assign a hotkey to any command | ✓ | ✓ |
+| Run commands by name from the launcher | ✓ | ✓ |
+| Move windows between displays | ✓ | ✓ |
+| Move windows between desktops (Spaces) | ✓ | ✓ |
+| Trigger commands via deeplink | ✓ | ✓ |
+| **Create Command** (your own size, position, offsets) | ✗ | ✓ |
+| **Create Layout** (a saved multi-app arrangement) | ✗ | ✓ |
+
+In other words, **everything free Rectangle does, free Raycast does too** — with more presets, in fact. The only reasons to reach for Pro are "I need a size that isn't in the presets" and "I want to save an arrangement of several apps."
+
+<Alert type="warning" title="Heads up: no hotkeys are set by default">
+Installing Raycast does not give you window shortcuts. **Nothing happens until you assign hotkeys yourself.** That accounts for 99% of "I heard Raycast does windows but it didn't work for me." Start with tip 1.
+</Alert>
+
+---
+
+## Eight ways to get the most out of Raycast window management
+
+All of this works on the free plan.
+
+### 1. Port your Rectangle keymap over
+
+Go to `Settings` → `Extensions` → `Window Management` and assign a hotkey to each command. If you're coming from Rectangle or Magnet, **reuse the exact keys you already have.** The adjustment period drops to zero.
+
+| Command | Suggested hotkey |
+| :--- | :--- |
+| Left Half | `⌃⌥←` |
+| Right Half | `⌃⌥→` |
+| Maximize | `⌃⌥↵` |
+| Almost Maximize | `⌃⌥⇧↵` |
+| Center | `⌃⌥C` |
+| Top Left / Top Right | `⌃⌥U` / `⌃⌥I` |
+| Bottom Left / Bottom Right | `⌃⌥J` / `⌃⌥K` |
+| Next Display | `⌃⌥⌘→` |
+
+Skip this one and the other seven are pointless.
+
+### 2. Use thirds and sixths on wide displays
+
+On a 27-inch or larger external monitor, halves are too big. **First Third / Center Third / Last Third** plus **First Two Thirds / Last Two Thirds** end up doing the real work.
+
+- Editor in the left two thirds, terminal in the right third
+- Document in the center third, references on both sides
+
+On an ultrawide you'll want sixths. Native macOS tiling has none of this.
+
+### 3. Save your hotkeys, use the launcher for the rest
+
+Assign a hotkey to everything and you'll remember none of them. **Hotkeys for what you use ten times a day; the launcher by name for everything else.**
+
+Set an **alias** per command to make that faster. Give `Left Two Thirds` the alias `l2` and it's Raycast, `l2`, Enter. You get the whole preset library without burning hotkey slots.
+
+### 4. Map the multi-monitor commands separately
+
+On a laptop-plus-external-display setup, these three make the biggest difference.
+
+- **Move to Next / Previous Display** — throw a window to the other screen
+- **Restore** — put a window back to its original size and position (great after unplugging a dock)
+- **Center on Display** — center it at a sensible size
+
+**Restore** in particular sells itself the first time you use it: it undoes the window scramble that happens every time you dock and undock.
+
+### 5. Move windows across Spaces too
+
+Separate from placement, there's **Move Window to Next / Previous Desktop**. What used to be a mouse drag in Mission Control becomes one keystroke. If you organize Spaces by task, you'll reach for this more often than for splitting.
+
+### 6. Dodge shortcut conflicts with a Hyper key
+
+`⌃⌥` combos collide constantly with IDEs and terminals. Use Karabiner-Elements to turn `Caps Lock` into a **Hyper key (`⌃⌥⇧⌘` at once)** and you get an entire shortcut namespace no app will ever claim.
+
+`Hyper` + `←` for left half, `Hyper` + `↵` for maximize, and so on — all of window management under one thumb. Setup is in the [Karabiner-Elements guide](/tools/karabiner-elements-guide-1) *(in Korean)*.
+
+### 7. Wire commands into automation with deeplinks
+
+Every window management command can produce a **deeplink**. Call it from the Shortcuts app or a shell script and your "meeting layout" becomes triggerable from outside Raycast.
+
+```bash
+open "raycast://extensions/raycast/window-management/left-half"
+```
+
+It's also a practical workaround for the free plan's missing Create Layout: chain app launches and placement commands in a shell script and you've rebuilt saved layouts by hand.
+
+### 8. Keep one, delete the rest
+
+Running Rectangle and Raycast side by side with different keys means **you'll never be sure which app owns which shortcut** — and when both register the same hotkey, one silently loses.
+
+Window management is muscle memory. If you're moving to Raycast, **quit Rectangle and remove it from Login Items.**
+
+---
+
+## Three moments when Raycast alone isn't enough
+
+### 1. You need a size that isn't in the presets → Rectangle Pro
+
+"62% of the screen, offset 20px from the left" is where the free plan stops, because **Create Command** is a Pro feature.
+
+Raycast Pro starts at $8/month billed annually, which is a lot to pay for window management alone. **[Rectangle Pro](https://rectangleapp.com/pro)** solves the same problem for $9.99, once.
+
+```bash
+brew install --cask rectangle
+```
+
+> That command installs free Rectangle; Pro comes from the official site with a 10-day trial.
+
+Custom sizes aren't all Pro adds:
+
+- **Snap targets** you can place anywhere on screen
+- **Throw** a window into 16 sizes and positions from wherever it is
+- **Workspaces** — arrange several apps with one shortcut
+- **Stash** windows at the screen edge; they slide out when the cursor touches
+- iCloud config sync, and one license across 3 Macs
+
+### 2. You want to save multi-app arrangements → Moom
+
+"Coding mode" means the editor, terminal, browser and Slack each in a fixed spot. "Writing mode" is a different arrangement entirely. Rebuilding either with four keystrokes every time means you eventually stop bothering.
+
+That's exactly **[Moom](https://manytricks.com/moom/)**'s strength: it **saves a whole arrangement and restores it from one trigger.** It can even apply a saved layout automatically the moment you connect an external display.
+
+It's **$15 once** ($8 upgrade for existing owners), sold directly by Many Tricks. There's a free trial, so find out first whether you're actually someone who saves layouts — plenty of people discover they aren't.
+
+If you already pay for Raycast Pro, **Create Layout** does the same job at no extra cost.
+
+### 3. You'd rather use your hands than your memory → Magnet, Swish, Loop
+
+Some people simply don't want to memorize shortcuts. For them, Raycast is the wrong tool from the start.
+
+- **[Magnet](https://magnet.crowdcafe.com/)** — $4.99 once, macOS 13+. Drag a window to a screen edge and it snaps. The best-selling window manager on the App Store, and there's almost nothing to configure.
+- **[Swish](https://highlyopinionated.co/swish/)** — $16 once (14-day trial, 2 Macs). **Swipe on the title bar with your trackpad** and the window places itself, with no dragging at all. Around 30 gestures including pinch-to-close and pinch-to-fullscreen; also included with Setapp.
+- **[Loop](https://github.com/MrKai77/Loop)** — free and open source. **Hold a key and a radial menu appears**; push the cursor in a direction to pick a placement. Directions instead of key combinations.
+
+```bash
+brew install --cask loop
+```
+
+<Alert type="tip" title="Going further: automatic tiling">
+If you want windows that **never overlap in the first place** rather than windows you place, you want a tiling window manager. **[AeroSpace](https://github.com/nikitabobko/AeroSpace)** brings i3-style tiling driven by a plain text config, with its own virtual workspaces instead of native Spaces — and **it doesn't require disabling SIP.** It's still a pre-1.0 public beta, so the config format may change.
+
+The older option, **yabai**, is more powerful but needs SIP partially disabled for some features. If touching your security settings gives you pause, start with AeroSpace.
+</Alert>
+
+---
+
+## So which one are you?
+
+| Your profile | Recommended setup |
+| :--- | :--- |
+| You split windows occasionally | **macOS native tiling only** |
+| On Raycast, presets are enough | **Raycast only** (just set hotkeys) |
+| No launcher, want free keyboard snapping | **Rectangle only** |
+| Need custom sizes and workspaces | **Rectangle Pro** ($9.99) |
+| Save a layout per working mode | **Moom** ($15) or **Raycast Pro** |
+| Mouse and drag first | **Magnet** ($4.99) |
+| Trackpad gestures first | **Swish** ($16) |
+| A developer at home in config files | **AeroSpace** (free) |
+
+The most common mistake is **running two window managers at once.** Shortcuts eat each other, things work "most of the time," and you lose an hour finding out why. Pick one and delete the rest.
+
+---
+
+## FAQ
+
+**Q. Does macOS snap windows on its own?**
+Yes. OS-level tiling arrived in Sequoia — via drag, the green button menu, or `fn` + `⌃` + arrow keys. But there are no thirds and you can't remap the shortcuts, so heavy users outgrow it.
+
+**Q. Is Raycast's window management a paid feature?**
+No. Presets, hotkeys and multi-display moves are all in the free plan. Pro is only needed for **custom sizes (Create Command)** and **saved layouts (Create Layout)**.
+
+**Q. Can I run Rectangle and Raycast together?**
+It works, but don't. When both register the same hotkey one silently loses, and you'll never be sure which app is handling what. If you're switching, quit the old app and remove it from Login Items.
+
+**Q. Do window managers drain the battery?**
+Rectangle and Raycast sit idle until a hotkey fires, so there's no perceptible cost. **Automatic tiling managers (AeroSpace, yabai)** are a different story — they watch window events continuously.
+
+**Q. Do I really have to grant Accessibility permission?**
+Yes — resizing another app's windows requires it. Only native tiling is exempt. If you granted it and things still don't work, toggling the app's checkbox off and back on after an update is the usual fix.
+
+---
+
+## Wrapping up
+
+To summarize:
+
+1. **If you split windows occasionally, native tiling is the whole answer.** Try `fn` + `⌃` + arrow keys before you go looking for an app.
+2. **If you're on Raycast, there's no reason to install a window manager.** Assign hotkeys and you have free Rectangle.
+3. **Custom sizes and saved layouts** are the only things worth paying for — Rectangle Pro ($9.99) and Moom ($15) respectively.
+
+If you're new to Raycast, the [complete Raycast guide](/tools/raycast-complete-guide-2026) and the [advanced Raycast guide](/tools/raycast-advanced-guide-2026) are good next reads, and if you're weighing Pro, see the [7-day Pro trial plan](/tools/raycast-pro-trial-guide) *(all in Korean)*. The companion piece on [Mac clipboard managers](/en/tools/mac-clipboard-manager-apps) applies the same test to another category of app you may not need.
