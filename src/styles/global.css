@@ -408,6 +408,134 @@ html[data-color-theme="slate"].dark {
   height: auto;
 }
 
+/* 클릭하면 라이트박스로 확대. 스크립트가 .is-zoomable을 붙인 다이어그램에만 적용된다. */
+.mermaid-diagram.is-zoomable {
+  position: relative;
+  cursor: zoom-in;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+.mermaid-diagram.is-zoomable:hover,
+.mermaid-diagram.is-zoomable:focus-visible {
+  background-color: color-mix(in oklch, var(--foreground) 5%, transparent);
+}
+.mermaid-diagram.is-zoomable:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mermaid-zoom-hint {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background-color: color-mix(in oklch, var(--card) 88%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+.mermaid-diagram.is-zoomable:hover .mermaid-zoom-hint,
+.mermaid-diagram.is-zoomable:focus-visible .mermaid-zoom-hint {
+  opacity: 1;
+}
+
+/* ── Mermaid 라이트박스 ── */
+.mermaid-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background-color: oklch(0 0 0 / 0.72);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.mermaid-lightbox.is-open {
+  opacity: 1;
+}
+.mermaid-lightbox__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  padding: 0.75rem;
+  flex: none;
+}
+.mermaid-lightbox__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--card);
+  color: var(--card-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.mermaid-lightbox__btn:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+.mermaid-lightbox__btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mermaid-lightbox__stage {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+}
+.mermaid-lightbox__stage.is-panning {
+  cursor: grabbing;
+}
+.mermaid-lightbox__canvas {
+  transform-origin: center center;
+  will-change: transform;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--card);
+}
+.mermaid-lightbox__canvas svg {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(92vw, 1400px);
+  max-height: 78vh;
+}
+.mermaid-lightbox__footer {
+  flex: none;
+  padding: 0.5rem 0.75rem 0.9rem;
+  text-align: center;
+  color: oklch(1 0 0 / 0.7);
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mermaid-lightbox,
+  .mermaid-diagram.is-zoomable,
+  .mermaid-zoom-hint {
+    transition: none;
+  }
+}
+
 /* scrollbar-none utility */
 .scrollbar-none {
   scrollbar-width: none;

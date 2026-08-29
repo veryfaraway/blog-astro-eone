@@ -347,42 +347,317 @@ const breadcrumbJsonLd = {
 </script>
 
 <script is:inline>
+  let mermaidApi = null;
+  // 다크모드 토글 시 다시 그리려면 원본 소스를 들고 있어야 한다
+  const mermaidDiagrams = [];
+  let mermaidRenderToken = 0;
+
+  const isDarkMode = () => document.documentElement.classList.contains('dark');
+
+  function configureMermaid() {
+    mermaidApi.initialize({
+      startOnLoad: false,
+      theme: isDarkMode() ? 'dark' : 'neutral',
+      securityLevel: 'loose',
+    });
+  }
+
+  async function renderDiagram(container, source) {
+    const id = 'mermaid-' + Math.random().toString(36).slice(2, 9);
+    try {
+      const { svg } = await mermaidApi.render(id, source);
+      container.innerHTML = svg;
+      makeZoomable(container);
+      return true;
+    } catch {
+      return false; // 개별 다이어그램 실패 시 호출 측에서 코드블록 유지
+    }
+  }
+
   async function initMermaid() {
     // 다이어그램 없으면 mermaid 로드 자체를 스킵
     if (!document.querySelector('pre[data-language="mermaid"]')) return;
-
-    const isDark = document.documentElement.classList.contains('dark');
 
     try {
       const { default: mermaid } = await import(
         'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'
       );
-
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: isDark ? 'dark' : 'neutral',
-        securityLevel: 'loose',
-      });
+      mermaidApi = mermaid;
+      configureMermaid();
 
       const blocks = document.querySelectorAll('pre[data-language="mermaid"]');
       for (const pre of blocks) {
-        const text = pre.querySelector('code')?.textContent?.trim() ?? '';
-        if (!text) continue;
+        const source = pre.querySelector('code')?.textContent?.trim() ?? '';
+        if (!source) continue;
 
-        const id = 'mermaid-' + Math.random().toString(36).slice(2, 9);
-        try {
-          const { svg } = await mermaid.render(id, text);
-          const container = document.createElement('div');
-          container.className = 'mermaid-diagram not-prose';
-          container.innerHTML = svg;
+        const container = document.createElement('div');
+        container.className = 'mermaid-diagram not-prose';
+        if (await renderDiagram(container, source)) {
           pre.replaceWith(container);
-        } catch {
-          // 개별 다이어그램 실패 시 코드블록 유지
+          mermaidDiagrams.push({ container, source });
         }
       }
+
+      watchThemeChange();
     } catch {
       // mermaid CDN 로드 실패 시 코드블록 유지
     }
+  }
+
+  /* mermaid는 렌더링 시점의 테마로 SVG를 한 번 굽기 때문에, 글을 읽던 중
+     다크모드를 토글하면 다이어그램 색만 그대로 남는다. html의 class 변화를
+     감시해서 테마가 실제로 바뀐 경우에만 전부 다시 그린다. */
+  function watchThemeChange() {
+    let wasDark = isDarkMode();
+
+    new MutationObserver(async () => {
+      if (isDarkMode() === wasDark) return; // 테마와 무관한 class 변경은 무시
+      wasDark = isDarkMode();
+
+      // 빠르게 연타했을 때 이전 렌더가 뒤늦게 덮어쓰지 않도록
+      const token = ++mermaidRenderToken;
+      configureMermaid();
+      for (const { container, source } of mermaidDiagrams) {
+        if (token !== mermaidRenderToken) return;
+        await renderDiagram(container, source);
+      }
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+
+  /* ── 다이어그램 클릭 시 라이트박스로 확대 ──
+     mermaid 결과물이 SVG(벡터)라 확대해도 깨지지 않는다. 원본 SVG를 복제해
+     쓰되, mermaid가 만든 스타일이 #id 선택자로 스코프돼 있어 id 중복을 피하려면
+     복제본의 id를 새로 바꿔줘야 한다. */
+  function makeZoomable(container) {
+    if (!container.querySelector('svg')) return;
+
+    // 힌트 배지는 innerHTML 교체 때 함께 날아가므로 렌더링할 때마다 다시 붙인다
+    const hint = document.createElement('span');
+    hint.className = 'mermaid-zoom-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = '🔍 클릭해서 확대';
+    container.appendChild(hint);
+
+    // 반면 리스너는 컨테이너에 남아 있다. 테마 토글로 다시 그릴 때 중복으로
+    // 달리면 클릭 한 번에 라이트박스가 여러 개 열린다.
+    if (container.dataset.zoomBound === '1') return;
+    container.dataset.zoomBound = '1';
+
+    container.classList.add('is-zoomable');
+    container.setAttribute('role', 'button');
+    container.setAttribute('tabindex', '0');
+    container.setAttribute('aria-label', '다이어그램 확대해서 보기');
+
+    // 클릭 시점에 SVG를 다시 찾아야 리렌더된 최신 다이어그램이 열린다
+    const open = () => {
+      const svg = container.querySelector('svg');
+      if (svg) openLightbox(svg);
+    };
+    container.addEventListener('click', open);
+    container.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
+  }
+
+  function cloneSvg(svg) {
+    const oldId = svg.id;
+    const newId = 'mermaid-zoom-' + Math.random().toString(36).slice(2, 9);
+    const holder = document.createElement('div');
+    // mermaid 내부 <style>이 #oldId로 스코프돼 있어 문자열 치환으로 함께 바꾼다
+    holder.innerHTML = oldId ? svg.outerHTML.split(oldId).join(newId) : svg.outerHTML;
+    const clone = holder.firstElementChild;
+    if (!clone) return null;
+
+    // mermaid는 SVG에 width="100%"를 걸어둔다. shrink-to-fit 컨테이너 안에서는
+    // 이게 0으로 무너지므로, viewBox의 고유 크기를 실제 width/height로 박아준다.
+    const vb = svg.viewBox?.baseVal;
+    const rect = svg.getBoundingClientRect();
+    const w = vb?.width || rect.width;
+    const h = vb?.height || rect.height;
+    if (w && h) {
+      clone.setAttribute('width', String(w));
+      clone.setAttribute('height', String(h));
+    }
+    // mermaid가 걸어둔 인라인 max-width는 제거만 한다. 'none'으로 덮으면
+    // 인라인 스타일이 우선순위를 가져가 스타일시트의 뷰포트 상한이 무시된다.
+    clone.style.removeProperty('max-width');
+    return clone;
+  }
+
+  function openLightbox(sourceSvg) {
+    const clone = cloneSvg(sourceSvg);
+    if (!clone) return;
+
+    const lastFocused = document.activeElement;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'mermaid-lightbox';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', '확대한 다이어그램');
+    overlay.innerHTML = `
+      <div class="mermaid-lightbox__toolbar">
+        <button type="button" class="mermaid-lightbox__btn" data-act="out" aria-label="축소">−</button>
+        <button type="button" class="mermaid-lightbox__btn" data-act="in" aria-label="확대">+</button>
+        <button type="button" class="mermaid-lightbox__btn" data-act="reset" aria-label="화면에 맞추기">맞춤</button>
+        <button type="button" class="mermaid-lightbox__btn" data-act="close" aria-label="닫기">✕</button>
+      </div>
+      <div class="mermaid-lightbox__stage"><div class="mermaid-lightbox__canvas"></div></div>
+      <p class="mermaid-lightbox__footer">스크롤·핀치로 확대 · 드래그로 이동 · 더블클릭으로 초기화 · Esc로 닫기</p>
+    `;
+
+    const stage = overlay.querySelector('.mermaid-lightbox__stage');
+    const canvas = overlay.querySelector('.mermaid-lightbox__canvas');
+    canvas.appendChild(clone);
+
+    const bodyOverflow = document.body.style.overflow;
+    const MIN = 0.4;
+    const MAX = 8;
+    let scale = 1;
+    let tx = 0;
+    let ty = 0;
+    // 드래그로 끝난 클릭이 배경 클릭(=닫기)으로 오인되지 않게 하는 플래그
+    let dragged = false;
+
+    const clamp = (v) => Math.min(MAX, Math.max(MIN, v));
+    const apply = () => {
+      canvas.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    };
+
+    // 커서(또는 핀치 중심) 위치를 기준으로 확대해야 보고 있던 지점이 유지된다
+    function zoomAt(clientX, clientY, factor) {
+      const rect = stage.getBoundingClientRect();
+      const px = clientX - rect.left - rect.width / 2;
+      const py = clientY - rect.top - rect.height / 2;
+      const next = clamp(scale * factor);
+      const k = next / scale;
+      tx = px - k * (px - tx);
+      ty = py - k * (py - ty);
+      scale = next;
+      apply();
+    }
+
+    function reset() {
+      scale = 1;
+      tx = 0;
+      ty = 0;
+      apply();
+    }
+
+    function zoomCenter(factor) {
+      const rect = stage.getBoundingClientRect();
+      zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
+    }
+
+    stage.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+      },
+      { passive: false }
+    );
+
+    stage.addEventListener('dblclick', reset);
+
+    // 드래그 패닝 + 두 손가락 핀치 줌 (포인터 이벤트로 마우스/터치 동시 처리)
+    const pointers = new Map();
+    let pinchDist = 0;
+    let pinchMid = { x: 0, y: 0 };
+
+    stage.addEventListener('pointerdown', (e) => {
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      stage.setPointerCapture(e.pointerId);
+      if (pointers.size === 1) {
+        dragged = false;
+        stage.classList.add('is-panning');
+      }
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      const prev = pointers.get(e.pointerId);
+      if (!prev) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.size === 1) {
+        const dx = e.clientX - prev.x;
+        const dy = e.clientY - prev.y;
+        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) dragged = true;
+        tx += dx;
+        ty += dy;
+        apply();
+        return;
+      }
+
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        if (pinchDist > 0) {
+          tx += mid.x - pinchMid.x;
+          ty += mid.y - pinchMid.y;
+          zoomAt(mid.x, mid.y, dist / pinchDist);
+        }
+        pinchDist = dist;
+        pinchMid = mid;
+      }
+    });
+
+    const endPointer = (e) => {
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) pinchDist = 0;
+      if (pointers.size === 0) stage.classList.remove('is-panning');
+    };
+    stage.addEventListener('pointerup', endPointer);
+    stage.addEventListener('pointercancel', endPointer);
+
+    function close() {
+      document.removeEventListener('keydown', onKey);
+      overlay.classList.remove('is-open');
+      document.body.style.overflow = bodyOverflow;
+      setTimeout(() => overlay.remove(), 180);
+      if (lastFocused instanceof HTMLElement) lastFocused.focus();
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === '+' || e.key === '=') zoomCenter(1.2);
+      else if (e.key === '-') zoomCenter(1 / 1.2);
+      else if (e.key === '0') reset();
+    }
+
+    overlay.addEventListener('click', (e) => {
+      const act = e.target instanceof Element ? e.target.closest('[data-act]')?.dataset.act : null;
+      if (act === 'in') zoomCenter(1.2);
+      else if (act === 'out') zoomCenter(1 / 1.2);
+      else if (act === 'reset') reset();
+      else if (act === 'close' || ((e.target === overlay || e.target === stage) && !dragged)) close();
+    });
+
+    document.addEventListener('keydown', onKey);
+
+    document.body.style.overflow = 'hidden';
+    document.body.appendChild(overlay);
+
+    // 화면 폭에 맞추다 보면 원본보다 크게 줄어드는 경우가 있다(주로 모바일).
+    // 글씨를 못 읽을 만큼 줄었을 때만 읽을 수 있는 배율로 열고, 나머지는 드래그로 본다.
+    // 데스크톱처럼 이미 충분히 큰 경우엔 화면에 꽉 맞춘 상태가 낫기 때문에 건드리지 않는다.
+    const fittedW = clone.getBoundingClientRect().width;
+    const naturalW = Number(clone.getAttribute('width')) || fittedW;
+    const fitRatio = naturalW > 0 ? fittedW / naturalW : 1;
+    if (fitRatio > 0 && fitRatio < 0.6) {
+      scale = clamp(0.75 / fitRatio);
+      apply();
+    }
+
+    requestAnimationFrame(() => overlay.classList.add('is-open'));
+    overlay.querySelector('[data-act="close"]')?.focus();
   }
 
   document.readyState === 'loading'
