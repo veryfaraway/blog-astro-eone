@@ -5,6 +5,7 @@ import Comments from '../components/Comments';
 import SeriesTOC from '../components/SeriesTOC.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import AffiliateNotice from '../components/AffiliateNotice.astro';
+import AdSlot from '../components/AdSlot.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
 import type { RelatedCandidate } from '../lib/related';
@@ -193,6 +194,9 @@ const breadcrumbJsonLd = {
       <!-- Affiliate notice -->
       {affiliate && <AffiliateNotice />}
 
+      <!-- Ad: above the article -->
+      <AdSlot slot="display" />
+
       <!-- Content + TOC -->
       <div class={hasTOC ? 'lg:grid lg:grid-cols-[1fr_220px] lg:gap-12' : ''}>
 
@@ -258,6 +262,9 @@ const breadcrumbJsonLd = {
           )}
         </div>
       )}
+
+      <!-- Ad: after the internal links have had first claim on the click -->
+      <AdSlot slot="inArticle" />
 
       <!-- Comments -->
       <Comments client:visible lang={lang} />

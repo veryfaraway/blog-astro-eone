@@ -1,16 +1,25 @@
 ---
 interface Props {
   slot?: 'inArticle' | 'display';
+  /** Overrides the slot id from env. Rarely needed. */
   adSlot?: string;
 }
 
-const { slot: type = 'display', adSlot = '' } = Astro.props;
+const { slot: type = 'display', adSlot } = Astro.props;
+
 const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+const isInArticle = type === 'inArticle';
+
+// Slot ids come from env by type, so posts and layouts can just write
+// <AdSlot slot="inArticle" /> without carrying ids around.
+const slotId =
+  adSlot ||
+  (isInArticle
+    ? import.meta.env.PUBLIC_ADSENSE_SLOT_INARTICLE
+    : import.meta.env.PUBLIC_ADSENSE_SLOT_DISPLAY);
 
 // AdSense 미설정 시 렌더링 안 함
-if (!client || !adSlot) return;
-
-const isInArticle = type === 'inArticle';
+if (!client || !slotId) return;
 ---
 
 <div class:list={['ad-slot not-prose', isInArticle ? 'my-8' : 'my-6']}>
@@ -18,10 +27,9 @@ const isInArticle = type === 'inArticle';
     class="adsbygoogle"
     style="display:block"
     data-ad-client={client}
-    data-ad-slot={adSlot}
+    data-ad-slot={slotId}
     data-ad-format={isInArticle ? 'fluid' : 'auto'}
     data-ad-layout={isInArticle ? 'in-article' : undefined}
     data-full-width-responsive="true"
   />
-  <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>

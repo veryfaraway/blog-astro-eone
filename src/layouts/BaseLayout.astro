@@ -127,12 +127,29 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
 
     <!-- Google AdSense -->
     {import.meta.env.PUBLIC_ADSENSE_CLIENT && (
-      <script
-        is:inline
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${import.meta.env.PUBLIC_ADSENSE_CLIENT}`}
-        crossorigin="anonymous"
-      />
+      <>
+        <script
+          is:inline
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${import.meta.env.PUBLIC_ADSENSE_CLIENT}`}
+          crossorigin="anonymous"
+        />
+        {/*
+          One initializer for every manual unit on the page. Slots are rendered
+          by AdSlot.astro and by the mid-article rehype plugin, which cannot emit
+          a push() of its own: the braces would be parsed as a JSX expression
+          once MDX converts the tree. AdSense stamps data-adsbygoogle-status on
+          a slot it has claimed, so the guard keeps a second run from pushing twice.
+        */}
+        <script is:inline>
+          document.addEventListener('DOMContentLoaded', function () {
+            var slots = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])');
+            for (var i = 0; i < slots.length; i++) {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+            }
+          });
+        </script>
+      </>
     )}
 
     <!-- Google Analytics -->
