@@ -1,0 +1,210 @@
+---
+title: "Best Mac Clipboard Manager 2026: Is Raycast's Free Plan Enough?"
+description: "A comparison of Mac clipboard managers — how far Raycast's free clipboard history actually goes, when Maccy, Paste, Pastebot or Alfred are worth it, and eight tips to get the most out of Raycast without installing anything else."
+date: 2026-08-29
+category: macOS
+tags:
+  - "macOS"
+  - "Clipboard Manager"
+  - "Raycast"
+  - "Maccy"
+  - "Productivity"
+draft: false
+lang: en
+thumbnail: ""
+---
+
+import Alert from '@/components/Alert.astro';
+
+Every Mac user hits this moment eventually. You copy a link, paste it, then go back for that sentence you copied a minute ago — and it's gone. `⌘C` overwrote it.
+
+A **clipboard manager** solves exactly this one problem: it keeps a record of everything you copy so you can search and reuse it later. The real question is which one to install — especially if you already run [Raycast](/tools/raycast-complete-guide-2026), which ships with clipboard history built in. **Do you actually need another app?**
+
+Short answer: **for most people, Raycast's free plan is enough.** But there are exactly three situations where it isn't, and in those cases a dedicated app is the right call. Let's draw that line precisely.
+
+---
+
+## The 30-second answer
+
+| Your situation | The answer |
+| :--- | :--- |
+| Already using Raycast | **Install nothing.** Just raise the retention to 3 months |
+| Need history older than 3 months, for free | **Maccy** — open source, unlimited, free |
+| Want your clipboard on iPhone and iPad too | **Paste** — the only realistic option |
+| Want copied text transformed automatically | **Pastebot** — its filters are unmatched |
+| Using Alfred instead of Raycast | **Powerpack** includes clipboard history |
+
+---
+
+## Mac clipboard managers at a glance
+
+| App | Price | Retention | Device sync | Open source | Character |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **Raycast** (Free) | Free | Up to 3 months | ✗ | ✗ | Built into the launcher |
+| **Raycast Pro** | Subscription | Unlimited | ✗ (history stays local) | ✗ | Above, plus AI |
+| **Maccy** | Free ($9.99 App Store support build) | Unlimited | ✗ | ✓ | Ultra-light, single purpose |
+| **Paste** | $2.49/mo billed annually | Unlimited | ✓ iCloud | ✗ | Mac · iPhone · iPad |
+| **Pastebot 3** | $39 one-time (or $24.99/yr) | Unlimited | ✗ | ✗ | Paste-time filters |
+| **Alfred Powerpack** | £34 one-time (~$43) | Unlimited | ✗ | ✗ | Built into the launcher |
+| **CopyClip / Flycut** | Free | Limited | ✗ | Partly ✓ | Minimal menu-bar tools |
+
+<Alert type="info" title="One thing they all need">
+Whichever you pick, it needs **System Settings → Privacy & Security → Accessibility** permission. Pasting on your behalf requires the ability to send keystrokes.
+</Alert>
+
+---
+
+## What Raycast's free plan actually gives you
+
+This is the most misunderstood part. It's easy to assume the free tier is a crippled demo, but the line between Free and Pro comes down to **one thing: how long history is kept.**
+
+| Feature | Free | Pro |
+| :--- | :---: | :---: |
+| Retention options | 1 day / 1 week / 1 month / **3 months** | + 6 months / 1 year / **Unlimited** |
+| Text, images, files, links, emails, colors | ✓ | ✓ |
+| Filter by content type | ✓ | ✓ |
+| Pinning entries | ✓ | ✓ |
+| Paste as plain text | ✓ | ✓ |
+| Rename / delete / bulk delete | ✓ | ✓ |
+| Convert an entry into a Snippet | ✓ | ✓ |
+| Sequential pasting | ✓ | ✓ |
+| OCR and QR code reading from images | ✓ | ✓ |
+| Excluded apps (password managers, etc.) | ✓ | ✓ |
+| Ask Clipboard (AI actions on clipboard) | ✗ | ✓ |
+
+In other words, **about 90% of the feature list is available for free.** The only wall you'll ever hit is needing something you copied more than three months ago. How often that actually happens to you is the whole decision.
+
+<Alert type="tip" title="Do this first">
+Open Raycast Settings → **Extensions → Clipboard History → Keep history for** and set it to **3 Months**, the free plan's maximum. The default may be shorter. This single change makes the biggest practical difference.
+</Alert>
+
+One more thing worth knowing: **Raycast's clipboard archive never leaves your Mac.** Pro's Cloud Sync covers settings, snippets and quick links — the clipboard history itself stays local even on Pro. That's a privacy win, and a limitation if you wanted it on your phone.
+
+---
+
+## Eight ways to get more out of Raycast's clipboard
+
+All of these work on the free plan. Try each one once and it sticks.
+
+### 1. Assign a dedicated hotkey
+
+Opening Raycast and typing "Clipboard History" is far too slow. Go into settings and bind a hotkey directly to the Clipboard History command.
+
+- Suggested: `⌥⌘V` or `⌘⇧V`
+- The hand shape is close to `⌘V`, so muscle memory forms fast
+
+Skip this one and the other seven don't matter.
+
+### 2. `⌘P` — narrow the list by type
+
+With the list open, `⌘P` lets you filter by **Text / Images / Files / Links / Emails / Colors**. Finding "that screenshot from earlier" no longer means scrolling past hundreds of text entries.
+
+### 3. `⌘.` — pin what you reuse
+
+Account numbers, boilerplate markdown, a signature block — anything you paste repeatedly can be pinned to the top of the list. Pinned entries survive the retention window.
+
+### 4. `⌘E` — rename entries
+
+Long text is hard to identify from a preview alone. Give it a name and that name becomes searchable too. Combined with pinning, this effectively turns the clipboard into a personal snippet vault.
+
+### 5. Paste as plain text
+
+Text copied from Notion or a web page drags along fonts, colors and links. Open the action panel with `⌘K` and choose **Paste as Plain Text** to insert only the characters.
+
+If formatting annoys you more often than it helps, flip the default in settings so plain text is the normal behavior and formatted paste is the deliberate exception.
+
+### 6. Sequential pasting
+
+Select several entries and paste them **one after another in order**. Moving a row of spreadsheet values into a web form, or filling several fields from one copied record, takes half the clicks it used to.
+
+### 7. Pull text out of images (OCR and QR)
+
+Copy a screenshot, open it in clipboard history, and the action panel can extract the text inside it or decode a QR code. Perfect for grabbing an error message out of a screenshot so you can search it. This quietly replaces a separate OCR app.
+
+### 8. Promote repeat offenders to Snippets
+
+If you've copied the same sentence three times this week, it doesn't belong in your clipboard — it belongs in **Snippets**. Convert it straight from the action panel and give it a keyword, and from then on typing something like `;sig` expands it automatically.
+
+<Alert type="warning" title="Check the security setting">
+Add 1Password, Bitwarden, Keychain Access and anything similar to **Excluded Applications** in settings. Raycast already skips clipboard content that an app marks as concealed, but not every app sets that flag correctly. Excluding them explicitly is the safer move.
+</Alert>
+
+---
+
+## Three moments when Raycast alone isn't enough
+
+### 1. You need more than three months → Maccy
+
+Three months is the free ceiling. If you're the kind of person who digs up "that command I saved six months ago," this is where you stop.
+
+Pro solves it, but if subscribing purely for clipboard history feels like too much, **[Maccy](https://maccy.app)** is there. It's open source, free, and has no practical limit on how much it keeps. Being a native Swift app, its memory footprint is negligible.
+
+```bash
+brew install --cask maccy
+```
+
+> No Homebrew yet? See the [Homebrew installation guide](/tools/install-homebrew-2026) *(in Korean)* first.
+
+Running it alongside Raycast is fine — just **separate the hotkeys**. Clear Raycast's Clipboard History hotkey and give `⌥⌘V` to Maccy, for example. Both recording at once won't break anything, but you're storing the same data twice, so it's cleaner to commit to one.
+
+### 2. You want it on your iPhone and iPad → Paste
+
+macOS **Universal Clipboard** hands off exactly one item — the most recent thing you copied. There's no shared history.
+
+If you want to copy several things on your Mac and pick between them on your phone, **[Paste](https://pasteapp.io)** is essentially the only realistic answer. It syncs over iCloud and lays your clipboard out as a board of cards. It runs **$2.49/month billed annually**, with a 7-day free trial.
+
+Keeping Raycast and adding Paste on top works fine. Just note both will record everything, so use the trial to decide whether you really need the sync.
+
+### 3. You want pasted content transformed → Pastebot
+
+This is the one genuinely functional gap in Raycast. Tapbots' **[Pastebot](https://tapbots.com/pastebot/)** has a concept of **filters** that rewrite content at the moment you paste it.
+
+- Strip `?utm_source=…` tracking parameters out of copied URLs
+- Collapse a multi-line list into one comma-separated line
+- Regex substitution, case conversion, indentation cleanup
+- Chain multiple filters into a pipeline
+
+If you do this several times a day, it pays for itself. Pastebot 3, released in July 2026, is **$39 direct (includes a year of updates, $19/year after)** or an **App Store subscription at $24.99/year**.
+
+---
+
+## So which one are you?
+
+| Your profile | Recommended setup |
+| :--- | :--- |
+| Already on Raycast, no complaints | **Raycast alone** (retention set to 3 months) |
+| Want unlimited history without paying | **Raycast + Maccy** (separate hotkeys) |
+| Want continuity with iPhone and iPad | **Raycast + Paste** |
+| Manipulate text constantly (developers, editors) | **Raycast + Pastebot** |
+| Alfred user | **Alfred Powerpack alone** |
+| No launcher, just want a clipboard | **Maccy alone** |
+
+The most common mistake is ending up with three clipboard apps installed and no idea which hotkey belongs to which. A clipboard manager is a muscle-memory tool — more than one entry point makes you slower, not faster. Pick one and uninstall the rest.
+
+---
+
+## FAQ
+
+**Q. Does macOS have built-in clipboard history?**
+No. macOS keeps only the most recent item you copied. Some apps support `⌘⇧V` for pasting without formatting, but there's no OS-level history, which is exactly why these apps exist.
+
+**Q. Will a clipboard manager record my passwords?**
+That depends on your settings. Well-behaved password managers mark clipboard content as concealed, and Raycast, Maccy and others skip it. It isn't foolproof, so **add those apps to the exclusion list yourself**.
+
+**Q. Are the free options really good enough?**
+Yes. Raycast's free plan or Maccy covers everything essential about clipboard management. Paying is only justified by two specific needs: **cross-device sync (Paste)** and **automatic transformation filters (Pastebot)**.
+
+**Q. Will a clipboard app slow my Mac down?**
+Not at the level of Maccy or Raycast — there's no perceptible overhead. That said, if you copy images frequently the database can grow to several hundred megabytes, so consider a shorter retention window for images or clear it out occasionally.
+
+---
+
+## Wrapping up
+
+To summarize:
+
+1. **If you're on Raycast, there's almost no reason to install anything new.** Three months of history covers most people.
+2. If retention is your only blocker, **Maccy** fixes it for free.
+3. **Cross-device sync** and **automatic transformation** are the only things genuinely worth paying for.
+
+If you're new to Raycast, the [complete Raycast guide](/tools/raycast-complete-guide-2026) and the [advanced Raycast guide](/tools/raycast-advanced-guide-2026) are good next reads, and if you're weighing Pro, try the [7-day Pro trial plan](/tools/raycast-pro-trial-guide) *(all in Korean)*.
