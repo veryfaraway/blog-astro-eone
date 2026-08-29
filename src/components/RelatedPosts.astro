@@ -1,0 +1,44 @@
+---
+import PostCard from './PostCard.astro';
+import type { RelatedCandidate } from '../lib/related';
+
+interface Props {
+  posts: RelatedCandidate[];
+  lang?: 'ko' | 'en';
+}
+
+const { posts, lang = 'ko' } = Astro.props;
+
+if (posts.length === 0) return;
+
+const heading = lang === 'ko' ? '함께 읽으면 좋은 글' : 'Related reading';
+---
+
+<section class="mt-14 pt-8 border-t border-border" aria-labelledby="related-posts">
+  <h2
+    id="related-posts"
+    class="text-xs font-semibold uppercase tracking-wide mb-6"
+    style="color: var(--section-accent);"
+  >
+    {heading}
+  </h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {posts.map((post) => (
+      // Scoped so each card keeps its own section accent — related posts can
+      // come from a different section than the one being read.
+      <div data-section={post.section}>
+        <PostCard
+          title={post.title}
+          description={post.description}
+          date={post.date}
+          slug={post.slug}
+          section={post.section}
+          tags={post.tags}
+          thumbnail={post.thumbnail}
+          lang={lang}
+        />
+      </div>
+    ))}
+  </div>
+</section>

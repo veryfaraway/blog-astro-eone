@@ -5,7 +5,9 @@ import Comments from '../components/Comments';
 import SeriesTOC from '../components/SeriesTOC.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import AffiliateNotice from '../components/AffiliateNotice.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
+import type { RelatedCandidate } from '../lib/related';
 import { getLocalizedPath } from '../lib/i18n';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
@@ -40,6 +42,7 @@ interface Props {
   seriesPosts?: SeriesPost[];
   currentSlug?: string;
   affiliate?: boolean;
+  relatedPosts?: RelatedCandidate[];
 }
 
 const {
@@ -60,6 +63,7 @@ const {
   seriesPosts,
   currentSlug,
   affiliate = false,
+  relatedPosts = [],
 } = Astro.props;
 
 const sectionLabel: Record<Section, string> = {
@@ -223,6 +227,9 @@ const breadcrumbJsonLd = {
       {hasSeries && (
         <SeriesNav posts={seriesPosts!} currentSlug={currentSlug!} lang={lang} />
       )}
+
+      <!-- Related posts -->
+      <RelatedPosts posts={relatedPosts} lang={lang} />
 
       <!-- Prev / Next navigation -->
       {(prevPost || nextPost) && (

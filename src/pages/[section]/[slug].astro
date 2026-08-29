@@ -3,12 +3,14 @@ import { getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { readingTime } from '../../lib/utils';
 import { getLocalizedPath } from '../../lib/i18n';
+import { getRelatedPosts, toRelatedCandidate, type RelatedCandidate } from '../../lib/related';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
 export async function getStaticPaths() {
   const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-  const paths = await Promise.all(
+
+  const bySection = await Promise.all(
     sections.map(async (section) => {
       const posts = await getCollection(section, (entry) =>
         entry.id.startsWith('ko/') && !entry.data.draft
@@ -16,44 +18,54 @@ export async function getStaticPaths() {
       const enPosts = await getCollection(section, (entry) =>
         entry.id.startsWith('en/') && !entry.data.draft
       );
-      const enSlugs = new Set(
-        enPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
-      );
-
       posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-      return posts.map((post, index) => {
-        const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
-        const alternateUrl = enSlugs.has(slug) ? getLocalizedPath('en', `${section}/${slug}`) : undefined;
-        const seriesPosts = post.data.series
-          ? posts
-              .filter(p => p.data.series === post.data.series)
-              .sort((a, b) => (a.data.series_order ?? 9999) - (b.data.series_order ?? 9999))
-              .map(p => ({
-                title: p.data.title,
-                slug: p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
-                section,
-                series_order: p.data.series_order,
-              }))
-          : undefined;
-        return {
-          params: { section, slug },
-          props: {
-            post,
-            section,
-            slug,
-            alternateUrl,
-            seriesPosts,
-            prevPost: posts[index + 1] ?? null,
-            nextPost: posts[index - 1] ?? null,
-          },
-        };
-      });
+      return { section, posts, enPosts };
     })
   );
-  return paths.flat();
+
+  // Related posts are ranked against every published ko post, not just the
+  // current section — tag clusters such as Raycast or IMAX cross sections.
+  const pool = bySection.flatMap(({ section, posts }) =>
+    posts.map((post) => toRelatedCandidate(post, section))
+  );
+
+  return bySection.flatMap(({ section, posts, enPosts }) => {
+    const enSlugs = new Set(
+      enPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
+    );
+
+    return posts.map((post, index) => {
+      const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
+      const alternateUrl = enSlugs.has(slug) ? getLocalizedPath('en', `${section}/${slug}`) : undefined;
+      const seriesPosts = post.data.series
+        ? posts
+            .filter(p => p.data.series === post.data.series)
+            .sort((a, b) => (a.data.series_order ?? 9999) - (b.data.series_order ?? 9999))
+            .map(p => ({
+              title: p.data.title,
+              slug: p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
+              section,
+              series_order: p.data.series_order,
+            }))
+        : undefined;
+      return {
+        params: { section, slug },
+        props: {
+          post,
+          section,
+          slug,
+          alternateUrl,
+          seriesPosts,
+          prevPost: posts[index + 1] ?? null,
+          nextPost: posts[index - 1] ?? null,
+          relatedPosts: getRelatedPosts(toRelatedCandidate(post, section), pool),
+        },
+      };
+    });
+  });
 }
 
-const { post, section, slug, alternateUrl, seriesPosts, prevPost, nextPost } = Astro.props as {
+const { post, section, slug, alternateUrl, seriesPosts, prevPost, nextPost, relatedPosts } = Astro.props as {
   post: Awaited<ReturnType<typeof getCollection>>[number];
   section: Section;
   slug: string;
@@ -61,6 +73,7 @@ const { post, section, slug, alternateUrl, seriesPosts, prevPost, nextPost } = A
   seriesPosts?: { title: string; slug: string; section: string; series_order?: number }[];
   prevPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
   nextPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+  relatedPosts: RelatedCandidate[];
 };
 
 const { Content, headings } = await render(post);
@@ -87,6 +100,7 @@ function toSlug(id: string) {
   currentSlug={slug}
   readingTime={minutes}
   headings={headings}
+  relatedPosts={relatedPosts}
   prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
   nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
 >

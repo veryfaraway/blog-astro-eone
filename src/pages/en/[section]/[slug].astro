@@ -3,12 +3,14 @@ import { getCollection, render } from 'astro:content';
 import PostLayout from '../../../layouts/PostLayout.astro';
 import { readingTime } from '../../../lib/utils';
 import { getLocalizedPath } from '../../../lib/i18n';
+import { getRelatedPosts, toRelatedCandidate, type RelatedCandidate } from '../../../lib/related';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
 export async function getStaticPaths() {
   const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-  const paths = await Promise.all(
+
+  const bySection = await Promise.all(
     sections.map(async (section) => {
       const enPosts = await getCollection(section, (entry) =>
         entry.id.startsWith('en/') && !entry.data.draft
@@ -16,36 +18,47 @@ export async function getStaticPaths() {
       const koPosts = await getCollection(section, (entry) =>
         entry.id.startsWith('ko/') && !entry.data.draft
       );
-      const koSlugs = new Set(
-        koPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
-      );
-
       enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-      return enPosts.map((post, index) => {
-        const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
-        const alternateUrl = koSlugs.has(slug) ? getLocalizedPath('ko', `${section}/${slug}`) : undefined;
-        return {
-          params: { section, slug },
-          props: {
-            post,
-            section,
-            alternateUrl,
-            prevPost: enPosts[index + 1] ?? null,
-            nextPost: enPosts[index - 1] ?? null,
-          },
-        };
-      });
+      return { section, enPosts, koPosts };
     })
   );
-  return paths.flat();
+
+  // English candidates only — a related link must not drop the reader into a
+  // language they were not reading.
+  const pool = bySection.flatMap(({ section, enPosts }) =>
+    enPosts.map((post) => toRelatedCandidate(post, section))
+  );
+
+  return bySection.flatMap(({ section, enPosts, koPosts }) => {
+    const koSlugs = new Set(
+      koPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
+    );
+
+    return enPosts.map((post, index) => {
+      const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
+      const alternateUrl = koSlugs.has(slug) ? getLocalizedPath('ko', `${section}/${slug}`) : undefined;
+      return {
+        params: { section, slug },
+        props: {
+          post,
+          section,
+          alternateUrl,
+          prevPost: enPosts[index + 1] ?? null,
+          nextPost: enPosts[index - 1] ?? null,
+          relatedPosts: getRelatedPosts(toRelatedCandidate(post, section), pool),
+        },
+      };
+    });
+  });
 }
 
-const { post, section, alternateUrl, prevPost, nextPost } = Astro.props as {
+const { post, section, alternateUrl, prevPost, nextPost, relatedPosts } = Astro.props as {
   post: Awaited<ReturnType<typeof getCollection>>[number];
   section: Section;
   alternateUrl?: string;
   prevPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
   nextPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+  relatedPosts: RelatedCandidate[];
 };
 
 const { Content, headings } = await render(post);
@@ -69,6 +82,7 @@ function toSlug(id: string) {
   alternateUrl={alternateUrl}
   readingTime={minutes}
   headings={headings}
+  relatedPosts={relatedPosts}
   prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
   nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
 >
