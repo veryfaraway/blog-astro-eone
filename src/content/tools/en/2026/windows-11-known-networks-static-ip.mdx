@@ -1,0 +1,300 @@
+---
+title: "Windows 11 Manage Known Networks: Auto-Switch Between Office Static IP and Home DHCP (Retire Your .bat Files)"
+description: "Static IP at the office, DHCP at home and cafes. If you still keep two netsh batch files on your desktop and run them by hand, this is the last guide you need. Here's how to store per-SSID IP settings in Windows 11, plus the adapter reset you must do first."
+date: 2026-08-29
+category: Windows
+tags:
+  - "Windows 11"
+  - "Networking"
+  - "Static IP"
+  - "DHCP"
+  - "netsh"
+draft: true
+lang: en
+thumbnail: ""
+---
+
+import Alert from '@/components/Alert.astro';
+
+Plenty of people still keep `office.bat` and `home.bat` sitting on their desktop. Arrive at the office, run `office.bat` as administrator to pin the static IP. Get home, run `home.bat` to go back to DHCP.
+
+```bat
+:: office.bat — the file that has been handed down for 15 years
+netsh interface ip set address name="Ethernet" static 10.10.20.55 255.255.255.0 10.10.20.1
+netsh interface ip set dns name="Ethernet" static 10.10.10.10
+```
+
+Back in the Windows XP days this was close to the right answer. But today, **Windows 11 remembers IP settings per network (per SSID).** Connect to the office Wi-Fi and you get the static IP; connect to your home router and you get DHCP — with nothing to click.
+
+The catch is that this feature **conflicts with manual settings you previously baked into the adapter**. That's why so many people report "I set it up and it just didn't work." This guide walks through **reset → configure → verify**, so it actually works.
+
+---
+
+## The 30-second version
+
+| Your situation | The answer |
+| :--- | :--- |
+| Both office and home are **Wi-Fi** | **Manage known networks** → per-SSID IP → fully automatic |
+| Office is **wired with no DHCP server at all** | TCP/IPv4 **Alternate Configuration** tab → automatic fallback |
+| Office is **wired but DHCP is running** | Alternate Configuration won't fire → use a **DHCP reservation** |
+| You need a static IP for a **firewall allowlist** | Reserve by MAC on the **router / DHCP server**, not on the PC |
+| You have leftovers from old .bat files | Start at **Step 0** below. Skip it and this almost certainly fails |
+
+---
+
+## Why retire the .bat files
+
+Not because netsh is a bad tool — because it charges you rent forever.
+
+- **Forget to run it and the network is dead on the spot.** Half the "screen sharing won't connect" moments in a meeting room are this.
+- **Administrator prompt (UAC) every single time.** Unlock, click Yes, watch a black window flash.
+- **Hard-coded interface names.** `name="Ethernet"` silently becomes `Ethernet 3` the moment you swap docking stations or plug in a USB NIC.
+- **IPv6, DNS, and proxy drift apart.** Most scripts only touch IPv4, and the leftovers create strange symptoms.
+- **New PC means starting from scratch.**
+
+A network profile, on the other hand, is **applied by Windows the instant you connect**. There is nothing left for you to do.
+
+---
+
+## Step 0: Reset the manual settings you already have (the important part)
+
+<Alert type="warning" title="Do not skip this step">
+A static IP typed into the adapter's TCP/IPv4 properties is a **global setting that applies no matter which network you join**. If it's still there, your per-SSID settings get ignored — or your office IP follows you home and nothing resolves. Clear it first.
+</Alert>
+
+### 1) Diagnose what you have
+
+Open Command Prompt or PowerShell (no admin rights needed):
+
+```powershell
+# Interface names — you'll paste these into the commands below
+netsh interface show interface
+
+# IP configuration for every adapter, at a glance
+netsh interface ip show config
+
+# Check whether DHCP is in use
+ipconfig /all
+```
+
+In `ipconfig /all`, any adapter showing **`DHCP Enabled . . . : No`** is carrying an old manual configuration. Also check `netsh interface ip show config` for `DHCP enabled: No` and `Statically Configured DNS Servers`.
+
+<Alert type="tip">
+Before you wipe anything, **write down the office IP, subnet mask, gateway, and DNS**. You'll type them straight back into the per-SSID settings in a moment. Clearing first and then asking "what was that IP again?" is a bad afternoon.
+</Alert>
+
+### 2) Put the adapter back on DHCP
+
+**In the GUI:** Settings → Network & internet → Wi-Fi (or Ethernet) → **[Edit]** next to **IP assignment** → **Automatic (DHCP)** → Save. Do the same for DNS server assignment.
+
+**From the command line (as administrator):**
+
+```powershell
+netsh interface ip set address name="Wi-Fi" source=dhcp
+netsh interface ip set dns     name="Wi-Fi" source=dhcp
+
+netsh interface ip set address name="Ethernet" source=dhcp
+netsh interface ip set dns     name="Ethernet" source=dhcp
+
+ipconfig /flushdns
+```
+
+Leave virtual adapters alone (VMware, Hyper-V, WSL, VPN). Physical Wi-Fi and Ethernet only.
+
+### 3) Clean up what the .bat files left behind
+
+Those old scripts rarely changed just the IP. Worth checking:
+
+```powershell
+# Persistent static routes (anything added with route -p)
+route print
+route delete 10.10.0.0            # only the ones you actually want gone
+
+# System proxy (if a script pushed a corporate proxy in)
+netsh winhttp show proxy
+netsh winhttp reset proxy
+
+# Delete a Wi-Fi profile that has bad settings baked in, then reconnect
+netsh wlan show profiles
+netsh wlan delete profile name="OFFICE-WIFI"
+```
+
+While you're at it, check `C:\Windows\System32\drivers\etc\hosts` for internal servers someone pinned years ago.
+
+### 4) Still misbehaving? Reset the TCP/IP stack
+
+If settings won't stick, or revert after a reboot:
+
+```powershell
+netsh winsock reset
+netsh int ip reset
+# reboot required
+```
+
+These two commands **do not erase your saved Wi-Fi passwords.** They only rebuild the Winsock catalog and reset the TCP/IP registry keys to their defaults, which makes them the relatively safe option.
+
+### 5) Last resort: Network reset
+
+Settings → Network & internet → **Advanced network settings** → **Network reset** → Reset now.
+
+<Alert type="danger" title="What Network reset costs you">
+It removes and reinstalls every network adapter. **Saved Wi-Fi networks and passwords, VPN profiles, Hyper-V virtual switches, and all manual IP settings are gone.** You may have to reinstall your corporate VPN client. Use it only after step 4 has failed. Your PC reboots automatically after about five minutes.
+</Alert>
+
+---
+
+## Step 1: Wi-Fi — per-SSID IP in Manage known networks
+
+This is the main event. Windows 11 **stores IP settings separately for each saved Wi-Fi profile.**
+
+1. **Settings** → **Network & internet** → **Wi-Fi**
+2. Click **Manage known networks**
+3. Select the **office SSID** that needs the static IP
+4. Click **[Edit]** next to **IP assignment**
+5. Change the dropdown from **Automatic (DHCP)** to **Manual**
+6. Turn on **IPv4** and fill in:
+   - **IP address**: `10.10.20.55`
+   - **Subnet mask**: `255.255.255.0` (if your build shows "Subnet prefix length" instead, enter `24`)
+   - **Gateway**: `10.10.20.1`
+   - **Preferred DNS** / **Alternate DNS**: your corporate DNS
+7. **Save**
+
+For your home and cafe SSIDs, **do nothing at all.** Leave them on the default, Automatic (DHCP).
+
+That's it. Office Wi-Fi gives you the static IP, home gives you DHCP. No batch file, no UAC prompt.
+
+<Alert type="info" title="Careful: pick the right profile">
+If you edit the wrong entry in the known networks list, **nothing happens to the network you're actually using.** Editing the currently connected network applies immediately; editing any other profile applies the next time you join that network.
+</Alert>
+
+### Other switches worth setting on the same screen
+
+The profile detail page has more than just IP settings.
+
+| Setting | Office SSID | Home / cafe SSID |
+| :--- | :--- | :--- |
+| **Connect automatically** | On | Turn off for cafes |
+| **Network profile type** | Private (if you need sharing/discovery) | **Public** for cafes, always |
+| **Random hardware addresses** | **Off** | On (privacy) |
+| **Metered connection** | Off | On for phone tethering |
+| **DNS over HTTPS** | Off if you use corporate DNS | On to stop DNS snooping |
+
+<Alert type="warning" title="Random MAC is the culprit more often than you'd think">
+If your corporate network uses MAC-based DHCP reservations or NAC (network access control), leaving random hardware addresses on means you show up as a different device each time. This is the classic cause of "only the office Wi-Fi keeps dropping my authentication." Turn it off for the office SSID.
+</Alert>
+
+---
+
+## Step 2: Wired — the Alternate Configuration tab
+
+Wired is a different story. **Ethernet has no identifier like an SSID, so its IP settings are stored per adapter.** You can't get the same clean per-network behavior.
+
+There is, however, an old but still-useful feature: **Alternate Configuration**.
+
+### How to set it
+
+1. **Control Panel** → Network and Sharing Center → **Change adapter settings**
+   (or `Win + R` → `ncpa.cpl`)
+2. **Right-click** the Ethernet adapter → **Properties**
+3. Select **Internet Protocol Version 4 (TCP/IPv4)** → **Properties**
+4. Confirm the General tab is set to **"Obtain an IP address automatically"**
+   → the **[Alternate Configuration]** tab only appears in that state
+5. **Alternate Configuration** tab → select **User configured** → enter the office IP, subnet mask, gateway, and DNS → OK
+
+### How it works, and where it stops
+
+When no DHCP server responds (roughly a 60-second timeout), Windows applies **the static IP from Alternate Configuration** instead of an APIPA address (`169.254.x.x`). At home or in a cafe, where DHCP is present, you get a DHCP lease as usual.
+
+<Alert type="danger" title="When Alternate Configuration won't help">
+It is a fallback that fires **only when the DHCP server fails to respond**. If your office runs DHCP but policy says you must use a static IP, Alternate Configuration will never trigger. It is also not a way to run two IP addresses at once. And because of that DHCP timeout, **connecting can take up to a minute.**
+</Alert>
+
+In that case the fix isn't on the client. See "The real answer" below.
+
+---
+
+## Step 3: Verify
+
+Configuring isn't finishing. **Actually move between networks** and check.
+
+```powershell
+# Summary of the current adapter configuration
+Get-NetIPConfiguration -InterfaceAlias "Wi-Fi"
+
+# Just the DHCP state
+Get-NetIPInterface -InterfaceAlias "Wi-Fi" -AddressFamily IPv4 | Select-Object InterfaceAlias, Dhcp
+
+# Does the gateway actually answer?
+Test-NetConnection 10.10.20.1
+```
+
+Run this sequence:
+
+1. Join the office Wi-Fi → `ipconfig` shows the static IP, `DHCP Enabled: No`
+2. Switch to home Wi-Fi (or your phone hotspot) → `ipconfig` shows a DHCP address, `DHCP Enabled: Yes`
+3. Go back to the office Wi-Fi → the static IP **comes back on its own**
+
+You're done only after step 3 passes. If the office IP is still there in step 2, **Step 0 wasn't finished** — go back and check whether a manual IP is still sitting in the adapter properties.
+
+---
+
+## The real answer: DHCP reservation
+
+Take a step back. **Why do you need a static IP at the office at all?**
+
+Usually one of these:
+
+- Your IP is registered in a server/database allowlist (firewall rule)
+- A license server identifies machines by IP
+- Colleagues connect to a dev port on your IP
+
+All three are solved by a **DHCP reservation** — the router or corporate DHCP server permanently assigns a specific IP to your MAC address.
+
+| | Static IP on the client | DHCP reservation |
+| :--- | :--- | :--- |
+| Configured on | Every PC | One router / DHCP server |
+| PC settings | Different per network | **Automatic (DHCP) everywhere** |
+| IP conflict risk | Yes (if someone already has it) | No (the server manages it) |
+| PC replacement / reinstall | Configure it all again | Register the MAC, done |
+| Wired vs. wireless | Configure each | Register each MAC |
+
+<Alert type="success" title="If this is available to you, Steps 1 and 2 become unnecessary">
+Leave the PC on DHCP everywhere and let the server own the address. There is nothing to configure on the laptop, anywhere. Asking your IT team to "reserve an IP for my laptop's MAC" is far faster than maintaining two batch files. When you ask, give them **both the wired and wireless MAC** (the "Physical Address" lines in `ipconfig /all`).
+</Alert>
+
+---
+
+## Common problems
+
+| Symptom | Cause | Fix |
+| :--- | :--- | :--- |
+| Per-SSID settings are configured, but the office IP persists at home | A global static IP is still in the adapter properties | Return the adapter to DHCP (Step 0.2) |
+| Settings revert after a reboot | Damaged TCP/IP stack, or a third-party VPN / security suite interfering | `netsh winsock reset` + `netsh int ip reset`, then reboot |
+| The [Alternate Configuration] tab isn't there | IPv4 is set to "Use the following IP address" | Switch the General tab to "Obtain an IP address automatically" |
+| Authentication keeps dropping on the office Wi-Fi only | Random hardware addresses is on | Turn it off in that SSID's profile |
+| Wired connection takes about a minute | Waiting out the DHCP timeout before Alternate Configuration | Working as designed. Move to a DHCP reservation if it bothers you |
+| The script broke after swapping docking stations | The interface name changed to `Ethernet 3` or similar | Retire the hard-coded .bat approach entirely |
+| The IP is right but there's no internet | DNS is still pinned to the corporate resolver | Set DNS server assignment to Automatic (DHCP) too |
+
+---
+
+## If you have more than one wired network
+
+If you move between, say, an office wired network and a data center wired network, one Alternate Configuration isn't enough. In order of preference:
+
+1. **First choice — DHCP reservations.** Reserve on both networks and the PC needs no configuration at all.
+2. **Second choice — a separate USB Ethernet adapter per site.** Different adapters store different IP settings.
+3. **Third choice — event-triggered automation.** In Task Scheduler, trigger a PowerShell script from network connection events in the `Microsoft-Windows-NetworkProfile/Operational` log. You're still running a script, but **nobody has to remember to run it**, which beats double-clicking a .bat file.
+
+Option 3 carries maintenance overhead, so push for option 1 where you can.
+
+---
+
+## Wrapping up
+
+- For **Wi-Fi**, store the IP per SSID in Manage known networks and switching becomes automatic. This is the canonical approach.
+- For **wired**, Alternate Configuration gives you a fallback — but only on networks with no DHCP server.
+- Whatever you do, **clear the adapter's manual settings first.** That's where most "it doesn't work" stories are decided.
+- And if the only reason you need a static IP is "a server has to know my address," a **DHCP reservation** removes client configuration entirely.
+
+You can delete `office.bat` and `home.bat` now.
