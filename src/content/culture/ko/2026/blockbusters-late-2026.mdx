@@ -8,23 +8,13 @@ tags:
   - "블록버스터"
   - "개봉예정"
   - "IMAX"
-draft: true
+draft: false
 lang: ko
-# thumbnail: "" # TODO: 대표 이미지 URL 입력
+thumbnail: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
 import Alert from '@/components/Alert.astro';
-
-{/* ─────────────────────────────────────────────────────────────
-    📌 미디어 삽입 안내
-    본문 곳곳에 "예고편 자리 / 이미지 자리" 주석을 남겨두었습니다.
-    - 예고편을 넣으려면 이 파일 상단(위 Alert import 아래)에 다음 줄을 추가하세요:
-        import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
-      그리고 해당 위치의 주석을 아래 형태로 바꿔주세요:
-        <YouTubeEmbed id="영상ID" title="영화 제목 공식 예고편" />
-    - 스틸컷/포스터는 그냥 마크다운 이미지로 넣으면 됩니다:
-        ![어벤져스: 둠스데이](https://…)
-   ───────────────────────────────────────────────────────────── */}
+import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 > 《스파이더맨: 브랜드 뉴 데이》와 《오디세이》로 여름을 태웠는데, 정작 진짜 물건들은 아직 남아 있습니다. 9월부터 12월까지, 2026년 하반기 극장 라인업을 한 번에 정리했습니다.
 
@@ -75,11 +65,13 @@ import Alert from '@/components/Alert.astro';
 
 ## 🍂 9월 — 워밍업, 그런데 호러가 세다
 
+![Resident Evil: Night 0](https://i.namu.wiki/i/3S5Q4i5E1tk-gQ9Hlze6vPaBvpAJ8Nc3jqKfle8VQeXNWt2PfiwOaJrm-ALJqsPkrtIwGeTXbAtNouO0OCUjlg.webp)
+
 여름 텐트폴과 연말 대작 사이의 비수기지만, 올해 9월은 호러 한 편이 판을 흔들 가능성이 있습니다.
 
 ### 레지던트 이블 — 09. 18
 
-{/* 📺 예고편 자리 — 레지던트 이블 공식 예고편 */}
+<YouTubeEmbed id="w2VPfpOGuxk" title="레지던트 이블 공식 예고편" />
 
 **감독:** 잭 크레거 / **주연:** 오스틴 에이브럼스, 폴 월터 하우저, 잭 체리
 
@@ -108,7 +100,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 디거 (Digger) — 10. 02
 
-{/* 📺 예고편 자리 — 디거 공식 예고편 */}
+<YouTubeEmbed id="zncFPBSPZC0" title="디거 공식 예고편" />
 
 **감독:** 알레한드로 G. 이냐리투 / **주연:** 톰 크루즈, 산드라 휠러, 존 굿맨, 제시 플레먼스, 리즈 아메드
 
@@ -122,7 +114,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 소셜 레코닝 (The Social Reckoning) — 10. 09
 
-{/* 📺 예고편 자리 — 소셜 레코닝 공식 예고편 */}
+<YouTubeEmbed id="gM4LkaXwGuY" title="소셜 레코닝 공식 예고편" />
 
 **감독/각본:** 애런 소킨 / **주연:** 제레미 스트롱, 마이키 매디슨, 제레미 앨런 화이트, 빌 버
 
@@ -134,7 +126,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 스트리트 파이터 — 10. 16
 
-{/* 📺 예고편 자리 — 스트리트 파이터 공식 예고편 */}
+<YouTubeEmbed id="TA8SHjQjo94" title="스트리트 파이터 공식 예고편" />
 
 **감독:** 키타오 사쿠라이 / **주연:** 앤드류 코지(류), 노아 센티네오(켄), 칼리나 량(춘리), 제이슨 모모아(블랑카)
 
@@ -159,7 +151,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 고질라 마이너스 제로 — 11. 06 (일본 11. 03)
 
-{/* 📺 예고편 자리 — 고질라 마이너스 제로 공식 예고편 */}
+<YouTubeEmbed id="kw0YhiqOPFg" title="고질라 마이너스 제로 공식 예고편" />
 
 **감독:** 야마자키 다카시 / **주연:** 카미키 류노스케, 하마베 미나미
 
@@ -173,7 +165,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 헝거게임: 새벽의 수확 — 11. 20
 
-{/* 📺 예고편 자리 — 헝거게임: 새벽의 수확 공식 예고편 */}
+<YouTubeEmbed id="lYXtL5TreOE" title="헝거게임: 새벽의 수확 공식 예고편" />
 
 **감독:** 프랜시스 로렌스 / **주연:** 조셉 지어, 랄프 파인즈, 글렌 클로즈, 키에란 컬킨, 엘르 패닝, 매켄나 그레이스, 마야 호크
 
@@ -185,7 +177,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 클리프 부스의 더 기막힌 모험 — 11. 25 (IMAX)
 
-{/* 📺 예고편 자리 — 클리프 부스 공식 예고편 */}
+![클리프 부스](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGY6IRcHlqZ9FNZFJtfyuh2arz3ifwGfrQ_8PDuVCV6gqcHV6zNHMKUG2z&s=10)
 
 **감독:** 데이비드 핀처 / **각본:** 쿠엔틴 타란티노 / **주연:** 브래드 피트, 엘리자베스 데비키, 야히아 압둘 마틴 2세
 
@@ -212,7 +204,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 듄: 파트 3 — 12. 14 (IMAX 선행) / 12. 18 (정식)
 
-{/* 📺 예고편 자리 — 듄: 파트 3 공식 예고편 */}
+<YouTubeEmbed id="NdvqHc56lE0" title="듄: 파트 3 공식 예고편" />
 
 **감독:** 드니 빌뇌브 / **주연:** 티모테 샬라메, 젠데이아, 플로렌스 퓨, 로버트 패틴슨, 레베카 퍼거슨, 안야 테일러조이, 하비에르 바르뎀
 
@@ -226,8 +218,7 @@ import Alert from '@/components/Alert.astro';
 
 ### 어벤져스: 둠스데이 — 12. 18
 
-{/* 🖼️ 이미지 자리 — 어벤져스: 둠스데이 포스터/스틸 */}
-{/* 📺 예고편 자리 — 어벤져스: 둠스데이 공식 예고편 */}
+<YouTubeEmbed id="Bk6DeEedYGs" title="어벤져스: 둠스데이 공식 예고편" />
 
 **감독:** 루소 형제 / **주연:** 로버트 다우니 주니어(닥터 둠), 크리스 헴스워스, 페드로 파스칼, 패트릭 스튜어트, 이안 맥켈런, 채닝 테이텀 외
 
