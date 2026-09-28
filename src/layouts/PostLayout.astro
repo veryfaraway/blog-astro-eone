@@ -44,6 +44,7 @@ interface Props {
   currentSlug?: string;
   affiliate?: boolean;
   relatedPosts?: RelatedCandidate[];
+  draft?: boolean;
 }
 
 const {
@@ -65,6 +66,7 @@ const {
   currentSlug,
   affiliate = false,
   relatedPosts = [],
+  draft = false,
 } = Astro.props;
 
 const sectionLabel: Record<Section, string> = {
@@ -143,6 +145,11 @@ const breadcrumbJsonLd = {
           >
             {category}
           </span>
+          {draft && (
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              Draft Preview
+            </span>
+          )}
         </div>
 
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-tight mb-4">

@@ -1,12 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { isVisiblePost } from '../../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
 
 const allPosts = (await Promise.all(
-  SECTIONS.map(s => getCollection(s, e => e.id.startsWith('ko/') && !e.data.draft))
+  SECTIONS.map(s => getCollection(s, e => e.id.startsWith('ko/') && isVisiblePost(e)))
 )).flat();
 
 const tagCount = new Map<string, number>();

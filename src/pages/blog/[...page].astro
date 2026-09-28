@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import type { GetStaticPathsOptions } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import { isVisiblePost } from '../../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -10,7 +11,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
   const allPosts = (await Promise.all(
     SECTIONS.map(async (section) => {
-      const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+      const posts = await getCollection(section, e => e.id.startsWith('ko/') && isVisiblePost(e));
       return posts.map(post => ({
         title: post.data.title,
         description: post.data.description,
@@ -19,6 +20,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         section: section as Section,
         tags: post.data.tags,
         thumbnail: post.data.thumbnail,
+        draft: post.data.draft,
       }));
     })
   )).flat().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -78,6 +80,7 @@ if (totalPages <= 7) {
                 section={post.section}
                 tags={post.tags}
                 thumbnail={post.thumbnail}
+                draft={post.draft}
               />
             </div>
           ))}

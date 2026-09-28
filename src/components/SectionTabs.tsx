@@ -11,6 +11,7 @@ interface Post {
   tags?: string[];
   thumbnail?: string;
   category?: string;
+  draft?: boolean;
 }
 
 interface Props {
@@ -149,6 +150,11 @@ export default function SectionTabs({ posts, section }: Props) {
                     >
                       {sectionLabel[section]}
                     </span>
+                    {post.draft && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        Draft
+                      </span>
+                    )}
                     <span className="text-xs" style={{ color: 'var(--muted-foreground)', opacity: 0.4 }}>·</span>
                     <time className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                       {formatDate(post.date)}

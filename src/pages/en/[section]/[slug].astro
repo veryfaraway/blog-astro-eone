@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import PostLayout from '../../../layouts/PostLayout.astro';
-import { readingTime } from '../../../lib/utils';
+import { readingTime, isVisiblePost } from '../../../lib/utils';
 import { getLocalizedPath } from '../../../lib/i18n';
 import { getRelatedPosts, toRelatedCandidate, type RelatedCandidate } from '../../../lib/related';
 
@@ -13,10 +13,10 @@ export async function getStaticPaths() {
   const bySection = await Promise.all(
     sections.map(async (section) => {
       const enPosts = await getCollection(section, (entry) =>
-        entry.id.startsWith('en/') && !entry.data.draft
+        entry.id.startsWith('en/') && isVisiblePost(entry)
       );
       const koPosts = await getCollection(section, (entry) =>
-        entry.id.startsWith('ko/') && !entry.data.draft
+        entry.id.startsWith('ko/') && isVisiblePost(entry)
       );
       enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       return { section, enPosts, koPosts };
@@ -83,6 +83,7 @@ function toSlug(id: string) {
   readingTime={minutes}
   headings={headings}
   relatedPosts={relatedPosts}
+  draft={post.data.draft}
   prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
   nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
 >

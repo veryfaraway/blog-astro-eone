@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { isVisiblePost } from '../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -22,7 +23,7 @@ const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
 
 const sectionData = await Promise.all(
   SECTIONS.map(async (section) => {
-    const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+    const posts = await getCollection(section, e => e.id.startsWith('ko/') && isVisiblePost(e));
     const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
     return {
       section,

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import SectionLayout from '../../layouts/SectionLayout.astro';
 import SectionTabs from '../../components/SectionTabs';
+import { isVisiblePost } from '../../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -21,7 +22,7 @@ const sectionMeta: Record<Section, { label: string; description: string }> = {
 };
 
 const allPosts = await getCollection(section, (entry) =>
-  entry.id.startsWith('ko/') && !entry.data.draft
+  entry.id.startsWith('ko/') && isVisiblePost(entry)
 );
 
 const posts = allPosts
@@ -35,6 +36,7 @@ const posts = allPosts
     tags: post.data.tags,
     thumbnail: post.data.thumbnail,
     category: post.data.category,
+    draft: post.data.draft,
   }));
 
 const { label, description } = sectionMeta[section];

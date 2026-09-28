@@ -2,13 +2,14 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import { isVisiblePost } from '../lib/utils';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
 
 const allPosts = (await Promise.all(
   SECTIONS.map(async (section) => {
-    const posts = await getCollection(section, e => e.id.startsWith('ko/') && !e.data.draft);
+    const posts = await getCollection(section, e => e.id.startsWith('ko/') && isVisiblePost(e));
     return posts.map(post => ({
       title: post.data.title,
       description: post.data.description,
@@ -17,6 +18,7 @@ const allPosts = (await Promise.all(
       section,
       tags: post.data.tags,
       thumbnail: post.data.thumbnail,
+      draft: post.data.draft,
     }));
   })
 )).flat().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -71,6 +73,7 @@ const sectionButtons: { section: Section; label: string; color: string }[] = [
               section={post.section}
               tags={post.tags}
               thumbnail={post.thumbnail}
+              draft={post.draft}
             />
           </div>
         ))}
