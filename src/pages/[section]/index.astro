@@ -1,14 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import SectionLayout from '../../layouts/SectionLayout.astro';
 import SectionTabs from '../../components/SectionTabs';
-import { isVisiblePost } from '../../lib/utils';
-
-type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+import { SECTIONS, getSectionPosts, getPostSlug, type Section } from '../../lib/content';
 
 export async function getStaticPaths() {
-  const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-  return sections.map(section => ({ params: { section } }));
+  return SECTIONS.map(section => ({ params: { section } }));
 }
 
 const { section } = Astro.params as { section: Section };
@@ -21,23 +17,19 @@ const sectionMeta: Record<Section, { label: string; description: string }> = {
   dev:     { label: 'Dev',     description: '개발 · AI · Backend · Frontend · DevOps' },
 };
 
-const allPosts = await getCollection(section, (entry) =>
-  entry.id.startsWith('ko/') && isVisiblePost(entry)
-);
+const allPosts = await getSectionPosts(section, { lang: 'ko' });
 
-const posts = allPosts
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .map(post => ({
-    title: post.data.title,
-    description: post.data.description,
-    date: post.data.date,
-    slug: post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
-    section,
-    tags: post.data.tags,
-    thumbnail: post.data.thumbnail,
-    category: post.data.category,
-    draft: post.data.draft,
-  }));
+const posts = allPosts.map(post => ({
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date,
+  slug: getPostSlug(post.id),
+  section,
+  tags: post.data.tags,
+  thumbnail: post.data.thumbnail,
+  category: post.data.category,
+  draft: post.data.draft,
+}));
 
 const { label, description } = sectionMeta[section];
 ---

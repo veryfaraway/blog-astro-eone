@@ -1,24 +1,16 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import PostLayout from '../../../layouts/PostLayout.astro';
-import { readingTime, isVisiblePost } from '../../../lib/utils';
+import { readingTime } from '../../../lib/utils';
 import { getLocalizedPath } from '../../../lib/i18n';
 import { getRelatedPosts, toRelatedCandidate, type RelatedCandidate } from '../../../lib/related';
-
-type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+import { SECTIONS, getSectionPosts, getPostSlug, type Section, type PostEntry } from '../../../lib/content';
 
 export async function getStaticPaths() {
-  const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-
   const bySection = await Promise.all(
-    sections.map(async (section) => {
-      const enPosts = await getCollection(section, (entry) =>
-        entry.id.startsWith('en/') && isVisiblePost(entry)
-      );
-      const koPosts = await getCollection(section, (entry) =>
-        entry.id.startsWith('ko/') && isVisiblePost(entry)
-      );
-      enPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+    SECTIONS.map(async (section) => {
+      const enPosts = await getSectionPosts(section, { lang: 'en' });
+      const koPosts = await getSectionPosts(section, { lang: 'ko' });
       return { section, enPosts, koPosts };
     })
   );
@@ -30,12 +22,10 @@ export async function getStaticPaths() {
   );
 
   return bySection.flatMap(({ section, enPosts, koPosts }) => {
-    const koSlugs = new Set(
-      koPosts.map((p) => p.id.replace(/\.(md|mdx)$/, '').split('/').pop()!)
-    );
+    const koSlugs = new Set(koPosts.map((p) => getPostSlug(p.id)));
 
     return enPosts.map((post, index) => {
-      const slug = post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
+      const slug = getPostSlug(post.id);
       const alternateUrl = koSlugs.has(slug) ? getLocalizedPath('ko', `${section}/${slug}`) : undefined;
       return {
         params: { section, slug },
@@ -53,20 +43,16 @@ export async function getStaticPaths() {
 }
 
 const { post, section, alternateUrl, prevPost, nextPost, relatedPosts } = Astro.props as {
-  post: Awaited<ReturnType<typeof getCollection>>[number];
+  post: PostEntry;
   section: Section;
   alternateUrl?: string;
-  prevPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
-  nextPost: Awaited<ReturnType<typeof getCollection>>[number] | null;
+  prevPost: PostEntry | null;
+  nextPost: PostEntry | null;
   relatedPosts: RelatedCandidate[];
 };
 
 const { Content, headings } = await render(post);
 const minutes = readingTime(post.body ?? '');
-
-function toSlug(id: string) {
-  return id.replace(/\.(md|mdx)$/, '').split('/').pop()!;
-}
 ---
 
 <PostLayout
@@ -84,8 +70,8 @@ function toSlug(id: string) {
   headings={headings}
   relatedPosts={relatedPosts}
   draft={post.data.draft}
-  prevPost={prevPost ? { title: prevPost.data.title, slug: toSlug(prevPost.id), section } : undefined}
-  nextPost={nextPost ? { title: nextPost.data.title, slug: toSlug(nextPost.id), section } : undefined}
+  prevPost={prevPost ? { title: prevPost.data.title, slug: getPostSlug(prevPost.id), section } : undefined}
+  nextPost={nextPost ? { title: nextPost.data.title, slug: getPostSlug(nextPost.id), section } : undefined}
 >
   <Content />
 </PostLayout>

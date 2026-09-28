@@ -1,18 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { isVisiblePost } from '../../lib/utils';
-
-type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
-const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
+import { getAllPosts, getPostSlug, type Section } from '../../lib/content';
 
 export async function getStaticPaths() {
-  const sections: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-  const allPosts = (await Promise.all(
-    sections.map(s => getCollection(s, e => e.id.startsWith('ko/') && isVisiblePost(e)))
-  )).flat();
-
+  const allPosts = await getAllPosts({ lang: 'ko' });
   const tagSet = new Set(allPosts.flatMap(p => p.data.tags ?? []));
 
   return Array.from(tagSet).map(tag => ({
@@ -23,23 +15,8 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.props as { tag: string };
 
-const allPosts = (await Promise.all(
-  SECTIONS.map(async (section) => {
-    const posts = await getCollection(section, e => e.id.startsWith('ko/') && isVisiblePost(e));
-    return posts
-      .filter(p => p.data.tags?.includes(tag))
-      .map(post => ({
-        title: post.data.title,
-        description: post.data.description,
-        date: post.data.date,
-        slug: post.id.replace(/\.(md|mdx)$/, '').split('/').pop()!,
-        section,
-        tags: post.data.tags,
-        thumbnail: post.data.thumbnail,
-        draft: post.data.draft,
-      }));
-  })
-)).flat().sort((a, b) => b.date.getTime() - a.date.getTime());
+const allPosts = (await getAllPosts({ lang: 'ko' }))
+  .filter(p => p.data.tags?.includes(tag));
 ---
 
 <BaseLayout
@@ -66,14 +43,14 @@ const allPosts = (await Promise.all(
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {allPosts.map(post => (
             <PostCard
-              title={post.title}
-              description={post.description}
-              date={post.date}
-              slug={post.slug}
-              section={post.section}
-              tags={post.tags}
-              thumbnail={post.thumbnail}
-              draft={post.draft}
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              slug={getPostSlug(post.id)}
+              section={post.collection as Section}
+              tags={post.data.tags}
+              thumbnail={post.data.thumbnail}
+              draft={post.data.draft}
             />
           ))}
         </div>

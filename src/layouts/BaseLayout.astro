@@ -10,6 +10,13 @@ interface Props {
   section?: 'life' | 'money' | 'culture' | 'tools' | 'dev' | 'vault';
   noindex?: boolean;
   ogImage?: string;
+  ogType?: 'website' | 'article';
+  articleMeta?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
   lang?: 'ko' | 'en';
   alternateUrl?: string;
 }
@@ -20,6 +27,8 @@ const {
   section,
   noindex = false,
   ogImage,
+  ogType = 'website',
+  articleMeta,
   lang = 'ko',
   alternateUrl,
 } = Astro.props;
@@ -28,7 +37,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
 const canonicalUrl = Astro.url?.pathname
   ? new URL(Astro.url.pathname, siteUrl).toString()
   : siteUrl;
-const ogImageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : `${siteUrl}/og-default.png`;
+const ogImageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : `${siteUrl}/og-default.jpg`;
 const fullTitle = title === '일취월장' ? title : `${title} — 일취월장`;
 const alternateAbsoluteUrl = alternateUrl ? new URL(alternateUrl, siteUrl).toString() : undefined;
 // x-default must always point at the same (default-locale) target regardless of which
@@ -43,9 +52,13 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- CDN Preconnect -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/rss+xml" title="일취월장" href="/rss.xml" />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="alternate" hreflang={lang} href={canonicalUrl} />
@@ -53,7 +66,7 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     {defaultLocaleUrl && <link rel="alternate" hreflang="x-default" href={defaultLocaleUrl} />}
 
     <!-- OG / Social -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
@@ -63,6 +76,14 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    {ogType === 'article' && articleMeta && (
+      <>
+        {articleMeta.publishedTime && <meta property="article:published_time" content={articleMeta.publishedTime} />}
+        {articleMeta.modifiedTime && <meta property="article:modified_time" content={articleMeta.modifiedTime} />}
+        {articleMeta.author && <meta property="article:author" content={articleMeta.author} />}
+        {articleMeta.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
+      </>
+    )}
 
     <!-- 영월체 (jsDelivr CDN) -->
     <link

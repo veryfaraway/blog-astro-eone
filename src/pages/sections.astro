@@ -1,9 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { isVisiblePost } from '../lib/utils';
-
-type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
+import { SECTIONS, getSectionPosts, type Section } from '../lib/content';
 
 interface SectionMeta {
   label: string;
@@ -19,16 +16,13 @@ const sectionMeta: Record<Section, SectionMeta> = {
   dev:     { label: 'Dev',     description: '개발 · AI · Backend · Frontend · DevOps', color: 'oklch(0.72 0.14 215)' },
 };
 
-const SECTIONS: Section[] = ['life', 'money', 'culture', 'tools', 'dev'];
-
 const sectionData = await Promise.all(
   SECTIONS.map(async (section) => {
-    const posts = await getCollection(section, e => e.id.startsWith('ko/') && isVisiblePost(e));
-    const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+    const posts = await getSectionPosts(section, { lang: 'ko' });
     return {
       section,
-      count: sorted.length,
-      latestTitle: sorted[0]?.data.title ?? null,
+      count: posts.length,
+      latestTitle: posts[0]?.data.title ?? null,
       ...sectionMeta[section],
     };
   })

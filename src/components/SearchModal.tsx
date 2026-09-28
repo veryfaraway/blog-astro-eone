@@ -14,6 +14,7 @@ declare global {
 export default function SearchModal({ open, onClose }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -32,7 +33,7 @@ export default function SearchModal({ open, onClose }: Props) {
           });
         }
       } catch {
-        // PagefindUI 초기화 실패 (dev 환경)
+        setLoadError(true);
       }
     };
 
@@ -44,7 +45,9 @@ export default function SearchModal({ open, onClose }: Props) {
     const script = document.createElement('script');
     script.src = '/pagefind/pagefind-ui.js';
     script.onload = init;
-    script.onerror = () => { /* dev 환경에서 pagefind 없음 */ };
+    script.onerror = () => {
+      setLoadError(true);
+    };
     document.head.appendChild(script);
 
     const style = document.createElement('link');
@@ -81,11 +84,23 @@ export default function SearchModal({ open, onClose }: Props) {
 
       {/* Modal */}
       <div className="relative w-full max-w-xl bg-card border border-border rounded-xl shadow-xl overflow-y-auto max-h-[70vh]">
-        <div ref={containerRef} className="pagefind-ui p-4" />
-        {!ready && (
-          <div className="p-6 text-center text-sm text-muted-foreground">
-            빌드 후 검색이 활성화됩니다.
+        {loadError ? (
+          <div className="p-8 text-center text-sm text-muted-foreground">
+            <p className="font-medium text-foreground mb-1">검색 인덱스를 불러올 수 없습니다.</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              로컬 개발 환경(<code>pnpm dev</code>)에서는 Pagefind 검색 인덱스가 생성되지 않습니다.<br />
+              <code>pnpm build && pnpm preview</code>로 실행하면 검색 기능을 확인할 수 있습니다.
+            </p>
           </div>
+        ) : (
+          <>
+            <div ref={containerRef} className="pagefind-ui p-4" />
+            {!ready && (
+              <div className="p-6 text-center text-sm text-muted-foreground">
+                검색 엔진을 불러오는 중입니다...
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
