@@ -6,9 +6,9 @@ category: Backend
 tags:
   - "java"
   - "azure"
-draft: true
+draft: false
 lang: ko
-thumbnail: "https://images.unsplash.com/photo-1690627931320-16ac56eb2588?q=80&w=2986&auto=format&fit=crop&ixlib=rb-4.0.3"
+thumbnail: "https://paradisecomputing.co.uk/media/4s2mvam4/micosoft-azure.png"
 ---
 
 클라우드 서비스 중 Azure에서 사용하기 좋은 OpenJDK 배포판으로는 **Azul Zulu**와 **Microsoft Build of OpenJDK**를 추천합니다. 두 배포판 모두 Azure 환경에서 안정적이고 효율적으로 동작하며, Microsoft와의 호환성이 뛰어납니다.
