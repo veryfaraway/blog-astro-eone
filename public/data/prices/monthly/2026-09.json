@@ -5460,6 +5460,2346 @@
           "changePercent": -1.377
         }
       }
+    },
+    {
+      "date": "2026-09-10",
+      "prices": {
+        "SMR": {
+          "close": 10.81,
+          "change": -0.3699999999999992,
+          "changePercent": -3.309
+        },
+        "INTU": {
+          "close": 313.94,
+          "change": -4.990000000000009,
+          "changePercent": -1.565
+        },
+        "HIMS": {
+          "close": 27.9,
+          "change": -0.2700000000000031,
+          "changePercent": -0.958
+        },
+        "CRCL": {
+          "close": 92.99,
+          "change": -3.190000000000012,
+          "changePercent": -3.317
+        },
+        "SPOT": {
+          "close": 523,
+          "change": -5.639999999999986,
+          "changePercent": -1.067
+        },
+        "OKLO": {
+          "close": 42.57,
+          "change": -0.740000000000002,
+          "changePercent": -1.709
+        },
+        "NKE": {
+          "close": 37.35,
+          "change": -0.75,
+          "changePercent": -1.969
+        },
+        "PGY": {
+          "close": 21.6,
+          "change": -0.4799999999999969,
+          "changePercent": -2.174
+        },
+        "ABT": {
+          "close": 105.23,
+          "change": -0.28999999999999204,
+          "changePercent": -0.275
+        },
+        "CRM": {
+          "close": 244.16,
+          "change": -4.960000000000008,
+          "changePercent": -1.991
+        },
+        "TEM": {
+          "close": 61.28,
+          "change": -3.010000000000005,
+          "changePercent": -4.682
+        },
+        "UUUU": {
+          "close": 14.55,
+          "change": -0.06999999999999851,
+          "changePercent": -0.479
+        },
+        "HOOD": {
+          "close": 115.28,
+          "change": -2.0600000000000023,
+          "changePercent": -1.756
+        },
+        "HII": {
+          "close": 280.85,
+          "change": -6.819999999999993,
+          "changePercent": -2.371
+        },
+        "TMUS": {
+          "close": 177.34,
+          "change": -4.349999999999994,
+          "changePercent": -2.394
+        },
+        "CTAS": {
+          "close": 200.04,
+          "change": -0.46000000000000796,
+          "changePercent": -0.229
+        },
+        "TLTW": {
+          "close": 21.08,
+          "change": -0.13000000000000256,
+          "changePercent": -0.613
+        },
+        "IBM": {
+          "close": 239.94,
+          "change": 7.849999999999994,
+          "changePercent": 3.382
+        },
+        "LOW": {
+          "close": 198.6,
+          "change": -2.200000000000017,
+          "changePercent": -1.096
+        },
+        "DIS": {
+          "close": 104.18,
+          "change": -0.8799999999999955,
+          "changePercent": -0.838
+        },
+        "CEG": {
+          "close": 293.905,
+          "change": -5.145000000000039,
+          "changePercent": -1.72
+        },
+        "META": {
+          "close": 653.69,
+          "change": 40.210000000000036,
+          "changePercent": 6.554
+        },
+        "LEU": {
+          "close": 181.49,
+          "change": -4.039999999999992,
+          "changePercent": -2.178
+        },
+        "MAIN": {
+          "close": 56.33,
+          "change": -0.3299999999999983,
+          "changePercent": -0.582
+        },
+        "PG": {
+          "close": 142.64,
+          "change": -2.940000000000026,
+          "changePercent": -2.02
+        },
+        "VICI": {
+          "close": 25.21,
+          "change": -0.05999999999999872,
+          "changePercent": -0.237
+        },
+        "MA": {
+          "close": 567.5,
+          "change": -3.3899999999999864,
+          "changePercent": -0.594
+        },
+        "AXP": {
+          "close": 321.8,
+          "change": -4.300000000000011,
+          "changePercent": -1.319
+        },
+        "DRAM": {
+          "close": 61.58,
+          "change": 0.4799999999999969,
+          "changePercent": 0.786
+        },
+        "MCD": {
+          "close": 253.48,
+          "change": -2.3300000000000125,
+          "changePercent": -0.911
+        },
+        "DRI": {
+          "close": 209.42,
+          "change": -3.5,
+          "changePercent": -1.644
+        },
+        "PFE": {
+          "close": 27.78,
+          "change": -0.00999999999999801,
+          "changePercent": -0.036
+        },
+        "WM": {
+          "close": 216.44,
+          "change": -1.3400000000000034,
+          "changePercent": -0.615
+        },
+        "HON": {
+          "close": 204.93,
+          "change": -3.3100000000000023,
+          "changePercent": -1.59
+        },
+        "ORCL": {
+          "close": 161.63,
+          "change": -0.8900000000000148,
+          "changePercent": -0.548
+        },
+        "AEP": {
+          "close": 124.67,
+          "change": -0.75,
+          "changePercent": -0.598
+        },
+        "MSFT": {
+          "close": 491.65,
+          "change": -2.3000000000000114,
+          "changePercent": -0.466
+        },
+        "MSI": {
+          "close": 459.89,
+          "change": -3.090000000000032,
+          "changePercent": -0.667
+        },
+        "SGOV": {
+          "close": 100.49,
+          "change": 0.009999999999990905,
+          "changePercent": 0.01
+        },
+        "UPS": {
+          "close": 99.22,
+          "change": -1.2600000000000051,
+          "changePercent": -1.254
+        },
+        "ASTS": {
+          "close": 62.42,
+          "change": -3.700000000000003,
+          "changePercent": -5.596
+        },
+        "EPR": {
+          "close": 59.67,
+          "change": -0.22999999999999687,
+          "changePercent": -0.384
+        },
+        "PEP": {
+          "close": 136.69,
+          "change": -1.759999999999991,
+          "changePercent": -1.271
+        },
+        "D": {
+          "close": 65.1,
+          "change": -1.1200000000000045,
+          "changePercent": -1.691
+        },
+        "ARKX": {
+          "close": 31.84,
+          "change": -0.6800000000000033,
+          "changePercent": -2.091
+        },
+        "JPM": {
+          "close": 354.71,
+          "change": 1.1999999999999886,
+          "changePercent": 0.339
+        },
+        "PM": {
+          "close": 185.71,
+          "change": 0.9800000000000182,
+          "changePercent": 0.531
+        },
+        "PKG": {
+          "close": 227.28,
+          "change": -4.710000000000008,
+          "changePercent": -2.03
+        },
+        "SO": {
+          "close": 88.34,
+          "change": -0.6499999999999915,
+          "changePercent": -0.73
+        },
+        "O": {
+          "close": 60.11,
+          "change": -0.9100000000000037,
+          "changePercent": -1.491
+        },
+        "LLY": {
+          "close": 1124.21,
+          "change": 0.2999999999999545,
+          "changePercent": 0.027
+        },
+        "KVUE": {
+          "close": 17.75,
+          "change": -0.6400000000000006,
+          "changePercent": -3.48
+        },
+        "DLR": {
+          "close": 189.08,
+          "change": -0.4199999999999875,
+          "changePercent": -0.222
+        },
+        "ALLY": {
+          "close": 41.83,
+          "change": -0.45000000000000284,
+          "changePercent": -1.064
+        },
+        "COST": {
+          "close": 902.6,
+          "change": -7.579999999999927,
+          "changePercent": -0.833
+        },
+        "RTX": {
+          "close": 197.55,
+          "change": -1.259999999999991,
+          "changePercent": -0.634
+        },
+        "ABBV": {
+          "close": 250.91,
+          "change": 2.1299999999999955,
+          "changePercent": 0.856
+        },
+        "NOC": {
+          "close": 515.57,
+          "change": -3.009999999999991,
+          "changePercent": -0.58
+        },
+        "PLTR": {
+          "close": 169.53,
+          "change": -0.7700000000000102,
+          "changePercent": -0.452
+        },
+        "LIN": {
+          "close": 466.65,
+          "change": -1.7300000000000182,
+          "changePercent": -0.369
+        },
+        "XLU": {
+          "close": 42.94,
+          "change": -0.5100000000000051,
+          "changePercent": -1.174
+        },
+        "GPIQ": {
+          "close": 56.41,
+          "change": -0.19000000000000483,
+          "changePercent": -0.336
+        },
+        "KR": {
+          "close": 56.44,
+          "change": -0.7600000000000051,
+          "changePercent": -1.329
+        },
+        "NXST": {
+          "close": 164.91,
+          "change": -4.235000000000014,
+          "changePercent": -2.504
+        },
+        "KMI": {
+          "close": 31.41,
+          "change": -0.5700000000000003,
+          "changePercent": -1.782
+        },
+        "LMT": {
+          "close": 524.46,
+          "change": -11.68999999999994,
+          "changePercent": -2.18
+        },
+        "GPIX": {
+          "close": 55.51,
+          "change": -0.3100000000000023,
+          "changePercent": -0.555
+        },
+        "IOT": {
+          "close": 38.65,
+          "change": -1.5,
+          "changePercent": -3.736
+        },
+        "BMY": {
+          "close": 64.41,
+          "change": -0.28000000000000114,
+          "changePercent": -0.433
+        },
+        "SCHD": {
+          "close": 34.09,
+          "change": -0.3199999999999932,
+          "changePercent": -0.93
+        },
+        "TGT": {
+          "close": 157.52,
+          "change": -5.189999999999998,
+          "changePercent": -3.19
+        },
+        "GE": {
+          "close": 325.42,
+          "change": -9.490000000000009,
+          "changePercent": -2.834
+        },
+        "RGLD": {
+          "close": 262.54,
+          "change": 1.170000000000016,
+          "changePercent": 0.448
+        },
+        "ATO": {
+          "close": 166.59,
+          "change": -1.4799999999999898,
+          "changePercent": -0.881
+        },
+        "CVX": {
+          "close": 213.81,
+          "change": 4.009999999999991,
+          "changePercent": 1.911
+        },
+        "XOM": {
+          "close": 164.23,
+          "change": 3.569999999999993,
+          "changePercent": 2.222
+        },
+        "LITE": {
+          "close": 988.98,
+          "change": 10.44500000000005,
+          "changePercent": 1.067
+        },
+        "GS": {
+          "close": 1028.78,
+          "change": -7.75,
+          "changePercent": -0.748
+        },
+        "CRDO": {
+          "close": 167.92,
+          "change": 0.1699999999999875,
+          "changePercent": 0.101
+        },
+        "FCX": {
+          "close": 76.23,
+          "change": -0.39000000000000057,
+          "changePercent": -0.509
+        },
+        "UNH": {
+          "close": 393.06,
+          "change": -7.779999999999973,
+          "changePercent": -1.941
+        },
+        "MS": {
+          "close": 215.35,
+          "change": -0.8900000000000148,
+          "changePercent": -0.412
+        },
+        "COP": {
+          "close": 136.53,
+          "change": 1.490000000000009,
+          "changePercent": 1.103
+        },
+        "BWXT": {
+          "close": 156.71,
+          "change": -3.6999999999999886,
+          "changePercent": -2.307
+        },
+        "MRK": {
+          "close": 147.53,
+          "change": -0.9300000000000068,
+          "changePercent": -0.626
+        },
+        "TSLA": {
+          "close": 367.81,
+          "change": -0.35000000000002274,
+          "changePercent": -0.095
+        },
+        "WELL": {
+          "close": 235.9,
+          "change": -1.3499999999999943,
+          "changePercent": -0.569
+        },
+        "COHR": {
+          "close": 303.48,
+          "change": 1.6000000000000227,
+          "changePercent": 0.53
+        },
+        "GLW": {
+          "close": 168.46,
+          "change": 2.5,
+          "changePercent": 1.506
+        },
+        "NVDA": {
+          "close": 223.67,
+          "change": -2.0600000000000023,
+          "changePercent": -0.913
+        },
+        "JNJ": {
+          "close": 267.08,
+          "change": -2.0400000000000205,
+          "changePercent": -0.758
+        },
+        "GOOGL": {
+          "close": 330.65,
+          "change": -7.710000000000036,
+          "changePercent": -2.279
+        },
+        "CVS": {
+          "close": 95.38,
+          "change": -0.6899999999999977,
+          "changePercent": -0.718
+        },
+        "AAPL": {
+          "close": 315.34,
+          "change": -0.8800000000000523,
+          "changePercent": -0.278
+        },
+        "AVGO": {
+          "close": 364.38,
+          "change": -4.180000000000007,
+          "changePercent": -1.134
+        },
+        "IONQ": {
+          "close": 38.14,
+          "change": -2.3299999999999983,
+          "changePercent": -5.757
+        },
+        "CSCO": {
+          "close": 109.43,
+          "change": 0.2600000000000051,
+          "changePercent": 0.238
+        },
+        "TSM": {
+          "close": 435.36,
+          "change": -3.6399999999999864,
+          "changePercent": -0.829
+        },
+        "STM": {
+          "close": 51.55,
+          "change": -0.4200000000000017,
+          "changePercent": -0.808
+        },
+        "AMAT": {
+          "close": 468.85,
+          "change": -3.9399999999999977,
+          "changePercent": -0.833
+        },
+        "DELL": {
+          "close": 535.25,
+          "change": 1.3700000000000045,
+          "changePercent": 0.257
+        },
+        "GEV": {
+          "close": 951.04,
+          "change": -20.269999999999982,
+          "changePercent": -2.087
+        },
+        "ASML": {
+          "close": 1729.52,
+          "change": -35.32999999999993,
+          "changePercent": -2.002
+        },
+        "BE": {
+          "close": 269.28,
+          "change": -7.940000000000055,
+          "changePercent": -2.864
+        },
+        "PL": {
+          "close": 17.22,
+          "change": -0.5899999999999999,
+          "changePercent": -3.313
+        },
+        "LRCX": {
+          "close": 315.84,
+          "change": -4.580000000000041,
+          "changePercent": -1.429
+        },
+        "VRT": {
+          "close": 262.89,
+          "change": -27.939999999999998,
+          "changePercent": -9.607
+        },
+        "MU": {
+          "close": 1027.77,
+          "change": 27.50999999999999,
+          "changePercent": 2.75
+        },
+        "RKLB": {
+          "close": 63.07,
+          "change": -2.8000000000000043,
+          "changePercent": -4.251
+        },
+        "ANET": {
+          "close": 192.93,
+          "change": -2.030000000000001,
+          "changePercent": -1.041
+        },
+        "APH": {
+          "close": 81.34,
+          "change": -0.4200000000000017,
+          "changePercent": -0.514
+        },
+        "BX": {
+          "close": 129.07,
+          "change": -4.900000000000006,
+          "changePercent": -3.658
+        },
+        "C": {
+          "close": 137.8,
+          "change": 1.0600000000000023,
+          "changePercent": 0.775
+        },
+        "CAT": {
+          "close": 815.56,
+          "change": -6.920000000000073,
+          "changePercent": -0.841
+        },
+        "CFG": {
+          "close": 69.37,
+          "change": -0.6199999999999903,
+          "changePercent": -0.886
+        },
+        "CWEN": {
+          "close": 32.07,
+          "change": -1.0399999999999991,
+          "changePercent": -3.141
+        },
+        "DKS": {
+          "close": 133.36,
+          "change": 0.9900000000000091,
+          "changePercent": 0.748
+        },
+        "DUK": {
+          "close": 120.43,
+          "change": -0.8099999999999881,
+          "changePercent": -0.668
+        },
+        "ENB": {
+          "close": 50.15,
+          "change": -0.3299999999999983,
+          "changePercent": -0.654
+        },
+        "HSY": {
+          "close": 172.19,
+          "change": -1.0800000000000125,
+          "changePercent": -0.623
+        },
+        "HWM": {
+          "close": 232.62,
+          "change": 1.0900000000000034,
+          "changePercent": 0.471
+        },
+        "MMM": {
+          "close": 164.4,
+          "change": -3.1200000000000045,
+          "changePercent": -1.862
+        },
+        "NEE": {
+          "close": 82.65,
+          "change": -1.1799999999999926,
+          "changePercent": -1.408
+        },
+        "NFG": {
+          "close": 82.45,
+          "change": -1.3599999999999994,
+          "changePercent": -1.623
+        },
+        "NRG": {
+          "close": 115.37,
+          "change": -4.269999999999996,
+          "changePercent": -3.569
+        },
+        "PNC": {
+          "close": 240.69,
+          "change": -2.219999999999999,
+          "changePercent": -0.914
+        },
+        "PSX": {
+          "close": 260.78,
+          "change": 1.6399999999999864,
+          "changePercent": 0.633
+        },
+        "RCL": {
+          "close": 259.76,
+          "change": -4.740000000000009,
+          "changePercent": -1.792
+        },
+        "SCHW": {
+          "close": 106.54,
+          "change": -0.3299999999999983,
+          "changePercent": -0.309
+        },
+        "SWK": {
+          "close": 91.68,
+          "change": -2.1299999999999955,
+          "changePercent": -2.271
+        },
+        "TEL": {
+          "close": 204.68,
+          "change": -0.3100000000000023,
+          "changePercent": -0.151
+        },
+        "UBER": {
+          "close": 71.08,
+          "change": -2.049999999999997,
+          "changePercent": -2.803
+        },
+        "VLO": {
+          "close": 388.95,
+          "change": 6.099999999999966,
+          "changePercent": 1.593
+        },
+        "VTR": {
+          "close": 89.38,
+          "change": -0.4900000000000091,
+          "changePercent": -0.545
+        },
+        "VZ": {
+          "close": 49.74,
+          "change": -0.6699999999999946,
+          "changePercent": -1.329
+        },
+        "WMB": {
+          "close": 75.15,
+          "change": -0.6799999999999926,
+          "changePercent": -0.897
+        },
+        "AMKR": {
+          "close": 51.35,
+          "change": 0.6300000000000026,
+          "changePercent": 1.242
+        },
+        "AMZN": {
+          "close": 252.4,
+          "change": -4.570000000000022,
+          "changePercent": -1.778
+        },
+        "CINF": {
+          "close": 169.21,
+          "change": 0.0700000000000216,
+          "changePercent": 0.041
+        },
+        "EXPE": {
+          "close": 272.6,
+          "change": -1.9499999999999886,
+          "changePercent": -0.71
+        },
+        "GILD": {
+          "close": 145.65,
+          "change": -0.9899999999999807,
+          "changePercent": -0.675
+        },
+        "IREN": {
+          "close": 45.37,
+          "change": -1.5600000000000023,
+          "changePercent": -3.324
+        },
+        "JEPQ": {
+          "close": 59.78,
+          "change": -0.07000000000000028,
+          "changePercent": -0.117
+        },
+        "KMB": {
+          "close": 98.7,
+          "change": -4.230000000000004,
+          "changePercent": -4.11
+        },
+        "NFLX": {
+          "close": 76.03,
+          "change": -0.7399999999999949,
+          "changePercent": -0.964
+        },
+        "QCOM": {
+          "close": 176.4,
+          "change": 2.3100000000000023,
+          "changePercent": 1.327
+        },
+        "SBUX": {
+          "close": 100.04,
+          "change": -1.9699999999999989,
+          "changePercent": -1.931
+        },
+        "SOFI": {
+          "close": 17.33,
+          "change": -0.6800000000000033,
+          "changePercent": -3.776
+        },
+        "WDC": {
+          "close": 482.28,
+          "change": 4.979999999999961,
+          "changePercent": 1.043
+        },
+        "WMT": {
+          "close": 105.83,
+          "change": -0.21999999999999886,
+          "changePercent": -0.207
+        },
+        "WYNN": {
+          "close": 90.23,
+          "change": -1.9899999999999949,
+          "changePercent": -2.158
+        },
+        "GDX": {
+          "close": 99.47,
+          "change": 1.0600000000000023,
+          "changePercent": 1.077
+        },
+        "ITA": {
+          "close": 219.45,
+          "change": -4.0800000000000125,
+          "changePercent": -1.825
+        },
+        "SVM": {
+          "close": 12.55,
+          "change": 0.120000000000001,
+          "changePercent": 0.965
+        },
+        "XLF": {
+          "close": 57.06,
+          "change": -0.23999999999999488,
+          "changePercent": -0.419
+        }
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "prices": {
+        "SMR": {
+          "close": 10.21,
+          "change": -0.5999999999999996,
+          "changePercent": -5.55
+        },
+        "INTU": {
+          "close": 312.77,
+          "change": -1.170000000000016,
+          "changePercent": -0.373
+        },
+        "HIMS": {
+          "close": 27.44,
+          "change": -0.4599999999999973,
+          "changePercent": -1.649
+        },
+        "CRCL": {
+          "close": 90.32,
+          "change": -2.6700000000000017,
+          "changePercent": -2.871
+        },
+        "SPOT": {
+          "close": 521.73,
+          "change": -1.2699999999999818,
+          "changePercent": -0.243
+        },
+        "OKLO": {
+          "close": 39.88,
+          "change": -2.6899999999999977,
+          "changePercent": -6.319
+        },
+        "NKE": {
+          "close": 36.62,
+          "change": -0.730000000000004,
+          "changePercent": -1.954
+        },
+        "PGY": {
+          "close": 20.3,
+          "change": -1.3000000000000007,
+          "changePercent": -6.019
+        },
+        "ABT": {
+          "close": 103.36,
+          "change": -1.8700000000000045,
+          "changePercent": -1.777
+        },
+        "CRM": {
+          "close": 243,
+          "change": -1.1599999999999966,
+          "changePercent": -0.475
+        },
+        "TEM": {
+          "close": 58.74,
+          "change": -2.539999999999999,
+          "changePercent": -4.145
+        },
+        "UUUU": {
+          "close": 13.63,
+          "change": -0.9199999999999999,
+          "changePercent": -6.323
+        },
+        "HOOD": {
+          "close": 113.33,
+          "change": -1.9500000000000028,
+          "changePercent": -1.692
+        },
+        "HII": {
+          "close": 281.67,
+          "change": 0.8199999999999932,
+          "changePercent": 0.292
+        },
+        "TMUS": {
+          "close": 177.16,
+          "change": -0.18000000000000682,
+          "changePercent": -0.101
+        },
+        "CTAS": {
+          "close": 198.44,
+          "change": -1.5999999999999943,
+          "changePercent": -0.8
+        },
+        "TLTW": {
+          "close": 20.85,
+          "change": -0.22999999999999687,
+          "changePercent": -1.091
+        },
+        "IBM": {
+          "close": 234.02,
+          "change": -5.9199999999999875,
+          "changePercent": -2.467
+        },
+        "LOW": {
+          "close": 196.59,
+          "change": -2.009999999999991,
+          "changePercent": -1.012
+        },
+        "DIS": {
+          "close": 105.82,
+          "change": 1.6399999999999864,
+          "changePercent": 1.574
+        },
+        "CEG": {
+          "close": 285.97,
+          "change": -7.934999999999945,
+          "changePercent": -2.7
+        },
+        "META": {
+          "close": 644.38,
+          "change": -9.31000000000006,
+          "changePercent": -1.424
+        },
+        "LEU": {
+          "close": 165.87,
+          "change": -15.620000000000005,
+          "changePercent": -8.607
+        },
+        "MAIN": {
+          "close": 55.8,
+          "change": -0.5300000000000011,
+          "changePercent": -0.941
+        },
+        "PG": {
+          "close": 142.97,
+          "change": 0.3300000000000125,
+          "changePercent": 0.231
+        },
+        "VICI": {
+          "close": 24.73,
+          "change": -0.4800000000000004,
+          "changePercent": -1.904
+        },
+        "MA": {
+          "close": 565.37,
+          "change": -2.1299999999999955,
+          "changePercent": -0.375
+        },
+        "AXP": {
+          "close": 320.71,
+          "change": -1.0900000000000318,
+          "changePercent": -0.339
+        },
+        "DRAM": {
+          "close": 58.56,
+          "change": -3.019999999999996,
+          "changePercent": -4.904
+        },
+        "MCD": {
+          "close": 253.05,
+          "change": -0.4299999999999784,
+          "changePercent": -0.17
+        },
+        "DRI": {
+          "close": 207.53,
+          "change": -1.8899999999999864,
+          "changePercent": -0.902
+        },
+        "PFE": {
+          "close": 27.65,
+          "change": -0.13000000000000256,
+          "changePercent": -0.468
+        },
+        "WM": {
+          "close": 214.77,
+          "change": -1.6699999999999875,
+          "changePercent": -0.772
+        },
+        "HON": {
+          "close": 202.18,
+          "change": -2.75,
+          "changePercent": -1.342
+        },
+        "ORCL": {
+          "close": 152.94,
+          "change": -8.689999999999998,
+          "changePercent": -5.376
+        },
+        "AEP": {
+          "close": 123.47,
+          "change": -1.2000000000000028,
+          "changePercent": -0.963
+        },
+        "MSFT": {
+          "close": 492.44,
+          "change": 0.7900000000000205,
+          "changePercent": 0.161
+        },
+        "MSI": {
+          "close": 463.88,
+          "change": 3.990000000000009,
+          "changePercent": 0.868
+        },
+        "SGOV": {
+          "close": 100.5,
+          "change": 0.010000000000005116,
+          "changePercent": 0.01
+        },
+        "UPS": {
+          "close": 99.97,
+          "change": 0.75,
+          "changePercent": 0.756
+        },
+        "ASTS": {
+          "close": 59.91,
+          "change": -2.510000000000005,
+          "changePercent": -4.021
+        },
+        "EPR": {
+          "close": 59.33,
+          "change": -0.3400000000000034,
+          "changePercent": -0.57
+        },
+        "PEP": {
+          "close": 136.65,
+          "change": -0.03999999999999204,
+          "changePercent": -0.029
+        },
+        "D": {
+          "close": 65.05,
+          "change": -0.04999999999999716,
+          "changePercent": -0.077
+        },
+        "ARKX": {
+          "close": 31.665,
+          "change": -0.1750000000000007,
+          "changePercent": -0.55
+        },
+        "JPM": {
+          "close": 353.56,
+          "change": -1.1499999999999773,
+          "changePercent": -0.324
+        },
+        "PM": {
+          "close": 189.77,
+          "change": 4.060000000000002,
+          "changePercent": 2.186
+        },
+        "PKG": {
+          "close": 232.41,
+          "change": 5.1299999999999955,
+          "changePercent": 2.257
+        },
+        "SO": {
+          "close": 87.75,
+          "change": -0.5900000000000034,
+          "changePercent": -0.668
+        },
+        "O": {
+          "close": 59.57,
+          "change": -0.5399999999999991,
+          "changePercent": -0.898
+        },
+        "LLY": {
+          "close": 1123,
+          "change": -1.2100000000000364,
+          "changePercent": -0.108
+        },
+        "KVUE": {
+          "close": 17.79,
+          "change": 0.03999999999999915,
+          "changePercent": 0.225
+        },
+        "DLR": {
+          "close": 185.37,
+          "change": -3.710000000000008,
+          "changePercent": -1.962
+        },
+        "ALLY": {
+          "close": 42.17,
+          "change": 0.3400000000000034,
+          "changePercent": 0.813
+        },
+        "COST": {
+          "close": 902.38,
+          "change": -0.22000000000002728,
+          "changePercent": -0.024
+        },
+        "RTX": {
+          "close": 198.12,
+          "change": 0.5699999999999932,
+          "changePercent": 0.289
+        },
+        "ABBV": {
+          "close": 255,
+          "change": 4.090000000000003,
+          "changePercent": 1.63
+        },
+        "NOC": {
+          "close": 518.95,
+          "change": 3.3799999999999955,
+          "changePercent": 0.656
+        },
+        "PLTR": {
+          "close": 165.86,
+          "change": -3.6699999999999875,
+          "changePercent": -2.165
+        },
+        "LIN": {
+          "close": 461.62,
+          "change": -5.029999999999973,
+          "changePercent": -1.078
+        },
+        "XLU": {
+          "close": 42.52,
+          "change": -0.4199999999999946,
+          "changePercent": -0.978
+        },
+        "GPIQ": {
+          "close": 55.9,
+          "change": -0.509999999999998,
+          "changePercent": -0.904
+        },
+        "KR": {
+          "close": 56.95,
+          "change": 0.5100000000000051,
+          "changePercent": 0.904
+        },
+        "NXST": {
+          "close": 169.97,
+          "change": 5.060000000000002,
+          "changePercent": 3.068
+        },
+        "KMI": {
+          "close": 30.95,
+          "change": -0.46000000000000085,
+          "changePercent": -1.464
+        },
+        "LMT": {
+          "close": 530.12,
+          "change": 5.659999999999968,
+          "changePercent": 1.079
+        },
+        "GPIX": {
+          "close": 55.21,
+          "change": -0.29999999999999716,
+          "changePercent": -0.54
+        },
+        "IOT": {
+          "close": 38.44,
+          "change": -0.21000000000000085,
+          "changePercent": -0.543
+        },
+        "BMY": {
+          "close": 63.75,
+          "change": -0.6599999999999966,
+          "changePercent": -1.025
+        },
+        "SCHD": {
+          "close": 33.99,
+          "change": -0.10000000000000142,
+          "changePercent": -0.293
+        },
+        "TGT": {
+          "close": 155.73,
+          "change": -1.7900000000000205,
+          "changePercent": -1.136
+        },
+        "GE": {
+          "close": 324.15,
+          "change": -1.2700000000000387,
+          "changePercent": -0.39
+        },
+        "RGLD": {
+          "close": 253.98,
+          "change": -8.56000000000003,
+          "changePercent": -3.26
+        },
+        "ATO": {
+          "close": 164.81,
+          "change": -1.7800000000000011,
+          "changePercent": -1.068
+        },
+        "CVX": {
+          "close": 212.76,
+          "change": -1.0500000000000114,
+          "changePercent": -0.491
+        },
+        "XOM": {
+          "close": 165.23,
+          "change": 1,
+          "changePercent": 0.609
+        },
+        "LITE": {
+          "close": 935.7,
+          "change": -53.27999999999997,
+          "changePercent": -5.387
+        },
+        "GS": {
+          "close": 1019.77,
+          "change": -9.009999999999991,
+          "changePercent": -0.876
+        },
+        "CRDO": {
+          "close": 160.31,
+          "change": -7.609999999999985,
+          "changePercent": -4.532
+        },
+        "FCX": {
+          "close": 71.21,
+          "change": -5.02000000000001,
+          "changePercent": -6.585
+        },
+        "UNH": {
+          "close": 388.28,
+          "change": -4.78000000000003,
+          "changePercent": -1.216
+        },
+        "MS": {
+          "close": 212.66,
+          "change": -2.6899999999999977,
+          "changePercent": -1.249
+        },
+        "COP": {
+          "close": 137.04,
+          "change": 0.5099999999999909,
+          "changePercent": 0.374
+        },
+        "BWXT": {
+          "close": 152.49,
+          "change": -4.219999999999999,
+          "changePercent": -2.693
+        },
+        "MRK": {
+          "close": 144.71,
+          "change": -2.819999999999993,
+          "changePercent": -1.911
+        },
+        "TSLA": {
+          "close": 363.56,
+          "change": -4.25,
+          "changePercent": -1.155
+        },
+        "WELL": {
+          "close": 235.71,
+          "change": -0.18999999999999773,
+          "changePercent": -0.081
+        },
+        "COHR": {
+          "close": 293.17,
+          "change": -10.310000000000002,
+          "changePercent": -3.397
+        },
+        "GLW": {
+          "close": 163.12,
+          "change": -5.340000000000003,
+          "changePercent": -3.17
+        },
+        "NVDA": {
+          "close": 218.36,
+          "change": -5.309999999999974,
+          "changePercent": -2.374
+        },
+        "JNJ": {
+          "close": 266.35,
+          "change": -0.7299999999999613,
+          "changePercent": -0.273
+        },
+        "GOOGL": {
+          "close": 332.6,
+          "change": 1.9500000000000455,
+          "changePercent": 0.59
+        },
+        "CVS": {
+          "close": 95.29,
+          "change": -0.0899999999999892,
+          "changePercent": -0.094
+        },
+        "AAPL": {
+          "close": 326.57,
+          "change": 11.230000000000018,
+          "changePercent": 3.561
+        },
+        "AVGO": {
+          "close": 360.83,
+          "change": -3.5500000000000114,
+          "changePercent": -0.974
+        },
+        "IONQ": {
+          "close": 36.84,
+          "change": -1.2999999999999972,
+          "changePercent": -3.408
+        },
+        "CSCO": {
+          "close": 107.44,
+          "change": -1.990000000000009,
+          "changePercent": -1.819
+        },
+        "TSM": {
+          "close": 428.03,
+          "change": -7.330000000000041,
+          "changePercent": -1.684
+        },
+        "STM": {
+          "close": 50.74,
+          "change": -0.8099999999999952,
+          "changePercent": -1.571
+        },
+        "AMAT": {
+          "close": 454.01,
+          "change": -14.840000000000032,
+          "changePercent": -3.165
+        },
+        "DELL": {
+          "close": 506.62,
+          "change": -28.629999999999995,
+          "changePercent": -5.349
+        },
+        "GEV": {
+          "close": 923.91,
+          "change": -27.129999999999995,
+          "changePercent": -2.853
+        },
+        "ASML": {
+          "close": 1687.43,
+          "change": -42.08999999999992,
+          "changePercent": -2.434
+        },
+        "BE": {
+          "close": 258.49,
+          "change": -10.789999999999964,
+          "changePercent": -4.007
+        },
+        "PL": {
+          "close": 16.69,
+          "change": -0.5299999999999976,
+          "changePercent": -3.078
+        },
+        "LRCX": {
+          "close": 298.01,
+          "change": -17.829999999999984,
+          "changePercent": -5.645
+        },
+        "VRT": {
+          "close": 248.13,
+          "change": -14.759999999999991,
+          "changePercent": -5.615
+        },
+        "MU": {
+          "close": 977.41,
+          "change": -50.360000000000014,
+          "changePercent": -4.9
+        },
+        "RKLB": {
+          "close": 61.96,
+          "change": -1.1099999999999994,
+          "changePercent": -1.76
+        },
+        "ANET": {
+          "close": 188.99,
+          "change": -3.9399999999999977,
+          "changePercent": -2.042
+        },
+        "APH": {
+          "close": 80.25,
+          "change": -1.0900000000000034,
+          "changePercent": -1.34
+        },
+        "BX": {
+          "close": 125.41,
+          "change": -3.6599999999999966,
+          "changePercent": -2.836
+        },
+        "C": {
+          "close": 138.5,
+          "change": 0.6999999999999886,
+          "changePercent": 0.508
+        },
+        "CAT": {
+          "close": 805,
+          "change": -10.559999999999945,
+          "changePercent": -1.295
+        },
+        "CFG": {
+          "close": 69.63,
+          "change": 0.2599999999999909,
+          "changePercent": 0.375
+        },
+        "CWEN": {
+          "close": 31.59,
+          "change": -0.4800000000000004,
+          "changePercent": -1.497
+        },
+        "DKS": {
+          "close": 133.14,
+          "change": -0.22000000000002728,
+          "changePercent": -0.165
+        },
+        "DUK": {
+          "close": 119.37,
+          "change": -1.0600000000000023,
+          "changePercent": -0.88
+        },
+        "ENB": {
+          "close": 48.22,
+          "change": -1.9299999999999997,
+          "changePercent": -3.848
+        },
+        "HSY": {
+          "close": 174.34,
+          "change": 2.1500000000000057,
+          "changePercent": 1.249
+        },
+        "HWM": {
+          "close": 227.91,
+          "change": -4.710000000000008,
+          "changePercent": -2.025
+        },
+        "MMM": {
+          "close": 162.86,
+          "change": -1.539999999999992,
+          "changePercent": -0.937
+        },
+        "NEE": {
+          "close": 82.44,
+          "change": -0.21000000000000796,
+          "changePercent": -0.254
+        },
+        "NFG": {
+          "close": 82.33,
+          "change": -0.12000000000000455,
+          "changePercent": -0.146
+        },
+        "NRG": {
+          "close": 111.65,
+          "change": -3.719999999999999,
+          "changePercent": -3.224
+        },
+        "PNC": {
+          "close": 242.98,
+          "change": 2.289999999999992,
+          "changePercent": 0.951
+        },
+        "PSX": {
+          "close": 258.51,
+          "change": -2.269999999999982,
+          "changePercent": -0.87
+        },
+        "RCL": {
+          "close": 259.01,
+          "change": -0.75,
+          "changePercent": -0.289
+        },
+        "SCHW": {
+          "close": 107.33,
+          "change": 0.789999999999992,
+          "changePercent": 0.742
+        },
+        "SWK": {
+          "close": 89.23,
+          "change": -2.450000000000003,
+          "changePercent": -2.672
+        },
+        "TEL": {
+          "close": 204.63,
+          "change": -0.05000000000001137,
+          "changePercent": -0.024
+        },
+        "UBER": {
+          "close": 72.56,
+          "change": 1.480000000000004,
+          "changePercent": 2.082
+        },
+        "VLO": {
+          "close": 385.43,
+          "change": -3.519999999999982,
+          "changePercent": -0.905
+        },
+        "VTR": {
+          "close": 90.44,
+          "change": 1.0600000000000023,
+          "changePercent": 1.186
+        },
+        "VZ": {
+          "close": 49.97,
+          "change": 0.22999999999999687,
+          "changePercent": 0.462
+        },
+        "WMB": {
+          "close": 72.82,
+          "change": -2.3300000000000125,
+          "changePercent": -3.1
+        },
+        "AMKR": {
+          "close": 49.53,
+          "change": -1.8200000000000003,
+          "changePercent": -3.544
+        },
+        "AMZN": {
+          "close": 251.89,
+          "change": -0.5100000000000193,
+          "changePercent": -0.202
+        },
+        "CINF": {
+          "close": 169.59,
+          "change": 0.37999999999999545,
+          "changePercent": 0.225
+        },
+        "EXPE": {
+          "close": 276.88,
+          "change": 4.279999999999973,
+          "changePercent": 1.57
+        },
+        "GILD": {
+          "close": 144.81,
+          "change": -0.8400000000000034,
+          "changePercent": -0.577
+        },
+        "IREN": {
+          "close": 43.64,
+          "change": -1.7299999999999969,
+          "changePercent": -3.813
+        },
+        "JEPQ": {
+          "close": 59.3,
+          "change": -0.480000000000004,
+          "changePercent": -0.803
+        },
+        "KMB": {
+          "close": 98.48,
+          "change": -0.21999999999999886,
+          "changePercent": -0.223
+        },
+        "NFLX": {
+          "close": 76.01,
+          "change": -0.01999999999999602,
+          "changePercent": -0.026
+        },
+        "QCOM": {
+          "close": 176.88,
+          "change": 0.47999999999998977,
+          "changePercent": 0.272
+        },
+        "SBUX": {
+          "close": 99.22,
+          "change": -0.8200000000000074,
+          "changePercent": -0.82
+        },
+        "SOFI": {
+          "close": 17.21,
+          "change": -0.11999999999999744,
+          "changePercent": -0.692
+        },
+        "WDC": {
+          "close": 460.93,
+          "change": -21.349999999999966,
+          "changePercent": -4.427
+        },
+        "WMT": {
+          "close": 105.73,
+          "change": -0.09999999999999432,
+          "changePercent": -0.094
+        },
+        "WYNN": {
+          "close": 88.42,
+          "change": -1.8100000000000023,
+          "changePercent": -2.006
+        },
+        "GDX": {
+          "close": 96.03,
+          "change": -3.4399999999999977,
+          "changePercent": -3.458
+        },
+        "ITA": {
+          "close": 218.32,
+          "change": -1.1299999999999955,
+          "changePercent": -0.515
+        },
+        "SVM": {
+          "close": 12.12,
+          "change": -0.4300000000000015,
+          "changePercent": -3.426
+        },
+        "XLF": {
+          "close": 56.87,
+          "change": -0.19000000000000483,
+          "changePercent": -0.333
+        }
+      }
+    },
+    {
+      "date": "2026-09-12",
+      "prices": {
+        "SMR": {
+          "close": 8.61,
+          "change": -1.6000000000000014,
+          "changePercent": -15.671
+        },
+        "INTU": {
+          "close": 321.57,
+          "change": 8.800000000000011,
+          "changePercent": 2.814
+        },
+        "HIMS": {
+          "close": 27.51,
+          "change": 0.07000000000000028,
+          "changePercent": 0.255
+        },
+        "CRCL": {
+          "close": 90.6,
+          "change": 0.28000000000000114,
+          "changePercent": 0.31
+        },
+        "SPOT": {
+          "close": 525.75,
+          "change": 4.019999999999982,
+          "changePercent": 0.771
+        },
+        "OKLO": {
+          "close": 36.22,
+          "change": -3.6600000000000037,
+          "changePercent": -9.178
+        },
+        "NKE": {
+          "close": 36.8,
+          "change": 0.17999999999999972,
+          "changePercent": 0.492
+        },
+        "PGY": {
+          "close": 19.97,
+          "change": -0.33000000000000185,
+          "changePercent": -1.626
+        },
+        "ABT": {
+          "close": 101.95,
+          "change": -1.4099999999999966,
+          "changePercent": -1.364
+        },
+        "CRM": {
+          "close": 247.72,
+          "change": 4.719999999999999,
+          "changePercent": 1.942
+        },
+        "TEM": {
+          "close": 59.01,
+          "change": 0.269999999999996,
+          "changePercent": 0.46
+        },
+        "UUUU": {
+          "close": 12.95,
+          "change": -0.6800000000000015,
+          "changePercent": -4.989
+        },
+        "HOOD": {
+          "close": 112.57,
+          "change": -0.7600000000000051,
+          "changePercent": -0.671
+        },
+        "HII": {
+          "close": 279.69,
+          "change": -1.9800000000000182,
+          "changePercent": -0.703
+        },
+        "TMUS": {
+          "close": 182.33,
+          "change": 5.170000000000016,
+          "changePercent": 2.918
+        },
+        "CTAS": {
+          "close": 201.5,
+          "change": 3.0600000000000023,
+          "changePercent": 1.542
+        },
+        "TLTW": {
+          "close": 20.87,
+          "change": 0.019999999999999574,
+          "changePercent": 0.096
+        },
+        "IBM": {
+          "close": 243.29,
+          "change": 9.269999999999982,
+          "changePercent": 3.961
+        },
+        "LOW": {
+          "close": 196.82,
+          "change": 0.22999999999998977,
+          "changePercent": 0.117
+        },
+        "DIS": {
+          "close": 106.55,
+          "change": 0.730000000000004,
+          "changePercent": 0.69
+        },
+        "CEG": {
+          "close": 284.75,
+          "change": -1.2200000000000273,
+          "changePercent": -0.427
+        },
+        "META": {
+          "close": 648.03,
+          "change": 3.6499999999999773,
+          "changePercent": 0.566
+        },
+        "LEU": {
+          "close": 152.31,
+          "change": -13.560000000000002,
+          "changePercent": -8.175
+        },
+        "MAIN": {
+          "close": 56.22,
+          "change": 0.4200000000000017,
+          "changePercent": 0.753
+        },
+        "PG": {
+          "close": 145.27,
+          "change": 2.3000000000000114,
+          "changePercent": 1.609
+        },
+        "VICI": {
+          "close": 24.83,
+          "change": 0.09999999999999787,
+          "changePercent": 0.404
+        },
+        "MA": {
+          "close": 569.19,
+          "change": 3.82000000000005,
+          "changePercent": 0.676
+        },
+        "AXP": {
+          "close": 324.69,
+          "change": 3.980000000000018,
+          "changePercent": 1.241
+        },
+        "DRAM": {
+          "close": 59.1,
+          "change": 0.5399999999999991,
+          "changePercent": 0.922
+        },
+        "MCD": {
+          "close": 252.53,
+          "change": -0.5200000000000102,
+          "changePercent": -0.205
+        },
+        "DRI": {
+          "close": 209.89,
+          "change": 2.359999999999985,
+          "changePercent": 1.137
+        },
+        "PFE": {
+          "close": 27.72,
+          "change": 0.07000000000000028,
+          "changePercent": 0.253
+        },
+        "WM": {
+          "close": 213.46,
+          "change": -0.3649999999999807,
+          "changePercent": -0.171
+        },
+        "HON": {
+          "close": 202.36,
+          "change": 0.18000000000000682,
+          "changePercent": 0.089
+        },
+        "ORCL": {
+          "close": 150.28,
+          "change": -2.6599999999999966,
+          "changePercent": -1.739
+        },
+        "AEP": {
+          "close": 123.33,
+          "change": -0.14000000000000057,
+          "changePercent": -0.113
+        },
+        "MSFT": {
+          "close": 495.63,
+          "change": 3.1899999999999977,
+          "changePercent": 0.648
+        },
+        "MSI": {
+          "close": 466.16,
+          "change": 2.2800000000000296,
+          "changePercent": 0.492
+        },
+        "SGOV": {
+          "close": 100.52,
+          "change": 0.01999999999999602,
+          "changePercent": 0.02
+        },
+        "UPS": {
+          "close": 100.28,
+          "change": 0.3100000000000023,
+          "changePercent": 0.31
+        },
+        "ASTS": {
+          "close": 59.86,
+          "change": -0.04999999999999716,
+          "changePercent": -0.083
+        },
+        "EPR": {
+          "close": 59.18,
+          "change": -0.14999999999999858,
+          "changePercent": -0.253
+        },
+        "PEP": {
+          "close": 136.32,
+          "change": -0.3300000000000125,
+          "changePercent": -0.241
+        },
+        "D": {
+          "close": 64.36,
+          "change": -0.6899999999999977,
+          "changePercent": -1.061
+        },
+        "ARKX": {
+          "close": 31.84,
+          "change": 0.1750000000000007,
+          "changePercent": 0.553
+        },
+        "JPM": {
+          "close": 356.23,
+          "change": 2.670000000000016,
+          "changePercent": 0.755
+        },
+        "PM": {
+          "close": 191.06,
+          "change": 1.289999999999992,
+          "changePercent": 0.68
+        },
+        "PKG": {
+          "close": 234.4,
+          "change": 1.990000000000009,
+          "changePercent": 0.856
+        },
+        "SO": {
+          "close": 87.17,
+          "change": -0.5799999999999983,
+          "changePercent": -0.661
+        },
+        "O": {
+          "close": 59.5,
+          "change": -0.07000000000000028,
+          "changePercent": -0.118
+        },
+        "LLY": {
+          "close": 1115.7,
+          "change": -7.2999999999999545,
+          "changePercent": -0.65
+        },
+        "KVUE": {
+          "close": 17.78,
+          "change": -0.00999999999999801,
+          "changePercent": -0.056
+        },
+        "DLR": {
+          "close": 188.58,
+          "change": 3.210000000000008,
+          "changePercent": 1.732
+        },
+        "ALLY": {
+          "close": 42.07,
+          "change": -0.10000000000000142,
+          "changePercent": -0.237
+        },
+        "COST": {
+          "close": 904.77,
+          "change": 2.3899999999999864,
+          "changePercent": 0.265
+        },
+        "RTX": {
+          "close": 197.68,
+          "change": -0.4399999999999977,
+          "changePercent": -0.222
+        },
+        "ABBV": {
+          "close": 257.12,
+          "change": 2.1200000000000045,
+          "changePercent": 0.831
+        },
+        "NOC": {
+          "close": 518.97,
+          "change": 0.01999999999998181,
+          "changePercent": 0.004
+        },
+        "PLTR": {
+          "close": 167.23,
+          "change": 1.3699999999999761,
+          "changePercent": 0.826
+        },
+        "LIN": {
+          "close": 466.22,
+          "change": 4.600000000000023,
+          "changePercent": 0.996
+        },
+        "XLU": {
+          "close": 42.39,
+          "change": -0.13000000000000256,
+          "changePercent": -0.306
+        },
+        "GPIQ": {
+          "close": 56.33,
+          "change": 0.4299999999999997,
+          "changePercent": 0.769
+        },
+        "KR": {
+          "close": 58.49,
+          "change": 1.5399999999999991,
+          "changePercent": 2.704
+        },
+        "NXST": {
+          "close": 169.085,
+          "change": -0.8849999999999909,
+          "changePercent": -0.521
+        },
+        "KMI": {
+          "close": 30.86,
+          "change": -0.08999999999999986,
+          "changePercent": -0.291
+        },
+        "LMT": {
+          "close": 524.19,
+          "change": -5.92999999999995,
+          "changePercent": -1.119
+        },
+        "GPIX": {
+          "close": 55.66,
+          "change": 0.44999999999999574,
+          "changePercent": 0.815
+        },
+        "IOT": {
+          "close": 38.38,
+          "change": -0.05999999999999517,
+          "changePercent": -0.156
+        },
+        "BMY": {
+          "close": 63.64,
+          "change": -0.10999999999999943,
+          "changePercent": -0.173
+        },
+        "SCHD": {
+          "close": 34.12,
+          "change": 0.12999999999999545,
+          "changePercent": 0.382
+        },
+        "TGT": {
+          "close": 155.83,
+          "change": 0.10000000000002274,
+          "changePercent": 0.064
+        },
+        "GE": {
+          "close": 323.66,
+          "change": -0.48999999999995225,
+          "changePercent": -0.151
+        },
+        "RGLD": {
+          "close": 252.28,
+          "change": -1.6999999999999886,
+          "changePercent": -0.669
+        },
+        "ATO": {
+          "close": 163.19,
+          "change": -1.6200000000000045,
+          "changePercent": -0.983
+        },
+        "CVX": {
+          "close": 214.06,
+          "change": 1.3000000000000114,
+          "changePercent": 0.611
+        },
+        "XOM": {
+          "close": 165.99,
+          "change": 0.7600000000000193,
+          "changePercent": 0.46
+        },
+        "LITE": {
+          "close": 927.03,
+          "change": -8.670000000000073,
+          "changePercent": -0.927
+        },
+        "GS": {
+          "close": 1029.18,
+          "change": 9.410000000000082,
+          "changePercent": 0.923
+        },
+        "CRDO": {
+          "close": 162.95,
+          "change": 2.6399999999999864,
+          "changePercent": 1.647
+        },
+        "FCX": {
+          "close": 71.07,
+          "change": -0.14000000000000057,
+          "changePercent": -0.197
+        },
+        "UNH": {
+          "close": 379.09,
+          "change": -9.189999999999998,
+          "changePercent": -2.367
+        },
+        "MS": {
+          "close": 214.38,
+          "change": 1.7199999999999989,
+          "changePercent": 0.809
+        },
+        "COP": {
+          "close": 137.35,
+          "change": 0.3100000000000023,
+          "changePercent": 0.226
+        },
+        "BWXT": {
+          "close": 150.12,
+          "change": -2.3700000000000045,
+          "changePercent": -1.554
+        },
+        "MRK": {
+          "close": 143.93,
+          "change": -0.7800000000000011,
+          "changePercent": -0.539
+        },
+        "TSLA": {
+          "close": 365.44,
+          "change": 1.8799999999999955,
+          "changePercent": 0.517
+        },
+        "WELL": {
+          "close": 235.62,
+          "change": -0.09000000000000341,
+          "changePercent": -0.038
+        },
+        "COHR": {
+          "close": 305.37,
+          "change": 12.199999999999989,
+          "changePercent": 4.161
+        },
+        "GLW": {
+          "close": 166.4,
+          "change": 3.280000000000001,
+          "changePercent": 2.011
+        },
+        "NVDA": {
+          "close": 218.29,
+          "change": -0.0700000000000216,
+          "changePercent": -0.032
+        },
+        "JNJ": {
+          "close": 265.58,
+          "change": -0.7700000000000387,
+          "changePercent": -0.289
+        },
+        "GOOGL": {
+          "close": 338.5,
+          "change": 5.899999999999977,
+          "changePercent": 1.774
+        },
+        "CVS": {
+          "close": 94.66,
+          "change": -0.6300000000000097,
+          "changePercent": -0.661
+        },
+        "AAPL": {
+          "close": 332.27,
+          "change": 5.699999999999989,
+          "changePercent": 1.745
+        },
+        "AVGO": {
+          "close": 361.99,
+          "change": 1.160000000000025,
+          "changePercent": 0.321
+        },
+        "IONQ": {
+          "close": 36.75,
+          "change": -0.09000000000000341,
+          "changePercent": -0.244
+        },
+        "CSCO": {
+          "close": 112.13,
+          "change": 4.689999999999998,
+          "changePercent": 4.365
+        },
+        "TSM": {
+          "close": 433.24,
+          "change": 5.210000000000036,
+          "changePercent": 1.217
+        },
+        "STM": {
+          "close": 51.51,
+          "change": 0.769999999999996,
+          "changePercent": 1.518
+        },
+        "AMAT": {
+          "close": 456.49,
+          "change": 2.480000000000018,
+          "changePercent": 0.546
+        },
+        "DELL": {
+          "close": 567.29,
+          "change": 60.66999999999996,
+          "changePercent": 11.975
+        },
+        "GEV": {
+          "close": 957.27,
+          "change": 33.360000000000014,
+          "changePercent": 3.611
+        },
+        "ASML": {
+          "close": 1698.3,
+          "change": 10.86999999999989,
+          "changePercent": 0.644
+        },
+        "BE": {
+          "close": 275.75,
+          "change": 17.25999999999999,
+          "changePercent": 6.677
+        },
+        "PL": {
+          "close": 16.45,
+          "change": -0.240000000000002,
+          "changePercent": -1.438
+        },
+        "LRCX": {
+          "close": 298.22,
+          "change": 0.21000000000003638,
+          "changePercent": 0.07
+        },
+        "VRT": {
+          "close": 257.06,
+          "change": 8.930000000000007,
+          "changePercent": 3.599
+        },
+        "MU": {
+          "close": 975.26,
+          "change": -2.1499999999999773,
+          "changePercent": -0.22
+        },
+        "RKLB": {
+          "close": 62.95,
+          "change": 0.990000000000002,
+          "changePercent": 1.598
+        },
+        "ANET": {
+          "close": 199.59,
+          "change": 10.599999999999994,
+          "changePercent": 5.609
+        },
+        "APH": {
+          "close": 83.92,
+          "change": 3.6700000000000017,
+          "changePercent": 4.573
+        },
+        "BX": {
+          "close": 128.51,
+          "change": 3.0999999999999943,
+          "changePercent": 2.472
+        },
+        "C": {
+          "close": 138.82,
+          "change": 0.3199999999999932,
+          "changePercent": 0.231
+        },
+        "CAT": {
+          "close": 818.57,
+          "change": 13.57000000000005,
+          "changePercent": 1.686
+        },
+        "CFG": {
+          "close": 70.48,
+          "change": 0.8500000000000085,
+          "changePercent": 1.221
+        },
+        "CWEN": {
+          "close": 31.14,
+          "change": -0.4499999999999993,
+          "changePercent": -1.424
+        },
+        "DKS": {
+          "close": 135.03,
+          "change": 3.140000000000015,
+          "changePercent": 2.381
+        },
+        "DUK": {
+          "close": 119.42,
+          "change": 0.04999999999999716,
+          "changePercent": 0.042
+        },
+        "ENB": {
+          "close": 47.76,
+          "change": -0.46000000000000085,
+          "changePercent": -0.954
+        },
+        "HSY": {
+          "close": 173.32,
+          "change": -1.0200000000000102,
+          "changePercent": -0.585
+        },
+        "HWM": {
+          "close": 229.61,
+          "change": 1.700000000000017,
+          "changePercent": 0.746
+        },
+        "MMM": {
+          "close": 164.97,
+          "change": 2.109999999999985,
+          "changePercent": 1.296
+        },
+        "NEE": {
+          "close": 82.31,
+          "change": -0.12999999999999545,
+          "changePercent": -0.158
+        },
+        "NFG": {
+          "close": 81,
+          "change": -1.3299999999999983,
+          "changePercent": -1.615
+        },
+        "NRG": {
+          "close": 113.46,
+          "change": 1.809999999999988,
+          "changePercent": 1.621
+        },
+        "PNC": {
+          "close": 244.24,
+          "change": 1.2600000000000193,
+          "changePercent": 0.519
+        },
+        "PSX": {
+          "close": 259.47,
+          "change": 0.9600000000000364,
+          "changePercent": 0.371
+        },
+        "RCL": {
+          "close": 260.14,
+          "change": 1.1299999999999955,
+          "changePercent": 0.436
+        },
+        "SCHW": {
+          "close": 107.25,
+          "change": -0.0799999999999983,
+          "changePercent": -0.075
+        },
+        "SWK": {
+          "close": 89.24,
+          "change": 0.009999999999990905,
+          "changePercent": 0.011
+        },
+        "TEL": {
+          "close": 211.96,
+          "change": 7.3300000000000125,
+          "changePercent": 3.582
+        },
+        "UBER": {
+          "close": 71.67,
+          "change": -0.8900000000000006,
+          "changePercent": -1.227
+        },
+        "VLO": {
+          "close": 390.42,
+          "change": 4.990000000000009,
+          "changePercent": 1.295
+        },
+        "VTR": {
+          "close": 89.99,
+          "change": -0.45000000000000284,
+          "changePercent": -0.498
+        },
+        "VZ": {
+          "close": 50.61,
+          "change": 0.6400000000000006,
+          "changePercent": 1.281
+        },
+        "WMB": {
+          "close": 72.85,
+          "change": 0.5549999999999926,
+          "changePercent": 0.768
+        },
+        "AMKR": {
+          "close": 51.73,
+          "change": 2.1999999999999957,
+          "changePercent": 4.442
+        },
+        "AMZN": {
+          "close": 256.78,
+          "change": 4.889999999999986,
+          "changePercent": 1.941
+        },
+        "CINF": {
+          "close": 169.8,
+          "change": 0.21000000000000796,
+          "changePercent": 0.124
+        },
+        "EXPE": {
+          "close": 280.83,
+          "change": 3.9499999999999886,
+          "changePercent": 1.427
+        },
+        "GILD": {
+          "close": 143.72,
+          "change": -1.0900000000000034,
+          "changePercent": -0.753
+        },
+        "IREN": {
+          "close": 43.83,
+          "change": 0.18999999999999773,
+          "changePercent": 0.435
+        },
+        "JEPQ": {
+          "close": 59.78,
+          "change": 0.480000000000004,
+          "changePercent": 0.809
+        },
+        "KMB": {
+          "close": 98.15,
+          "change": -0.3299999999999983,
+          "changePercent": -0.335
+        },
+        "NFLX": {
+          "close": 77.4,
+          "change": 1.3900000000000006,
+          "changePercent": 1.829
+        },
+        "QCOM": {
+          "close": 181.97,
+          "change": 5.090000000000003,
+          "changePercent": 2.878
+        },
+        "SBUX": {
+          "close": 98.74,
+          "change": -0.480000000000004,
+          "changePercent": -0.484
+        },
+        "SOFI": {
+          "close": 17.32,
+          "change": 0.10999999999999943,
+          "changePercent": 0.639
+        },
+        "WDC": {
+          "close": 447.18,
+          "change": -13.75,
+          "changePercent": -2.983
+        },
+        "WMT": {
+          "close": 107.15,
+          "change": 1.4200000000000017,
+          "changePercent": 1.343
+        },
+        "WYNN": {
+          "close": 87.7,
+          "change": -0.7199999999999989,
+          "changePercent": -0.814
+        },
+        "GDX": {
+          "close": 97.1,
+          "change": 1.0699999999999932,
+          "changePercent": 1.114
+        },
+        "ITA": {
+          "close": 219.01,
+          "change": 0.6899999999999977,
+          "changePercent": 0.316
+        },
+        "SVM": {
+          "close": 11.91,
+          "change": -0.20999999999999908,
+          "changePercent": -1.733
+        },
+        "XLF": {
+          "close": 57.25,
+          "change": 0.38000000000000256,
+          "changePercent": 0.668
+        }
+      }
     }
   ]
 }
