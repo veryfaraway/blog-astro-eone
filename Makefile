@@ -4,6 +4,7 @@
 .PHONY: help dev build preview build-preview check \
         clean clean-cache clean-dist clean-all \
         install fresh logs \
+        seo seo-report \
         coupang coupang-dry coupang-retry coupang-refresh
 
 # 기본: help 출력
@@ -24,6 +25,13 @@ build-preview:			## 빌드 후 바로 미리보기
 
 check:				## TypeScript / Astro 타입 체크
 	pnpm astro check
+
+# ── SEO & 유입 분석 ──────────────────────────────────
+seo:				## 구글 검색 유입 및 기회 키워드/콘텐츠 갭 분석 (최근 28일)
+	pnpm run analyze:seo
+
+seo-report:			## 최근 90일 기준 심층 SEO 분석
+	pnpm run analyze:seo -- --days 90
 
 # ── 쿠팡 상품 캐시 ───────────────────────────────────
 # 상품 정보는 src/data/coupang-products.json(커밋 대상)에서만 읽는다.

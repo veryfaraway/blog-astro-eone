@@ -15,6 +15,9 @@ pnpm-debug.log*
 .env
 .env.local
 .env.*.local
+*service-account*.json
+gcp-key*.json
+credentials*.json
 
 # macOS
 .DS_Store

@@ -1,6 +1,6 @@
 ---
-title: "yt-dlp 완전 정복 — 터미널 하나로 유튜브 다운로드 제대로 쓰기"
-description: "yt-dlp 설치부터 화질 선택, MP3 추출, 플레이리스트 일괄 다운로드, 자막, 설정 파일, alias 등록까지. 터미널이 익숙하다면 이게 가장 강력한 정답입니다."
+title: "yt-dlp 설치 및 사용법 완전 가이드: Mac 터미널 유튜브 다운로드"
+description: "yt-dlp 설치부터 화질 선택, MP3 추출, 플레이리스트 다운로드, 자막 설정까지 yt-dlp의 모든 사용법을 정리했습니다. 터미널 명령어로 광고 없이 최고 화질 유튜브를 소장하세요."
 thumbnail: "https://images.unsplash.com/photo-1746608943026-e56ff017cd71?q=80&w=2370&auto=format&fit=crop"
 date: 2026-06-01
 draft: false
@@ -10,7 +10,10 @@ series_order: 2
 category: Media
 tags:
   - "yt-dlp"
+  - "yt-dlp 설치"
+  - "yt dlp 사용법"
   - "YouTube"
+  - "유튜브 다운로더"
   - "터미널"
   - "macOS"
   - "ffmpeg"
@@ -23,7 +26,7 @@ import Alert from '@/components/Alert.astro';
 
 `yt-dlp`는 유튜브 다운로더 중 사실상 표준입니다. 전 세계 개발자들이 유튜브 정책 변경에 실시간으로 대응하고, YouTube 외에 수백 개 사이트도 지원합니다. 터미널이 익숙하다면 유료 앱보다 훨씬 빠르고 강력하게 쓸 수 있습니다. 자주 쓰는 명령어를 alias로 등록해 두면 클릭 한 번과 다를 바 없어집니다.
 
-## 설치
+## yt-dlp 설치 방법 (Homebrew)
 
 Mac에 Homebrew가 있다면 두 줄로 끝납니다.
 
@@ -44,7 +47,7 @@ ffmpeg -version
 
 ---
 
-## 기본 다운로드
+## 기본 다운로드 사용법 (URL 입력)
 
 가장 단순한 사용법입니다. URL만 넘기면 화질과 오디오를 자동으로 합쳐 최적 파일로 저장합니다.
 
