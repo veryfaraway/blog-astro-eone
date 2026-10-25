@@ -212,10 +212,10 @@ const breadcrumbJsonLd = {
       <AdSlot slot="display" />
 
       <!-- Content + TOC -->
-      <div class={hasTOC ? 'lg:grid lg:grid-cols-[1fr_220px] lg:gap-12' : ''}>
+      <div class={hasTOC ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12' : ''}>
 
         <!-- Article -->
-        <article class="prose prose-neutral dark:prose-invert max-w-none
+        <article class="prose prose-neutral dark:prose-invert max-w-none min-w-0
           prose-headings:font-semibold prose-headings:tracking-tight
           prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4
           prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3
