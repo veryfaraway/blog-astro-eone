@@ -66,6 +66,8 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     {defaultLocaleUrl && <link rel="alternate" hreflang="x-default" href={defaultLocaleUrl} />}
 
     <!-- OG / Social -->
+    <meta property="og:site_name" content="일취월장" />
+    <meta name="application-name" content="일취월장" />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -111,7 +113,9 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48 32x32" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Dark mode init (blocking — prevents flash) -->
     <script is:inline>
@@ -141,7 +145,8 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "일취월장",
-      "url": siteUrl,
+      "alternateName": ["eone", "blog.eone.one", "eone.one"],
+      "url": new URL('/', siteUrl).toString(),
       "description": description,
       "inLanguage": lang === 'ko' ? 'ko-KR' : 'en-US',
     })} />
