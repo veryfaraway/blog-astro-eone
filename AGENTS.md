@@ -65,8 +65,24 @@
 ## 3. 컴포넌트 및 코드 규칙
 
 - **컴포넌트 import**: MDX 파일의 경우 frontmatter 바로 아래, 본문 시작 전에 import. (미사용 import 금지)
-- **강조 박스**: `Alert.astro` 사용 (`type: "info" | "warning" | "success" | "danger" | "tip"`).
+- **강조 박스**: `Alert.astro` 사용 (`type: "info" | "warning" | "success" | "danger" | "tip"`, 선택 `title`).
   *(폐기 예정인 `Callout.astro` 절대 사용 금지)*
+- **주제별 MDX 컴포넌트 적극 활용** (상세 Props는 [`docs/astro-components.md`](docs/astro-components.md) 참조):
+  - **영화·드라마·다큐 (`culture` 등)**:
+    - `MovieCard.astro`: 작품 소개 섹션 상단에 `<MovieCard title="작품명" imdbId="ttXXXXXXX" />` 배치 (OMDb API로 포스터·평점·개봉년도·줄거리 자동 표시).
+    - `PersonCard.astro`: 주요 출연진·제작진 소개 시 `<div class="flex flex-wrap gap-3">` 내부에 `<PersonCard name="이름" role="역할" imdbId="nmXXXXXXX" />` 배치 (TMDb API로 프로필 이미지 자동 표시).
+    - `PersonInline.astro`: 본문 문장 중간에 주요 인물을 언급할 때 `<PersonInline name="이름" role="역할" imdbId="nmXXXXXXX" />` 인라인 칩으로 연결.
+    - `YouTubeEmbed.astro`: 공식 예고편·관련 영상이 있을 때 `<YouTubeEmbed id="영상ID" title="영상 제목" />` 삽입.
+  - **도서 리뷰·원작 소개**:
+    - `BookCard.astro`: `<BookCard title="도서명" isbn13="978..." comment="한줄 추천평" />` 배치 (알라딘 API 연동, 정확한 13자리 ISBN을 모를 때는 `isbn13=""` 빈 문자열로 폴백).
+  - **데이터·시간대·이미지 레이아웃**:
+    - `Chart.astro`: 수치 비교·통계 시각화 시 Chart.js 기반 차트(`bar`, `line`, `pie`, `doughnut`, `radar`) 사용.
+    - `ClockChart.astro`: 24시간 원형 시계 형태의 시간대(증시 거래 시간, 루틴 등) 시각화 시 사용.
+    - `ImageRow.astro`: 2～4장의 이미지를 나란히 그리드로 배치할 때 `<ImageRow cols={2} caption="...">` 사용.
+    - `CloudinaryImage.astro`: Cloudinary 호스팅 이미지를 반응형(LQIP 블러 포함)으로 삽입할 때 사용.
+  - **제휴·상품 추천 (`money` 등, 사용 시 frontmatter에 `affiliate: true` 필수)**:
+    - `AffiliateLink.astro`: 쿠팡(`coupang`), Amazon(`amazon`), 11번가(`11st`) 등 제휴 링크 버튼.
+    - `CoupangProductCard.astro`: 쿠팡 상품 카드 (`href` + `title` 직접 지정 방식 권장).
 - **코드 블록 언어 태그**: Shiki가 인식하는 소문자 표준 태그 필수 사용 (`bash`, `javascript`, `typescript`, `tsx`, `astro`, `json`, `yaml`, `html`, `css` 등). 잘못된 태그 사용 시 빌드 경고 발생.
 - **물결표(`~`) 취소선 오인 주의**: 마크다운(GFM) 파서가 한 문장/단락 내의 연속된 ASCII 물결표(`~`)를 취소선(`<del>`)으로 오인 렌더링하는 것을 방지하기 위해, 기간이나 범위(예: `1~2주`, `3~5월`) 표기 시 반드시 **전각 물결표(`～`)** 또는 대시(`–`)를 사용하거나 이스케이프(`\~`)합니다.
 - **볼드(`**`) 내 괄호(`()`) 사용 금지**: 닫는 괄호 뒤에 한글 조사(는/가/를/에 등)가 바로 붙는 경우(예: `**단어(설명)**는`), 마크다운(CommonMark) 파서의 구두점 단어 경계 인식 오류로 인해 볼드가 풀리고 `**`가 그대로 노출됩니다. 따라서 **부연설명이나 외래어 표기 괄호는 볼드 마커 바깥으로 분리**(예: `**단어**(설명)는`)하거나 괄호가 포함된 문구는 볼드를 적용하지 않습니다.

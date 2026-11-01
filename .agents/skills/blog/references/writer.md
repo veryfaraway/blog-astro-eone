@@ -55,9 +55,24 @@
   - 큰 주제는 H2(`##`), 세부 항목은 H3(`###`)로만 구성합니다.
   - H2/H3 소제목에도 타겟 키워드와 질문형 키워드를 자연스럽게 녹여냅니다.
 - **첫 단락 키워드 노출**: 본문 첫 문단(1~3문장) 안에 메인 검색 키워드를 매끄럽게 포함시킵니다.
-- **체류 시간 증대 (Dwell Time)**:
+- **체류 시간 증대 (Dwell Time) 및 MDX 컴포넌트 적극 활용**:
   - 단순 텍스트 나열을 피하고, 중요한 경고나 팁은 `<Alert>` 컴포넌트를 활용해 가독성을 높입니다.
   - 필요한 경우 Mermaid 다이어그램이나 시각적 도표를 삽입합니다.
+  - 포스트 주제에 따라 [`docs/astro-components.md`](../../../docs/astro-components.md)에 정의된 전용 컴포넌트를 적극적으로 조합합니다:
+    - **영화/드라마 (`culture` 등)**:
+      - 작품 기본 소개 섹션에 `<MovieCard title="작품명" imdbId="ttXXXXXXX" />` 배치
+      - 주요 등장인물·제작진 섹션에 `<div class="flex flex-wrap gap-3">`로 감싼 `<PersonCard name="이름" role="역할" imdbId="nmXXXXXXX" />` 배치
+      - 본문 문장 내 인물 언급 시 `<PersonInline name="이름" role="역할" imdbId="nmXXXXXXX" />` 활용
+      - 공식 예고편이나 핵심 클립이 있을 때 `<YouTubeEmbed id="영상ID" title="영상 제목" />` 삽입
+    - **도서/원작 소개**:
+      - `<BookCard title="도서명" isbn13="978..." comment="추천 코멘트" />` 배치 (분권 도서는 `<div class="grid gap-3 md:grid-cols-2 items-start">`로 나란히 배치, 정확한 ISBN13 미확인 시 `isbn13=""`로 비워둠)
+    - **데이터/시간대/이미지 그리드**:
+      - 통계·수치 비교는 `<Chart type="bar|line|pie|doughnut|radar" data={...} caption="..." />`
+      - 24시간 기준 시간대 안내(증시 시간, 일과표 등)는 `<ClockChart segments={[...]} caption="..." />`
+      - 2～4장의 비교·연속 이미지는 `<ImageRow cols={2} caption="...">`로 배치
+    - **제휴/상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수 추가):
+      - `<AffiliateLink href="..." provider="coupang|amazon|11st|other" />`
+      - `<CoupangProductCard href="..." title="..." />`
 
 ---
 

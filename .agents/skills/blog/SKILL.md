@@ -43,7 +43,8 @@ flowchart TD
 - **수행 작업**:
   - 웹 검색 및 최신 기술 문서 탐색
   - **출처 신뢰도 점수 부여**: Tier 1(9~10점: 공식 문서/학술)부터 Tier 4(1~3점: 미검증 블로그)까지 가산점 부여
-  - 팩트 시트, 불확실/상충 정보, 실무 코드 예시, SEO 추천 키워드 산출
+  - **MDX 컴포넌트용 식별자 조사**: 영화/드라마 주제는 IMDb 작품 ID(`ttXXXXXXX`) 및 주요 인물 IMDb ID(`nmXXXXXXX`), 도서 주제는 13자리 ISBN(`isbn13`), 관련 공식 YouTube 영상 ID 등을 함께 수집
+  - 팩트 시트, 불확실/상충 정보, 실무 코드 예시 및 컴포넌트 식별자, SEO 추천 키워드 산출
 
 ---
 
@@ -55,12 +56,12 @@ flowchart TD
   - `TypeName`: `"self"`
   - `Role`: `"Lead Technical Writer"`
   - `Model`: `"pro"` (또는 `"inherit"`: 최고 품질 보장)
-- **전달 지침**: [`.agents/skills/blog/references/writer.md`](references/writer.md) 및 [`AGENTS.md`](../../../AGENTS.md) 참조
+- **전달 지침**: [`.agents/skills/blog/references/writer.md`](references/writer.md), [`AGENTS.md`](../../../AGENTS.md), [`docs/astro-components.md`](../../../docs/astro-components.md) 참조
 - **필수 준수 사항**:
   - **탈(脫) AI 어투**: 금지어 전면 배제, 첫 2문장 훅, 생생한 능동형 개발자 문체
   - **SEO 최적화**: 60자 이내 타이틀, 120~160자 description, H2/H3 계층, 본문 첫 단락 키워드 노출
   - **팩트 무결성**: Phase 1의 Tier 1~2 팩트 위주 서술, 불확실한 정보는 단정하지 않음
-  - **규격**: Frontmatter 스키마 준수, `<Alert>` 컴포넌트 활용, Shiki 소문자 언어 태그
+  - **규격 및 MDX 컴포넌트 적극 활용**: Frontmatter 스키마 준수, Shiki 소문자 언어 태그, `<Alert>` 외에 주제에 맞는 전용 컴포넌트(`MovieCard`, `PersonCard`, `PersonInline`, `BookCard`, `YouTubeEmbed`, `Chart`, `ClockChart`, `ImageRow`, `AffiliateLink`, `CoupangProductCard`) 적극 배치
 
 #### 2) 시각화 및 썸네일 (Visual) — 선택적 병렬 단계
 - **다이어그램**: 본문 흐름에 필요한 Mermaid 코드는 `writer`가 직접 삽입.
@@ -81,7 +82,7 @@ flowchart TD
   1. **팩트체크**: 리서치 자료와의 일치성, 출처 없는 허위 정보 유무
   2. **탈-AI 어투**: 금지어 포함 여부, 첫 문장 훅 점검
   3. **SEO 완성도**: 타이틀/디스크립션 길이 및 키워드 배치, 헤딩 구조
-  4. **기술 규격**: Frontmatter 누락, Shiki 코드블록 태그 유효성, `Alert` 컴포넌트 사용 여부
+  4. **기술 규격 및 컴포넌트 활용도**: Frontmatter 누락, Shiki 코드블록 태그 유효성, `Alert` 및 주제별 특화 컴포넌트(`MovieCard`, `PersonCard`, `BookCard` 등) 적절 사용 여부
 - **출력**: `[🚨 필수 수정]`, `[💡 권장 개선]`, `[✅ 통과 항목]`으로 정리된 수정안 보고서
 
 ---
