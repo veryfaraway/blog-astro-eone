@@ -34,6 +34,7 @@ const {
 } = Astro.props;
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
+const gaId = import.meta.env.PUBLIC_GA_ID || (import.meta.env.PROD ? 'G-49PMYESYMW' : '');
 const canonicalUrl = Astro.url?.pathname
   ? new URL(Astro.url.pathname, siteUrl).toString()
   : siteUrl;
@@ -179,10 +180,10 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     )}
 
     <!-- Google Analytics -->
-    {import.meta.env.PUBLIC_GA_ID && (
+    {gaId && (
       <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.PUBLIC_GA_ID}`}></script>
-        <script is:inline define:vars={{ gaId: import.meta.env.PUBLIC_GA_ID }}>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script is:inline define:vars={{ gaId }}>
           window.dataLayer = window.dataLayer || [];
           function gtag() { dataLayer.push(arguments); }
           gtag('js', new Date());

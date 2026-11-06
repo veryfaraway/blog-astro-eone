@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  PUBLIC_GA_ID = "G-49PMYESYMW"
 
 [[headers]]
   for = "/vault/*"
