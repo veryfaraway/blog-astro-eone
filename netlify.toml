@@ -13,10 +13,27 @@
 
 # mustardseed.eone.one → life / money
 # frugal 카테고리 포스트는 /money, 나머지는 /life
-# (포스트별 slug 리다이렉트는 Phase 6 마이그레이션 시 개별 추가)
+[[redirects]]
+  from = "https://mustardseed.eone.one/tags/*"
+  to = "https://blog.eone.one/tags/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://mustardseed.eone.one/post/frugal/*"
   to = "https://blog.eone.one/money/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://mustardseed.eone.one/post/:year/:day/shinhan-50-plus*"
+  to = "https://blog.eone.one/money/shinhan-50-plus"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://mustardseed.eone.one/post/:year/:day/:slug"
+  to = "https://blog.eone.one/life/:slug"
   status = 301
   force = true
 
@@ -27,8 +44,12 @@
   force = true
 
 # burn.eone.one → tools / dev
-# Tools 카테고리 포스트는 /tools, 나머지는 /dev
-# (포스트별 slug 리다이렉트는 Phase 6 마이그레이션 시 개별 추가)
+[[redirects]]
+  from = "https://burn.eone.one/tags/*"
+  to = "https://blog.eone.one/tags/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "https://burn.eone.one/*"
   to = "https://blog.eone.one/dev/:splat"
@@ -37,7 +58,49 @@
 
 # popcorn.eone.one → culture
 [[redirects]]
+  from = "https://popcorn.eone.one/tags/*"
+  to = "https://blog.eone.one/tags/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "https://popcorn.eone.one/*"
   to = "https://blog.eone.one/culture/:splat"
   status = 301
   force = true
+
+# blog.eone.one 내 레거시/중첩 경로 보정 (GA4 404 유입 방지)
+[[redirects]]
+  from = "/life/tags/*"
+  to = "/tags/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/dev/tags/*"
+  to = "/tags/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/culture/tags/*"
+  to = "/tags/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/life/post/:year/:day/shinhan-50-plus*"
+  to = "/money/shinhan-50-plus"
+  status = 301
+
+[[redirects]]
+  from = "/life/post/:year/:day/:slug"
+  to = "/life/:slug"
+  status = 301
+
+[[redirects]]
+  from = "/Life/볼보-딜러사-한눈에-보기"
+  to = "/life/volvo-partners"
+  status = 301
+
+[[redirects]]
+  from = "/:section/ko/:year/:slug"
+  to = "/:section/:slug"
+  status = 301

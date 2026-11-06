@@ -23,11 +23,11 @@ import Alert from '@/components/Alert.astro';
 결제 요청 API를 호출했는데 브라우저 화면에 `504 Gateway Timeout`이 떨어집니다. 당황한 사용자가 결제 버튼을 한 번 더 누르는 순간, 카드사에서 결제 문자가 두 번 날아오는 끔찍한 사고가 벌어집니다. 분산 시스템에서 네트워크 단절과 타임아웃을 다루는 멱등성 설계가 결여되었을 때 발생하는 전형적인 참사입니다.
 
 앞선 시리즈를 통해 우리는 견고한 엔터프라이즈 REST API의 토대를 다져왔습니다:
-- [1편: REST API URI 설계 원칙](/dev/ko/2026/rest-api-uri-naming-spring-boot-fastapi) — 자원 중심 계층형 엔드포인트 설계
-- [2편: HTTP 메서드와 상태 코드 설계](/dev/ko/2026/rest-api-http-methods-status-codes) — 안전성과 멱등성을 지킨 올바른 HTTP 스펙 매핑
-- [3편: 대용량 페이징 최적화](/dev/ko/2026/rest-api-pagination-offset-cursor) — Keyset 커서 페이징을 통한 DB 부하 격리
-- [4편: RFC 9457 표준 에러 처리](/dev/ko/2026/rest-api-error-handling-rfc9457) — Problem Details 기반의 기계 판독형 에러 프로토콜
-- [5편: API 버전 관리와 하위 호환성 전략](/dev/ko/2026/rest-api-versioning-backward-compatibility) — Tolerant Reader와 RFC 8594 Sunset 수명주기
+- [1편: REST API URI 설계 원칙](/dev/rest-api-uri-naming-spring-boot-fastapi) — 자원 중심 계층형 엔드포인트 설계
+- [2편: HTTP 메서드와 상태 코드 설계](/dev/rest-api-http-methods-status-codes) — 안전성과 멱등성을 지킨 올바른 HTTP 스펙 매핑
+- [3편: 대용량 페이징 최적화](/dev/rest-api-pagination-offset-cursor) — Keyset 커서 페이징을 통한 DB 부하 격리
+- [4편: RFC 9457 표준 에러 처리](/dev/rest-api-error-handling-rfc9457) — Problem Details 기반의 기계 판독형 에러 프로토콜
+- [5편: API 버전 관리와 하위 호환성 전략](/dev/rest-api-versioning-backward-compatibility) — Tolerant Reader와 RFC 8594 Sunset 수명주기
 
 하지만 로컬 개발 환경이나 인메모리 테스트에서는 완벽하게 동작하던 API도, 통제 불가능한 네트워크와 외부 연동이 얽히는 실무 분산 환경에 배포되는 순간 거친 도전에 직면합니다. 패킷 유실로 인한 재시도 루프와 이중 결제, 그리고 수십 초가 소요되는 대용량 작업이 서블릿 스레드 풀 전체를 잠식하는 장애가 대표적입니다.
 
@@ -847,11 +847,11 @@ flowchart TD
 
 | 회차 | 주제 | 핵심 키워드 | 바로가기 |
 | :---: | :--- | :--- | :---: |
-| **1편** | **URI 설계와 네이밍 원칙** | Resource URI, 복수형 명사, Kebab-case, Filter Query | [바로가기](/dev/ko/2026/rest-api-uri-naming-spring-boot-fastapi) |
-| **2편** | **HTTP 메서드와 상태 코드** | RFC 9110, Safe & Idempotent, 204 No Content, 409 vs 422 | [바로가기](/dev/ko/2026/rest-api-http-methods-status-codes) |
-| **3편** | **대용량 페이징 최적화** | Offset Paging, Keyset Cursor, 인덱스 커버링, 無 COUNT | [바로가기](/dev/ko/2026/rest-api-pagination-offset-cursor) |
-| **4편** | **표준 에러 처리 (RFC 9457)** | Problem Details, Type URI, 필드 검증 에러, 스택트레이스 마스킹 | [바로가기](/dev/ko/2026/rest-api-error-handling-rfc9457) |
-| **5편** | **버전 관리와 하위 호환성** | Breaking Change, Tolerant Reader, RFC 8594 Sunset, Brownout | [바로가기](/dev/ko/2026/rest-api-versioning-backward-compatibility) |
+| **1편** | **URI 설계와 네이밍 원칙** | Resource URI, 복수형 명사, Kebab-case, Filter Query | [바로가기](/dev/rest-api-uri-naming-spring-boot-fastapi) |
+| **2편** | **HTTP 메서드와 상태 코드** | RFC 9110, Safe & Idempotent, 204 No Content, 409 vs 422 | [바로가기](/dev/rest-api-http-methods-status-codes) |
+| **3편** | **대용량 페이징 최적화** | Offset Paging, Keyset Cursor, 인덱스 커버링, 無 COUNT | [바로가기](/dev/rest-api-pagination-offset-cursor) |
+| **4편** | **표준 에러 처리 (RFC 9457)** | Problem Details, Type URI, 필드 검증 에러, 스택트레이스 마스킹 | [바로가기](/dev/rest-api-error-handling-rfc9457) |
+| **5편** | **버전 관리와 하위 호환성** | Breaking Change, Tolerant Reader, RFC 8594 Sunset, Brownout | [바로가기](/dev/rest-api-versioning-backward-compatibility) |
 | **6편** | **멱등성과 202 비동기 아키텍처** | IETF Idempotency-Key, Redis SETNX, RFC 9110 202 Accepted, 스레드 고갈 방지 | *본 포스트* |
 
 API는 두 시스템이 네트워크라는 불확실한 다리를 건너 소통하기 위해 맺는 가장 엄격한 엔지니어링 계약입니다. 이 6부작 시리즈에서 다룬 표준 스펙과 아키텍처 패턴들이 견고하고 우아한 분산 백엔드 시스템을 구축하는 데 든든한 나침반이 되기를 바랍니다.

@@ -4,7 +4,7 @@
 .PHONY: help dev build preview build-preview check \
         clean clean-cache clean-dist clean-all \
         install fresh logs \
-        seo seo-report \
+        seo seo-report ga ga-report \
         coupang coupang-dry coupang-retry coupang-refresh
 
 # 기본: help 출력
@@ -32,6 +32,12 @@ seo:				## 구글 검색 유입 및 기회 키워드/콘텐츠 갭 분석 (최�
 
 seo-report:			## 최근 90일 기준 심층 SEO 분석
 	pnpm run analyze:seo -- --days 90
+
+ga:				## GA4 유입 경로 및 페이지별 체류시간/이탈률 분석 (최근 28일)
+	pnpm run analyze:ga
+
+ga-report:			## 최근 90일 기준 GA4 심층 분석
+	pnpm run analyze:ga -- --days 90
 
 # ── 쿠팡 상품 캐시 ───────────────────────────────────
 # 상품 정보는 src/data/coupang-products.json(커밋 대상)에서만 읽는다.

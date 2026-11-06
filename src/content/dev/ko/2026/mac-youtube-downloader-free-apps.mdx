@@ -13,9 +13,11 @@ thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=
 
 import Alert from '@/components/Alert.astro';
 
-유튜브 영상을 가끔 오프라인으로 보관하고 싶을 때, 유료 구독 없이 사용할 수 있는  
-Mac용 무료 다운로더 앱들을 비교해 봤습니다.  
-**소량 다운로드(하루 1~5개)** 기준으로 추천합니다.
+유튜브 영상을 오프라인으로 저장하려 할 때 광고 투성이 웹 사이트나 유료 결제 유도 앱 때문에 피로했던 경험이 있으실 겁니다. 유료 구독 없이 Mac에서 깔끔하게 쓸 수 있는 **무료 유튜브 다운로더 4종**을 하루 1～5개 소량 다운로드부터 무제한 고화질 저장까지 상황별로 비교해 정리했습니다.
+
+<Alert type="tip" title="더 깔끔한 최신 GUI 앱(Stacher)이나 yt-dlp 상세 설정을 찾는다면">
+디자인이 깔끔한 무료 GUI 앱을 원한다면 [Stacher 사용법 완전 정리](/tools/stacher-usage-guide)를, 터미널에서 최고 화질·자막·구간 자르기까지 다루고 싶다면 [yt-dlp 설치 및 사용법 완전 가이드](/tools/yt-dlp-complete-guide)를 바로 확인해보세요.
+</Alert>
 
 ---
 
@@ -126,9 +128,9 @@ yt-dlp --write-sub --sub-lang ko "유튜브URL"
 
 ## 결론: 어떤 앱을 선택해야 할까?
 
-- **소량 사용자(하루 1~5개)** → **4K Video Downloader** 무료 버전  
-- **완전 무료·무제한** → **ClipGrab**  
-- **개발자·고급 기능** → **MacYTDL** 또는 **yt-dlp**
+- **소량 사용자(하루 1～5개)** → **4K Video Downloader** 무료 버전
+- **깔끔한 무료 GUI + 무제한 고화질** → **[Stacher 사용법 완전 정리](/tools/stacher-usage-guide)** 또는 **[Mac 무료 다운로더 3종 비교 (Reel·Stacher·yt-dlp)](/tools/youtube-downloader-mac-free)**
+- **개발자·터미널 자동화** → **[yt-dlp 완전 정복 가이드](/tools/yt-dlp-complete-guide)** (Homebrew가 없다면 [2026 Homebrew 설치 가이드](/tools/install-homebrew-2026) 참고)
 
 ---
 

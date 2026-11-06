@@ -181,7 +181,7 @@ const breadcrumbJsonLd = {
               <div class="flex flex-wrap gap-1">
                 {tags.map(tag => (
                   <a
-                    href={`/tags/${tag}`}
+                    href={`/tags/${encodeURIComponent(tag)}/`}
                     class="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {tag}

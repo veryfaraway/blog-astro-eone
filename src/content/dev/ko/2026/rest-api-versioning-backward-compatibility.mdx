@@ -22,7 +22,7 @@ import Alert from '@/components/Alert.astro';
 
 서비스를 라이브로 운영하다 보면 백엔드 개발자의 등골을 서늘하게 만드는 순간이 있습니다. 신규 필드를 수정하고 기분 좋게 배포 버튼을 눌렀는데, 업데이트를 미뤄둔 구버전 모바일 앱을 쓰는 사용자들의 화면이 일제히 튕기며 CS 인입이 폭발하는 순간입니다.
 
-앞선 [1편: REST API URI 설계 원칙](/dev/ko/2026/rest-api-uri-naming-spring-boot-fastapi), [2편: HTTP 메서드와 상태 코드 설계](/dev/ko/2026/rest-api-http-methods-status-codes), [3편: 대용량 페이징 최적화](/dev/ko/2026/rest-api-pagination-offset-cursor), 그리고 [4편: RFC 9457 표준 에러 처리](/dev/ko/2026/rest-api-error-handling-rfc9457)를 통해 견고한 단일 API 인터페이스를 구축했습니다. 하지만 비즈니스는 멈추지 않고 진화하며, 데이터 구조와 비즈니스 요구사항은 필연적으로 바뀝니다.
+앞선 [1편: REST API URI 설계 원칙](/dev/rest-api-uri-naming-spring-boot-fastapi), [2편: HTTP 메서드와 상태 코드 설계](/dev/rest-api-http-methods-status-codes), [3편: 대용량 페이징 최적화](/dev/rest-api-pagination-offset-cursor), 그리고 [4편: RFC 9457 표준 에러 처리](/dev/rest-api-error-handling-rfc9457)를 통해 견고한 단일 API 인터페이스를 구축했습니다. 하지만 비즈니스는 멈추지 않고 진화하며, 데이터 구조와 비즈니스 요구사항은 필연적으로 바뀝니다.
 
 코드는 빌드하고 배포하면 그만이지만, 네트워크 너머로 한 번 노출된 API는 살아 움직이는 공공재입니다. 이미 세상에 배포된 수십만 대의 스마트폰 앱, 계약을 맺고 우리 API를 호출하는 수백 개의 B2B 파트너사 서버, 그리고 사내 배치 스크립트까지 통제할 수 없는 클라이언트가 실시간으로 연결되어 있기 때문입니다.
 
@@ -590,4 +590,4 @@ app.include_router(orders_v2.router)
 
 API 버전 관리는 단순히 코드 몇 줄을 분기하는 기술이 아니라, 시스템의 변경 속도와 클라이언트의 안정성 사이에서 균형을 잡는 조직적인 약속입니다. 잘 설계된 하위 호환성 전략과 우아한 Sunset 라이프사이클이 갖춰지면, 백엔드 엔지니어는 레거시 클라이언트의 크래시 공포에서 벗어나 당당하게 새로운 비즈니스 가치를 배포할 수 있습니다.
 
-이어지는 최종회 [6편: 분산 시스템의 신뢰성을 완성하는 엔터프라이즈 REST API — 멱등성(Idempotency-Key)과 비동기 202 처리](/dev/ko/2026/rest-api-idempotency-async-202)에서는 네트워크 타임아웃 환경에서도 결제 중복 승인을 원천 차단하는 `Idempotency-Key` 메커니즘과 대용량 배치 처리를 위한 `202 Accepted` 비동기 작업 큐 설계 패턴을 다룹니다.
+이어지는 최종회 [6편: 분산 시스템의 신뢰성을 완성하는 엔터프라이즈 REST API — 멱등성(Idempotency-Key)과 비동기 202 처리](/dev/rest-api-idempotency-async-202)에서는 네트워크 타임아웃 환경에서도 결제 중복 승인을 원천 차단하는 `Idempotency-Key` 메커니즘과 대용량 배치 처리를 위한 `202 Accepted` 비동기 작업 큐 설계 패턴을 다룹니다.

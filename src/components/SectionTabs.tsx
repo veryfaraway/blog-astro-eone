@@ -187,7 +187,7 @@ export default function SectionTabs({ posts, section }: Props) {
                       {post.tags.slice(0, 3).map((tag) => (
                         <a
                           key={tag}
-                          href={`/tags/${tag}`}
+                          href={`/tags/${encodeURIComponent(tag)}/`}
                           className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors"
                           style={{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}
                         >

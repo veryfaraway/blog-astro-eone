@@ -21,7 +21,7 @@ import Alert from '@/components/Alert.astro';
 
 API 연동 작업을 하다가 분명 HTTP 상태 코드는 `200 OK`인데 JSON 본문에 `{"code": -1, "message": "잔액이 부족합니다"}`가 찍혀 있는 것을 보고 깊은 한숨을 내쉬어본 경험, 다들 한 번쯤 있으실 겁니다. 프론트엔드와 백엔드, 그리고 인프라 네트워크 전체를 혼란에 빠뜨리는 이른바 '200 성공 위장 에러' 안티패턴의 전형입니다.
 
-앞선 [1편: REST API URI 설계 원칙](/dev/ko/2026/rest-api-uri-naming-spring-boot-fastapi), [2편: HTTP 메서드와 상태 코드 설계](/dev/ko/2026/rest-api-http-methods-status-codes), 그리고 [3편: 대용량 페이징 최적화](/dev/ko/2026/rest-api-pagination-offset-cursor)를 통해 정상 요청에 대한 API 아키텍처를 탄탄하게 세웠습니다. 하지만 프로덕션 환경의 실무 백엔드 시스템은 정상적인 흐름보다 **예기치 못한 실패와 비즈니스 예외 상황**을 어떻게 처리하느냐에서 완성도와 안정성이 판가름 납니다.
+앞선 [1편: REST API URI 설계 원칙](/dev/rest-api-uri-naming-spring-boot-fastapi), [2편: HTTP 메서드와 상태 코드 설계](/dev/rest-api-http-methods-status-codes), 그리고 [3편: 대용량 페이징 최적화](/dev/rest-api-pagination-offset-cursor)를 통해 정상 요청에 대한 API 아키텍처를 탄탄하게 세웠습니다. 하지만 프로덕션 환경의 실무 백엔드 시스템은 정상적인 흐름보다 **예기치 못한 실패와 비즈니스 예외 상황**을 어떻게 처리하느냐에서 완성도와 안정성이 판가름 납니다.
 
 많은 개발팀이 에러 응답을 만들 때 사내 자체 규격(예: `{ "success": false, "code": "E001", "error": "..." }`)을 임의로 고안해 사용합니다. 그러나 마이크로서비스 환경에서 팀마다 제각각인 포맷을 고집하면 클라이언트는 서비스마다 서로 다른 에러 파싱 코드를 중복 작성해야 하고, 게이트웨이나 APM 도구와의 유기적인 연동도 불가능해집니다.
 
@@ -684,4 +684,4 @@ FastAPI의 기본 `RequestValidationError` 응답은 자체 포맷(`{"detail": [
 
 에러 응답은 단순한 실패 메시지 전달을 넘어, 인프라 라우팅과 옵저버빌리티, 그리고 클라이언트 안정성을 지탱하는 핵심 계약(Contract)입니다. 표준 RFC 9457 규격과 체계적인 비즈니스 에러 이원화 체계가 갖춰지면 프론트엔드는 예측 가능한 방어 로직을 구현할 수 있고, 인프라 엔지니어는 결함 없는 모니터링 메트릭을 확보할 수 있습니다.
 
-다음 [5편: REST API 버전 관리 전략과 하위 호환성 유지 가이드](/dev/ko/2026/rest-api-versioning-backward-compatibility)에서는 비즈니스가 성장함에 따라 필연적으로 마주하는 API 변경 사항을 클라이언트 중단 없이 우아하게 배포하는 URI, 헤더, 쿼리 기반 버전 관리 전략을 다룹니다.
+다음 [5편: REST API 버전 관리 전략과 하위 호환성 유지 가이드](/dev/rest-api-versioning-backward-compatibility)에서는 비즈니스가 성장함에 따라 필연적으로 마주하는 API 변경 사항을 클라이언트 중단 없이 우아하게 배포하는 URI, 헤더, 쿼리 기반 버전 관리 전략을 다룹니다.

@@ -39,7 +39,7 @@ function fontSize(count: number): string {
       <div class="flex flex-wrap gap-3 items-baseline">
         {tags.map(([tag, count]) => (
           <a
-            href={`/tags/${tag}`}
+            href={`/tags/${encodeURIComponent(tag)}/`}
             class={`${fontSize(count)} text-muted-foreground hover:text-foreground transition-colors`}
             title={`${count}개의 포스트`}
           >

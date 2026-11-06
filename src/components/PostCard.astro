@@ -113,7 +113,7 @@ const formattedDate = new Date(date).toLocaleDateString(lang === 'ko' ? 'ko-KR' 
   {tags.length > 0 && (
     <div class="flex flex-wrap gap-1 mt-auto pt-1">
       {tags.slice(0, 3).map((tag) => (
-        <TagBadge tag={tag} href={`/tags/${tag}`} />
+        <TagBadge tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
       ))}
     </div>
   )}

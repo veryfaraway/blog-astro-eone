@@ -13,6 +13,7 @@
     "check": "astro check",
     "coupang": "node scripts/fetch-coupang.mjs",
     "analyze:seo": "uv run scripts/seo-insights.py",
+    "analyze:ga": "uv run scripts/ga-insights.py",
     "migrate": "node scripts/migrate.mjs",
     "migrate:hugo": "node scripts/migrate.mjs --source=hugo",
     "migrate:popcorn": "node scripts/migrate.mjs --source=popcorn",
