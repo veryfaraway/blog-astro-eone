@@ -64,8 +64,6 @@
       - 주요 등장인물·제작진 섹션에 `<div class="flex flex-wrap gap-3">`로 감싼 `<PersonCard name="이름" role="역할" imdbId="nmXXXXXXX" />` 배치
       - 본문 문장 내 인물 언급 시 `<PersonInline name="이름" role="역할" imdbId="nmXXXXXXX" />` 활용
       - 공식 예고편이나 핵심 클립이 있을 때 `<YouTubeEmbed id="영상ID" title="영상 제목" />` 삽입
-    - **도서/원작 소개**:
-      - `<BookCard title="도서명" isbn13="978..." comment="추천 코멘트" />` 배치 (분권 도서는 `<div class="grid gap-3 md:grid-cols-2 items-start">`로 나란히 배치, 정확한 ISBN13 미확인 시 `isbn13=""`로 비워둠)
     - **데이터/시간대/이미지 그리드**:
       - 통계·수치 비교는 `<Chart type="bar|line|pie|doughnut|radar" data={...} caption="..." />`
       - 24시간 기준 시간대 안내(증시 시간, 일과표 등)는 `<ClockChart segments={[...]} caption="..." />`
@@ -121,6 +119,6 @@ pnpm add @astrojs/check
 ### 주의 사항:
 - 컴포넌트 import는 반드시 frontmatter 바로 아래에 위치해야 합니다.
 - 코드 블록에는 Shiki가 인식할 수 있는 소문자 표준 식별자(`typescript`, `bash`, `astro`, `json` 등)만 사용합니다.
-- 폐기 대상인 `Callout.astro`는 절대 쓰지 말고 `Alert.astro`를 사용합니다.
+- 폐기 대상인 `Callout.astro`와 알라딘 OpenAPI 종료(2026.10.30)로 동작하지 않는 `BookCard.astro`는 절대 쓰지 말고 강조 박스는 `Alert.astro`를 사용합니다.
 - **물결표(`~`) 취소선 오인 주의**: 마크다운(GFM) 파서가 한 문장이나 단락 안에 연속으로 등장하는 ASCII 물결표(`~`)를 취소선(`<del>`)으로 오인하지 않도록, 날짜·기간·수치 범위(예: `1～2주`, `3～5월`, `20～30대`)를 표기할 때는 반드시 **전각 물결표(`～`)** 또는 대시(`–`)를 사용하거나 이스케이프(`\~`)합니다.
 - **볼드(`**`) 내 괄호(`()`) 사용 금지**: `**단어(설명)**는`처럼 닫는 괄호 뒤에 한글 조사가 붙으면 마크다운 단어 경계 인식 오류로 `**`가 그대로 노출됩니다. 괄호가 포함된 부연설명/외래어는 반드시 볼드 마커 바깥에 두거나(예: `**단어**(설명)는`), 괄호가 포함된 문구는 볼드를 적용하지 않습니다.

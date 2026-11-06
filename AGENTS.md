@@ -66,15 +66,13 @@
 
 - **컴포넌트 import**: MDX 파일의 경우 frontmatter 바로 아래, 본문 시작 전에 import. (미사용 import 금지)
 - **강조 박스**: `Alert.astro` 사용 (`type: "info" | "warning" | "success" | "danger" | "tip"`, 선택 `title`).
-  *(폐기 예정인 `Callout.astro` 절대 사용 금지)*
+  *(폐기 예정인 `Callout.astro` 및 알라딘 OpenAPI 서비스 종료(2026.10.30)로 동작하지 않는 `BookCard.astro` 절대 사용 금지)*
 - **주제별 MDX 컴포넌트 적극 활용** (상세 Props는 [`docs/astro-components.md`](docs/astro-components.md) 참조):
   - **영화·드라마·다큐 (`culture` 등)**:
     - `MovieCard.astro`: 작품 소개 섹션 상단에 `<MovieCard title="작품명" imdbId="ttXXXXXXX" />` 배치 (OMDb API로 포스터·평점·개봉년도·줄거리 자동 표시).
     - `PersonCard.astro`: 주요 출연진·제작진 소개 시 `<div class="flex flex-wrap gap-3">` 내부에 `<PersonCard name="이름" role="역할" imdbId="nmXXXXXXX" />` 배치 (TMDb API로 프로필 이미지 자동 표시).
     - `PersonInline.astro`: 본문 문장 중간에 주요 인물을 언급할 때 `<PersonInline name="이름" role="역할" imdbId="nmXXXXXXX" />` 인라인 칩으로 연결.
     - `YouTubeEmbed.astro`: 공식 예고편·관련 영상이 있을 때 `<YouTubeEmbed id="영상ID" title="영상 제목" />` 삽입.
-  - **도서 리뷰·원작 소개**:
-    - `BookCard.astro`: `<BookCard title="도서명" isbn13="978..." comment="한줄 추천평" />` 배치 (알라딘 API 연동, 정확한 13자리 ISBN을 모를 때는 `isbn13=""` 빈 문자열로 폴백).
   - **데이터·시간대·이미지 레이아웃**:
     - `Chart.astro`: 수치 비교·통계 시각화 시 Chart.js 기반 차트(`bar`, `line`, `pie`, `doughnut`, `radar`) 사용.
     - `ClockChart.astro`: 24시간 원형 시계 형태의 시간대(증시 거래 시간, 루틴 등) 시각화 시 사용.

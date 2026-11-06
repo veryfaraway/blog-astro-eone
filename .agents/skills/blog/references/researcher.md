@@ -70,8 +70,8 @@ Researcher는 메인 세션에 아래 4가지 고정 섹션으로 정리하여 �
 - **[MDX 컴포넌트용 식별자]** (주제 해당 시 필수 조사):
   - **영화/드라마 (`MovieCard`)**: 작품의 정확한 IMDb ID (예: `tt27444205`)
   - **주요 인물 (`PersonCard` / `PersonInline`)**: 감독·작가·주연 배우의 IMDb Name ID (예: `nm1250791`)
-  - **도서 (`BookCard`)**: 13자리 ISBN (`isbn13`, 하이픈 제외 숫자 13자리. 확인 불가 시 빈 문자열 표기 안내)
   - **영상 (`YouTubeEmbed`)**: 공식 예고편 또는 핵심 참고 영상의 YouTube Video ID (`watch?v=` 뒤 11자리)
+  - *(주의: `BookCard.astro`는 알라딘 OpenAPI 서비스 종료(2026.10.30)로 더 이상 사용하지 않으므로 `BookCard`용 ISBN 조사는 생략)*
 
 ### 4. SEO 추천 키워드 및 검색 의도 분석
 - **메인 키워드**: (검색량이 높고 글의 주제를 관통하는 1~2개 키워드)

@@ -335,7 +335,9 @@ import PersonInline from '@/components/PersonInline.astro';
 
 ---
 
-#### `BookCard.astro`
+#### `BookCard.astro` (⚠️ 신규 사용 금지 — 알라딘 OpenAPI 서비스 종료)
+
+> **⚠️ 2026년 10월 30일 자로 알라딘 OpenAPI(TTB Key) 서비스가 공식 전면 종료되었습니다.** (신규 키 발급 종료: 2026.09.04 / 전체 API 종료: 2026.10.30). 이에 따라 `BookCard.astro`의 알라딘 도서 정보 조회 및 제휴 링크 자동 생성이 더 이상 동작하지 않으므로 **신규 포스트에서는 `BookCard.astro`를 사용하지 마세요.** 기존 포스트 호환(title 폴백 렌더링) 목적으로만 컴포넌트 파일이 유지됩니다.
 
 도서 정보 카드. 알라딘 Open API로 표지·저자·출판사·가격·평점을 빌드 타임에 fetch. API 요청에 `includeKey=1`을 붙여 응답 `link`에 TTBKey가 자동 포함된 제휴 링크를 그대로 받아오므로, 대시보드에서 책마다 수동으로 "링크 만들기"를 할 필요가 없다. API 키 없거나 fetch 실패 시 title만 표시(폴백).
 
@@ -523,3 +525,4 @@ const { required, optional = 'a' } = Astro.props;
 | 컴포넌트 | 대체 | 비고 |
 |---------|------|------|
 | `Callout.astro` | `Alert.astro` | `global.css`의 `.alert-*` 클래스 의존, 아이콘 없음. 기존 포스트 호환용으로만 존재 — 신규 사용 금지 |
+| `BookCard.astro` | 일반 텍스트 또는 `CoupangProductCard` / `AffiliateLink` | 알라딘 OpenAPI(TTB Key) 서비스 전면 종료(2026.10.30)로 도서 정보 및 제휴 링크 조회 불가 — 신규 포스트 사용 금지 |
