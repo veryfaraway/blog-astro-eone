@@ -1,0 +1,370 @@
+---
+interface Props {
+  defaultScore?: number;
+  defaultBudget?: number;
+}
+
+const { defaultScore = 22, defaultBudget = 100 } = Astro.props;
+const uid = `fg-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class="fg-calc-root not-prose my-6 rounded-xl border border-border bg-card p-4 sm:p-6 text-foreground shadow-sm"
+  data-default-score={defaultScore}
+  data-default-budget={defaultBudget}
+>
+  <!-- 상단 타이틀 + CNN 실시간 공식 바로가기 -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Interactive Dynamic DCA Simulator
+      </div>
+      <div class="mt-0.5 text-base sm:text-lg font-bold text-foreground">
+        CNN 공포지수 판독 &amp; 이번 달 분할 매수 계산기
+      </div>
+    </div>
+    <a
+      href="https://edition.cnn.com/markets/fear-and-greed"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-600 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:bg-red-700 shrink-0"
+    >
+      <span>CNN 실시간 점수 확인</span>
+      <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+  <!-- 1단계: 점수 슬라이더 & 5구간 스펙트럼 게이지 -->
+  <div class="mt-4">
+    <div class="flex items-center justify-between gap-2">
+      <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-score`}>
+        1. 오늘 확인한 CNN 공포탐욕지수 점수 (0–100)
+      </label>
+      <div class="flex items-center gap-1.5">
+        <input
+          id={`${uid}-score`}
+          type="number"
+          min="0"
+          max="100"
+          value={defaultScore}
+          class="fg-score-num w-16 rounded-md border border-border bg-background px-2 py-1 text-right text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-xs text-muted-foreground">점</span>
+      </div>
+    </div>
+
+    <!-- 5구간 시각 바 + 포인터 -->
+    <div class="relative mt-3 pt-1">
+      <div class="grid grid-cols-100 h-3 w-full overflow-hidden rounded-full text-[0px]" style="display:flex;">
+        <div style="width:25%;background:#ef4444;" title="0–24 극도의 공포"></div>
+        <div style="width:20%;background:#f97316;" title="25–44 공포"></div>
+        <div style="width:11%;background:#eab308;" title="45–55 중립"></div>
+        <div style="width:19%;background:#84cc16;" title="56–74 탐욕"></div>
+        <div style="width:25%;background:#10b981;" title="75–100 극도의 탐욕"></div>
+      </div>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={defaultScore}
+        aria-label="CNN 공포탐욕지수 점수 슬라이더"
+        class="fg-score-range mt-2 w-full cursor-pointer accent-red-600"
+      />
+      <div class="mt-0.5 flex justify-between text-[11px] text-muted-foreground">
+        <span>0 (극도의 공포)</span>
+        <span>25</span>
+        <span>45–55 (중립)</span>
+        <span>75</span>
+        <span>100 (극도의 탐욕)</span>
+      </div>
+    </div>
+
+    <!-- 역대 주요 장세 프리셋 칩 -->
+    <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
+      <span class="text-[11px] font-medium text-muted-foreground mr-1">역대 시점 대입:</span>
+      <button type="button" data-preset-score="2" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2020 코로나 바닥 (2점)</button>
+      <button type="button" data-preset-score="3" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2025 관세 쇼크 (3점)</button>
+      <button type="button" data-preset-score="16" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2026 조정 저점 (16점)</button>
+      <button type="button" data-preset-score="35" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">일반 공포 (35점)</button>
+      <button type="button" data-preset-score="50" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">중립 (50점)</button>
+      <button type="button" data-preset-score="79" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2024 AI 랠리 과열 (79점)</button>
+      <button type="button" data-preset-score="86" class="fg-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2021 고점 과열 (86점)</button>
+    </div>
+  </div>
+
+  <!-- 2단계: 월 기본 적립금 & 내 현금 비중 -->
+  <div class="mt-5 grid gap-4 sm:grid-cols-2 border-t border-border pt-4">
+    <div>
+      <label class="block text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-budget`}>
+        2. 평소 월 기본 적립금 (만 원)
+      </label>
+      <div class="mt-1.5 flex items-center gap-2">
+        <input
+          id={`${uid}-budget`}
+          type="number"
+          min="10"
+          max="10000"
+          step="10"
+          value={defaultBudget}
+          class="fg-budget-num w-24 rounded-md border border-border bg-background px-2.5 py-1.5 text-right text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-xs text-muted-foreground">만 원 / 월</span>
+        <div class="ml-auto flex gap-1">
+          <button type="button" data-preset-budget="50" class="fg-budget-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">50만</button>
+          <button type="button" data-preset-budget="100" class="fg-budget-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">100만</button>
+          <button type="button" data-preset-budget="200" class="fg-budget-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">200만</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <span class="block text-xs sm:text-sm font-semibold text-foreground">
+        3. 현재 내 계좌 현금 비중
+      </span>
+      <div class="mt-1.5 grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          data-cash-mode="ample"
+          class="fg-cash-btn rounded-md border border-primary bg-primary/10 px-2.5 py-1.5 text-xs font-semibold text-foreground transition cursor-pointer"
+        >
+          현금 여유 있음 (25%↑)
+        </button>
+        <button
+          type="button"
+          data-cash-mode="tight"
+          class="fg-cash-btn rounded-md border border-border bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition cursor-pointer"
+        >
+          주식 비중 높음 (풀매수)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 판독 대시보드 -->
+  <div class="mt-5 grid gap-3 sm:grid-cols-3">
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">현재 구간 판정</div>
+      <div class="mt-1 flex items-baseline gap-2">
+        <span class="fg-out-zone text-base sm:text-lg font-extrabold text-red-500">극도의 공포</span>
+        <span class="fg-out-mult rounded bg-red-500/15 px-1.5 py-0.5 text-xs font-bold text-red-600 dark:text-red-400">×1.7배</span>
+      </div>
+      <div class="fg-out-sub mt-1 text-xs text-muted-foreground">역발상 분할 매수 우위 구간</div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">이번 달 권장 매수액</div>
+      <div class="fg-out-monthly mt-1 text-lg sm:text-xl font-extrabold text-foreground">170만 원</div>
+      <div class="fg-out-diff mt-1 text-xs text-muted-foreground">평소 대비 +70만 원 추가 집행</div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">주간 4회 쪼개 사기 (올인 방지)</div>
+      <div class="fg-out-weekly mt-1 text-lg sm:text-xl font-extrabold text-foreground">주 42.5만 원</div>
+      <div class="fg-out-reserve mt-1 text-xs text-muted-foreground">4주간 매주 동일 요일 분할</div>
+    </div>
+  </div>
+
+  <!-- 맞춤 포지션 코멘트 -->
+  <div class="fg-out-advice mt-3 rounded-lg border border-border bg-muted/30 px-3.5 py-3 text-xs sm:text-sm leading-relaxed text-foreground">
+  </div>
+</div>
+
+<script>
+  function initFearGreedCalculators() {
+    document.querySelectorAll<HTMLElement>('.fg-calc-root').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      const scoreNum = root.querySelector<HTMLInputElement>('.fg-score-num')!;
+      const scoreRange = root.querySelector<HTMLInputElement>('.fg-score-range')!;
+      const budgetNum = root.querySelector<HTMLInputElement>('.fg-budget-num')!;
+      const cashBtns = root.querySelectorAll<HTMLButtonElement>('.fg-cash-btn');
+
+      const outZone = root.querySelector<HTMLElement>('.fg-out-zone')!;
+      const outMult = root.querySelector<HTMLElement>('.fg-out-mult')!;
+      const outSub = root.querySelector<HTMLElement>('.fg-out-sub')!;
+      const outMonthly = root.querySelector<HTMLElement>('.fg-out-monthly')!;
+      const outDiff = root.querySelector<HTMLElement>('.fg-out-diff')!;
+      const outWeekly = root.querySelector<HTMLElement>('.fg-out-weekly')!;
+      const outReserve = root.querySelector<HTMLElement>('.fg-out-reserve')!;
+      const outAdvice = root.querySelector<HTMLElement>('.fg-out-advice')!;
+
+      let cashMode: 'ample' | 'tight' = 'ample';
+
+      function getPlan(score: number, mode: 'ample' | 'tight') {
+        if (score <= 14) {
+          return {
+            zone: '극도의 공포 (패닉)',
+            color: '#ef4444',
+            badgeClass: 'bg-red-500/15 text-red-600 dark:text-red-400',
+            mult: mode === 'ample' ? 2.0 : 1.3,
+            sub: '역사적 투매 · 중장기 저가 매집 구간',
+            advice:
+              mode === 'ample'
+                ? '<strong>행동 지침:</strong> 지수 한 자릿수–10점대 초반은 코로나 폭락(2점)·2022년 금리 쇼크(8점)·2025년 관세 쇼크(3점) 급의 투매 구간입니다. 단, 지하실이 더 남았을 수 있으니 비축 현금을 한 번에 털지 말고 <strong>S&P 500·나스닥 100 등 대표 지수 ETF 위주로 4–12주에 걸쳐 평소의 2배씩</strong> 기계적으로 분할 집행하세요.'
+                : '<strong>행동 지침:</strong> 이미 주식 비중이 높다면 무리한 대출·마진 물타기는 금물입니다. <strong>절대 공포에 패닉 셀(투매)하지 말고 버티는 것</strong>이 1순위이며, 월급·배당금 등 새로 들어오는 현금 흐름만 1.3배 수준으로 대표 지수 ETF에 담으세요.',
+          };
+        }
+        if (score <= 24) {
+          return {
+            zone: '극도의 공포',
+            color: '#ef4444',
+            badgeClass: 'bg-red-500/15 text-red-600 dark:text-red-400',
+            mult: mode === 'ample' ? 1.7 : 1.2,
+            sub: '기관 헷지 급증 · 적극 분할 매수 구간',
+            advice:
+              mode === 'ample'
+                ? '<strong>행동 지침:</strong> 시장 참여자들이 악재에 과민 반응하며 우량주까지 함께 던지는 구간입니다. 대기 중이던 파킹통장·단기채 현금을 꺼내 <strong>평소 적립액의 1.7배를 주 단위로 4등분</strong>해 매수 평단가를 낮추세요.'
+                : '<strong>행동 지침:</strong> 계좌 평가손실이 불편하더라도 손절매는 피해야 할 구간입니다. 개별 테마주 물타기 대신 우량 지수 위주로 <strong>평소보다 20%만 증액해 적립</strong>하며 반등을 기다리세요.',
+          };
+        }
+        if (score <= 44) {
+          return {
+            zone: '공포',
+            color: '#f97316',
+            badgeClass: 'bg-orange-500/15 text-orange-600 dark:text-orange-400',
+            mult: mode === 'ample' ? 1.3 : 1.0,
+            sub: '조정 및 경계 심리 우세 구간',
+            advice:
+              mode === 'ample'
+                ? '<strong>행동 지침:</strong> 단기 조정으로 가격 부담이 덜어진 상태입니다. <strong>평소 적립액의 1.3배</strong>로 매수 강도를 살짝 높이되, 지수가 24점 이하(극도의 공포)로 추가 하락할 가능성에 대비해 핵심 현금 실탄은 남겨두세요.'
+                : '<strong>행동 지침:</strong> 흔한 건전 조정 구간입니다. 계좌 현금이 넉넉하지 않다면 추가 증액 없이 <strong>원래 정해둔 월 기본 적립금(1.0배)만 흔들림 없이 집행</strong>하세요.',
+          };
+        }
+        if (score <= 55) {
+          return {
+            zone: '중립',
+            color: '#eab308',
+            badgeClass: 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-400',
+            mult: 1.0,
+            sub: '매수·매도 균형 · 정액 적립 유지',
+            advice:
+              '<strong>행동 지침:</strong> 공포도 과열도 아닌 방향성 탐색 국면입니다. 시장 예측에 에너지를 쓰지 말고 <strong>원래 계획한 1.0배 정액 분할 매수(DCA)</strong>만 루틴대로 이어가세요.',
+          };
+        }
+        if (score <= 74) {
+          return {
+            zone: '탐욕',
+            color: '#65a30d',
+            badgeClass: 'bg-lime-500/15 text-lime-700 dark:text-lime-400',
+            mult: mode === 'ample' ? 0.6 : 0.5,
+            sub: '낙관론 확산 · 추격 매수 속도 조절',
+            advice:
+              mode === 'ample'
+                ? '<strong>행동 지침:</strong> 주가가 125일 이동평균선 위로 꽤 올라온 상태입니다. FOMO(소외 불안)에 휩쓸려 목돈을 넣지 말고 <strong>매수액을 평소의 60%로 줄인 뒤, 아낀 40%는 SGOV·파킹통장에 다음 조정장 실탄으로 적립</strong>하세요.'
+                : '<strong>행동 지침:</strong> 이미 주식 비중이 충분해 상승장의 과실을 누리고 있습니다. 신규 매수는 <strong>평소의 절반(0.5배)으로 축소</strong>하고 현금 쿠션을 조금씩 채워두세요.',
+          };
+        }
+        return {
+          zone: '극도의 탐욕',
+          color: '#10b981',
+          badgeClass: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+          mult: 0,
+          sub: '단기 과열 경고등 · 현금 비축 구간',
+          advice:
+            mode === 'ample'
+              ? '<strong>행동 지침:</strong> 콜옵션 쏠림과 정크본드 매수세가 극에 달한 과열 구간입니다. <strong>이번 달 신규 주식 매수는 잠시 멈추고(0원)</strong> 월 투자금 전액을 단기 국채·파킹통장에 비축해 다음 공포 구간을 준비하세요.'
+              : '<strong>행동 지침:</strong> 모두가 취해 있을 때 리스크를 줄여야 합니다. 신규 매수를 멈추는 것은 물론, <strong>목표 비중을 크게 초과해 급등한 종목의 10–20%를 분할 익절(리밸런싱)</strong>해 현금 실탄을 확보하세요.',
+        };
+      }
+
+      function formatKRW(manwon: number): string {
+        if (manwon === 0) return '0원 (매수 보류)';
+        const rounded = Math.round(manwon * 10) / 10;
+        return Number.isInteger(rounded) ? `${rounded.toLocaleString()}만 원` : `${rounded.toLocaleString()}만 원`;
+      }
+
+      function render() {
+        let score = parseInt(scoreNum.value, 10);
+        if (Number.isNaN(score)) score = 0;
+        score = Math.max(0, Math.min(100, score));
+
+        let budget = parseFloat(budgetNum.value);
+        if (Number.isNaN(budget) || budget < 0) budget = 0;
+
+        const plan = getPlan(score, cashMode);
+        const monthly = budget * plan.mult;
+        const diff = monthly - budget;
+        const weekly = monthly / 4;
+
+        outZone.textContent = plan.zone;
+        outZone.style.color = plan.color;
+        outMult.textContent = `×${plan.mult.toFixed(1)}배`;
+        outMult.className = `fg-out-mult rounded px-1.5 py-0.5 text-xs font-bold ${plan.badgeClass}`;
+        outSub.textContent = plan.sub;
+
+        outMonthly.textContent = formatKRW(monthly);
+        if (diff > 0) {
+          outDiff.textContent = `평소(${budget.toLocaleString()}만) 대비 +${(Math.round(diff * 10) / 10).toLocaleString()}만 원 증액`;
+        } else if (diff < 0) {
+          const saved = Math.round(Math.abs(diff) * 10) / 10;
+          outDiff.textContent = `아낀 ${saved.toLocaleString()}만 원은 단기채·파킹통장 비축`;
+        } else {
+          outDiff.textContent = `평소 월 기본 적립액 그대로 유지`;
+        }
+
+        if (monthly === 0) {
+          outWeekly.textContent = '주 0원';
+          outReserve.textContent = `월 ${budget.toLocaleString()}만 원 전액 현금 비축`;
+        } else {
+          outWeekly.textContent = `주 ${(Math.round(weekly * 10) / 10).toLocaleString()}만 원`;
+          outReserve.textContent = '4주간 매주 나눠 집행 (일괄 올인 금지)';
+        }
+
+        outAdvice.innerHTML = plan.advice;
+        scoreRange.style.accentColor = plan.color;
+      }
+
+      scoreRange.addEventListener('input', () => {
+        scoreNum.value = scoreRange.value;
+        render();
+      });
+
+      scoreNum.addEventListener('input', () => {
+        let v = parseInt(scoreNum.value, 10);
+        if (!Number.isNaN(v)) {
+          v = Math.max(0, Math.min(100, v));
+          scoreRange.value = String(v);
+        }
+        render();
+      });
+
+      budgetNum.addEventListener('input', render);
+
+      root.querySelectorAll<HTMLButtonElement>('.fg-preset').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const s = btn.dataset.presetScore ?? '22';
+          scoreNum.value = s;
+          scoreRange.value = s;
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.fg-budget-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          budgetNum.value = btn.dataset.presetBudget ?? '100';
+          render();
+        });
+      });
+
+      cashBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          cashMode = (btn.dataset.cashMode as 'ample' | 'tight') ?? 'ample';
+          cashBtns.forEach((b) => {
+            const active = b.dataset.cashMode === cashMode;
+            b.className = active
+              ? 'fg-cash-btn rounded-md border border-primary bg-primary/10 px-2.5 py-1.5 text-xs font-semibold text-foreground transition cursor-pointer'
+              : 'fg-cash-btn rounded-md border border-border bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition cursor-pointer';
+          });
+          render();
+        });
+      });
+
+      render();
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initFearGreedCalculators)
+    : initFearGreedCalculators();
+</script>

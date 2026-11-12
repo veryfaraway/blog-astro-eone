@@ -270,6 +270,41 @@ import Chart from '@/components/Chart.astro';
 
 ---
 
+#### `FearGreedCalculator.astro`
+
+CNN 공포탐욕지수(0–100) 실시간 공식 페이지 바로가기와 점수 구간 판독·동적 분할 매수(Dynamic DCA) 금액 계산을 결합한 인터랙티브 시뮬레이터. 다크모드 자동 대응.
+
+```mdx
+import FearGreedCalculator from '@/components/FearGreedCalculator.astro';
+
+<FearGreedCalculator defaultScore={22} defaultBudget={100} />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `defaultScore` | `number` | `22` | 초기 표시할 지수 점수 (`0`–`100`) |
+| `defaultBudget` | `number` | `100` | 초기 월 기본 적립금 (단위: 만 원) |
+
+---
+
+#### `VixCalculator.astro`
+
+CBOE VIX 지수(`^VIX`) 실시간 확인 바로가기와 5단계 구간 판독, '16의 법칙'(`VIX ÷ √252`·`VIX ÷ √12`) 기반 일간·30일 예상 변동폭(원화 환산 포함), 시간차 분할 매수(Tranche DCA) 계산을 결합한 인터랙티브 시뮬레이터. 다크모드 자동 대응.
+
+```mdx
+import VixCalculator from '@/components/VixCalculator.astro';
+
+<VixCalculator defaultVix={32} defaultPortfolio={3000} defaultBudget={100} />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `defaultVix` | `number` | `32` | 초기 표시할 VIX 지수 (`9`–`90`) |
+| `defaultPortfolio` | `number` | `3000` | 초기 미국주식 보유 평가금액 (단위: 만 원) |
+| `defaultBudget` | `number` | `100` | 초기 월 기본 적립금 (단위: 만 원) |
+
+---
+
 #### `AdSlot.astro`
 
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.
@@ -304,10 +339,10 @@ import MovieCard from '@/components/MovieCard.astro';
 ---
 
 #### `PersonCard.astro` / `PersonInline.astro`
-인물 프로필 카드. imdbId 또는 profileUrl이 있으면 링크로 렌더링.
-이미지 없으면 이름에서 자동 생성한 이니셜 + 색상 플레이스홀더 표시.
+인물 프로필 카드. `imdbId` 또는 `profileUrl`이 있으면 링크로 렌더링.
+`PersonCard`는 `imdbId`가 주어지고 `image` prop이 생략된 경우 빌드 타임에 TMDb API(`TMDB_API_KEY` 환경변수)로 프로필 사진을 자동 조회하며, 이미지가 없거나 조회 실패 시 이름에서 자동 생성한 이니셜 + 색상 플레이스홀더를 표시한다.
 
-`PersonInline`은 본문 텍스트 중간에 삽입하는 인라인 버전 (아바타 + 이름).
+`PersonInline`은 본문 텍스트 중간에 삽입하는 인라인 버전으로, 별도 API 호출 없이 `image` prop 또는 1글자 이니셜 아바타 + 이름을 표시한다.
 
 ```mdx
 import PersonCard from '@/components/PersonCard.astro';

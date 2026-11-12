@@ -47,8 +47,9 @@ function midXY(startH: number, endH: number, r: number): [number, number] {
 }
 
 function formatHour(h: number): string {
-  const hh = Math.floor(h);
-  const mm = h % 1 >= 0.5 ? '30' : '00';
+  const totalMin = Math.round(h * 60) % (24 * 60);
+  const hh = Math.floor(totalMin / 60);
+  const mm = String(totalMin % 60).padStart(2, '0');
   return `${hh}:${mm}`;
 }
 

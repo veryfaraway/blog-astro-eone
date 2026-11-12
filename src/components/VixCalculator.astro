@@ -1,0 +1,405 @@
+---
+interface Props {
+  defaultVix?: number;
+  defaultPortfolio?: number;
+  defaultBudget?: number;
+}
+
+const {
+  defaultVix = 32,
+  defaultPortfolio = 3000,
+  defaultBudget = 100,
+} = Astro.props;
+const uid = `vix-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class="vix-calc-root not-prose my-6 rounded-xl border border-border bg-card p-4 sm:p-6 text-foreground shadow-sm"
+  data-default-vix={defaultVix}
+  data-default-portfolio={defaultPortfolio}
+  data-default-budget={defaultBudget}
+>
+  <!-- 상단 헤더 + 실시간 조회 바로가기 -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Implied Volatility &amp; Tranche DCA Translator
+      </div>
+      <div class="mt-0.5 text-base sm:text-lg font-bold text-foreground">
+        VIX 지수 실전 판독 &amp; 내 계좌 예상 변동폭 계산기
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <a
+        href="https://finance.yahoo.com/quote/%5EVIX/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-indigo-700"
+      >
+        <span>Yahoo 실시간 (^VIX)</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        href="https://www.google.com/finance/quote/VIX:INDEXCBOE"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-muted/60 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-muted"
+      >
+        <span>Google 실시간</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 1단계: VIX 입력 슬라이더 & 5구간 선형 스펙트럼 (10 ~ 85 매칭) -->
+  <div class="mt-4">
+    <div class="flex items-center justify-between gap-2">
+      <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-vix`}>
+        1. 현재 확인한 VIX 지수 (평시 12–20 / 위기 시 30–85+)
+      </label>
+      <div class="flex items-center gap-1.5">
+        <input
+          id={`${uid}-vix`}
+          type="number"
+          min="9"
+          max="90"
+          step="0.1"
+          value={defaultVix}
+          class="vix-num w-20 rounded-md border border-border bg-background px-2 py-1 text-right text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-xs text-muted-foreground">pt</span>
+      </div>
+    </div>
+
+    <!-- 5구간 컬러 스펙트럼 바 (슬라이더 10~85 폭 75 선형 비율 정확 일치) -->
+    <div class="relative mt-3 pt-1">
+      <div class="h-3 w-full overflow-hidden rounded-full flex">
+        <div style="width:6.67%;background:#10b981;" title="15 미만: 안일·과열 주의"></div>
+        <div style="width:6.67%;background:#3b82f6;" title="15–20: 평시 안정"></div>
+        <div style="width:13.33%;background:#eab308;" title="20–30: 경계·조정장"></div>
+        <div style="width:13.33%;background:#f97316;" title="30–40: 공포·투매"></div>
+        <div style="width:60%;background:#ef4444;" title="40 이상: 극단적 패닉"></div>
+      </div>
+      <input
+        type="range"
+        min="10"
+        max="85"
+        step="0.1"
+        value={defaultVix}
+        aria-label="VIX 지수 슬라이더"
+        class="vix-range mt-2 w-full cursor-pointer accent-orange-500"
+      />
+      <div class="relative mt-0.5 h-4 text-[11px] text-muted-foreground">
+        <span class="absolute left-0">10</span>
+        <span class="absolute -translate-x-1/2" style="left:13.33%;">20</span>
+        <span class="absolute -translate-x-1/2" style="left:26.67%;">30 (공포)</span>
+        <span class="absolute -translate-x-1/2" style="left:40%;">40 (패닉)</span>
+        <span class="absolute right-0">85 (위기)</span>
+      </div>
+    </div>
+
+    <!-- 역대 쇼크 시점 프리셋 -->
+    <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
+      <span class="text-[11px] font-medium text-muted-foreground mr-1">역대 기록 대입:</span>
+      <button type="button" data-preset-vix="12.5" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">강세장 안일 (12.5)</button>
+      <button type="button" data-preset-vix="17.6" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">역사적 중앙값 (17.6)</button>
+      <button type="button" data-preset-vix="31.1" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2026 최고종가 (31.1)</button>
+      <button type="button" data-preset-vix="36.5" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2022 금리인상 고점 (36.5)</button>
+      <button type="button" data-preset-vix="38.6" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2024 엔캐리 종가 (38.6)</button>
+      <button type="button" data-preset-vix="52.3" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2025 관세쇼크 종가 (52.3)</button>
+      <button type="button" data-preset-vix="82.7" class="vix-preset rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">2020 코로나 최고종가 (82.7)</button>
+    </div>
+  </div>
+
+  <!-- 2단계: 내 미국주식 평가금액 & 월 적립금 -->
+  <div class="mt-5 grid gap-4 sm:grid-cols-2 border-t border-border pt-4">
+    <div>
+      <label class="block text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-portfolio`}>
+        2. 내 미국주식 보유 평가금액 (만 원)
+      </label>
+      <div class="mt-1.5 flex flex-wrap items-center gap-2">
+        <input
+          id={`${uid}-portfolio`}
+          type="number"
+          min="0"
+          max="1000000"
+          step="100"
+          value={defaultPortfolio}
+          class="vix-portfolio-num w-28 rounded-md border border-border bg-background px-2.5 py-1.5 text-right text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-xs text-muted-foreground">만 원</span>
+        <div class="ml-auto flex gap-1">
+          <button type="button" data-preset-pf="1000" class="vix-pf-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1천만</button>
+          <button type="button" data-preset-pf="3000" class="vix-pf-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">3천만</button>
+          <button type="button" data-preset-pf="10000" class="vix-pf-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1억</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-budget`}>
+        3. 평소 월 기본 적립금 (만 원)
+      </label>
+      <div class="mt-1.5 flex flex-wrap items-center gap-2">
+        <input
+          id={`${uid}-budget`}
+          type="number"
+          min="0"
+          max="100000"
+          step="10"
+          value={defaultBudget}
+          class="vix-budget-num w-24 rounded-md border border-border bg-background px-2.5 py-1.5 text-right text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <span class="text-xs text-muted-foreground">만 원 / 월</span>
+        <div class="ml-auto flex gap-1">
+          <button type="button" data-preset-bg="50" class="vix-bg-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">50만</button>
+          <button type="button" data-preset-bg="100" class="vix-bg-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">100만</button>
+          <button type="button" data-preset-bg="200" class="vix-bg-btn rounded border border-border bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">200만</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 4분할 대시보드 -->
+  <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-live="polite">
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">현재 장세 판정</div>
+      <div class="mt-1 flex items-baseline gap-1.5 flex-wrap">
+        <span class="vix-out-zone text-base font-extrabold text-orange-600 dark:text-orange-400">공포·본격 투매</span>
+        <span class="vix-out-rarity rounded bg-orange-500/15 px-1.5 py-0.5 text-[11px] font-bold text-orange-600 dark:text-orange-400">상위 6–8% 희귀 구간</span>
+      </div>
+      <div class="vix-out-stat mt-1 text-[11px] text-muted-foreground">30 돌파 후 1년 평균 +23% (Cboe)</div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">오늘 하루 예상 진폭 (68% 확률)</div>
+      <div class="vix-out-daily-pct mt-1 text-lg font-extrabold text-foreground">±2.02%</div>
+      <div class="vix-out-daily-krw mt-1 text-[11px] text-muted-foreground">내 계좌 하루 약 ±60.5만 원 (암산 ÷16 ≈ ±2.0%)</div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">향후 30일 예상 진폭 (68% 확률)</div>
+      <div class="vix-out-monthly-pct mt-1 text-lg font-extrabold text-foreground">±9.24%</div>
+      <div class="vix-out-monthly-krw mt-1 text-[11px] text-muted-foreground">한 달 약 ±277.1만 원 등락 반영</div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/40 p-3.5">
+      <div class="text-[11px] font-medium text-muted-foreground">이번 달 권장 매수 &amp; 분할</div>
+      <div class="vix-out-dca mt-1 text-lg font-extrabold text-foreground">160만 원 (×1.6배)</div>
+      <div class="vix-out-tranche mt-1 text-[11px] text-muted-foreground">주 40만 원씩 4회 시간차 분할</div>
+    </div>
+  </div>
+
+  <!-- 실전 행동 코멘트 (초기 렌더링 시 CLS 방지를 위해 기본 코멘트 포함) -->
+  <div class="vix-out-advice mt-3 rounded-lg border border-border bg-muted/30 px-3.5 py-3 text-xs sm:text-sm leading-relaxed text-foreground">
+    <strong>실전 판독:</strong> 패닉 셀링으로 우량 지수까지 헐값에 던져지는 구간입니다. 1990년 이후 VIX 종가 30 초과 시 1년 뒤 S&amp;P 500 평균 수익률은 +23%(35 초과 시 +28%)에 달했습니다. 단, <strong>미국 본장 개장 전(한국 저녁 프리마켓) 일시 착시인지 정규장 종가 기준인지 먼저 확인</strong>한 뒤 4주에 나눠 1.6배씩 담으세요.
+  </div>
+</div>
+
+<script>
+  function initVixCalculators() {
+    const SQRT_252 = Math.sqrt(252); // ~15.8745
+    const SQRT_12 = Math.sqrt(12);   // ~3.4641
+
+    document.querySelectorAll<HTMLElement>('.vix-calc-root').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      const vixNum = root.querySelector<HTMLInputElement>('.vix-num')!;
+      const vixRange = root.querySelector<HTMLInputElement>('.vix-range')!;
+      const pfNum = root.querySelector<HTMLInputElement>('.vix-portfolio-num')!;
+      const bgNum = root.querySelector<HTMLInputElement>('.vix-budget-num')!;
+
+      const outZone = root.querySelector<HTMLElement>('.vix-out-zone')!;
+      const outRarity = root.querySelector<HTMLElement>('.vix-out-rarity')!;
+      const outStat = root.querySelector<HTMLElement>('.vix-out-stat')!;
+      const outDailyPct = root.querySelector<HTMLElement>('.vix-out-daily-pct')!;
+      const outDailyKrw = root.querySelector<HTMLElement>('.vix-out-daily-krw')!;
+      const outMonthlyPct = root.querySelector<HTMLElement>('.vix-out-monthly-pct')!;
+      const outMonthlyKrw = root.querySelector<HTMLElement>('.vix-out-monthly-krw')!;
+      const outDca = root.querySelector<HTMLElement>('.vix-out-dca')!;
+      const outTranche = root.querySelector<HTMLElement>('.vix-out-tranche')!;
+      const outAdvice = root.querySelector<HTMLElement>('.vix-out-advice')!;
+
+      function getRegime(vix: number) {
+        if (vix < 15) {
+          return {
+            zone: '안일·낙관 과열',
+            accent: '#10b981',
+            zoneClass: 'text-emerald-600 dark:text-emerald-400',
+            badgeClass: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+            rarity: '거래일 약 30%',
+            stat: '추격 매수 자제 · 현금 쿠션 비축기',
+            mult: 0.7,
+            splits: 4,
+            advice:
+              '<strong>실전 판독:</strong> 옵션 보험료가 극도로 싸진 평온한 강세장입니다. 시장이 악재 가능성을 과소평가하고 있어 돌발 쇼크 시 변동성이 급격히 튈 수 있으니, <strong>목돈 추격 매수는 피하고 월 적립액의 30% 정도를 단기채·파킹통장에 아껴 다음 조정장 실탄으로 비축</strong>하세요.',
+          };
+        }
+        if (vix < 20) {
+          return {
+            zone: '평시 안정 구간',
+            accent: '#3b82f6',
+            zoneClass: 'text-blue-600 dark:text-blue-400',
+            badgeClass: 'bg-blue-500/15 text-blue-700 dark:text-blue-400',
+            rarity: '역사적 표준 (약 32%)',
+            stat: '1990년 이후 중앙값(17.6) 부근',
+            mult: 1.0,
+            splits: 4,
+            advice:
+              '<strong>실전 판독:</strong> S&amp;P 500이 일간 ±1% 안팎으로 건전하게 숨 쉬는 가장 표준적인 장세입니다. 뉴스 소음에 흔들릴 필요 없이 <strong>원래 계획한 월 기본 적립금(1.0배)을 정해진 날짜에 기계적으로 집행</strong>하세요.',
+          };
+        }
+        if (vix < 30) {
+          return {
+            zone: '경계·일반 조정장',
+            accent: '#eab308',
+            zoneClass: 'text-amber-600 dark:text-yellow-400',
+            badgeClass: 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-400',
+            rarity: '거래일 약 30%',
+            stat: '1차 비중 확대 탐색 구간',
+            mult: 1.2,
+            splits: 4,
+            advice:
+              '<strong>실전 판독:</strong> 금리·실적·지정학 불확실성으로 기관의 풋옵션 헤지 수요가 늘어난 일반 조정 국면입니다. <strong>적립 강도를 1.2배로 소폭 높이되</strong>, VIX 30 이상의 본격 투매가 뒤따를 수 있으므로 대기 현금의 주력은 아직 아껴두세요.',
+          };
+        }
+        if (vix < 40) {
+          return {
+            zone: '공포·본격 투매',
+            accent: '#f97316',
+            zoneClass: 'text-orange-600 dark:text-orange-400',
+            badgeClass: 'bg-orange-500/15 text-orange-600 dark:text-orange-400',
+            rarity: '상위 6–8% 희귀 구간',
+            stat: '30 돌파 후 1년 평균 +23% (Cboe)',
+            mult: 1.6,
+            splits: 4,
+            advice:
+              '<strong>실전 판독:</strong> 패닉 셀링으로 우량 지수까지 헐값에 던져지는 구간입니다. 1990년 이후 VIX 종가 30 초과 시 1년 뒤 S&amp;P 500 평균 수익률은 +23%(35 초과 시 +28%)에 달했습니다. 단, <strong>미국 본장 개장 전(한국 저녁 프리마켓) 일시 착시인지 정규장 종가 기준인지 먼저 확인</strong>한 뒤 4주에 나눠 1.6배씩 담으세요.',
+          };
+        }
+        return {
+          zone: '극단 패닉·항복',
+          accent: '#ef4444',
+          zoneClass: 'text-red-600 dark:text-red-400',
+          badgeClass: 'bg-red-500/15 text-red-600 dark:text-red-400',
+          rarity: '상위 2% 꼬리위험',
+          stat: '40 돌파 후 1년 승률 83% · 평균 +22%',
+          mult: 2.0,
+          splits: 6,
+          advice:
+            '<strong>실전 판독:</strong> 2008년 금융위기·2020년 코로나·2025년 관세 쇼크 급의 강제 청산(마진콜) 투매장입니다. 중장기 승률이 압도적으로 높지만, <strong>2008년처럼 첫 40 돌파 후 수개월간 여진이 이어질 수 있으니 절대 하루에 올인하지 말고 6–8주 이상 시간차를 두고 S&amp;P 500·나스닥 100 등 대표 지수 ETF만 분할 매집</strong>하세요.',
+        };
+      }
+
+      function fmtManwon(v: number): string {
+        const r = Math.round(v * 10) / 10;
+        if (r >= 10000) {
+          const eok = Math.floor(r / 10000);
+          const rem = Math.round(r % 10000);
+          return rem > 0 ? `${eok}억 ${rem.toLocaleString()}만 원` : `${eok}억 원`;
+        }
+        return `${r.toLocaleString()}만 원`;
+      }
+
+      function render() {
+        let vix = parseFloat(vixNum.value);
+        if (Number.isNaN(vix)) vix = 20;
+        vix = Math.max(9, Math.min(90, vix));
+
+        let pf = parseFloat(pfNum.value);
+        if (Number.isNaN(pf) || pf < 0) pf = 0;
+
+        let bg = parseFloat(bgNum.value);
+        if (Number.isNaN(bg) || bg < 0) bg = 0;
+
+        const regime = getRegime(vix);
+        const dailyPct = vix / SQRT_252;
+        const rule16Pct = vix / 16;
+        const monthlyPct = vix / SQRT_12;
+
+        const dailyKrw = (pf * dailyPct) / 100;
+        const monthlyKrw = (pf * monthlyPct) / 100;
+
+        const totalDca = bg * regime.mult;
+        const perSplit = totalDca / regime.splits;
+
+        outZone.textContent = regime.zone;
+        outZone.className = `vix-out-zone text-base font-extrabold ${regime.zoneClass}`;
+        outRarity.textContent = regime.rarity;
+        outRarity.className = `vix-out-rarity rounded px-1.5 py-0.5 text-[11px] font-bold ${regime.badgeClass}`;
+        outStat.textContent = regime.stat;
+
+        outDailyPct.textContent = `±${dailyPct.toFixed(2)}%`;
+        outDailyKrw.textContent =
+          pf > 0
+            ? `내 계좌 하루 약 ±${fmtManwon(dailyKrw)} (암산 ÷16 ≈ ±${rule16Pct.toFixed(1)}%)`
+            : `암산식(VIX÷16) 기준 약 ±${rule16Pct.toFixed(2)}%`;
+
+        outMonthlyPct.textContent = `±${monthlyPct.toFixed(2)}%`;
+        outMonthlyKrw.textContent =
+          pf > 0
+            ? `한 달 약 ±${fmtManwon(monthlyKrw)} 등락 반영`
+            : `정밀식(VIX÷√12) 30일 기대 진폭`;
+
+        outDca.textContent = `${fmtManwon(totalDca)} (×${regime.mult.toFixed(1)}배)`;
+        if (regime.mult < 1) {
+          const saved = bg - totalDca;
+          outTranche.textContent = `주 ${fmtManwon(perSplit)} 매수 · 아낀 ${fmtManwon(saved)} 현금 비축`;
+        } else if (regime.splits > 4) {
+          outTranche.textContent = `회당 ${fmtManwon(perSplit)}씩 ${regime.splits}주간 쪼개 집행`;
+        } else {
+          outTranche.textContent = `주 ${fmtManwon(perSplit)}씩 4회 시간차 분할`;
+        }
+
+        outAdvice.innerHTML = regime.advice;
+        vixRange.style.accentColor = regime.accent;
+      }
+
+      vixRange.addEventListener('input', () => {
+        vixNum.value = vixRange.value;
+        render();
+      });
+
+      vixNum.addEventListener('input', () => {
+        const v = parseFloat(vixNum.value);
+        if (!Number.isNaN(v)) {
+          vixRange.value = String(Math.max(10, Math.min(85, v)));
+        }
+        render();
+      });
+
+      pfNum.addEventListener('input', render);
+      bgNum.addEventListener('input', render);
+
+      root.querySelectorAll<HTMLButtonElement>('.vix-preset').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const v = btn.dataset.presetVix ?? '32';
+          vixNum.value = v;
+          vixRange.value = v;
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.vix-pf-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          pfNum.value = btn.dataset.presetPf ?? '3000';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.vix-bg-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          bgNum.value = btn.dataset.presetBg ?? '100';
+          render();
+        });
+      });
+
+      render();
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initVixCalculators)
+    : initVixCalculators();
+</script>
