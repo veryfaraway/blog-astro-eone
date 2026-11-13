@@ -34,7 +34,7 @@ thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/v1774927357/media/
 <div class="alert alert-info">
 <p class="alert-title">🎬 용아맥 매진 시 대안 & 포맷 비교</p>
 
-용아맥 좋은 자리가 이미 전멸했다면, 같은 용산아이파크몰에 있는 **세계 최초 4면 SCREENX + 돌비 애트모스 상영관(4관)** 도 훌륭한 대안입니다. [용산CGV SCREENX(4관) 좌석 총정리](/culture/cgv-yongsan-screenx-seat-guide)와 [용아맥 vs 아이맥스 vs 돌비시네마 vs 스크린X 포맷 비교](/culture/spider-man-brand-new-day-theater-format-guide)에서 차이를 확인해보세요.
+용아맥 좋은 자리가 이미 전멸했다면, 같은 용산아이파크몰에 있는 **세계 최초 4면 SCREENX + 돌비 애트모스 상영관(4관)** 과 **국내 유일 Sway & Twist 모션체어를 갖춘 용포디(3관 ULTRA 4DX)** 도 훌륭한 대안입니다. [용산CGV SCREENX(4관) 좌석 총정리](/culture/cgv-yongsan-screenx-seat-guide), [용포디 좌석 명당 총정리](/culture/cgv-yongsan-4dx-seat-guide), [용아맥 vs 아이맥스 vs 돌비시네마 vs 스크린X 포맷 비교](/culture/spider-man-brand-new-day-theater-format-guide)에서 차이를 확인해보세요.
 
 </div>
 
@@ -433,4 +433,4 @@ CGV 앱에서 원하는 영화를 '관심 영화'로 등록해두면 예매 오�
 
 용아맥은 분명 그 값어치를 하는 상영관입니다. 특히 8월 5일 개봉하는 크리스토퍼 놀란의 《오디세이》처럼 IMAX 카메라로 찍은 작품은 여기서 보는 게 사실상 유일한 선택지에 가깝고요. 7월 29일 개봉하는 《스파이더맨: 브랜드 뉴 데이》까지 겹치면서 당분간 예매 전쟁이 계속될 예정입니다. 좌석 지도 북마크 해두고, 다음 예매 전쟁에서 꼭 명당 사수하세요!
 
-같은 CGV 용산아이파크몰 안에는 세계 유일의 4면 SCREENX 상영관도 있습니다. 정면 압도감은 용아맥, 시야 확장감은 SCREENX — 궁금하다면 [용산CGV SCREENX(4관) 좌석 가이드](/culture/cgv-yongsan-screenx-seat-guide)도 함께 확인해보세요.
+같은 CGV 용산아이파크몰 안에는 세계 유일의 4면 SCREENX 상영관(4관)과 국내 유일 Sway & Twist 모션체어를 갖춘 용포디(3관 ULTRA 4DX)도 있습니다. 정면 압도감은 용아맥, 시야 확장감은 [용산CGV SCREENX(4관) 좌석 가이드](/culture/cgv-yongsan-screenx-seat-guide), 온몸으로 타는 모션 쾌감은 [용포디 좌석 명당 총정리](/culture/cgv-yongsan-4dx-seat-guide)에서 함께 비교해보세요.

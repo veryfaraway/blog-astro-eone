@@ -305,6 +305,20 @@ import VixCalculator from '@/components/VixCalculator.astro';
 
 ---
 
+#### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro`
+
+CGV 용산아이파크몰 특별관 좌석 판별 포스트 전용 인터랙티브 좌석 배치도 컴포넌트 (Props 없음).
+- `ScreenXSeatMap.astro`: 4관(4면 SCREENX, A–I열 × 21석) 위치별 추천 등급 호버 지도 (`cgv-yongsan-screenx-seat-guide.mdx`)
+- `Yongsan4dxSeatMap.astro`: 3관(ULTRA 4DX · 용포디, A–I열 × 16석 = 144석) 3가지 뷰 모드(`종합 추천 티어` / `프라임 vs 스탠다드` / `4연석 모션 강도`), 프라임 40석(`E–I열 5–12번`) 프레임, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`cgv-yongsan-4dx-seat-guide.mdx`)
+
+```mdx
+import Yongsan4dxSeatMap from '@/components/Yongsan4dxSeatMap.astro';
+
+<Yongsan4dxSeatMap />
+```
+
+---
+
 #### `AdSlot.astro`
 
 Google AdSense 광고 슬롯. 포스트 본문 내 광고 삽입 위치에 사용.

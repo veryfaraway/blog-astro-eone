@@ -1,0 +1,1003 @@
+---
+// CGV 용산아이파크몰 3관 (ULTRA 4DX · 용포디) 144석 인터랙티브 좌석 배치도.
+// A–I열(9개 열) × 1–16번(균일 16석) = 총 144석, 프라임석(E–I열 5–12번, 40석) 및 4연석 모션 유닛 반영.
+---
+
+<div class="not-prose yd-map-wrap my-6" data-yd-map>
+  <div class="yd-header">
+    <div class="yd-title">CGV 용산아이파크몰 3관 — ULTRA 4DX Seat Guide (144석)</div>
+    <div class="yd-tabs" role="tablist" aria-label="좌석 배치도 보기 모드">
+      <button type="button" role="tab" class="yd-tab is-active" data-mode="tier" aria-selected="true">
+        종합 추천 티어
+      </button>
+      <button type="button" role="tab" class="yd-tab" data-mode="zone" aria-selected="false">
+        프라임 vs 스탠다드
+      </button>
+      <button type="button" role="tab" class="yd-tab" data-mode="motion" aria-selected="false">
+        4연석 모션 강도
+      </button>
+    </div>
+  </div>
+
+  <!-- 3면 ULTRA 4DX 스크린 시각화 -->
+  <div class="yd-screen-stage" aria-hidden="true">
+    <div class="yd-screen-wing yd-screen-wing-l">
+      <span>LEFT 270°</span>
+    </div>
+    <div class="yd-screen-front">
+      SCREEN · 3면 ScreenX (270°) + ULTRA 4DX
+    </div>
+    <div class="yd-screen-wing yd-screen-wing-r">
+      <span>RIGHT 270°</span>
+    </div>
+  </div>
+  <div class="yd-proj-caption">전방 광역 효과 (강풍 · 열풍 · 눈 · 안개 · 비눗방울 · 섬광)</div>
+  <div class="yd-proj-line" aria-hidden="true"></div>
+
+  <!-- 모드별 범례 -->
+  <div class="yd-legend" data-yd-legend>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-s)"></span>S — 최우선 명당</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-aplus)"></span>A+ — 강모션 명당</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-a)"></span>A — 추천 프라임</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-bplus)"></span>B+ — 가성비 명당</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-b)"></span>B — 볼만한 통로·인접석</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-c)"></span>C — 타협 가능</div>
+    <div class="yd-li"><span class="yd-dot" style="background:var(--tier-avoid)"></span>기피 권장</div>
+  </div>
+
+  <!-- 좌석 그리드 -->
+  <div class="yd-scroll-wrap">
+    <div class="yd-board">
+      <!-- 4연석 액추에이터 유닛 헤더 -->
+      <div class="yd-unit-headers" aria-hidden="true">
+        <div class="yd-label-spacer"></div>
+        <div class="yd-uh">1–4 유닛</div>
+        <div class="yd-aisle-hd">통로</div>
+        <div class="yd-uh yd-uh-ctr">5–8 유닛</div>
+        <div class="yd-seam-hd"></div>
+        <div class="yd-uh yd-uh-ctr">9–12 유닛</div>
+        <div class="yd-aisle-hd">통로</div>
+        <div class="yd-uh">13–16 유닛</div>
+      </div>
+
+      <!-- 좌석 번호 헤더 (1–16) -->
+      <div class="yd-col-nums" data-yd-cols aria-hidden="true"></div>
+
+      <!-- 실제 9열 × 16석 그리드 + PRIME ZONE 오버레이 -->
+      <div class="yd-seat-stage">
+        <div class="yd-seat-grid" data-yd-grid role="group" aria-label="CGV 용산 4DX A열부터 I열까지 총 144석 배치도"></div>
+        <div class="yd-prime-frame" aria-hidden="true">
+          <span class="yd-prime-badge">PRIME ZONE · 40석 (Sway &amp; Twist)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="yd-meta-note">
+    <span>※ 8번·9번 사이는 복도가 아닌 4연석 모듈 경계</span>
+    <span>·</span>
+    <span>맨 뒷줄은 I열 (J·K·L열 없음, 총 144석)</span>
+  </div>
+
+  <!-- 하단 인터랙티브 상세 패널 -->
+  <div class="yd-tooltip" data-yd-tooltip aria-live="polite">
+    좌석에 마우스를 올리거나 탭하면 <strong>열·번호별 모션 특성</strong>과 <strong>실전 예매 판단</strong>이 여기에 표시됩니다.
+  </div>
+</div>
+
+<style is:global>
+  .yd-map-wrap {
+    --seat-w: 22px;
+    --seat-h: 19px;
+    --seat-gap: 2px;
+    --row-h: 23px;
+    --row-gap: 6px;
+    --label-w: 20px;
+    --label-mr: 6px;
+    --aisle-w: 16px;
+    --seam-w: 4px;
+    --unit-w: calc(4 * var(--seat-w) + 3 * var(--seat-gap));
+
+    /* Tier mode colors */
+    --tier-s: #ef4444;
+    --tier-aplus: #f97316;
+    --tier-a: #eab308;
+    --tier-bplus: #10b981;
+    --tier-b: #06b6d4;
+    --tier-c: #6366f1;
+    --tier-avoid: #475569;
+
+    /* Zone mode colors */
+    --zone-prime: #8b5cf6;
+    --zone-std-d: #0ea5e9;
+    --zone-std: #334155;
+
+    /* Motion mode colors */
+    --mot-p-edge: #f43f5e;
+    --mot-p-inner: #f59e0b;
+    --mot-s-edge: #38bdf8;
+    --mot-s-inner: #475569;
+
+    background: #0d0f14;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    padding: 1.35rem 1rem 1.15rem;
+    color: #e8eaf0;
+    font-family: inherit;
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.45);
+  }
+
+  @media (max-width: 520px) {
+    .yd-map-wrap {
+      --seat-w: 15px;
+      --seat-h: 15px;
+      --seat-gap: 2px;
+      --row-h: 19px;
+      --row-gap: 5px;
+      --label-w: 16px;
+      --label-mr: 4px;
+      --aisle-w: 10px;
+      --seam-w: 3px;
+      padding: 1.1rem 0.65rem 1rem;
+    }
+  }
+
+  .yd-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  .yd-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #9aa2b4;
+    text-transform: uppercase;
+  }
+
+  .yd-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    background: #151922;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    padding: 3px;
+  }
+
+  .yd-tab {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #8a93a6;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.2;
+  }
+
+  .yd-tab:hover {
+    color: #e8eaf0;
+  }
+
+  .yd-tab.is-active {
+    background: #252c3d;
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+
+  .yd-tab:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 1px;
+  }
+
+  /* 3면 ScreenX + ULTRA 4DX 상단 무대 */
+  .yd-screen-stage {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    max-width: 430px;
+    margin: 0 auto 4px;
+    padding: 0 6px;
+  }
+
+  .yd-screen-front {
+    flex: 1 1 auto;
+    background: linear-gradient(180deg, #1e3a5f 0%, #0f2240 100%);
+    border: 1px solid rgba(110, 175, 255, 0.42);
+    border-radius: 4px 4px 36% 36% / 4px 4px 14px 14px;
+    padding: 6px 8px 11px;
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: #a8ccfa;
+    box-shadow: 0 6px 18px -6px rgba(59, 130, 246, 0.35);
+  }
+
+  .yd-screen-wing {
+    width: 58px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.22) 0%, rgba(30, 58, 95, 0.08) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 3px;
+    padding: 6px 2px;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #7dd3fc;
+  }
+
+  .yd-screen-wing-l {
+    transform: skewY(-18deg);
+    transform-origin: top right;
+  }
+
+  .yd-screen-wing-r {
+    transform: skewY(18deg);
+    transform-origin: top left;
+  }
+
+  @media (max-width: 520px) {
+    .yd-screen-wing {
+      width: 44px;
+      font-size: 7px;
+      padding: 5px 1px;
+    }
+    .yd-screen-front {
+      font-size: 8.5px;
+      padding: 5px 4px 9px;
+    }
+  }
+
+  .yd-proj-caption {
+    text-align: center;
+    font-size: 9.5px;
+    color: #677086;
+    margin-top: 2px;
+  }
+
+  .yd-proj-line {
+    width: 1px;
+    height: 12px;
+    border-left: 1px dashed rgba(110, 175, 255, 0.25);
+    margin: 2px auto 8px;
+  }
+
+  /* 범례 */
+  .yd-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 12px;
+    margin: 0 auto 12px;
+    font-size: 10.5px;
+    color: #9aa2b4;
+    max-width: 540px;
+  }
+
+  .yd-li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .yd-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2.5px;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  /* 그리드 보드 */
+  .yd-scroll-wrap {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .yd-board {
+    display: inline-flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .yd-label-spacer {
+    width: var(--label-w);
+    margin-right: var(--label-mr);
+    flex-shrink: 0;
+  }
+
+  .yd-unit-headers {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+
+  .yd-uh {
+    width: var(--unit-w);
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 8.5px;
+    font-weight: 600;
+    color: #6d768a;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1.5px solid rgba(148, 163, 184, 0.25);
+    border-radius: 3px 3px 0 0;
+    padding: 1px 0 2px;
+  }
+
+  .yd-uh-ctr {
+    color: #b4a5f8;
+    border-bottom-color: rgba(167, 139, 250, 0.45);
+  }
+
+  .yd-aisle-hd {
+    width: var(--aisle-w);
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 7px;
+    color: #4b5366;
+  }
+
+  .yd-seam-hd {
+    width: var(--seam-w);
+    flex-shrink: 0;
+  }
+
+  .yd-col-nums {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .yd-col-unit {
+    display: flex;
+    gap: var(--seat-gap);
+    width: var(--unit-w);
+    flex-shrink: 0;
+  }
+
+  .yd-col-num {
+    width: var(--seat-w);
+    font-size: 8.5px;
+    font-weight: 600;
+    text-align: center;
+    color: #636c80;
+    flex-shrink: 0;
+  }
+
+  .yd-col-aisle {
+    width: var(--aisle-w);
+    flex-shrink: 0;
+  }
+
+  .yd-col-seam {
+    width: var(--seam-w);
+    flex-shrink: 0;
+  }
+
+  .yd-seat-stage {
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .yd-seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--row-gap);
+  }
+
+  .yd-seat-row {
+    display: flex;
+    align-items: center;
+    height: var(--row-h);
+  }
+
+  .yd-row-label {
+    width: var(--label-w);
+    margin-right: var(--label-mr);
+    height: var(--row-h);
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7488;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .yd-row-label.is-prime-row {
+    color: #c4b5fd;
+  }
+
+  .yd-unit {
+    display: flex;
+    gap: var(--seat-gap);
+    width: var(--unit-w);
+    height: var(--row-h);
+    align-items: flex-start;
+    padding-bottom: 2px;
+    border-bottom: 2px solid rgba(148, 163, 184, 0.2);
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .yd-unit.is-prime-unit {
+    border-bottom-color: rgba(196, 181, 253, 0.55);
+  }
+
+  .yd-aisle {
+    width: var(--aisle-w);
+    height: var(--row-h);
+    flex-shrink: 0;
+  }
+
+  .yd-seam {
+    width: var(--seam-w);
+    height: var(--seat-h);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .yd-seam::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 50%;
+    border-left: 1px dotted rgba(255, 255, 255, 0.16);
+  }
+
+  .yd-seat {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    border-radius: 3px 3px 2px 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 7.5px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    box-sizing: border-box;
+  }
+
+  .yd-seat.is-prime-seat {
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  .yd-seat:hover {
+    transform: scale(1.26);
+    z-index: 15;
+    filter: brightness(1.12);
+  }
+
+  .yd-seat:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 1.5px;
+    z-index: 16;
+  }
+
+  .yd-seat.is-selected {
+    transform: scale(1.24);
+    outline: 2px solid #ffffff;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
+    z-index: 14;
+  }
+
+  /* Tier colors */
+  .yd-c-tier-s { background: var(--tier-s); }
+  .yd-c-tier-aplus { background: var(--tier-aplus); }
+  .yd-c-tier-a { background: var(--tier-a); color: #111827; }
+  .yd-c-tier-bplus { background: var(--tier-bplus); color: #052e16; }
+  .yd-c-tier-b { background: var(--tier-b); color: #083344; }
+  .yd-c-tier-c { background: var(--tier-c); }
+  .yd-c-tier-avoid { background: var(--tier-avoid); color: rgba(255, 255, 255, 0.55); }
+
+  /* Zone colors */
+  .yd-c-zone-prime {
+    background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%);
+    color: #ffffff;
+  }
+  .yd-c-zone-std {
+    background: var(--zone-std);
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .yd-c-zone-std-d {
+    background: #2b4257;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    color: #bae6fd;
+  }
+
+  /* Motion colors */
+  .yd-c-mot-p-edge { background: var(--mot-p-edge); color: #ffffff; }
+  .yd-c-mot-p-inner { background: var(--mot-p-inner); color: #111827; }
+  .yd-c-mot-s-edge { background: var(--mot-s-edge); color: #082f49; }
+  .yd-c-mot-s-inner { background: var(--mot-s-inner); color: rgba(255, 255, 255, 0.7); }
+
+  /* PRIME ZONE 40석 테두리 프레임 */
+  .yd-prime-frame {
+    position: absolute;
+    pointer-events: none;
+    left: calc(var(--label-w) + var(--label-mr) + var(--unit-w) + var(--aisle-w) - 4px);
+    width: calc(2 * var(--unit-w) + var(--seam-w) + 8px);
+    top: calc(4 * (var(--row-h) + var(--row-gap)) - 3px);
+    height: calc(5 * var(--row-h) + 4 * var(--row-gap) + 7px);
+    border: 1.5px dashed rgba(196, 181, 253, 0.68);
+    border-radius: 6px;
+    background: rgba(139, 92, 246, 0.05);
+    box-sizing: border-box;
+    z-index: 5;
+  }
+
+  .yd-prime-badge {
+    position: absolute;
+    bottom: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #ddd6fe;
+    background: #231c3d;
+    border: 1px solid rgba(167, 139, 250, 0.45);
+    border-radius: 999px;
+    padding: 1px 8px;
+    line-height: 1.4;
+  }
+
+  .yd-meta-note {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 8px;
+    margin-top: 4px;
+    font-size: 10px;
+    color: #6c7589;
+    text-align: center;
+  }
+
+  /* 하단 정보 패널 */
+  .yd-tooltip {
+    margin-top: 10px;
+    background: #151922;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 9px;
+    padding: 10px 13px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: #9aa2b4;
+    min-height: 68px;
+  }
+
+  .yd-tooltip strong {
+    color: #f1f5f9;
+  }
+
+  .yd-tt-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 6px;
+    margin-bottom: 5px;
+  }
+
+  .yd-tt-coord {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-right: 2px;
+  }
+
+  .yd-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1.5px 7px;
+    border-radius: 999px;
+    line-height: 1.4;
+  }
+
+  .yd-chip-prime {
+    background: rgba(139, 92, 246, 0.24);
+    color: #ddd6fe;
+    border: 1px solid rgba(167, 139, 250, 0.4);
+  }
+
+  .yd-chip-std {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+  }
+
+  .yd-chip-unit {
+    background: rgba(56, 189, 248, 0.14);
+    color: #bae6fd;
+    border: 1px solid rgba(56, 189, 248, 0.28);
+  }
+
+  .yd-chip-tier {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+  }
+
+  .yd-tt-desc {
+    color: #cbd5e1;
+    font-size: 11.5px;
+    line-height: 1.58;
+  }
+</style>
+
+<script>
+  type ViewMode = 'tier' | 'zone' | 'motion';
+  type TierKey = 's' | 'aplus' | 'a' | 'bplus' | 'b' | 'c' | 'avoid';
+
+  const ROWS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'] as const;
+  const UNITS = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+    [13, 14, 15, 16],
+  ] as const;
+
+  function isPrime(row: string, col: number): boolean {
+    return ['E', 'F', 'G', 'H', 'I'].includes(row) && col >= 5 && col <= 12;
+  }
+
+  function isUnitEdge(col: number): boolean {
+    return [1, 4, 5, 8, 9, 12, 13, 16].includes(col);
+  }
+
+  function getUnitPositionLabel(col: number): string {
+    if (col === 1) return '1–4번 유닛 좌측 바깥 끝자리';
+    if (col === 4) return '1–4번 유닛 우측 끝자리 (통로 인접)';
+    if (col === 2 || col === 3) return '1–4번 유닛 안쪽 좌석';
+    if (col === 5) return '5–8번 유닛 좌측 끝자리 (통로·강모션)';
+    if (col === 8) return '5–8번 유닛 우측 끝자리 (정중앙·강모션)';
+    if (col === 6 || col === 7) return '5–8번 유닛 안쪽 (안정 밸런스)';
+    if (col === 9) return '9–12번 유닛 좌측 끝자리 (정중앙·강모션)';
+    if (col === 12) return '9–12번 유닛 우측 끝자리 (통로·강모션)';
+    if (col === 10 || col === 11) return '9–12번 유닛 안쪽 (안정 밸런스)';
+    if (col === 13) return '13–16번 유닛 좌측 끝자리 (통로 인접)';
+    if (col === 16) return '13–16번 유닛 우측 바깥 끝자리';
+    return '13–16번 유닛 안쪽 좌석';
+  }
+
+  function getTier(row: string, col: number): TierKey {
+    if (['A', 'B', 'C'].includes(row)) return 'avoid';
+
+    if (isPrime(row, col)) {
+      if ((row === 'F' || row === 'G') && col >= 7 && col <= 10) return 's';
+      if ((row === 'F' || row === 'G') && (col === 5 || col === 12)) return 'aplus';
+      if ((row === 'E' || row === 'H') && [5, 8, 9, 12].includes(col)) return 'aplus';
+      return 'a';
+    }
+
+    // 스탠다드석 (D열 전체 + E–I열 사이드)
+    if (row === 'D') {
+      if (col >= 6 && col <= 11) return 'bplus';
+      if (col === 5 || col === 12) return 'b';
+      return 'c';
+    }
+
+    // E–I열 사이드 (1–4번, 13–16번)
+    if (['E', 'F', 'G', 'H'].includes(row) && (col === 4 || col === 13)) return 'b';
+    return 'c';
+  }
+
+  const TIER_LABELS: Record<TierKey, string> = {
+    s: 'S등급 · 최우선 명당',
+    aplus: 'A+등급 · 강모션 명당',
+    a: 'A등급 · 추천 프라임',
+    bplus: 'B+등급 · 가성비 최강 스탠다드',
+    b: 'B등급 · 실속 통로·인접 스탠다드',
+    c: 'C등급 · 타협 가능 사이드',
+    avoid: '기피 권장 구역',
+  };
+
+  function getSeatDescription(row: string, col: number, tier: TierKey): string {
+    if (tier === 's') {
+      if (col === 8 || col === 9) {
+        return '용포디 전체를 통틀어 가장 먼저 매진되는 황금 좌표입니다. 상영관 정중앙 시야이면서 4연석 유닛 끝자리(8·9번)에 걸쳐 있어 Sway & Twist 회전 쾌감까지 극대화됩니다.';
+      }
+      return '아담한 정면 스크린이 시야에 가장 이상적으로 차오르는 스윗스팟입니다. 4연석 유닛 안쪽이라 흔들림 중심이 안정적이어서 시야 몰입과 모션 밸런스가 모두 뛰어납니다.';
+    }
+
+    if (tier === 'aplus') {
+      if (col === 5 || col === 12) {
+        return '프라임석 Sway & Twist에 4연석 바깥 끝자리의 회전 가속도가 더해지는 롤러코스터석입니다. 드리프트·급선회 시 몸이 튕겨 나가는 하드코어 타격감을 원한다면 1순위입니다.';
+      }
+      return `${row === 'E' ? '정면 화면이 시야를 꽉 채우는 근접 몰입 열' : '3면 ScreenX 시야가 편안하게 들어오는 중후열'}이면서 상영관 정중앙 끝자리(8·9번)라 시야와 강모션 쾌감을 동시에 챙길 수 있습니다.`;
+    }
+
+    if (tier === 'a') {
+      if (row === 'I') {
+        return '용포디 맨 뒷줄(I열, 뒤에 J·K열 없음) 프라임석입니다. 정면 스크린은 살짝 아담해지지만 좌우 3면 ScreenX 파노라마가 한눈에 들어오고 멀미 부담이 가장 적습니다.';
+      }
+      if (row === 'E') {
+        return '프라임 구역 첫 줄(E열) 안쪽 좌석입니다. 스크린에 빨려 들어가는 듯한 근접 시야와 안정적인 Sway & Twist 모션을 고르게 체감할 수 있습니다.';
+      }
+      return 'S석 바로 옆이거나 안정적인 중후열 프라임석입니다. 실버 가죽 시트의 착좌감과 Sway & Twist 입체 모션, 목뒤 온풍까지 용포프의 핵심 사양을 온전히 누릴 수 있습니다.';
+    }
+
+    if (tier === 'bplus') {
+      return '프라임석(E열) 바로 한 줄 앞 정중앙인데도 스탠다드석으로 분류되는 최고의 가성비 알짜석입니다. Sway & Twist는 없지만 시야각이 훌륭하고 요금도 1,000원 저렴해 프라임 매진 시 0순위로 잡으세요.';
+    }
+
+    if (tier === 'b') {
+      if (row === 'D') {
+        return 'D열 중앙 블록 양 끝자리(5·12번)로, 통로와 맞닿아 개방감이 좋고 기본 3축 모션의 끝자리 진폭도 경쾌합니다. 프라임석 전멸 시 충분히 돈값 하는 선택지입니다.';
+      }
+      return '프라임 구역과 복도 통로 하나만 사이에 둔 명당 열 스탠다드석입니다. Sway & Twist는 빠지지만 시선 높이가 최적이고, 사이드 유닛의 중앙 쪽 끝자리라 모션 반경도 꽤 역동적입니다.';
+    }
+
+    if (tier === 'c') {
+      if (row === 'D') {
+        return '중열 초입 사이드석이라 반대편 벽면 ScreenX 시야각은 다소 비스듬하지만, 기본 3축 모션과 상영관 광역 환경효과(강풍·열풍·안개·눈)를 체험하기엔 무난합니다.';
+      }
+      return `${row === 'I' ? '맨 뒷줄 사이드라 시야각 왜곡이 완만한 편입니다.' : '중후열 사이드 스탠다드석입니다.'} 정면 각도와 Sway & Twist 부재는 아쉽지만 앞줄보다 훨씬 쾌적하게 관람할 수 있습니다.`;
+    }
+
+    // avoid (A–C열)
+    if (col <= 4 || col >= 13) {
+      return '정면 올려다보기 목 피로도 + 좌우 3면 ScreenX 각도 왜곡 + 전방 물·바람 노즐 직격이 동시에 겹칩니다. 특전 수령 목적이 아니라면 다른 회차나 옆 관(4관 SCREENX)을 권합니다.';
+    }
+    return '스크린과 너무 가까워 고개를 계속 들어야 하고 전방 바람·연기·물 분사가 과하게 닿을 수 있습니다. 실관람 목적이라면 최소 D열 이상으로 올라가는 편이 훨씬 쾌적합니다.';
+  }
+
+  const LEGENDS: Record<ViewMode, string> = {
+    tier: `
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-s)"></span>S — 최우선 명당</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-aplus)"></span>A+ — 강모션 명당</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-a)"></span>A — 추천 프라임</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-bplus)"></span>B+ — 가성비 명당</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-b)"></span>B — 볼만한 통로·인접석</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-c)"></span>C — 타협 가능</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--tier-avoid)"></span>기피 권장</div>
+    `,
+    zone: `
+      <div class="yd-li"><span class="yd-dot" style="background:#8b5cf6"></span>프라임석 40석 (E–I열 5–12번 · Sway &amp; Twist · +1,000원)</div>
+      <div class="yd-li"><span class="yd-dot" style="background:#2b4257;border:1px solid rgba(56,189,248,0.6)"></span>D열 중앙 스탠다드 8석 (가성비 구간)</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--zone-std)"></span>일반 스탠다드석 96석 (기본 3축 모션 · 광역 환경효과 동일)</div>
+    `,
+    motion: `
+      <div class="yd-li"><span class="yd-dot" style="background:var(--mot-p-edge)"></span>프라임 끝자리 (5·8·9·12번 · 최대 회전 진폭)</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--mot-p-inner)"></span>프라임 안쪽 (6·7·10·11번 · 안정 균형 진폭)</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--mot-s-edge)"></span>스탠다드 끝자리 (유닛 양 끝 · 3축 강진폭)</div>
+      <div class="yd-li"><span class="yd-dot" style="background:var(--mot-s-inner)"></span>스탠다드 안쪽 (유닛 내측 · 3축 기본 진폭)</div>
+    `,
+  };
+
+  function getModeClass(mode: ViewMode, row: string, col: number): string {
+    if (mode === 'tier') {
+      return `yd-c-tier-${getTier(row, col)}`;
+    }
+    if (mode === 'zone') {
+      if (isPrime(row, col)) return 'yd-c-zone-prime';
+      if (row === 'D' && col >= 5 && col <= 12) return 'yd-c-zone-std-d';
+      return 'yd-c-zone-std';
+    }
+    // motion mode
+    const prime = isPrime(row, col);
+    const edge = isUnitEdge(col);
+    if (prime && edge) return 'yd-c-mot-p-edge';
+    if (prime && !edge) return 'yd-c-mot-p-inner';
+    if (!prime && edge) return 'yd-c-mot-s-edge';
+    return 'yd-c-mot-s-inner';
+  }
+
+  function initYongsan4dxMaps() {
+    document.querySelectorAll<HTMLElement>('[data-yd-map]').forEach((root) => {
+      if (root.dataset.initialized === 'true') return;
+      root.dataset.initialized = 'true';
+
+      const colsEl = root.querySelector<HTMLElement>('[data-yd-cols]')!;
+      const gridEl = root.querySelector<HTMLElement>('[data-yd-grid]')!;
+      const legendEl = root.querySelector<HTMLElement>('[data-yd-legend]')!;
+      const tooltipEl = root.querySelector<HTMLElement>('[data-yd-tooltip]')!;
+      const tabBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('.yd-tab'));
+
+      let currentMode: ViewMode = 'tier';
+      let selectedKey: string | null = null;
+      const seatButtons = new Map<string, HTMLButtonElement>();
+
+      // 상단 열 번호 렌더링
+      const colSpacer = document.createElement('div');
+      colSpacer.className = 'yd-label-spacer';
+      colsEl.appendChild(colSpacer);
+
+      UNITS.forEach((unitCols, uIdx) => {
+        const uDiv = document.createElement('div');
+        uDiv.className = 'yd-col-unit';
+        unitCols.forEach((c) => {
+          const nDiv = document.createElement('div');
+          nDiv.className = 'yd-col-num';
+          nDiv.textContent = String(c);
+          uDiv.appendChild(nDiv);
+        });
+        colsEl.appendChild(uDiv);
+
+        if (uIdx === 0 || uIdx === 2) {
+          const aisle = document.createElement('div');
+          aisle.className = 'yd-col-aisle';
+          colsEl.appendChild(aisle);
+        } else if (uIdx === 1) {
+          const seam = document.createElement('div');
+          seam.className = 'yd-col-seam';
+          colsEl.appendChild(seam);
+        }
+      });
+
+      function renderTooltip(row: string, col: number, pinned: boolean) {
+        const prime = isPrime(row, col);
+        const tier = getTier(row, col);
+        const tierText = TIER_LABELS[tier];
+        const unitText = getUnitPositionLabel(col);
+        const desc = getSeatDescription(row, col, tier);
+        const zoneChip = prime
+          ? `<span class="yd-chip yd-chip-prime">프라임석 · Sway &amp; Twist (+1,000원)</span>`
+          : `<span class="yd-chip yd-chip-std">스탠다드석 · 기본 3축 모션</span>`;
+        const pinHint = pinned ? ' <span style="font-size:10px;color:#94a3b8;font-weight:500">(고정됨 · 다시 탭하면 해제)</span>' : '';
+
+        tooltipEl.innerHTML = `
+          <div class="yd-tt-top">
+            <span class="yd-tt-coord">${row}열 ${col}번${pinHint}</span>
+            ${zoneChip}
+            <span class="yd-chip yd-chip-unit">${unitText}</span>
+            <span class="yd-chip yd-chip-tier">${tierText}</span>
+          </div>
+          <div class="yd-tt-desc">${desc}</div>
+        `;
+      }
+
+      function restoreDefaultOrSelected() {
+        if (selectedKey) {
+          const [r, cStr] = selectedKey.split('-');
+          renderTooltip(r, Number(cStr), true);
+        } else {
+          tooltipEl.innerHTML =
+            '좌석에 마우스를 올리거나 탭하면 <strong>열·번호별 모션 특성</strong>과 <strong>실전 예매 판단</strong>이 여기에 표시됩니다.';
+        }
+      }
+
+      function applySeatClasses() {
+        seatButtons.forEach((btn, key) => {
+          const [row, cStr] = key.split('-');
+          const col = Number(cStr);
+          const prime = isPrime(row, col);
+          const modeCls = getModeClass(currentMode, row, col);
+          btn.className = `yd-seat ${modeCls}${prime ? ' is-prime-seat' : ''}${selectedKey === key ? ' is-selected' : ''}`;
+          btn.setAttribute('aria-pressed', selectedKey === key ? 'true' : 'false');
+        });
+      }
+
+      // 9개 열 × 16석 생성
+      ROWS.forEach((row) => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'yd-seat-row';
+
+        const lbl = document.createElement('div');
+        const primeRow = ['E', 'F', 'G', 'H', 'I'].includes(row);
+        lbl.className = `yd-row-label${primeRow ? ' is-prime-row' : ''}`;
+        lbl.textContent = row;
+        rowDiv.appendChild(lbl);
+
+        UNITS.forEach((unitCols, uIdx) => {
+          const unitDiv = document.createElement('div');
+          const primeUnit = primeRow && (uIdx === 1 || uIdx === 2);
+          unitDiv.className = `yd-unit${primeUnit ? ' is-prime-unit' : ''}`;
+
+          unitCols.forEach((col) => {
+            const key = `${row}-${col}`;
+            const prime = isPrime(row, col);
+            const tier = getTier(row, col);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.seat = key;
+            btn.setAttribute(
+              'aria-label',
+              `${row}열 ${col}번, ${prime ? '프라임석' : '스탠다드석'}, ${TIER_LABELS[tier]}`
+            );
+            btn.textContent = String(col);
+
+            btn.addEventListener('mouseenter', () => {
+              renderTooltip(row, col, selectedKey === key);
+            });
+
+            btn.addEventListener('mouseleave', () => {
+              restoreDefaultOrSelected();
+            });
+
+            btn.addEventListener('focus', () => {
+              renderTooltip(row, col, selectedKey === key);
+            });
+
+            btn.addEventListener('blur', () => {
+              restoreDefaultOrSelected();
+            });
+
+            btn.addEventListener('click', () => {
+              if (selectedKey === key) {
+                selectedKey = null;
+              } else {
+                selectedKey = key;
+              }
+              applySeatClasses();
+              if (selectedKey) {
+                renderTooltip(row, col, true);
+              } else {
+                restoreDefaultOrSelected();
+              }
+            });
+
+            seatButtons.set(key, btn);
+            unitDiv.appendChild(btn);
+          });
+
+          rowDiv.appendChild(unitDiv);
+
+          if (uIdx === 0 || uIdx === 2) {
+            const aisle = document.createElement('div');
+            aisle.className = 'yd-aisle';
+            rowDiv.appendChild(aisle);
+          } else if (uIdx === 1) {
+            const seam = document.createElement('div');
+            seam.className = 'yd-seam';
+            rowDiv.appendChild(seam);
+          }
+        });
+
+        gridEl.appendChild(rowDiv);
+      });
+
+      applySeatClasses();
+
+      // 탭 전환 이벤트
+      tabBtns.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const nextMode = tab.dataset.mode as ViewMode;
+          if (!nextMode || nextMode === currentMode) return;
+          currentMode = nextMode;
+
+          tabBtns.forEach((b) => {
+            const active = b === tab;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+
+          legendEl.innerHTML = LEGENDS[currentMode];
+          applySeatClasses();
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initYongsan4dxMaps);
+  } else {
+    initYongsan4dxMaps();
+  }
+  document.addEventListener('astro:page-load', initYongsan4dxMaps);
+</script>
