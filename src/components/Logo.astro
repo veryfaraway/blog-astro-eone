@@ -2,9 +2,15 @@
 interface Props {
   size?: number;
   animated?: boolean;
+  showSeasonalMotif?: boolean;
   class?: string;
 }
-const { size = 24, animated = false, class: className } = Astro.props;
+const {
+  size = 24,
+  animated = false,
+  showSeasonalMotif = false,
+  class: className,
+} = Astro.props;
 ---
 
 <svg
@@ -15,7 +21,7 @@ const { size = 24, animated = false, class: className } = Astro.props;
   fill="none"
   aria-label="일취월장"
   role="img"
-  class:list={['eone-logo', className]}
+  class:list={['eone-logo', showSeasonalMotif && 'has-seasonal-motif', className]}
 >
   <!-- 원형 틀 -->
   <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
@@ -30,9 +36,81 @@ const { size = 24, animated = false, class: className } = Astro.props;
       stroke-linecap="round"
     />
   </g>
+
+  {showSeasonalMotif && (
+    <g class="seasonal-logo-motifs" aria-hidden="true">
+      <!-- 새해·설날: 떠오르는 일출 해와 지평선 구름 -->
+      <g class="motif motif-new-year" transform="translate(25.5, 6.2)">
+        <circle cx="0" cy="0.4" r="3.4" fill="var(--card)" />
+        <path d="M -2.6 1.2 A 2.6 2.6 0 0 1 2.6 1.2 Z" fill="var(--season-accent)" />
+        <line x1="-3.4" y1="1.8" x2="3.4" y2="1.8" stroke="var(--primary)" stroke-width="1.1" stroke-linecap="round" />
+      </g>
+
+      <!-- 벚꽃: 끝이 살짝 갈라진 벚꽃잎 한 조각 -->
+      <g class="motif motif-sakura" transform="translate(25.6, 6.0) rotate(28)">
+        <path
+          d="M 0 -3.6 C 1.5 -2.6, 2.5 -0.6, 1.8 1.5 C 1.2 2.8, 0.4 3.4, 0 3.7 C -0.4 3.4, -1.2 2.8, -1.8 1.5 C -2.5 -0.6, -1.5 -2.6, 0 -3.6 Z"
+          fill="var(--card)"
+          stroke="var(--card)"
+          stroke-width="1.2"
+        />
+        <path
+          d="M 0 -2.4 L 0.75 -3.3 C 2.0 -2.1, 2.3 0.2, 1.4 1.8 C 0.8 2.8, 0.2 3.2, 0 3.4 C -0.2 3.2, -0.8 2.8, -1.4 1.8 C -2.3 0.2, -2.0 -2.1, -0.75 -3.3 Z"
+          fill="var(--season-accent)"
+        />
+      </g>
+
+      <!-- 여름 휴양지: 산뜻한 태양과 작은 물결 -->
+      <g class="motif motif-resort" transform="translate(25.6, 6.0)">
+        <circle cx="0" cy="0" r="3.6" fill="var(--card)" />
+        <circle cx="0" cy="-0.6" r="1.8" fill="var(--season-accent)" />
+        <path
+          d="M -3.0 2.0 Q -1.5 1.0, 0 2.0 T 3.0 2.0"
+          stroke="var(--primary)"
+          stroke-width="1.15"
+          stroke-linecap="round"
+          fill="none"
+        />
+      </g>
+
+      <!-- 추수감사절·만추: 따뜻한 가을 낙엽 -->
+      <g class="motif motif-thanksgiving" transform="translate(25.6, 6.0) rotate(32)">
+        <path
+          d="M 0 -3.6 C 2.3 -2.0, 2.6 0.8, 0 3.2 C -2.6 0.8, -2.3 -2.0, 0 -3.6 Z"
+          fill="var(--card)"
+          stroke="var(--card)"
+          stroke-width="1.3"
+        />
+        <path
+          d="M 0 -3.2 C 2.1 -1.7, 2.3 0.7, 0 2.8 C -2.3 0.7, -2.1 -1.7, 0 -3.2 Z"
+          fill="var(--season-accent)"
+        />
+        <line x1="0" y1="-1.8" x2="0" y2="3.6" stroke="var(--card)" stroke-width="0.75" stroke-linecap="round" />
+      </g>
+
+      <!-- 성탄(Nativity): 아기 예수의 구유를 비추는 베들레헴의 별 -->
+      <g class="motif motif-christmas" transform="translate(26.0, 5.6)">
+        <circle cx="0" cy="0" r="3.2" fill="var(--card)" opacity="0.85" />
+        <!-- 대각선 보조 빛줄기 -->
+        <path
+          d="M -1.8 -1.8 L 0 -0.35 L 1.8 -1.8 L 0.35 0 L 1.8 1.8 L 0 0.35 L -1.8 1.8 L -0.35 0 Z"
+          fill="var(--season-accent)"
+          opacity="0.55"
+        />
+        <!-- 주 십자형 베들레헴의 별 (아래쪽 구유를 향한 긴 빛줄기) -->
+        <path
+          d="M 0 -4.2 L 0.75 -0.75 L 3.8 0 L 0.75 0.75 L 0 5.2 L -0.75 0.75 L -3.8 0 L -0.75 -0.75 Z"
+          fill="var(--season-accent)"
+        />
+      </g>
+    </g>
+  )}
 </svg>
 
 <style>
+  .has-seasonal-motif {
+    overflow: visible;
+  }
   .spin-bowl {
     transform-box: view-box;
     transform-origin: 50% 50%;
@@ -44,7 +122,31 @@ const { size = 24, animated = false, class: className } = Astro.props;
   @keyframes e-spin {
     to { transform: rotate(360deg); }
   }
+
+  /* 시즌 로고 모티프: 해당 테마 활성 시에만 표시 (vault 제외) */
+  .motif {
+    display: none;
+  }
+  :global(html[data-color-theme="new-year"] body:not([data-section="vault"])) .motif-new-year,
+  :global(html[data-color-theme="sakura"] body:not([data-section="vault"])) .motif-sakura,
+  :global(html[data-color-theme="resort"] body:not([data-section="vault"])) .motif-resort,
+  :global(html[data-color-theme="thanksgiving"] body:not([data-section="vault"])) .motif-thanksgiving,
+  :global(html[data-color-theme="christmas"] body:not([data-section="vault"])) .motif-christmas {
+    display: inline;
+  }
+
+  .motif-christmas {
+    animation: star-pulse 5s ease-in-out infinite;
+  }
+  @keyframes star-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.72; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .spin-bowl { animation: none; }
+    .spin-bowl,
+    .motif-christmas {
+      animation: none;
+    }
   }
 </style>

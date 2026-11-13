@@ -305,16 +305,19 @@ import VixCalculator from '@/components/VixCalculator.astro';
 
 ---
 
-#### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro`
+#### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro` / `DolbyCinemaSeatMap.astro`
 
-CGV 용산아이파크몰 특별관 좌석 판별 포스트 전용 인터랙티브 좌석 배치도 컴포넌트 (Props 없음).
-- `ScreenXSeatMap.astro`: 4관(4면 SCREENX, A–I열 × 21석) 위치별 추천 등급 호버 지도 (`cgv-yongsan-screenx-seat-guide.mdx`)
-- `Yongsan4dxSeatMap.astro`: 3관(ULTRA 4DX · 용포디, A–I열 × 16석 = 144석) 3가지 뷰 모드(`종합 추천 티어` / `프라임 vs 스탠다드` / `4연석 모션 강도`), 프라임 40석(`E–I열 5–12번`) 프레임, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`cgv-yongsan-4dx-seat-guide.mdx`)
+특별관 좌석 판별 포스트 전용 인터랙티브 좌석 배치도 컴포넌트 (Props 없음).
+- `ScreenXSeatMap.astro`: CGV 용산아이파크몰 4관(4면 SCREENX, A–I열 × 21석) 위치별 추천 등급 호버 지도 (`cgv-yongsan-screenx-seat-guide.mdx`)
+- `Yongsan4dxSeatMap.astro`: CGV 용산아이파크몰 3관(ULTRA 4DX · 용포디, A–I열 × 16석 = 144석) 3가지 뷰 모드(`종합 추천 티어` / `프라임 vs 스탠다드` / `4연석 모션 강도`), 프라임 40석(`E–I열 5–12번`) 프레임, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`cgv-yongsan-4dx-seat-guide.mdx`)
+- `DolbyCinemaSeatMap.astro`: 메가박스 코엑스(`코돌비` 1관 · 378석 · A–R열 · 2.39:1 커브드)와 남양주현대아울렛 스페이스원(`남돌비` 5관 · 290석 · A–M열 · 1.85:1 플랫) 듀얼 상영관 전환 및 2가지 뷰 모드(`종합 추천 티어` / `시야·단차 & 음향존`), 영사기 광축·안전 난간 표시, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`coex-namyangju-dolby-seat-guide.mdx`)
 
 ```mdx
 import Yongsan4dxSeatMap from '@/components/Yongsan4dxSeatMap.astro';
+import DolbyCinemaSeatMap from '@/components/DolbyCinemaSeatMap.astro';
 
 <Yongsan4dxSeatMap />
+<DolbyCinemaSeatMap />
 ```
 
 ---

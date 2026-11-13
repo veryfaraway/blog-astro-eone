@@ -37,7 +37,7 @@ const pathname = Astro.url.pathname;
         aria-label="일취월장 홈으로"
       >
         <span class="logo-elevated">
-          <Logo size={48} animated={true} />
+          <Logo size={48} animated={true} showSeasonalMotif={true} />
         </span>
       </a>
 
@@ -115,6 +115,9 @@ const pathname = Astro.url.pathname;
   }
   :global(.dark) .logo-elevated {
     filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.70));
+  }
+  :global(html[data-seasonal="true"] body:not([data-section="vault"])) #site-header {
+    border-bottom-color: color-mix(in oklch, var(--season-accent) 28%, var(--border));
   }
 </style>
 

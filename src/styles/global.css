@@ -81,6 +81,8 @@
     --chart-3: oklch(0.63 0.27 303);
     --chart-4: oklch(0.56 0.024 265);
     --chart-5: oklch(0.72 0.14 215);
+    --season-accent: var(--primary);
+    --season-accent-soft: var(--muted);
 }
 .dark {
     --destructive: oklch(0.704 0.191 22.216);
@@ -318,6 +320,316 @@ html[data-color-theme="slate"].dark {
     --sidebar-ring: oklch(0.55 0.006 258);
 }
 
+/* ══════════════════════════════════════════
+   NEW YEAR — 새해·설날 / 한지 미색 & 청자·단청 일출
+══════════════════════════════════════════ */
+html[data-color-theme="new-year"] {
+    --background: oklch(0.972 0.014 84);
+    --foreground: oklch(0.15 0.024 215);
+    --card: oklch(0.942 0.017 84);
+    --card-foreground: oklch(0.15 0.024 215);
+    --popover: oklch(0.942 0.017 84);
+    --popover-foreground: oklch(0.15 0.024 215);
+    --primary: oklch(0.42 0.11 182);
+    --primary-foreground: oklch(0.97 0.010 84);
+    --secondary: oklch(0.90 0.020 84);
+    --secondary-foreground: oklch(0.20 0.024 215);
+    --muted: oklch(0.915 0.018 84);
+    --muted-foreground: oklch(0.48 0.024 205);
+    --accent: oklch(0.89 0.026 82);
+    --accent-foreground: oklch(0.17 0.024 215);
+    --border: oklch(0.83 0.022 82);
+    --input: oklch(0.83 0.022 82);
+    --ring: oklch(0.42 0.11 182);
+    --sidebar: oklch(0.942 0.017 84);
+    --sidebar-foreground: oklch(0.15 0.024 215);
+    --sidebar-primary: oklch(0.42 0.11 182);
+    --sidebar-primary-foreground: oklch(0.97 0.010 84);
+    --sidebar-accent: oklch(0.90 0.020 84);
+    --sidebar-accent-foreground: oklch(0.20 0.024 215);
+    --sidebar-border: oklch(0.83 0.022 82);
+    --sidebar-ring: oklch(0.42 0.11 182);
+    --season-accent: oklch(0.58 0.16 32);
+    --season-accent-soft: oklch(0.93 0.036 60);
+}
+html[data-color-theme="new-year"].dark {
+    --background: oklch(0.125 0.022 225);
+    --foreground: oklch(0.93 0.014 85);
+    --card: oklch(0.17 0.020 225);
+    --card-foreground: oklch(0.93 0.014 85);
+    --popover: oklch(0.17 0.020 225);
+    --popover-foreground: oklch(0.93 0.014 85);
+    --primary: oklch(0.74 0.11 180);
+    --primary-foreground: oklch(0.11 0.020 225);
+    --secondary: oklch(0.21 0.020 225);
+    --secondary-foreground: oklch(0.89 0.012 85);
+    --muted: oklch(0.195 0.020 225);
+    --muted-foreground: oklch(0.60 0.020 210);
+    --accent: oklch(0.22 0.024 225);
+    --accent-foreground: oklch(0.90 0.012 85);
+    --border: oklch(0.26 0.020 225 / 80%);
+    --input: oklch(0.28 0.020 225);
+    --ring: oklch(0.74 0.11 180);
+    --sidebar: oklch(0.17 0.020 225);
+    --sidebar-foreground: oklch(0.91 0.014 85);
+    --sidebar-primary: oklch(0.74 0.11 180);
+    --sidebar-primary-foreground: oklch(0.11 0.020 225);
+    --sidebar-accent: oklch(0.23 0.020 225);
+    --sidebar-accent-foreground: oklch(0.89 0.012 85);
+    --sidebar-border: oklch(0.26 0.020 225 / 80%);
+    --sidebar-ring: oklch(0.74 0.11 180);
+    --season-accent: oklch(0.74 0.14 52);
+    --season-accent-soft: oklch(0.22 0.036 45);
+}
+
+/* ══════════════════════════════════════════
+   SAKURA — 벚꽃 / 페일 로즈 & 밤벚꽃 플럼
+══════════════════════════════════════════ */
+html[data-color-theme="sakura"] {
+    --background: oklch(0.976 0.011 352);
+    --foreground: oklch(0.15 0.028 348);
+    --card: oklch(0.945 0.015 352);
+    --card-foreground: oklch(0.15 0.028 348);
+    --popover: oklch(0.945 0.015 352);
+    --popover-foreground: oklch(0.15 0.028 348);
+    --primary: oklch(0.50 0.15 352);
+    --primary-foreground: oklch(0.98 0.006 352);
+    --secondary: oklch(0.905 0.020 352);
+    --secondary-foreground: oklch(0.20 0.026 348);
+    --muted: oklch(0.92 0.016 352);
+    --muted-foreground: oklch(0.49 0.028 348);
+    --accent: oklch(0.895 0.026 352);
+    --accent-foreground: oklch(0.18 0.028 348);
+    --border: oklch(0.84 0.022 352);
+    --input: oklch(0.84 0.022 352);
+    --ring: oklch(0.50 0.15 352);
+    --sidebar: oklch(0.945 0.015 352);
+    --sidebar-foreground: oklch(0.15 0.028 348);
+    --sidebar-primary: oklch(0.50 0.15 352);
+    --sidebar-primary-foreground: oklch(0.98 0.006 352);
+    --sidebar-accent: oklch(0.905 0.020 352);
+    --sidebar-accent-foreground: oklch(0.20 0.026 348);
+    --sidebar-border: oklch(0.84 0.022 352);
+    --sidebar-ring: oklch(0.50 0.15 352);
+    --season-accent: oklch(0.64 0.15 352);
+    --season-accent-soft: oklch(0.94 0.032 352);
+}
+html[data-color-theme="sakura"].dark {
+    --background: oklch(0.128 0.022 345);
+    --foreground: oklch(0.935 0.012 352);
+    --card: oklch(0.175 0.022 345);
+    --card-foreground: oklch(0.935 0.012 352);
+    --popover: oklch(0.175 0.022 345);
+    --popover-foreground: oklch(0.935 0.012 352);
+    --primary: oklch(0.77 0.11 352);
+    --primary-foreground: oklch(0.12 0.022 345);
+    --secondary: oklch(0.215 0.022 345);
+    --secondary-foreground: oklch(0.90 0.012 352);
+    --muted: oklch(0.20 0.020 345);
+    --muted-foreground: oklch(0.60 0.022 348);
+    --accent: oklch(0.225 0.026 345);
+    --accent-foreground: oklch(0.90 0.012 352);
+    --border: oklch(0.265 0.022 345 / 80%);
+    --input: oklch(0.285 0.022 345);
+    --ring: oklch(0.77 0.11 352);
+    --sidebar: oklch(0.175 0.022 345);
+    --sidebar-foreground: oklch(0.92 0.014 352);
+    --sidebar-primary: oklch(0.77 0.11 352);
+    --sidebar-primary-foreground: oklch(0.12 0.022 345);
+    --sidebar-accent: oklch(0.235 0.022 345);
+    --sidebar-accent-foreground: oklch(0.90 0.012 352);
+    --sidebar-border: oklch(0.265 0.022 345 / 80%);
+    --sidebar-ring: oklch(0.77 0.11 352);
+    --season-accent: oklch(0.78 0.12 352);
+    --season-accent-soft: oklch(0.23 0.038 348);
+}
+
+/* ══════════════════════════════════════════
+   RESORT — 여름 휴양지 / 터콰이즈 라군 & 선셋 코랄
+══════════════════════════════════════════ */
+html[data-color-theme="resort"] {
+    --background: oklch(0.976 0.012 198);
+    --foreground: oklch(0.14 0.034 212);
+    --card: oklch(0.942 0.016 198);
+    --card-foreground: oklch(0.14 0.034 212);
+    --popover: oklch(0.942 0.016 198);
+    --popover-foreground: oklch(0.14 0.034 212);
+    --primary: oklch(0.46 0.14 198);
+    --primary-foreground: oklch(0.98 0.006 198);
+    --secondary: oklch(0.895 0.022 198);
+    --secondary-foreground: oklch(0.19 0.032 212);
+    --muted: oklch(0.915 0.018 198);
+    --muted-foreground: oklch(0.48 0.030 206);
+    --accent: oklch(0.89 0.028 196);
+    --accent-foreground: oklch(0.16 0.034 212);
+    --border: oklch(0.83 0.024 198);
+    --input: oklch(0.83 0.024 198);
+    --ring: oklch(0.46 0.14 198);
+    --sidebar: oklch(0.942 0.016 198);
+    --sidebar-foreground: oklch(0.14 0.034 212);
+    --sidebar-primary: oklch(0.46 0.14 198);
+    --sidebar-primary-foreground: oklch(0.98 0.006 198);
+    --sidebar-accent: oklch(0.895 0.022 198);
+    --sidebar-accent-foreground: oklch(0.19 0.032 212);
+    --sidebar-border: oklch(0.83 0.024 198);
+    --sidebar-ring: oklch(0.46 0.14 198);
+    --season-accent: oklch(0.64 0.16 42);
+    --season-accent-soft: oklch(0.94 0.034 196);
+}
+html[data-color-theme="resort"].dark {
+    --background: oklch(0.125 0.028 206);
+    --foreground: oklch(0.935 0.010 196);
+    --card: oklch(0.172 0.026 206);
+    --card-foreground: oklch(0.935 0.010 196);
+    --popover: oklch(0.172 0.026 206);
+    --popover-foreground: oklch(0.935 0.010 196);
+    --primary: oklch(0.75 0.13 192);
+    --primary-foreground: oklch(0.11 0.026 206);
+    --secondary: oklch(0.21 0.026 206);
+    --secondary-foreground: oklch(0.90 0.010 196);
+    --muted: oklch(0.195 0.026 206);
+    --muted-foreground: oklch(0.59 0.024 200);
+    --accent: oklch(0.22 0.030 206);
+    --accent-foreground: oklch(0.90 0.010 196);
+    --border: oklch(0.26 0.026 206 / 80%);
+    --input: oklch(0.28 0.026 206);
+    --ring: oklch(0.75 0.13 192);
+    --sidebar: oklch(0.172 0.026 206);
+    --sidebar-foreground: oklch(0.91 0.012 196);
+    --sidebar-primary: oklch(0.75 0.13 192);
+    --sidebar-primary-foreground: oklch(0.11 0.026 206);
+    --sidebar-accent: oklch(0.235 0.026 206);
+    --sidebar-accent-foreground: oklch(0.90 0.010 196);
+    --sidebar-border: oklch(0.26 0.026 206 / 80%);
+    --sidebar-ring: oklch(0.75 0.13 192);
+    --season-accent: oklch(0.74 0.14 44);
+    --season-accent-soft: oklch(0.22 0.038 200);
+}
+
+/* ══════════════════════════════════════════
+   THANKSGIVING — 추수감사절·만추 / 메이플 테라코타 & 골드
+══════════════════════════════════════════ */
+html[data-color-theme="thanksgiving"] {
+    --background: oklch(0.968 0.020 74);
+    --foreground: oklch(0.16 0.032 50);
+    --card: oklch(0.934 0.024 74);
+    --card-foreground: oklch(0.16 0.032 50);
+    --popover: oklch(0.934 0.024 74);
+    --popover-foreground: oklch(0.16 0.032 50);
+    --primary: oklch(0.45 0.15 44);
+    --primary-foreground: oklch(0.97 0.012 76);
+    --secondary: oklch(0.89 0.028 74);
+    --secondary-foreground: oklch(0.21 0.030 50);
+    --muted: oklch(0.908 0.024 74);
+    --muted-foreground: oklch(0.50 0.034 58);
+    --accent: oklch(0.88 0.036 70);
+    --accent-foreground: oklch(0.19 0.032 50);
+    --border: oklch(0.82 0.030 72);
+    --input: oklch(0.82 0.030 72);
+    --ring: oklch(0.45 0.15 44);
+    --sidebar: oklch(0.934 0.024 74);
+    --sidebar-foreground: oklch(0.16 0.032 50);
+    --sidebar-primary: oklch(0.45 0.15 44);
+    --sidebar-primary-foreground: oklch(0.97 0.012 76);
+    --sidebar-accent: oklch(0.89 0.028 74);
+    --sidebar-accent-foreground: oklch(0.21 0.030 50);
+    --sidebar-border: oklch(0.82 0.030 72);
+    --sidebar-ring: oklch(0.45 0.15 44);
+    --season-accent: oklch(0.58 0.16 48);
+    --season-accent-soft: oklch(0.93 0.040 68);
+}
+html[data-color-theme="thanksgiving"].dark {
+    --background: oklch(0.128 0.024 50);
+    --foreground: oklch(0.93 0.018 82);
+    --card: oklch(0.176 0.023 50);
+    --card-foreground: oklch(0.93 0.018 82);
+    --popover: oklch(0.176 0.023 50);
+    --popover-foreground: oklch(0.93 0.018 82);
+    --primary: oklch(0.73 0.14 66);
+    --primary-foreground: oklch(0.11 0.022 50);
+    --secondary: oklch(0.215 0.023 50);
+    --secondary-foreground: oklch(0.89 0.015 82);
+    --muted: oklch(0.20 0.022 50);
+    --muted-foreground: oklch(0.59 0.026 66);
+    --accent: oklch(0.225 0.028 52);
+    --accent-foreground: oklch(0.89 0.015 82);
+    --border: oklch(0.265 0.023 50 / 80%);
+    --input: oklch(0.285 0.023 50);
+    --ring: oklch(0.73 0.14 66);
+    --sidebar: oklch(0.176 0.023 50);
+    --sidebar-foreground: oklch(0.91 0.022 82);
+    --sidebar-primary: oklch(0.73 0.14 66);
+    --sidebar-primary-foreground: oklch(0.11 0.022 50);
+    --sidebar-accent: oklch(0.24 0.023 50);
+    --sidebar-accent-foreground: oklch(0.89 0.015 82);
+    --sidebar-border: oklch(0.265 0.023 50 / 80%);
+    --sidebar-ring: oklch(0.73 0.14 66);
+    --season-accent: oklch(0.75 0.14 68);
+    --season-accent-soft: oklch(0.23 0.038 55);
+}
+
+/* ══════════════════════════════════════════
+   CHRISTMAS (NATIVITY) — 성탄 / 포대기 린넨 아이보리 & 고요한 밤 베들레헴의 별
+══════════════════════════════════════════ */
+html[data-color-theme="christmas"] {
+    --background: oklch(0.975 0.012 86);
+    --foreground: oklch(0.15 0.030 264);
+    --card: oklch(0.944 0.016 85);
+    --card-foreground: oklch(0.15 0.030 264);
+    --popover: oklch(0.944 0.016 85);
+    --popover-foreground: oklch(0.15 0.030 264);
+    --primary: oklch(0.35 0.10 264);
+    --primary-foreground: oklch(0.975 0.010 86);
+    --secondary: oklch(0.905 0.020 85);
+    --secondary-foreground: oklch(0.20 0.028 264);
+    --muted: oklch(0.92 0.017 85);
+    --muted-foreground: oklch(0.48 0.026 260);
+    --accent: oklch(0.90 0.028 84);
+    --accent-foreground: oklch(0.17 0.030 264);
+    --border: oklch(0.835 0.022 84);
+    --input: oklch(0.835 0.022 84);
+    --ring: oklch(0.35 0.10 264);
+    --sidebar: oklch(0.944 0.016 85);
+    --sidebar-foreground: oklch(0.15 0.030 264);
+    --sidebar-primary: oklch(0.35 0.10 264);
+    --sidebar-primary-foreground: oklch(0.975 0.010 86);
+    --sidebar-accent: oklch(0.905 0.020 85);
+    --sidebar-accent-foreground: oklch(0.20 0.028 264);
+    --sidebar-border: oklch(0.835 0.022 84);
+    --sidebar-ring: oklch(0.35 0.10 264);
+    --season-accent: oklch(0.64 0.14 82);
+    --season-accent-soft: oklch(0.935 0.036 85);
+}
+html[data-color-theme="christmas"].dark {
+    --background: oklch(0.118 0.028 265);
+    --foreground: oklch(0.94 0.014 86);
+    --card: oklch(0.165 0.026 265);
+    --card-foreground: oklch(0.94 0.014 86);
+    --popover: oklch(0.165 0.026 265);
+    --popover-foreground: oklch(0.94 0.014 86);
+    --primary: oklch(0.80 0.14 85);
+    --primary-foreground: oklch(0.12 0.028 265);
+    --secondary: oklch(0.205 0.026 265);
+    --secondary-foreground: oklch(0.90 0.012 86);
+    --muted: oklch(0.19 0.025 265);
+    --muted-foreground: oklch(0.60 0.022 255);
+    --accent: oklch(0.215 0.028 265);
+    --accent-foreground: oklch(0.91 0.014 86);
+    --border: oklch(0.255 0.026 265 / 80%);
+    --input: oklch(0.275 0.026 265);
+    --ring: oklch(0.80 0.14 85);
+    --sidebar: oklch(0.165 0.026 265);
+    --sidebar-foreground: oklch(0.92 0.014 86);
+    --sidebar-primary: oklch(0.80 0.14 85);
+    --sidebar-primary-foreground: oklch(0.12 0.028 265);
+    --sidebar-accent: oklch(0.23 0.026 265);
+    --sidebar-accent-foreground: oklch(0.90 0.012 86);
+    --sidebar-border: oklch(0.255 0.026 265 / 80%);
+    --sidebar-ring: oklch(0.80 0.14 85);
+    --season-accent: oklch(0.82 0.15 85);
+    --season-accent-soft: oklch(0.22 0.036 265);
+}
+
 /* Section accent colors — sub-point only (badges, border-left, hover) */
 :root {
   --section-accent: oklch(0.556 0 0);
@@ -355,6 +667,8 @@ html[data-color-theme="slate"].dark {
   --border: oklch(0.27 0.012 120 / 60%);
   --section-accent: oklch(0.72 0.18 145);
   --section-accent-light: oklch(0.15 0.05 145);
+  --season-accent: oklch(0.72 0.18 145);
+  --season-accent-soft: oklch(0.15 0.05 145);
 }
 
 /* Blockquote — 따옴표 제거, section accent 왼쪽 선, 이탤릭 제거 */

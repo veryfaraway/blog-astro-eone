@@ -2,7 +2,12 @@
 import '../styles/global.css';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
-import { colorTheme } from '../config/theme';
+import {
+  colorTheme,
+  THEME_CONFIG,
+  VALID_COLOR_THEMES,
+  SEASONAL_COLOR_THEMES,
+} from '../config/theme';
 
 interface Props {
   title?: string;
@@ -44,6 +49,18 @@ const alternateAbsoluteUrl = alternateUrl ? new URL(alternateUrl, siteUrl).toStr
 // x-default must always point at the same (default-locale) target regardless of which
 // locale is currently rendering, per Google's hreflang spec — it is not "self".
 const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
+const themeRuntime = {
+  defaultTheme: THEME_CONFIG.defaultTheme,
+  overrideTheme: THEME_CONFIG.overrideTheme,
+  validThemes: VALID_COLOR_THEMES,
+  seasonalThemes: SEASONAL_COLOR_THEMES,
+  schedules: THEME_CONFIG.schedules.map(({ theme, start, end, includeLunarNewYear }) => ({
+    theme,
+    start,
+    end,
+    includeLunarNewYear: Boolean(includeLunarNewYear),
+  })),
+};
 ---
 
 <!doctype html>
@@ -118,13 +135,89 @@ const defaultLocaleUrl = lang === 'ko' ? canonicalUrl : alternateAbsoluteUrl;
     <link rel="icon" href="/favicon.ico" sizes="48x48 32x32" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-    <!-- Dark mode init (blocking — prevents flash) -->
-    <script is:inline>
+    <!-- Dark mode & seasonal color theme init (blocking — prevents flash) -->
+    <script is:inline define:vars={{ themeRuntime }}>
       (function () {
-        const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (!stored && prefersDark)) {
-          document.documentElement.classList.add('dark');
+        const root = document.documentElement;
+
+        // 1. Light / Dark mode
+        try {
+          const stored = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            root.classList.add('dark');
+          }
+        } catch {}
+
+        // 2. Color & seasonal theme resolution
+        function inSolarRange(mmdd, start, end) {
+          return start <= end
+            ? mmdd >= start && mmdd <= end
+            : mmdd >= start || mmdd <= end;
+        }
+
+        function isLunarSeollal(date) {
+          try {
+            const parts = new Intl.DateTimeFormat('en-US-u-ca-chinese', {
+              month: 'numeric',
+              day: 'numeric',
+            }).formatToParts(date);
+            const rawMonth = parts.find(function (p) { return p.type === 'month'; })?.value || '';
+            if (/bis|leap/i.test(rawMonth)) return false;
+            const m = parseInt(rawMonth, 10);
+            const d = parseInt(parts.find(function (p) { return p.type === 'day'; })?.value || '', 10);
+            return (m === 1 && d >= 1 && d <= 3) || (m === 12 && d >= 29);
+          } catch {
+            return false;
+          }
+        }
+
+        let resolved = null;
+
+        // Priority A: ?theme= query preview & sessionStorage persistence (same tab)
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const q = params.get('theme');
+          if (q === 'auto' || q === 'reset') {
+            sessionStorage.removeItem('theme-preview');
+          } else if (q && themeRuntime.validThemes.indexOf(q) !== -1) {
+            sessionStorage.setItem('theme-preview', q);
+            resolved = q;
+          } else {
+            const preview = sessionStorage.getItem('theme-preview');
+            if (preview && themeRuntime.validThemes.indexOf(preview) !== -1) {
+              resolved = preview;
+            }
+          }
+        } catch {}
+
+        // Priority B: Operator manual override in src/config/theme.ts
+        if (!resolved && themeRuntime.overrideTheme) {
+          resolved = themeRuntime.overrideTheme;
+        }
+
+        // Priority C: Automatic seasonal schedule (local calendar date)
+        if (!resolved) {
+          const now = new Date();
+          const mm = String(now.getMonth() + 1).padStart(2, '0');
+          const dd = String(now.getDate()).padStart(2, '0');
+          const mmdd = mm + '-' + dd;
+
+          for (let i = 0; i < themeRuntime.schedules.length; i++) {
+            const s = themeRuntime.schedules[i];
+            if (inSolarRange(mmdd, s.start, s.end) || (s.includeLunarNewYear && isLunarSeollal(now))) {
+              resolved = s.theme;
+              break;
+            }
+          }
+        }
+
+        resolved = resolved || themeRuntime.defaultTheme;
+        root.setAttribute('data-color-theme', resolved);
+        if (themeRuntime.seasonalThemes.indexOf(resolved) !== -1) {
+          root.setAttribute('data-seasonal', 'true');
+        } else {
+          root.removeAttribute('data-seasonal');
         }
       })();
     </script>

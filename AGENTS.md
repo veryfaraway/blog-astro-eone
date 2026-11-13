@@ -81,5 +81,6 @@
 - [`docs/astro-components.md`](docs/astro-components.md): 전체 Astro/MDX 컴포넌트 Props 및 사용법 단일 원본
 - [`docs/bilingual-post-guide.md`](docs/bilingual-post-guide.md): 영문(`en`) 포스트 `slug` 동기화, `hreflang` 및 번역 원칙
 - [`docs/design-system.md`](docs/design-system.md): 컬러 토큰, 타이포그래피, 섹션별 테마 디자인 원칙
+- [`docs/seasonal-theme-guide.md`](docs/seasonal-theme-guide.md): 시즌·스페셜 테마 스케줄 조정, 수동 고정, `?theme=` 미리보기 및 신규 테마 추가 가이드
 - [`docs/heatmap-spec.md`](docs/heatmap-spec.md): `/vault` 미국 주식 히트맵(히든 피처) 구조 및 데이터 스키마
 - [`docs/content-follow-up-plan.md`](docs/content-follow-up-plan.md): GSC/GA4 유입 데이터 기반 후속 포스트 기획 백로그

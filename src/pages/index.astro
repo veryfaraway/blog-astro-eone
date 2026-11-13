@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import SeasonalHeroAccent from '../components/SeasonalHeroAccent.astro';
 import { getAllPosts, getPostSlug, type Section } from '../lib/content';
 
 const allPosts = await getAllPosts({ lang: 'ko' });
@@ -19,23 +20,26 @@ const sectionButtons: { section: Section; label: string; color: string }[] = [
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14">
 
     <!-- Hero -->
-    <div class="py-12">
-      <h1 class="font-heading text-6xl font-bold tracking-tight text-foreground mb-2">일취월장</h1>
-      <p class="text-sm text-muted-foreground mb-6">
-        일과 취미에 월등한 장인 블로그입니다.
-      </p>
+    <div class="relative overflow-hidden py-12">
+      <SeasonalHeroAccent lang="ko" />
+      <div class="relative z-10">
+        <h1 class="font-heading text-6xl font-bold tracking-tight text-foreground mb-2">일취월장</h1>
+        <p class="text-sm text-muted-foreground mb-6">
+          일과 취미에 월등한 장인 블로그입니다.
+        </p>
 
-      <!-- Section badge buttons -->
-      <div class="flex flex-wrap gap-2">
-        {sectionButtons.map(({ section, label, color }) => (
-          <a
-            href={`/${section}`}
-            style={`color: ${color}; border-color: ${color};`}
-            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-transparent hover:opacity-80 transition-opacity"
-          >
-            {label}
-          </a>
-        ))}
+        <!-- Section badge buttons -->
+        <div class="flex flex-wrap gap-2">
+          {sectionButtons.map(({ section, label, color }) => (
+            <a
+              href={`/${section}`}
+              style={`color: ${color}; border-color: ${color};`}
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-transparent hover:opacity-80 transition-opacity"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
 

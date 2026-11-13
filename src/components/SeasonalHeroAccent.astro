@@ -1,0 +1,476 @@
+---
+import { THEME_CONFIG, type SeasonalColorTheme } from '../config/theme';
+
+interface Props {
+  lang?: 'ko' | 'en';
+}
+
+const { lang = 'ko' } = Astro.props;
+
+const badgeMap = Object.fromEntries(
+  THEME_CONFIG.schedules.map((s) => [s.theme, s.badge[lang]])
+) as Record<SeasonalColorTheme, string>;
+---
+
+<!-- 1. Hero 배경 앰비언트 레이어 (우측 여백 중심, 본문 침범 없음) -->
+<div class="seasonal-hero-backdrop" aria-hidden="true">
+  <!-- NEW YEAR: 한지 일출 광채와 잔잔한 전통 구름문 -->
+  <div class="ambient ambient-new-year">
+    <div class="new-year-glow" />
+    <svg class="new-year-svg" viewBox="0 0 360 180" fill="none">
+      <circle cx="275" cy="118" r="38" fill="var(--season-accent)" opacity="0.16" />
+      <path
+        class="cloud-drift-slow"
+        d="M 205 118 H 255 C 263 118, 267 110, 260 106 C 264 98, 252 94, 246 101 C 240 96, 228 99, 228 107 H 198"
+        stroke="var(--primary)"
+        stroke-width="1.4"
+        stroke-linecap="round"
+        opacity="0.32"
+      />
+      <path
+        class="cloud-drift-alt"
+        d="M 270 134 H 332 C 340 134, 342 126, 335 123 C 338 116, 326 113, 321 119 H 282"
+        stroke="var(--season-accent)"
+        stroke-width="1.3"
+        stroke-linecap="round"
+        opacity="0.30"
+      />
+    </svg>
+  </div>
+
+  <!-- SAKURA: 봄바람에 살랑이는 벚꽃잎 -->
+  <div class="ambient ambient-sakura">
+    <div class="sakura-glow" />
+    {[
+      { left: '62%', delay: '0s', dur: '13s', size: 13, op: 0.36 },
+      { left: '71%', delay: '-4s', dur: '15s', size: 10, op: 0.26 },
+      { left: '79%', delay: '-8s', dur: '12s', size: 14, op: 0.38 },
+      { left: '86%', delay: '-2s', dur: '16s', size: 11, op: 0.28 },
+      { left: '92%', delay: '-10s', dur: '14s', size: 9, op: 0.24 },
+      { left: '67%', delay: '-6s', dur: '17s', size: 12, op: 0.30 },
+    ].map((p) => (
+      <svg
+        class="falling-petal"
+        style={`left:${p.left}; animation-delay:${p.delay}; animation-duration:${p.dur}; width:${p.size}px; height:${p.size}px; opacity:${p.op};`}
+        viewBox="0 0 16 16"
+        fill="none"
+      >
+        <path
+          d="M 8 2.2 L 9.4 0.8 C 12.2 3.0, 13.0 7.5, 10.8 11.2 C 9.6 13.1, 8.4 14.1, 8 14.5 C 7.6 14.1, 6.4 13.1, 5.2 11.2 C 3.0 7.5, 3.8 3.0, 6.6 0.8 Z"
+          fill="var(--season-accent)"
+        />
+      </svg>
+    ))}
+  </div>
+
+  <!-- RESORT: 여름 라군 윤슬 보케와 수평선 물결 -->
+  <div class="ambient ambient-resort">
+    <div class="resort-shimmer resort-shimmer-1" />
+    <div class="resort-shimmer resort-shimmer-2" />
+    <svg class="resort-waves" viewBox="0 0 360 180" fill="none">
+      <circle cx="290" cy="54" r="20" fill="var(--season-accent)" opacity="0.16" />
+      <path
+        d="M 170 138 Q 205 126, 240 138 T 310 138 T 380 138"
+        stroke="var(--primary)"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        opacity="0.26"
+      />
+      <path
+        d="M 195 152 Q 230 142, 265 152 T 335 152"
+        stroke="var(--season-accent)"
+        stroke-width="1.3"
+        stroke-linecap="round"
+        opacity="0.22"
+      />
+    </svg>
+  </div>
+
+  <!-- THANKSGIVING: 깊어가는 만추의 낙엽 -->
+  <div class="ambient ambient-thanksgiving">
+    <div class="autumn-glow" />
+    {[
+      { left: '64%', delay: '0s', dur: '14s', size: 15, op: 0.32 },
+      { left: '74%', delay: '-5s', dur: '16s', size: 12, op: 0.24 },
+      { left: '83%', delay: '-9s', dur: '13s', size: 16, op: 0.34 },
+      { left: '90%', delay: '-3s', dur: '17s', size: 13, op: 0.26 },
+      { left: '70%', delay: '-11s', dur: '15s', size: 11, op: 0.22 },
+    ].map((l) => (
+      <svg
+        class="falling-leaf"
+        style={`left:${l.left}; animation-delay:${l.delay}; animation-duration:${l.dur}; width:${l.size}px; height:${l.size}px; opacity:${l.op};`}
+        viewBox="0 0 18 18"
+        fill="none"
+      >
+        <path
+          d="M 9 1.5 C 13.5 4.8, 14.5 10.2, 9 15.2 C 3.5 10.2, 4.5 4.8, 9 1.5 Z"
+          fill="var(--season-accent)"
+        />
+        <path d="M 9 4.5 V 16.8" stroke="var(--card)" stroke-width="1.1" stroke-linecap="round" />
+      </svg>
+    ))}
+  </div>
+
+  <!-- CHRISTMAS (NATIVITY): 베들레헴의 별빛과 구유에 누운 아기 예수 -->
+  <div class="ambient ambient-christmas">
+    <svg class="nativity-svg" viewBox="0 0 360 185" fill="none">
+      <defs>
+        <linearGradient id="bethlehem-ray" x1="276" y1="30" x2="276" y2="156" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="var(--season-accent)" stop-opacity="0.26" />
+          <stop offset="68%" stop-color="var(--season-accent)" stop-opacity="0.08" />
+          <stop offset="100%" stop-color="var(--season-accent)" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- 구유로 쏟아지는 은은한 별빛 원뿔 -->
+      <polygon points="276,30 232,158 320,158" fill="url(#bethlehem-ray)" />
+
+      <!-- 밤하늘의 작은 별들 -->
+      <circle class="twinkle twinkle-1" cx="206" cy="36" r="1.4" fill="var(--season-accent)" opacity="0.45" />
+      <circle class="twinkle twinkle-2" cx="236" cy="22" r="1.1" fill="var(--season-accent)" opacity="0.35" />
+      <circle class="twinkle twinkle-3" cx="318" cy="28" r="1.5" fill="var(--season-accent)" opacity="0.45" />
+      <circle class="twinkle twinkle-1" cx="340" cy="56" r="1.2" fill="var(--season-accent)" opacity="0.32" />
+      <circle class="twinkle twinkle-2" cx="222" cy="64" r="1.1" fill="var(--season-accent)" opacity="0.28" />
+
+      <!-- 베들레헴의 별 (Star of Bethlehem) -->
+      <g class="bethlehem-star" transform="translate(276, 30)">
+        <circle cx="0" cy="0" r="10" fill="var(--season-accent)" opacity="0.14" />
+        <path
+          d="M -6 -6 L 0 -1.2 L 6 -6 L 1.2 0 L 6 6 L 0 1.2 L -6 6 L -1.2 0 Z"
+          fill="var(--season-accent)"
+          opacity="0.42"
+        />
+        <path
+          d="M 0 -15 L 2.1 -2.1 L 13 0 L 2.1 2.1 L 0 19 L -2.1 2.1 L -13 0 L -2.1 -2.1 Z"
+          fill="var(--season-accent)"
+          opacity="0.82"
+        />
+      </g>
+
+      <!-- 마구간 지붕의 절제된 아치 실루엣 -->
+      <path
+        d="M 234 114 L 276 92 L 318 114"
+        stroke="var(--foreground)"
+        stroke-width="1.3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        opacity="0.18"
+      />
+
+      <!-- 아기 예수 후광(Halo)과 포대기에 싸인 모습 & 나무 구유(Manger) -->
+      <g transform="translate(276, 138)">
+        <!-- 은은한 아기 예수 후광 -->
+        <circle cx="-5" cy="-10" r="7.5" stroke="var(--season-accent)" stroke-width="1.3" opacity="0.55" />
+        <!-- 아기 예수 머리 -->
+        <circle cx="-5" cy="-10" r="3.6" fill="var(--season-accent)" opacity="0.65" />
+        <!-- 포대기(Swaddling cloth)에 싸인 몸체 -->
+        <path
+          d="M -1.5 -8.5 C 5 -9.5, 12.5 -7.5, 14.5 -3.5 C 9 -2.5, -3 -2.5, -8 -4.5 C -7.5 -7, -4.5 -8, -1.5 -8.5 Z"
+          fill="var(--season-accent)"
+          opacity="0.52"
+        />
+        <!-- 나무 구유 받침통 -->
+        <path
+          d="M -18 -4 L 18 -4 L 13 5 L -13 5 Z"
+          stroke="var(--foreground)"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+          fill="var(--season-accent)"
+          fill-opacity="0.14"
+          opacity="0.42"
+        />
+        <!-- 나무 구유 X자 다리 -->
+        <path
+          d="M -11 5 L 10 18 M 11 5 L -10 18"
+          stroke="var(--foreground)"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          opacity="0.34"
+        />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<!-- 2. 타이틀 상단 시즌 마이크로 배지 (시즌 테마일 때만 노출) -->
+<div class="seasonal-badges">
+  <span class="seasonal-badge badge-new-year">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M 3 10.5 A 5 5 0 0 1 13 10.5 Z" fill="currentColor" />
+      <line x1="1.5" y1="12" x2="14.5" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+    {badgeMap['new-year']}
+  </span>
+
+  <span class="seasonal-badge badge-sakura">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M 8 2.4 L 9.5 1 C 12.4 3.2, 13.0 7.8, 10.8 11.5 C 9.6 13.3, 8.4 14.3, 8 14.6 C 7.6 14.3, 6.4 13.3, 5.2 11.5 C 3.0 7.8, 3.6 3.2, 6.5 1 Z" fill="currentColor" />
+    </svg>
+    {badgeMap['sakura']}
+  </span>
+
+  <span class="seasonal-badge badge-resort">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="6" r="3" fill="currentColor" />
+      <path d="M 2 12 Q 5 9.8, 8 12 T 14 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+    {badgeMap['resort']}
+  </span>
+
+  <span class="seasonal-badge badge-thanksgiving">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M 8 1.5 C 12.2 4.5, 13 9.5, 8 14 C 3 9.5, 3.8 4.5, 8 1.5 Z" fill="currentColor" />
+    </svg>
+    {badgeMap['thanksgiving']}
+  </span>
+
+  <span class="seasonal-badge badge-christmas">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M 8 0.8 L 9.4 6.6 L 15 8 L 9.4 9.4 L 8 15.2 L 6.6 9.4 L 1 8 L 6.6 6.6 Z" fill="currentColor" />
+    </svg>
+    {badgeMap['christmas']}
+  </span>
+</div>
+
+<style>
+  .seasonal-hero-backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    user-select: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .ambient {
+    display: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  :global(html[data-color-theme="new-year"]) .ambient-new-year,
+  :global(html[data-color-theme="sakura"]) .ambient-sakura,
+  :global(html[data-color-theme="resort"]) .ambient-resort,
+  :global(html[data-color-theme="thanksgiving"]) .ambient-thanksgiving,
+  :global(html[data-color-theme="christmas"]) .ambient-christmas {
+    display: block;
+  }
+
+  /* ── 배지 공통 & 테마별 토글 ── */
+  .seasonal-badges {
+    position: relative;
+    z-index: 10;
+  }
+  .seasonal-badge {
+    display: none;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.2rem 0.65rem;
+    margin-bottom: 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--season-accent);
+    background-color: color-mix(in oklch, var(--season-accent) 10%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--season-accent) 26%, var(--border));
+  }
+
+  :global(html[data-color-theme="new-year"]) .badge-new-year,
+  :global(html[data-color-theme="sakura"]) .badge-sakura,
+  :global(html[data-color-theme="resort"]) .badge-resort,
+  :global(html[data-color-theme="thanksgiving"]) .badge-thanksgiving,
+  :global(html[data-color-theme="christmas"]) .badge-christmas {
+    display: inline-flex;
+  }
+
+  /* ── 새해 연출 ── */
+  .new-year-glow {
+    position: absolute;
+    right: 4%;
+    bottom: -20%;
+    width: 260px;
+    height: 180px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--season-accent) 18%, transparent) 0%, transparent 72%);
+  }
+  .new-year-svg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: auto;
+    max-width: 65%;
+  }
+  .cloud-drift-slow {
+    animation: drift-x 14s ease-in-out infinite;
+  }
+  .cloud-drift-alt {
+    animation: drift-x 18s ease-in-out infinite reverse;
+  }
+  @keyframes drift-x {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+  }
+
+  /* ── 벚꽃 연출 ── */
+  .sakura-glow {
+    position: absolute;
+    right: 2%;
+    top: -15%;
+    width: 280px;
+    height: 200px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--season-accent) 14%, transparent) 0%, transparent 72%);
+  }
+  .falling-petal {
+    position: absolute;
+    top: -18px;
+    animation-name: sakura-fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes sakura-fall {
+    0% {
+      transform: translate3d(0, -10px, 0) rotate(0deg);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.36;
+    }
+    85% {
+      opacity: 0.28;
+    }
+    100% {
+      transform: translate3d(-48px, 195px, 0) rotate(220deg);
+      opacity: 0;
+    }
+  }
+
+  /* ── 여름 휴양지 연출 ── */
+  .resort-shimmer {
+    position: absolute;
+    border-radius: 9999px;
+    animation: shimmer-breathe 12s ease-in-out infinite;
+  }
+  .resort-shimmer-1 {
+    right: 6%;
+    top: -10%;
+    width: 240px;
+    height: 180px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--primary) 16%, transparent) 0%, transparent 70%);
+  }
+  .resort-shimmer-2 {
+    right: 16%;
+    bottom: -20%;
+    width: 200px;
+    height: 160px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--season-accent) 14%, transparent) 0%, transparent 70%);
+    animation-delay: -6s;
+  }
+  .resort-waves {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: auto;
+    max-width: 65%;
+  }
+  @keyframes shimmer-breathe {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+
+  /* ── 추수감사절·만추 연출 ── */
+  .autumn-glow {
+    position: absolute;
+    right: 4%;
+    top: -10%;
+    width: 260px;
+    height: 190px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--season-accent) 14%, transparent) 0%, transparent 72%);
+  }
+  .falling-leaf {
+    position: absolute;
+    top: -18px;
+    animation-name: leaf-sway;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  @keyframes leaf-sway {
+    0% {
+      transform: translate3d(0, -12px, 0) rotate(-18deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.34;
+    }
+    50% {
+      transform: translate3d(-22px, 95px, 0) rotate(28deg);
+    }
+    85% {
+      opacity: 0.24;
+    }
+    100% {
+      transform: translate3d(-8px, 195px, 0) rotate(-12deg);
+      opacity: 0;
+    }
+  }
+
+  /* ── 성탄(Nativity) 연출: 베들레헴의 별과 구유 ── */
+  .nativity-svg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: auto;
+    max-width: 72%;
+  }
+  .bethlehem-star {
+    animation: nativity-star 6s ease-in-out infinite;
+  }
+  .twinkle {
+    animation: star-twinkle 5s ease-in-out infinite;
+  }
+  .twinkle-2 {
+    animation-delay: -1.8s;
+  }
+  .twinkle-3 {
+    animation-delay: -3.4s;
+  }
+  @keyframes nativity-star {
+    0%, 100% { opacity: 0.95; }
+    50% { opacity: 0.68; }
+  }
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 0.48; }
+    50% { opacity: 0.14; }
+  }
+
+  /* 모바일에서는 우측 앰비언트가 타이틀과 겹치지 않도록 은은하게 감쇠 */
+  @media (max-width: 640px) {
+    .new-year-svg,
+    .resort-waves,
+    .nativity-svg {
+      opacity: 0.45;
+      max-width: 55%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cloud-drift-slow,
+    .cloud-drift-alt,
+    .falling-petal,
+    .resort-shimmer,
+    .falling-leaf,
+    .bethlehem-star,
+    .twinkle {
+      animation: none;
+    }
+    .falling-petal,
+    .falling-leaf {
+      top: 32%;
+    }
+  }
+</style>
