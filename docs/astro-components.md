@@ -95,6 +95,10 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 | `title` | `string` | `'YouTube video'` | iframe 접근성 title |
 
 > **ID 추출법:** `https://www.youtube.com/watch?v=dQw4w9WgXcQ` → `dQw4w9WgXcQ`
+>
+> **⚠️ 한국(`KR`) 지역 제한(Geo-block) 및 외부 임베드 허용 검증 필수:**
+> HBO·Hulu·Peacock·Paramount+ 등 미국 방송사 본사 채널 영상은 `availableCountries`가 `["US"]`로 제한되어 한국 접속 시 `"The uploader has not made this video available in your country"` 오류가 자주 발생합니다(클라우드 기반 `search_web` 검색에서는 정상 노출되어 오판하기 쉬움).
+> 영상을 삽입할 때는 반드시 `https://www.youtube.com/watch?v={id}&gl=KR`의 `ytInitialPlayerResponse`에서 ① `playabilityStatus.status === "OK"`, ② `playabilityStatus.playableInEmbed === true`, ③ `microformat.playerMicroformatRenderer.availableCountries`에 `"KR"` 포함(또는 필드 미지정) 여부를 확인하세요. 지역 제한 시 글로벌 배급사 공식 채널(예: Warner Bros. Entertainment, Sony Pictures, Universal Pictures, Apple TV)이나 국내 OTT 공식 채널 영상으로 교체합니다.
 
 ---
 
@@ -302,6 +306,25 @@ import VixCalculator from '@/components/VixCalculator.astro';
 | `defaultVix` | `number` | `32` | 초기 표시할 VIX 지수 (`9`–`90`) |
 | `defaultPortfolio` | `number` | `3000` | 초기 미국주식 보유 평가금액 (단위: 만 원) |
 | `defaultBudget` | `number` | `100` | 초기 월 기본 적립금 (단위: 만 원) |
+
+---
+
+#### `EvHybridCalculator.astro`
+
+2026 대한민국 세법(취득세 감면·차령별 자동차세 경감)·국고/지자체 전기차 보조금·내연기관 전환지원금·공공 충전요금 5단계 개편 단가를 반영해 가솔린 vs 하이브리드 vs 전기차의 0～10년 누적 총소유비용(TCO)과 손익분기 주행거리를 실시간 시뮬레이션하는 인터랙티브 계산기. 차급 프리셋 3종(준중형·중형 SUV·준대형)과 테슬라 모델 Y RWD 스왑, 내 견적 직접 입력, 반응형 SVG 라인 차트를 포함하며 다크모드에 자동 대응한다.
+
+```mdx
+import EvHybridCalculator from '@/components/EvHybridCalculator.astro';
+
+<EvHybridCalculator />
+<EvHybridCalculator defaultPreset="compact" defaultAnnualKm={12000} defaultYears={5} />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `defaultPreset` | `'compact' \| 'midsize-suv' \| 'fullsize'` | `'midsize-suv'` | 초기 표시할 비교 차급 프리셋 |
+| `defaultAnnualKm` | `number` | `15000` | 초기 연간 주행거리 (`5000`–`40000`, 단위: km) |
+| `defaultYears` | `number` | `5` | 초기 목표 보유 기간 (`1`–`10`, 단위: 년) |
 
 ---
 

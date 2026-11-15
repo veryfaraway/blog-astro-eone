@@ -1,0 +1,1256 @@
+---
+interface Props {
+  defaultPreset?: 'compact' | 'midsize-suv' | 'fullsize';
+  defaultAnnualKm?: number;
+  defaultYears?: number;
+}
+
+const {
+  defaultPreset = 'midsize-suv',
+  defaultAnnualKm = 15000,
+  defaultYears = 5,
+} = Astro.props;
+
+const uid = `evc-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class="ev-calc-root not-prose my-6 rounded-xl border border-border bg-card p-4 sm:p-6 text-foreground shadow-sm"
+  data-default-preset={defaultPreset}
+  data-default-km={defaultAnnualKm}
+  data-default-years={defaultYears}
+>
+  <!-- 1. 상단 헤더 + 실시간 유가/보조금 확인 바로가기 -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        2026 Tax · Subsidy · TCO Breakeven Simulator
+      </div>
+      <div class="mt-0.5 text-base sm:text-lg font-bold text-foreground">
+        전기차 vs 하이브리드 vs 가솔린 손익분기 계산기
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <a
+        href="https://www.opinet.co.kr/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-muted/60 px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-muted"
+      >
+        <span>오피넷 전국 유가</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        href="https://www.ev.or.kr/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-emerald-700"
+      >
+        <span>무공해차 보조금 조회</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. 차급 프리셋 탭 + 모델 Y RWD 서브 프리셋 -->
+  <div class="mt-4">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="text-xs sm:text-sm font-semibold text-foreground">
+        1. 비교 차급 선택 (2026 연식 실거래 트림 기준)
+      </span>
+      <span class="ev-custom-badge hidden rounded bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+        직접 수정 견적 반영 중
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" role="tablist" aria-label="차급 프리셋">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'compact'}
+        data-segment="compact"
+        class="ev-seg-btn rounded-lg border border-border bg-muted/40 px-3 py-2 text-left transition cursor-pointer hover:bg-muted/70"
+      >
+        <div class="text-xs font-bold text-foreground">준중형 엔트리</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">아반떼 1.6 · HEV vs EV3</div>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'midsize-suv'}
+        data-segment="midsize-suv"
+        class="ev-seg-btn rounded-lg border border-primary bg-primary/10 px-3 py-2 text-left transition cursor-pointer"
+      >
+        <div class="text-xs font-bold text-foreground">중형 패밀리 SUV</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">쏘렌토 2.5T · HEV vs 아이오닉 5</div>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'fullsize'}
+        data-segment="fullsize"
+        class="ev-seg-btn rounded-lg border border-border bg-muted/40 px-3 py-2 text-left transition cursor-pointer hover:bg-muted/70"
+      >
+        <div class="text-xs font-bold text-foreground">준대형 세단·크로스오버</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">그랜저 2.5 · HEV vs 더 뉴 EV6</div>
+      </button>
+    </div>
+
+    <!-- 선택된 모델 요약 + 테슬라 모델 Y RWD 스왑 칩 -->
+    <div class="mt-2.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-border bg-muted/30 px-3 py-2">
+      <div class="ev-model-summary flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-xs text-muted-foreground">
+        <span><strong class="text-orange-600 dark:text-orange-400">가솔린</strong> 더 뉴 쏘렌토 2.5T</span>
+        <span><strong class="text-blue-600 dark:text-blue-400">HEV</strong> 쏘렌토 1.6T HEV</span>
+        <span><strong class="text-emerald-600 dark:text-emerald-400">EV</strong> 아이오닉 5 E-Lite</span>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button
+          type="button"
+          class="ev-modely-btn rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-semibold text-foreground hover:bg-muted transition cursor-pointer"
+        >
+          ⚡ 모델 Y RWD 대입 (보조금 300만)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 핵심 주행·충전 슬라이더 4종 -->
+  <div class="mt-5 grid gap-4 sm:grid-cols-2 border-t border-border pt-4">
+    <!-- (1) 연간 주행거리 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-km`}>
+          연간 주행거리
+        </label>
+        <span class="ev-km-label text-sm font-extrabold text-foreground">15,000 km / 년</span>
+      </div>
+      <input
+        id={`${uid}-km`}
+        type="range"
+        min="5000"
+        max="40000"
+        step="1000"
+        value={defaultAnnualKm}
+        class="ev-km-range mt-2 w-full cursor-pointer accent-emerald-600"
+      />
+      <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+        <span class="text-[11px] text-muted-foreground">빠른 대입:</span>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-km="8000" class="ev-km-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">8천km</button>
+          <button type="button" data-km="15000" class="ev-km-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1.5만km</button>
+          <button type="button" data-km="25000" class="ev-km-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground cursor-pointer hover:text-foreground">2.5만km</button>
+          <button type="button" data-km="35000" class="ev-km-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground cursor-pointer hover:text-foreground">3.5만km</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- (2) 목표 보유 기간 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-years`}>
+          목표 보유 기간
+        </label>
+        <span class="ev-years-label text-sm font-extrabold text-foreground">5년 (총 7.5만 km)</span>
+      </div>
+      <input
+        id={`${uid}-years`}
+        type="range"
+        min="1"
+        max="10"
+        step="1"
+        value={defaultYears}
+        class="ev-years-range mt-2 w-full cursor-pointer accent-blue-600"
+      />
+      <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+        <span class="text-[11px] text-muted-foreground">빠른 선택:</span>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-years="3" class="ev-years-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">3년</button>
+          <button type="button" data-years="5" class="ev-years-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">5년</button>
+          <button type="button" data-years="7" class="ev-years-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">7년</button>
+          <button type="button" data-years="10" class="ev-years-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">10년</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- (3) 전기차 집밥(완속) 충전 비중 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-home`}>
+          전기차 '집밥'(완속) 비중
+        </label>
+        <span class="ev-home-label text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+          80% · 평균 301원/kWh
+        </span>
+      </div>
+      <input
+        id={`${uid}-home`}
+        type="range"
+        min="0"
+        max="100"
+        step="10"
+        value="80"
+        class="ev-home-range mt-2 w-full cursor-pointer accent-emerald-600"
+      />
+      <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+        <span class="text-[11px] text-muted-foreground">완속 285원 · 급속 365원:</span>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-home="90" class="ev-home-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">집밥 90%</button>
+          <button type="button" data-home="50" class="ev-home-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">반반 50%</button>
+          <button type="button" data-home="0" class="ev-home-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">집밥 없음(급속 100%)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- (4) 보통휘발유 단가 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="text-xs sm:text-sm font-semibold text-foreground" for={`${uid}-fuel`}>
+          보통휘발유 단가
+        </label>
+        <span class="ev-fuel-label text-sm font-extrabold text-orange-600 dark:text-orange-400">
+          1,800원 / L
+        </span>
+      </div>
+      <input
+        id={`${uid}-fuel`}
+        type="range"
+        min="1500"
+        max="2200"
+        step="10"
+        value="1800"
+        class="ev-fuel-range mt-2 w-full cursor-pointer accent-orange-500"
+      />
+      <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+        <span class="text-[11px] text-muted-foreground">유가 시나리오:</span>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-fuel="1650" class="ev-fuel-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">안정 1,650원</button>
+          <button type="button" data-fuel="1800" class="ev-fuel-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">평균 1,800원</button>
+          <button type="button" data-fuel="2050" class="ev-fuel-chip rounded border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">고유가 2,050원</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 현실 보정 체크박스 2종 -->
+  <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 rounded-lg border border-border bg-muted/30 px-3.5 py-2.5">
+    <label class="inline-flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer select-none">
+      <input
+        type="checkbox"
+        checked
+        class="ev-winter-chk h-4 w-4 rounded border-border accent-emerald-600 cursor-pointer"
+      />
+      <span>겨울철·사계절 실전비 보정 <span class="text-muted-foreground">(전기차 공인전비 -8% 적용)</span></span>
+    </label>
+    <label class="inline-flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer select-none">
+      <input
+        type="checkbox"
+        class="ev-conv-chk h-4 w-4 rounded border-border accent-emerald-600 cursor-pointer"
+      />
+      <span>2026 내연기관차 전환지원금 <span class="text-muted-foreground">(3년↑ 가솔린·디젤 처분 시 보조금 +100만 원)</span></span>
+    </label>
+  </div>
+
+  <!-- 5. 접이식 내 견적 직접 입력 패널 -->
+  <details class="ev-custom-details mt-3 rounded-lg border border-border bg-muted/20 text-xs">
+    <summary class="flex items-center justify-between px-3.5 py-2.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted/40 rounded-lg">
+      <span>내 대리점 견적서·지자체 보조금 직접 입력하기 (선택)</span>
+      <span class="text-[11px] font-normal text-muted-foreground">출고가 · 보조금 · 연비 · 소모품 수정 ▾</span>
+    </summary>
+    <div class="border-t border-border p-3.5">
+      <div class="grid gap-3 md:grid-cols-3">
+        <!-- 가솔린 입력 -->
+        <div class="rounded-md border border-border bg-card p-2.5 space-y-2">
+          <div class="font-bold text-orange-600 dark:text-orange-400">가솔린 제원·견적</div>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">출고가(만 원)</span>
+            <input type="number" step="10" min="1000" max="30000" value="3966" class="ev-in-gas-price w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">복합연비(km/L)</span>
+            <input type="number" step="0.1" min="4" max="35" value="10.8" class="ev-in-gas-eff w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">배기량(cc)</span>
+            <input type="number" step="1" min="800" max="6500" value="2497" class="ev-in-gas-cc w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">연 소모품(만 원)</span>
+            <input type="number" step="1" min="0" max="500" value="50" class="ev-in-gas-maint w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+        </div>
+
+        <!-- 하이브리드 입력 -->
+        <div class="rounded-md border border-border bg-card p-2.5 space-y-2">
+          <div class="font-bold text-blue-600 dark:text-blue-400">하이브리드 제원·견적</div>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">세제후 출고가(만)</span>
+            <input type="number" step="10" min="1000" max="30000" value="4260" class="ev-in-hev-price w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">복합연비(km/L)</span>
+            <input type="number" step="0.1" min="5" max="40" value="15.7" class="ev-in-hev-eff w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">배기량(cc)</span>
+            <input type="number" step="1" min="800" max="6500" value="1598" class="ev-in-hev-cc w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">연 소모품(만 원)</span>
+            <input type="number" step="1" min="0" max="500" value="42" class="ev-in-hev-maint w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+        </div>
+
+        <!-- 전기차 입력 -->
+        <div class="rounded-md border border-border bg-card p-2.5 space-y-2">
+          <div class="font-bold text-emerald-600 dark:text-emerald-400">전기차 제원·견적</div>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">세제후 출고가(만)</span>
+            <input type="number" step="10" min="1000" max="30000" value="5064" class="ev-in-ev-price w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">국비+지방비(만)</span>
+            <input type="number" step="10" min="0" max="5000" value="780" class="ev-in-ev-sub w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">복합전비(km/kWh)</span>
+            <input type="number" step="0.1" min="2" max="12" value="5.2" class="ev-in-ev-eff w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+          <label class="flex items-center justify-between gap-2">
+            <span class="text-muted-foreground">연 소모품(만 원)</span>
+            <input type="number" step="1" min="0" max="500" value="30" class="ev-in-ev-maint w-24 rounded border border-border bg-background px-2 py-1 text-right font-semibold text-foreground" />
+          </label>
+        </div>
+      </div>
+      <div class="mt-2.5 flex items-center justify-between text-[11px] text-muted-foreground">
+        <span>※ 전기차 취득세 과세표준은 보조금 차감 전 출고가 기준으로 산정 후 최대 140만 원이 감면됩니다.</span>
+        <button type="button" class="ev-reset-custom rounded border border-border bg-background px-2.5 py-1 font-semibold text-foreground hover:bg-muted cursor-pointer shrink-0">
+          프리셋 기본값 복원
+        </button>
+      </div>
+    </div>
+  </details>
+
+  <!-- ==================== 출력 영역 ==================== -->
+
+  <!-- 1. 핵심 판독 배너 -->
+  <div class="mt-5 rounded-xl border border-border bg-muted/40 p-4" aria-live="polite">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="ev-verdict-sub text-xs font-medium text-muted-foreground">
+          5년 보유 · 총 7.5만 km 주행 기준 총소유비용(TCO) 1위
+        </div>
+        <div class="mt-1 flex flex-wrap items-baseline gap-2">
+          <span class="ev-verdict-winner text-lg sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
+            전기차 (아이오닉 5 E-Lite) 가장 유리
+          </span>
+          <span class="ev-verdict-save rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+            2위 하이브리드보다 584.5만 원 절약
+          </span>
+        </div>
+      </div>
+      <div class="ev-verdict-3rd text-xs text-muted-foreground sm:text-right">
+        3위 가솔린 대비 <strong class="text-foreground">870.4만 원</strong> 절약
+      </div>
+    </div>
+    <p class="ev-verdict-comment mt-2.5 border-t border-border/70 pt-2.5 text-xs leading-relaxed text-muted-foreground">
+      보조금 780만 원과 취득세 140만 원 감면 덕분에 초기 취등록 포함 실구매가부터 하이브리드보다 저렴하게 출발하며, 연간 100만 원 이상 적은 유지비로 격차를 벌립니다.
+    </p>
+  </div>
+
+  <!-- 손익분기 카드 3종 -->
+  <div class="mt-3 grid gap-3 sm:grid-cols-3">
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="flex items-center justify-between text-[11px] font-semibold text-muted-foreground">
+        <span>하이브리드 vs 가솔린</span>
+        <span class="h-2 w-2 rounded-full" style="background:#3b82f6;"></span>
+      </div>
+      <div class="ev-be-hev-gas mt-1 text-base sm:text-lg font-extrabold text-foreground">
+        2.6년 · 약 3.9만 km
+      </div>
+      <div class="ev-be-hev-gas-sub mt-1 text-[11px] text-muted-foreground">
+        초기 실구매 차액 +312.7만 원 회수 시점
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="flex items-center justify-between text-[11px] font-semibold text-muted-foreground">
+        <span>전기차 vs 가솔린</span>
+        <span class="h-2 w-2 rounded-full" style="background:#10b981;"></span>
+      </div>
+      <div class="ev-be-ev-gas mt-1 text-base sm:text-lg font-extrabold text-foreground">
+        1.1년 · 약 1.6만 km
+      </div>
+      <div class="ev-be-ev-gas-sub mt-1 text-[11px] text-muted-foreground">
+        초기 실구매 차액 +247.9만 원 회수 시점
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="flex items-center justify-between text-[11px] font-semibold text-muted-foreground">
+        <span>전기차 vs 하이브리드</span>
+        <span class="h-2 w-2 rounded-full" style="background:#10b981;"></span>
+      </div>
+      <div class="ev-be-ev-hev mt-1 text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
+        출고 즉시 이득
+      </div>
+      <div class="ev-be-ev-hev-sub mt-1 text-[11px] text-muted-foreground">
+        0년 차 초기 비용부터 64.8만 원 저렴
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 0~10년 누적 총소유비용(TCO) 인터랙티브 SVG 라인 차트 -->
+  <div class="mt-5 rounded-xl border border-border bg-muted/20 p-3.5 sm:p-4">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="text-xs sm:text-sm font-bold text-foreground">
+          0～10년 누적 총소유비용(TCO) 역전 그래프
+        </div>
+        <div class="ev-chart-caption mt-0.5 text-[11px] sm:text-xs text-muted-foreground">
+          [5년 차 · 7.5만 km] 가솔린 6,023.5만 · 하이브리드 5,737.7만 · 전기차 5,153.1만 원
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 text-[11px] font-semibold shrink-0">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#f97316;"></span>
+          <span>가솔린</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#3b82f6;"></span>
+          <span>하이브리드</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#10b981;"></span>
+          <span>전기차</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="mt-3 w-full overflow-x-auto">
+      <svg
+        viewBox="0 0 680 260"
+        class="ev-svg-chart w-full h-auto min-w-[460px] select-none"
+        role="img"
+        aria-label="0년부터 10년까지 유종별 누적 총소유비용 비교 선 그래프"
+      >
+        <g class="ev-svg-grid"></g>
+        <line class="ev-svg-target-line" x1="355" y1="20" x2="355" y2="220" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 4" />
+        <line class="ev-svg-hover-line hidden" x1="355" y1="20" x2="355" y2="220" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" />
+        <path class="ev-svg-path-gas" fill="none" stroke="#f97316" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+        <path class="ev-svg-path-hev" fill="none" stroke="#3b82f6" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+        <path class="ev-svg-path-ev" fill="none" stroke="#10b981" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+        <g class="ev-svg-points"></g>
+        <g class="ev-svg-hitareas"></g>
+      </svg>
+    </div>
+    <div class="mt-1 text-center text-[11px] text-muted-foreground">
+      차트의 연차 지점에 마우스를 올리거나 탭하면 해당 연차의 정확한 누적 비용을 비교할 수 있습니다.
+    </div>
+  </div>
+
+  <!-- 3. 유종별 상세 비용 비교 테이블 -->
+  <div class="mt-4 overflow-x-auto rounded-xl border border-border">
+    <table class="w-full min-w-[540px] text-xs sm:text-sm border-collapse whitespace-nowrap">
+      <thead>
+        <tr class="bg-muted/60 border-b border-border text-muted-foreground">
+          <th class="px-3 py-2.5 text-left font-semibold">유종 (비교 모델)</th>
+          <th class="px-3 py-2.5 text-right font-semibold">초기 실구매가<span class="hidden sm:inline"> (취득세 포함)</span></th>
+          <th class="px-3 py-2.5 text-right font-semibold">1km 에너지비</th>
+          <th class="px-3 py-2.5 text-right font-semibold">1년 차 세금+소모품</th>
+          <th class="ev-th-tco px-3 py-2.5 text-right font-semibold text-foreground">5년 누적 총비용</th>
+        </tr>
+      </thead>
+      <tbody class="ev-tbody divide-y divide-border">
+        <tr>
+          <td class="px-3 py-2.5 font-semibold">
+            <span class="inline-block h-2 w-2 rounded-full mr-1.5" style="background:#f97316;"></span>가솔린
+          </td>
+          <td class="px-3 py-2.5 text-right">4,218.4만 원</td>
+          <td class="px-3 py-2.5 text-right">167원/km</td>
+          <td class="px-3 py-2.5 text-right">114.9만 원</td>
+          <td class="px-3 py-2.5 text-right font-bold">6,023.5만 원</td>
+        </tr>
+        <tr>
+          <td class="px-3 py-2.5 font-semibold">
+            <span class="inline-block h-2 w-2 rounded-full mr-1.5" style="background:#3b82f6;"></span>하이브리드
+          </td>
+          <td class="px-3 py-2.5 text-right">4,531.1만 원</td>
+          <td class="px-3 py-2.5 text-right">115원/km</td>
+          <td class="px-3 py-2.5 text-right">71.1만 원</td>
+          <td class="px-3 py-2.5 text-right font-bold">5,737.7만 원</td>
+        </tr>
+        <tr class="bg-emerald-500/5">
+          <td class="px-3 py-2.5 font-semibold">
+            <span class="inline-block h-2 w-2 rounded-full mr-1.5" style="background:#10b981;"></span>전기차
+          </td>
+          <td class="px-3 py-2.5 text-right">4,466.3만 원</td>
+          <td class="px-3 py-2.5 text-right">63원/km</td>
+          <td class="px-3 py-2.5 text-right">43.0만 원</td>
+          <td class="px-3 py-2.5 text-right font-extrabold text-emerald-600 dark:text-emerald-400">5,153.1만 원</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-2.5 text-[11px] leading-relaxed text-muted-foreground">
+    ※ 2026 대한민국 세법 기준: 비영업용 승용 취득세 7%(공급가액 기준, 하이브리드 감면 0원 · 전기차 보조금 차감 전 과세표준 산정 후 최대 140만 원 감면), 내연기관·HEV 차령 3년 차부터 자동차세 연 5% 경감(최대 50%), 전기차 자동차세 연 13만 원 정액 반영. 공채 할인·탁송료·운전자별 자동차보험료 및 중고차 감가상각은 제외된 순수 지출 총액입니다.
+  </div>
+</div>
+
+<script>
+  type SegmentKey = 'compact' | 'midsize-suv' | 'fullsize';
+
+  interface PresetSpec {
+    label: string;
+    gasName: string;
+    gasPrice: number;
+    gasEff: number;
+    gasCc: number;
+    gasMaint: number;
+    hevName: string;
+    hevPrice: number;
+    hevEff: number;
+    hevCc: number;
+    hevMaint: number;
+    evName: string;
+    evPrice: number;
+    evSub: number;
+    evEff: number;
+    evMaint: number;
+  }
+
+  const PRESETS: Record<SegmentKey, PresetSpec> = {
+    compact: {
+      label: '준중형',
+      gasName: '아반떼 1.6 모던',
+      gasPrice: 2390,
+      gasEff: 15.0,
+      gasCc: 1598,
+      gasMaint: 40,
+      hevName: '아반떼 1.6 HEV 모던',
+      hevPrice: 2942,
+      hevEff: 21.1,
+      hevCc: 1598,
+      hevMaint: 35,
+      evName: 'EV3 롱레인지 에어',
+      evPrice: 4415,
+      evSub: 780,
+      evEff: 5.4,
+      evMaint: 28,
+    },
+    'midsize-suv': {
+      label: '중형 SUV',
+      gasName: '더 뉴 쏘렌토 2.5T',
+      gasPrice: 3966,
+      gasEff: 10.8,
+      gasCc: 2497,
+      gasMaint: 50,
+      hevName: '쏘렌토 1.6T HEV',
+      hevPrice: 4260,
+      hevEff: 15.7,
+      hevCc: 1598,
+      hevMaint: 42,
+      evName: '아이오닉 5 E-Lite',
+      evPrice: 5064,
+      evSub: 780,
+      evEff: 5.2,
+      evMaint: 30,
+    },
+    fullsize: {
+      label: '준대형',
+      gasName: '그랜저 2.5 익스클루시브',
+      gasPrice: 4353,
+      gasEff: 11.7,
+      gasCc: 2497,
+      gasMaint: 52,
+      hevName: '그랜저 1.6T HEV',
+      hevPrice: 4843,
+      hevEff: 18.0,
+      hevCc: 1598,
+      hevMaint: 44,
+      evName: '더 뉴 EV6 롱레인지',
+      evPrice: 5060,
+      evSub: 780,
+      evEff: 5.2,
+      evMaint: 30,
+    },
+  };
+
+  const MODEL_Y_SPEC = {
+    evName: '테슬라 모델 Y RWD',
+    evPrice: 4999,
+    evSub: 300,
+    evEff: 5.6,
+    evMaint: 30,
+  };
+
+  const HOME_ELEC_KRW = 285;
+  const FAST_ELEC_KRW = 365;
+
+  function calcIceBaseTaxWon(cc: number): number {
+    if (cc <= 1000) return cc * 104;
+    if (cc <= 1600) return cc * 182;
+    return cc * 260;
+  }
+
+  function calcAgeDiscount(year: number): number {
+    if (year <= 2) return 1;
+    return Math.max(0.5, 1 - (year - 2) * 0.05);
+  }
+
+  function fmtManwon(v: number): string {
+    const r = Math.round(v * 10) / 10;
+    return `${r.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}만 원`;
+  }
+
+  function fmtManwonShort(v: number): string {
+    const r = Math.round(v * 10) / 10;
+    return `${r.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}만`;
+  }
+
+  function calcBreakeven(
+    targetTco: number[],
+    baseTco: number[],
+    annualKm: number,
+  ): { main: string; sub: string; isImmediate: boolean; isNever: boolean } {
+    const diff0 = targetTco[0] - baseTco[0];
+    if (diff0 <= 0) {
+      // 초기 실구매부터 이미 저렴하거나 동일한 경우
+      for (let y = 1; y <= 10; y++) {
+        const dPrev = targetTco[y - 1] - baseTco[y - 1];
+        const dCurr = targetTco[y] - baseTco[y];
+        if (dPrev <= 0 && dCurr > 0) {
+          const frac = Math.abs(dPrev) / (Math.abs(dPrev) + dCurr);
+          const yr = (y - 1) + frac;
+          return {
+            main: `초기 우위 → ${yr.toFixed(1)}년 역전`,
+            sub: `초기 ${fmtManwonShort(Math.abs(diff0))} 저렴하나 유지비로 역전`,
+            isImmediate: false,
+            isNever: true,
+          };
+        }
+      }
+      return {
+        main: '출고 즉시 이득',
+        sub: diff0 < -0.05 ? `0년 차 초기 비용부터 ${fmtManwon(Math.abs(diff0))} 저렴` : '초기 실구매가 동일 · 유지비 즉시 절감',
+        isImmediate: true,
+        isNever: false,
+      };
+    }
+
+    for (let y = 1; y <= 10; y++) {
+      const dPrev = targetTco[y - 1] - baseTco[y - 1];
+      const dCurr = targetTco[y] - baseTco[y];
+      if (dPrev > 0 && dCurr <= 0) {
+        const frac = dPrev / (dPrev - dCurr);
+        const exactYr = (y - 1) + frac;
+        const exactKm = exactYr * annualKm;
+        const kmStr =
+          exactKm >= 10000
+            ? `약 ${(exactKm / 10000).toFixed(1)}만 km`
+            : `약 ${Math.round(exactKm / 100) * 100}km`;
+        return {
+          main: `${exactYr.toFixed(1)}년 · ${kmStr}`,
+          sub: `초기 차액 +${fmtManwon(diff0)} 회수 시점`,
+          isImmediate: false,
+          isNever: false,
+        };
+      }
+    }
+
+    const diff10 = targetTco[10] - baseTco[10];
+    return {
+      main: '10년 내 회수 불가',
+      sub: `10년 운행 후에도 +${fmtManwon(diff10)} 더 지출`,
+      isImmediate: false,
+      isNever: true,
+    };
+  }
+
+  function initEvCalculators() {
+    document.querySelectorAll<HTMLElement>('.ev-calc-root').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      let currentSegment = ((root.dataset.defaultPreset as SegmentKey) || 'midsize-suv');
+      if (!PRESETS[currentSegment]) currentSegment = 'midsize-suv';
+      let isModelYActive = false;
+      let isCustomEdited = false;
+      let hoveredYear: number | null = null;
+
+      // DOM elements
+      const segBtns = root.querySelectorAll<HTMLButtonElement>('.ev-seg-btn');
+      const modelYBtn = root.querySelector<HTMLButtonElement>('.ev-modely-btn')!;
+      const modelSummary = root.querySelector<HTMLElement>('.ev-model-summary')!;
+      const customBadge = root.querySelector<HTMLElement>('.ev-custom-badge')!;
+      const resetCustomBtn = root.querySelector<HTMLButtonElement>('.ev-reset-custom')!;
+
+      const kmRange = root.querySelector<HTMLInputElement>('.ev-km-range')!;
+      const kmLabel = root.querySelector<HTMLElement>('.ev-km-label')!;
+      const yearsRange = root.querySelector<HTMLInputElement>('.ev-years-range')!;
+      const yearsLabel = root.querySelector<HTMLElement>('.ev-years-label')!;
+      const homeRange = root.querySelector<HTMLInputElement>('.ev-home-range')!;
+      const homeLabel = root.querySelector<HTMLElement>('.ev-home-label')!;
+      const fuelRange = root.querySelector<HTMLInputElement>('.ev-fuel-range')!;
+      const fuelLabel = root.querySelector<HTMLElement>('.ev-fuel-label')!;
+
+      const winterChk = root.querySelector<HTMLInputElement>('.ev-winter-chk')!;
+      const convChk = root.querySelector<HTMLInputElement>('.ev-conv-chk')!;
+
+      // Custom quote inputs
+      const inGasPrice = root.querySelector<HTMLInputElement>('.ev-in-gas-price')!;
+      const inGasEff = root.querySelector<HTMLInputElement>('.ev-in-gas-eff')!;
+      const inGasCc = root.querySelector<HTMLInputElement>('.ev-in-gas-cc')!;
+      const inGasMaint = root.querySelector<HTMLInputElement>('.ev-in-gas-maint')!;
+
+      const inHevPrice = root.querySelector<HTMLInputElement>('.ev-in-hev-price')!;
+      const inHevEff = root.querySelector<HTMLInputElement>('.ev-in-hev-eff')!;
+      const inHevCc = root.querySelector<HTMLInputElement>('.ev-in-hev-cc')!;
+      const inHevMaint = root.querySelector<HTMLInputElement>('.ev-in-hev-maint')!;
+
+      const inEvPrice = root.querySelector<HTMLInputElement>('.ev-in-ev-price')!;
+      const inEvSub = root.querySelector<HTMLInputElement>('.ev-in-ev-sub')!;
+      const inEvEff = root.querySelector<HTMLInputElement>('.ev-in-ev-eff')!;
+      const inEvMaint = root.querySelector<HTMLInputElement>('.ev-in-ev-maint')!;
+
+      // Output elements
+      const verdictSub = root.querySelector<HTMLElement>('.ev-verdict-sub')!;
+      const verdictWinner = root.querySelector<HTMLElement>('.ev-verdict-winner')!;
+      const verdictSave = root.querySelector<HTMLElement>('.ev-verdict-save')!;
+      const verdict3rd = root.querySelector<HTMLElement>('.ev-verdict-3rd')!;
+      const verdictComment = root.querySelector<HTMLElement>('.ev-verdict-comment')!;
+
+      const beHevGas = root.querySelector<HTMLElement>('.ev-be-hev-gas')!;
+      const beHevGasSub = root.querySelector<HTMLElement>('.ev-be-hev-gas-sub')!;
+      const beEvGas = root.querySelector<HTMLElement>('.ev-be-ev-gas')!;
+      const beEvGasSub = root.querySelector<HTMLElement>('.ev-be-ev-gas-sub')!;
+      const beEvHev = root.querySelector<HTMLElement>('.ev-be-ev-hev')!;
+      const beEvHevSub = root.querySelector<HTMLElement>('.ev-be-ev-hev-sub')!;
+
+      const chartCaption = root.querySelector<HTMLElement>('.ev-chart-caption')!;
+      const svgGrid = root.querySelector<SVGGElement>('.ev-svg-grid')!;
+      const svgTargetLine = root.querySelector<SVGLineElement>('.ev-svg-target-line')!;
+      const svgHoverLine = root.querySelector<SVGLineElement>('.ev-svg-hover-line')!;
+      const svgPathGas = root.querySelector<SVGPathElement>('.ev-svg-path-gas')!;
+      const svgPathHev = root.querySelector<SVGPathElement>('.ev-svg-path-hev')!;
+      const svgPathEv = root.querySelector<SVGPathElement>('.ev-svg-path-ev')!;
+      const svgPoints = root.querySelector<SVGGElement>('.ev-svg-points')!;
+      const svgHitareas = root.querySelector<SVGGElement>('.ev-svg-hitareas')!;
+
+      const thTco = root.querySelector<HTMLElement>('.ev-th-tco')!;
+      const tbody = root.querySelector<HTMLElement>('.ev-tbody')!;
+
+      function loadPresetInputs(seg: SegmentKey, applyModelY: boolean) {
+        const p = PRESETS[seg];
+        inGasPrice.value = String(p.gasPrice);
+        inGasEff.value = String(p.gasEff);
+        inGasCc.value = String(p.gasCc);
+        inGasMaint.value = String(p.gasMaint);
+
+        inHevPrice.value = String(p.hevPrice);
+        inHevEff.value = String(p.hevEff);
+        inHevCc.value = String(p.hevCc);
+        inHevMaint.value = String(p.hevMaint);
+
+        if (applyModelY) {
+          inEvPrice.value = String(MODEL_Y_SPEC.evPrice);
+          inEvSub.value = String(MODEL_Y_SPEC.evSub);
+          inEvEff.value = String(MODEL_Y_SPEC.evEff);
+          inEvMaint.value = String(MODEL_Y_SPEC.evMaint);
+        } else {
+          inEvPrice.value = String(p.evPrice);
+          inEvSub.value = String(p.evSub);
+          inEvEff.value = String(p.evEff);
+          inEvMaint.value = String(p.evMaint);
+        }
+        isCustomEdited = false;
+      }
+
+      function syncSegmentUI() {
+        segBtns.forEach((btn) => {
+          const active = btn.dataset.segment === currentSegment;
+          btn.setAttribute('aria-selected', String(active));
+          btn.className = active
+            ? 'ev-seg-btn rounded-lg border border-primary bg-primary/10 px-3 py-2 text-left transition cursor-pointer'
+            : 'ev-seg-btn rounded-lg border border-border bg-muted/40 px-3 py-2 text-left transition cursor-pointer hover:bg-muted/70';
+        });
+
+        modelYBtn.className = isModelYActive
+          ? 'ev-modely-btn rounded-md border border-emerald-600 bg-emerald-600/15 px-2.5 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 transition cursor-pointer'
+          : 'ev-modely-btn rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-semibold text-foreground hover:bg-muted transition cursor-pointer';
+        modelYBtn.textContent = isModelYActive
+          ? '✓ 모델 Y RWD 적용 중 (클릭 시 복원)'
+          : '⚡ 모델 Y RWD 대입 (보조금 300만)';
+
+        customBadge.classList.toggle('hidden', !isCustomEdited);
+
+        const p = PRESETS[currentSegment];
+        const evTitle = isCustomEdited
+          ? '직접 입력 EV'
+          : isModelYActive
+            ? MODEL_Y_SPEC.evName
+            : p.evName;
+        const gasTitle = isCustomEdited ? '직접 입력 가솔린' : p.gasName;
+        const hevTitle = isCustomEdited ? '직접 입력 HEV' : p.hevName;
+
+        modelSummary.innerHTML = `
+          <span><strong class="text-orange-600 dark:text-orange-400">가솔린</strong> ${gasTitle}</span>
+          <span><strong class="text-blue-600 dark:text-blue-400">HEV</strong> ${hevTitle}</span>
+          <span><strong class="text-emerald-600 dark:text-emerald-400">EV</strong> ${evTitle}</span>
+        `;
+      }
+
+      function numVal(el: HTMLInputElement, fallback: number, min = 0, max = 100000): number {
+        const v = parseFloat(el.value);
+        if (!Number.isFinite(v)) return fallback;
+        return Math.min(max, Math.max(min, v));
+      }
+
+      let lastGasTco: number[] = [];
+      let lastHevTco: number[] = [];
+      let lastEvTco: number[] = [];
+
+      function updateCaptionForYear(yr: number, annualKm: number) {
+        const totalManKm = ((yr * annualKm) / 10000).toFixed(1);
+        const prefix = yr === 0 ? '[0년 차 · 초기 실구매가]' : `[${yr}년 차 · ${totalManKm}만 km]`;
+        chartCaption.textContent = `${prefix} 가솔린 ${fmtManwonShort(lastGasTco[yr])} · 하이브리드 ${fmtManwonShort(lastHevTco[yr])} · 전기차 ${fmtManwonShort(lastEvTco[yr])} 원`;
+      }
+
+      function render() {
+        syncSegmentUI();
+
+        const annualKm = Math.max(1000, parseInt(kmRange.value, 10) || 15000);
+        const targetYears = Math.max(1, Math.min(10, parseInt(yearsRange.value, 10) || 5));
+        const homePct = Math.max(0, Math.min(100, parseInt(homeRange.value, 10) || 0));
+        const homeRatio = homePct / 100;
+        const fuelPrice = Math.max(1000, parseInt(fuelRange.value, 10) || 1800);
+        const winterAdjust = winterChk.checked;
+        const conversionBonus = convChk.checked;
+
+        const blendedElecPrice = Math.round(homeRatio * HOME_ELEC_KRW + (1 - homeRatio) * FAST_ELEC_KRW);
+
+        // Update slider labels
+        kmLabel.textContent = `${annualKm.toLocaleString()} km / 년`;
+        yearsLabel.textContent = `${targetYears}년 (총 ${((annualKm * targetYears) / 10000).toFixed(1)}만 km)`;
+        homeLabel.textContent = `${homePct}% · 평균 ${blendedElecPrice}원/kWh`;
+        fuelLabel.textContent = `${fuelPrice.toLocaleString()}원 / L`;
+
+        // Specs
+        const gasPrice = numVal(inGasPrice, 3966, 100);
+        const gasEff = numVal(inGasEff, 10.8, 1);
+        const gasCc = numVal(inGasCc, 2497, 100);
+        const gasMaint = numVal(inGasMaint, 50, 0);
+
+        const hevPrice = numVal(inHevPrice, 4260, 100);
+        const hevEff = numVal(inHevEff, 15.7, 1);
+        const hevCc = numVal(inHevCc, 1598, 100);
+        const hevMaint = numVal(inHevMaint, 42, 0);
+
+        const evSticker = numVal(inEvPrice, 5064, 100);
+        const evSubsidy = numVal(inEvSub, 780, 0);
+        const evEffRaw = numVal(inEvEff, 5.2, 0.5);
+        const evMaint = numVal(inEvMaint, 30, 0);
+
+        // 2026 Acquisition tax (won -> manwon)
+        const gasAcqTax = Math.round(((gasPrice * 10000) / 1.1) * 0.07) / 10000;
+        const hevAcqTax = Math.round(((hevPrice * 10000) / 1.1) * 0.07) / 10000;
+        const evAcqTax =
+          Math.max(0, Math.round(((evSticker * 10000) / 1.1) * 0.07) - 1400000) / 10000;
+
+        // Year 0 initial purchase total
+        const gasInit = gasPrice + gasAcqTax;
+        const hevInit = hevPrice + hevAcqTax;
+        const evNetVehicle = Math.max(0, evSticker - evSubsidy - (conversionBonus ? 100 : 0));
+        const evInit = evNetVehicle + evAcqTax;
+
+        // Annual energy cost (manwon)
+        const gasFuelYr = ((annualKm / gasEff) * fuelPrice) / 10000;
+        const hevFuelYr = ((annualKm / hevEff) * fuelPrice) / 10000;
+        const effectiveEvEff = winterAdjust ? evEffRaw * 0.92 : evEffRaw;
+        const evFuelYr = ((annualKm / effectiveEvEff) * blendedElecPrice) / 10000;
+
+        // Base annual auto tax (manwon)
+        const gasBaseTax = calcIceBaseTaxWon(gasCc) / 10000;
+        const hevBaseTax = calcIceBaseTaxWon(hevCc) / 10000;
+        const evTax = 13.0;
+
+        const gasTco: number[] = [gasInit];
+        const hevTco: number[] = [hevInit];
+        const evTco: number[] = [evInit];
+
+        for (let y = 1; y <= 10; y++) {
+          const disc = calcAgeDiscount(y);
+          gasTco.push(gasTco[y - 1] + gasBaseTax * disc + gasFuelYr + gasMaint);
+          hevTco.push(hevTco[y - 1] + hevBaseTax * disc + hevFuelYr + hevMaint);
+          evTco.push(evTco[y - 1] + evTax + evFuelYr + evMaint);
+        }
+
+        lastGasTco = gasTco;
+        lastHevTco = hevTco;
+        lastEvTco = evTco;
+
+        const p = PRESETS[currentSegment];
+        const names = {
+          gas: isCustomEdited ? '가솔린' : `가솔린 (${p.gasName})`,
+          hev: isCustomEdited ? '하이브리드' : `하이브리드 (${p.hevName})`,
+          ev: isCustomEdited
+            ? '전기차'
+            : `전기차 (${isModelYActive ? MODEL_Y_SPEC.evName : p.evName})`,
+        };
+
+        // Rank at targetYears
+        const ranking = [
+          {
+            key: 'gas' as const,
+            short: '가솔린',
+            full: names.gas,
+            tco: gasTco[targetYears],
+            textCls: 'text-orange-600 dark:text-orange-400',
+            badgeCls: 'bg-orange-500/15 text-orange-700 dark:text-orange-400',
+          },
+          {
+            key: 'hev' as const,
+            short: '하이브리드',
+            full: names.hev,
+            tco: hevTco[targetYears],
+            textCls: 'text-blue-600 dark:text-blue-400',
+            badgeCls: 'bg-blue-500/15 text-blue-700 dark:text-blue-400',
+          },
+          {
+            key: 'ev' as const,
+            short: '전기차',
+            full: names.ev,
+            tco: evTco[targetYears],
+            textCls: 'text-emerald-600 dark:text-emerald-400',
+            badgeCls: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+          },
+        ].sort((a, b) => a.tco - b.tco);
+
+        const first = ranking[0];
+        const second = ranking[1];
+        const third = ranking[2];
+
+        const totalKmMan = ((annualKm * targetYears) / 10000).toFixed(1);
+        verdictSub.textContent = `${targetYears}년 보유 · 총 ${totalKmMan}만 km 주행 기준 총소유비용(TCO) 1위`;
+        verdictWinner.textContent = `${first.full} 가장 유리`;
+        verdictWinner.className = `ev-verdict-winner text-lg sm:text-xl font-extrabold ${first.textCls}`;
+        verdictSave.textContent = `2위 ${second.short}보다 ${fmtManwon(second.tco - first.tco)} 절약`;
+        verdictSave.className = `ev-verdict-save rounded-md px-2 py-0.5 text-xs font-bold ${first.badgeCls}`;
+        verdict3rd.innerHTML = `3위 ${third.short} 대비 <strong class="text-foreground">${fmtManwon(third.tco - first.tco)}</strong> 절약`;
+
+        // Contextual diagnosis comment
+        if (first.key === 'gas') {
+          verdictComment.textContent =
+            '연간 주행거리가 짧거나 상위 파워트레인과의 초기 출고가·취득세 격차가 커서, 아낀 유류비보다 처음에 덜 낸 차값이 더 크게 남는 실속 구간입니다.';
+        } else if (first.key === 'hev') {
+          verdictComment.textContent =
+            homePct <= 30
+              ? '공용 급속 충전 비중이 높거나 전기차 보조금이 적어 하이브리드의 가성비가 빛나는 조건입니다. 충전 스트레스 없이 세금·유류비를 동시에 방어할 수 있습니다.'
+              : '1.6 터보 다운사이징 자동차세 절감과 높은 복합연비가 시너지를 내며 초기 차값 차액을 안정적으로 회수하는 구간입니다.';
+        } else {
+          verdictComment.textContent =
+            evInit <= hevInit
+              ? '국고·지자체 보조금과 취득세 최대 140만 원 감면이 맞물려 초기 실구매가부터 하이브리드 이하로 내려왔습니다. 타면 탈수록 유지비 격차가 벌어집니다.'
+              : '초기 실구매가는 더 높지만, 완속 집밥 충전 단가와 연 13만 원 고정 자동차세 덕분에 목표 보유 기간 안에 초기 차액을 모두 회수하고 남습니다.';
+        }
+
+        // Breakeven cards
+        const resHevGas = calcBreakeven(hevTco, gasTco, annualKm);
+        const resEvGas = calcBreakeven(evTco, gasTco, annualKm);
+        const resEvHev = calcBreakeven(evTco, hevTco, annualKm);
+
+        function applyBeCard(
+          mainEl: HTMLElement,
+          subEl: HTMLElement,
+          res: ReturnType<typeof calcBreakeven>,
+          accentCls: string,
+        ) {
+          mainEl.textContent = res.main;
+          if (res.isImmediate) {
+            mainEl.className = `mt-1 text-base sm:text-lg font-extrabold ${accentCls}`;
+          } else if (res.isNever) {
+            mainEl.className = 'mt-1 text-base sm:text-lg font-extrabold text-muted-foreground';
+          } else {
+            mainEl.className = 'mt-1 text-base sm:text-lg font-extrabold text-foreground';
+          }
+          subEl.textContent = res.sub;
+        }
+
+        applyBeCard(beHevGas, beHevGasSub, resHevGas, 'text-blue-600 dark:text-blue-400');
+        applyBeCard(beEvGas, beEvGasSub, resEvGas, 'text-emerald-600 dark:text-emerald-400');
+        applyBeCard(beEvHev, beEvHevSub, resEvHev, 'text-emerald-600 dark:text-emerald-400');
+
+        // SVG Line Chart rendering (viewBox 680 x 260)
+        const padL = 62;
+        const padR = 24;
+        const padT = 20;
+        const padB = 36;
+        const plotW = 680 - padL - padR; // 594
+        const plotH = 260 - padT - padB; // 204
+
+        const allVals = [...gasTco, ...hevTco, ...evTco];
+        const minV = Math.floor(Math.min(...allVals) / 500) * 500;
+        const maxVRaw = Math.ceil(Math.max(...allVals) / 500) * 500;
+        const maxV = maxVRaw <= minV ? minV + 1000 : maxVRaw;
+
+        const xAt = (yr: number) => padL + (yr / 10) * plotW;
+        const yAt = (val: number) => padT + plotH - ((val - minV) / (maxV - minV)) * plotH;
+
+        // Gridlines (4 horizontal steps + X labels 0..10)
+        let gridHtml = '';
+        const yTicks = 4;
+        for (let i = 0; i <= yTicks; i++) {
+          const v = minV + ((maxV - minV) * i) / yTicks;
+          const y = yAt(v).toFixed(1);
+          const labelText = `${Math.round(v).toLocaleString()}만`;
+          gridHtml += `<line x1="${padL}" y1="${y}" x2="${680 - padR}" y2="${y}" stroke="currentColor" stroke-opacity="0.1" stroke-width="1" />`;
+          gridHtml += `<text x="${padL - 8}" y="${Number(y) + 4}" text-anchor="end" fill="currentColor" fill-opacity="0.6" font-size="11">${labelText}</text>`;
+        }
+        for (let yr = 0; yr <= 10; yr++) {
+          const x = xAt(yr).toFixed(1);
+          const isTarget = yr === targetYears;
+          gridHtml += `<text x="${x}" y="${260 - 10}" text-anchor="middle" fill="currentColor" fill-opacity="${isTarget ? '1' : '0.65'}" font-weight="${isTarget ? '700' : '400'}" font-size="11">${yr}년</text>`;
+        }
+        svgGrid.innerHTML = gridHtml;
+
+        const targetX = xAt(targetYears).toFixed(1);
+        svgTargetLine.setAttribute('x1', targetX);
+        svgTargetLine.setAttribute('x2', targetX);
+        svgTargetLine.setAttribute('y1', String(padT));
+        svgTargetLine.setAttribute('y2', String(padT + plotH));
+
+        const buildPath = (arr: number[]) =>
+          arr.map((v, yr) => `${yr === 0 ? 'M' : 'L'}${xAt(yr).toFixed(1)},${yAt(v).toFixed(1)}`).join(' ');
+
+        svgPathGas.setAttribute('d', buildPath(gasTco));
+        svgPathHev.setAttribute('d', buildPath(hevTco));
+        svgPathEv.setAttribute('d', buildPath(evTco));
+
+        const activeYr = hoveredYear !== null ? hoveredYear : targetYears;
+        let ptsHtml = '';
+        for (let yr = 0; yr <= 10; yr++) {
+          const x = xAt(yr).toFixed(1);
+          const r = yr === activeYr ? '5' : '3';
+          ptsHtml += `<circle cx="${x}" cy="${yAt(gasTco[yr]).toFixed(1)}" r="${r}" fill="#f97316" />`;
+          ptsHtml += `<circle cx="${x}" cy="${yAt(hevTco[yr]).toFixed(1)}" r="${r}" fill="#3b82f6" />`;
+          ptsHtml += `<circle cx="${x}" cy="${yAt(evTco[yr]).toFixed(1)}" r="${r}" fill="#10b981" />`;
+        }
+        svgPoints.innerHTML = ptsHtml;
+
+        let hitsHtml = '';
+        const colW = plotW / 10;
+        for (let yr = 0; yr <= 10; yr++) {
+          const cx = xAt(yr);
+          const rx = Math.max(padL, cx - colW / 2);
+          const rw = yr === 0 || yr === 10 ? colW / 2 + 8 : colW;
+          hitsHtml += `<rect data-yr="${yr}" x="${rx.toFixed(1)}" y="${padT}" width="${rw.toFixed(1)}" height="${plotH + 24}" fill="transparent" style="cursor:pointer;" />`;
+        }
+        svgHitareas.innerHTML = hitsHtml;
+
+        svgHitareas.querySelectorAll<SVGRectElement>('rect[data-yr]').forEach((rect) => {
+          const yr = parseInt(rect.dataset.yr || '0', 10);
+          const activate = () => {
+            hoveredYear = yr;
+            const hx = xAt(yr).toFixed(1);
+            svgHoverLine.setAttribute('x1', hx);
+            svgHoverLine.setAttribute('x2', hx);
+            svgHoverLine.setAttribute('y1', String(padT));
+            svgHoverLine.setAttribute('y2', String(padT + plotH));
+            svgHoverLine.classList.remove('hidden');
+            svgPoints.querySelectorAll<SVGCircleElement>('circle').forEach((c, idx) => {
+              const ptYr = Math.floor(idx / 3);
+              c.setAttribute('r', ptYr === yr ? '5' : '3');
+            });
+            updateCaptionForYear(yr, annualKm);
+          };
+          rect.addEventListener('mouseenter', activate);
+          rect.addEventListener('click', activate);
+        });
+
+        updateCaptionForYear(activeYr, annualKm);
+
+        // Table rendering
+        thTco.textContent = `${targetYears}년 누적 총비용`;
+        const gasPerKm = Math.round(fuelPrice / gasEff);
+        const hevPerKm = Math.round(fuelPrice / hevEff);
+        const evPerKm = Math.round(blendedElecPrice / effectiveEvEff);
+
+        const gasYr1Fixed = gasBaseTax + gasMaint;
+        const hevYr1Fixed = hevBaseTax + hevMaint;
+        const evYr1Fixed = evTax + evMaint;
+
+        const rows = [
+          {
+            key: 'gas' as const,
+            dot: '#f97316',
+            label: isCustomEdited ? '가솔린' : `가솔린 (${p.gasName})`,
+            init: gasInit,
+            perKm: gasPerKm,
+            yr1Fixed: gasYr1Fixed,
+            tco: gasTco[targetYears],
+            winRowCls: 'bg-orange-500/5',
+            winTextCls: 'text-orange-600 dark:text-orange-400',
+          },
+          {
+            key: 'hev' as const,
+            dot: '#3b82f6',
+            label: isCustomEdited ? '하이브리드' : `하이브리드 (${p.hevName})`,
+            init: hevInit,
+            perKm: hevPerKm,
+            yr1Fixed: hevYr1Fixed,
+            tco: hevTco[targetYears],
+            winRowCls: 'bg-blue-500/5',
+            winTextCls: 'text-blue-600 dark:text-blue-400',
+          },
+          {
+            key: 'ev' as const,
+            dot: '#10b981',
+            label: isCustomEdited
+              ? '전기차'
+              : `전기차 (${isModelYActive ? MODEL_Y_SPEC.evName : p.evName})`,
+            init: evInit,
+            perKm: evPerKm,
+            yr1Fixed: evYr1Fixed,
+            tco: evTco[targetYears],
+            winRowCls: 'bg-emerald-500/5',
+            winTextCls: 'text-emerald-600 dark:text-emerald-400',
+          },
+        ];
+
+        tbody.innerHTML = rows
+          .map((r) => {
+            const isWin = r.key === first.key;
+            return `
+              <tr class="${isWin ? r.winRowCls : ''}">
+                <td class="px-3 py-2.5 font-semibold text-foreground">
+                  <span class="inline-block h-2 w-2 rounded-full mr-1.5" style="background:${r.dot};"></span>${r.label}
+                  ${isWin ? `<span class="ml-1 rounded bg-foreground/10 px-1.5 py-0.5 text-[10px] font-bold text-foreground">최저</span>` : ''}
+                </td>
+                <td class="px-3 py-2.5 text-right text-foreground">${fmtManwon(r.init)}</td>
+                <td class="px-3 py-2.5 text-right text-muted-foreground">${r.perKm.toLocaleString()}원/km</td>
+                <td class="px-3 py-2.5 text-right text-muted-foreground">${fmtManwon(r.yr1Fixed)}</td>
+                <td class="px-3 py-2.5 text-right ${isWin ? `font-extrabold ${r.winTextCls}` : 'font-bold text-foreground'}">${fmtManwon(r.tco)}</td>
+              </tr>
+            `;
+          })
+          .join('');
+      }
+
+      function clearHover() {
+        hoveredYear = null;
+        svgHoverLine.classList.add('hidden');
+      }
+
+      // Event bindings
+      segBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const seg = (btn.dataset.segment as SegmentKey) || 'midsize-suv';
+          currentSegment = seg;
+          isModelYActive = false;
+          clearHover();
+          loadPresetInputs(currentSegment, false);
+          render();
+        });
+      });
+
+      modelYBtn.addEventListener('click', () => {
+        isModelYActive = !isModelYActive;
+        clearHover();
+        loadPresetInputs(currentSegment, isModelYActive);
+        render();
+      });
+
+      resetCustomBtn.addEventListener('click', () => {
+        clearHover();
+        loadPresetInputs(currentSegment, isModelYActive);
+        render();
+      });
+
+      [kmRange, yearsRange, homeRange, fuelRange].forEach((el) => {
+        el.addEventListener('input', () => {
+          clearHover();
+          render();
+        });
+      });
+
+      [winterChk, convChk].forEach((el) => {
+        el.addEventListener('change', () => {
+          clearHover();
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ev-km-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          clearHover();
+          kmRange.value = chip.dataset.km || '15000';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ev-years-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          clearHover();
+          yearsRange.value = chip.dataset.years || '5';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ev-home-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          clearHover();
+          homeRange.value = chip.dataset.home || '80';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ev-fuel-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          clearHover();
+          fuelRange.value = chip.dataset.fuel || '1800';
+          render();
+        });
+      });
+
+      [
+        inGasPrice,
+        inGasEff,
+        inGasCc,
+        inGasMaint,
+        inHevPrice,
+        inHevEff,
+        inHevCc,
+        inHevMaint,
+        inEvPrice,
+        inEvSub,
+        inEvEff,
+        inEvMaint,
+      ].forEach((inp) => {
+        inp.addEventListener('input', () => {
+          isCustomEdited = true;
+          render();
+        });
+      });
+
+      const svgEl = root.querySelector<SVGSVGElement>('.ev-svg-chart')!;
+      svgEl.addEventListener('mouseleave', () => {
+        hoveredYear = null;
+        svgHoverLine.classList.add('hidden');
+        const targetYears = Math.max(1, Math.min(10, parseInt(yearsRange.value, 10) || 5));
+        const annualKm = Math.max(1000, parseInt(kmRange.value, 10) || 15000);
+        svgPoints.querySelectorAll<SVGCircleElement>('circle').forEach((c, idx) => {
+          const ptYr = Math.floor(idx / 3);
+          c.setAttribute('r', ptYr === targetYears ? '5' : '3');
+        });
+        updateCaptionForYear(targetYears, annualKm);
+      });
+
+      loadPresetInputs(currentSegment, false);
+      render();
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initEvCalculators)
+    : initEvCalculators();
+</script>

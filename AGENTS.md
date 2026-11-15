@@ -60,6 +60,7 @@
   - **영화·인물·영상**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `YouTubeEmbed`(`id="영상ID"`)
   - **데이터·시간대·이미지**: `Chart`(`bar | line | pie | doughnut | radar`), `ClockChart`(24시간 원형 시간대), `ImageRow`(2～4열 그리드), `CloudinaryImage`
   - **제휴·상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수): `AffiliateLink`, `CoupangProductCard`(`href` + `title` 직접 지정 권장)
+- **`YouTubeEmbed` 한국(`KR`) 지역 제한 및 임베드 허용 검증 필수**: 미국 방송사·OTT 본사 채널(HBO, Hulu, Peacock, Paramount+ 등) 영상은 북미(`US`) 전용 지역 제한(Geo-block)이 걸려 한국에서 재생 불가 오류가 빈발하며, 웹 검색(`search_web`)만으로는 이를 걸러내지 못합니다. `YouTubeEmbed` 사용 시 반드시 `https://www.youtube.com/watch?v={id}&gl=KR` 응답(`ytInitialPlayerResponse`)에서 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `availableCountries` 내 `"KR"` 포함(또는 국가 제한 없음) 여부를 직접 검증하고, 차단된 경우 글로벌 배급사(Warner Bros. Entertainment, Sony Pictures 등)나 국내 공식 채널 영상으로 대체합니다.
 - **코드 블록 언어 태그**: Shiki가 인식하는 소문자 표준 태그 필수 사용 (`bash`, `javascript`, `typescript`, `tsx`, `astro`, `json`, `yaml`, `html`, `css`, `mermaid` 등).
 - **물결표(`~`) 취소선 오인 주의**: 마크다운(GFM) 파서가 문단 내 연속된 ASCII 물결표(`~`)를 취소선(`<del>`)으로 오인 렌더링하지 않도록, 기간·범위 표기 시 반드시 **전각 물결표(`～`)** 또는 대시(`–`)를 사용합니다(코드 블록/인라인 코드 제외).
 - **볼드(`**`) 내 괄호(`()`) 사용 금지**: 닫는 괄호 뒤에 한글 조사(는/가/를/에 등)가 바로 붙는 경우(예: `**단어(설명)**는`), CommonMark 구두점 단어 경계 인식 오류로 볼드가 풀리고 `**`가 그대로 노출됩니다. **괄호는 반드시 볼드 마커 바깥으로 분리**(예: `**단어**(설명)는`)하거나 볼드를 적용하지 않습니다.

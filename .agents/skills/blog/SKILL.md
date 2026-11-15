@@ -56,7 +56,7 @@ flowchart TD
   - 웹 검색 및 최신 공식 기술 문서·릴리스 노트 탐색 (최신 버전 API의 **정확한 메서드/어노테이션 속성명** 및 **정식(Final) vs 프리뷰(Preview) 상태** 교차 검증 필수)
   - **출처 신뢰도 점수 부여**: Tier 1(9~10점: 공식 문서/표준/논문)부터 Tier 4(1~3점: 미검증 블로그)까지 가산점 부여
   - **블로그 내부 아카이브 및 태그 규칙 스캔**: `src/content/{섹션}/ko/` 하위 **모든 연도 폴더**(`2024/`, `2025/`, `2026/` 등)와 공통 레퍼런스 가이드(`docs/post-writing-guide.md`)를 탐색하여 주제 중복을 피하고, 자연스러운 **내부 링크 후보**와 **기존 태그 표기 규칙**(영문 소문자 kebab-case 등)을 함께 수집
-  - **MDX 컴포넌트용 식별자 조사**: 영화/드라마 주제는 IMDb 작품 ID(`ttXXXXXXX`) 및 주요 인물 IMDb ID(`nmXXXXXXX`), 관련 공식 YouTube 영상 ID 등을 함께 수집 (`BookCard`는 알라딘 OpenAPI 종료로 사용하지 않음)
+  - **MDX 컴포넌트용 식별자 조사**: 영화/드라마 주제는 IMDb 작품 ID(`ttXXXXXXX`) 및 주요 인물 IMDb ID(`nmXXXXXXX`), 관련 공식 YouTube 영상 ID 후보 2~3개(미국 내수용 채널의 한국 지역 차단에 대비해 글로벌 배급사·국내 공식 채널 포함) 등을 함께 수집 (`BookCard`는 알라딘 OpenAPI 종료로 사용하지 않음)
   - 팩트 시트, 불확실/상충 정보, 실무 코드 예시·내부 링크·컴포넌트 식별자, SEO 추천 키워드 산출
 
 ---
@@ -102,8 +102,11 @@ flowchart TD
 ### Phase 4: 반영, 에셋 배치 및 최종 빌드 검증 (메인 세션)
 1. **검수 반영**: 메인 세션이 `reviewer`의 `[🚨 필수 수정]` 항목을 초안에 즉시 반영하고, `[💡 권장 개선]` 사항을 검토하여 적용합니다.
 2. **썸네일 에셋 복사 및 확장자 동기화**: `image-generator`가 반환한 아티팩트 이미지 파일을 `public/images/posts/{연도}/{slug}-thumbnail.{ext}`로 복사하고, 포스트 frontmatter의 `thumbnail: "/images/posts/{연도}/{slug}-thumbnail.{ext}"` 경로 및 실제 확장자(`.jpg` / `.png` / `.webp`)가 정확히 일치하는지 확인합니다.
-3. **최종 저장 및 정적 빌드 검증**:
+3. **`YouTubeEmbed` 한국(`KR`) 재생·임베드 검증** (해당 컴포넌트 사용 시 필수):
+   - 읽기 전용 샌드박스에서 실행되는 `research`/`reviewer` 서브에이전트의 `search_web`은 클라우드 서버 기준이라 미국 전용 지역 제한(`availableCountries: ["US"]`)을 걸러내지 못합니다.
+   - 본문에 `<YouTubeEmbed id="..." />`가 포함된 경우, 메인 세션이 한국 기준(`https://www.youtube.com/watch?v={id}&gl=KR`의 `ytInitialPlayerResponse`)으로 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `availableCountries` 내 `"KR"` 포함(또는 제한 없음) 여부를 직접 검증하고, 차단된 경우 글로벌 배급사·국내 공식 채널 후보 영상으로 교체합니다.
+4. **최종 저장 및 정적 빌드 검증**:
    - 최종 완성본이 `src/content/{섹션}/ko/{연도}/{slug}.mdx`에 저장되었는지 확인합니다.
    - `pnpm build`를 실행하여 Astro 콘텐츠 스키마, MDX 컴포넌트 파싱, Shiki 코드 하이라이팅, Mermaid 구문, Pagefind 인덱싱이 에러 없이 통과하는지 검증합니다.
    - 빌드된 `dist/{섹션}/{slug}/index.html`에서 미파싱된 `**`·`*` 기호 노출이나 의도치 않은 `<del>`(취소선) 태그가 없는지 최종 점검합니다.
-4. **결과 보고**: 사용자에게 결과물 요약(글자 수, 주요 SEO 키워드, 채택 출처 티어, 생성된 포스트 및 썸네일 파일 링크)을 간결하게 보고합니다.
+5. **결과 보고**: 사용자에게 결과물 요약(글자 수, 주요 SEO 키워드, 채택 출처 티어, 생성된 포스트 및 썸네일 파일 링크)을 간결하게 보고합니다.

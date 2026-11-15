@@ -76,7 +76,8 @@ Researcher는 메인 세션에 아래 4가지 고정 섹션으로 정리하여 �
 - **[MDX 컴포넌트용 식별자]** (주제 해당 시 필수 조사):
   - **영화/드라마 (`MovieCard`)**: 작품의 정확한 IMDb ID (예: `tt27444205`)
   - **주요 인물 (`PersonCard` / `PersonInline`)**: 감독·작가·주연 배우의 IMDb Name ID (예: `nm1250791`)
-  - **영상 (`YouTubeEmbed`)**: 공식 예고편 또는 핵심 참고 영상의 YouTube Video ID (`watch?v=` 뒤 11자리)
+  - **영상 (`YouTubeEmbed`)**: 공식 예고편 또는 핵심 참고 영상의 YouTube Video ID (`watch?v=` 뒤 11자리) **후보 2～3개** 수집.
+    - *(지역 제한 주의: `search_web`은 북미 클라우드 기준으로 검색되어 HBO US·Paramount+·Hulu·Peacock 등 미국 내수용 채널의 한국 지역 차단(`Geo-block`) 여부를 판별할 수 없습니다. 미국 방송사 단독 채널 외에 Warner Bros. Entertainment·Sony Pictures·Universal·Apple TV 등 글로벌 배급사 채널이나 국내 공식 채널 후보를 반드시 함께 확보해 메인 세션에 전달하세요.)*
   - *(주의: `BookCard.astro`는 알라딘 OpenAPI 서비스 종료(2026.10.30)로 더 이상 사용하지 않으므로 `BookCard`용 ISBN 조사는 생략)*
 
 ### 4. SEO 추천 키워드 및 검색 의도 분석

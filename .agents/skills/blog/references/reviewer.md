@@ -41,7 +41,7 @@
 - [ ] MDX 컴포넌트 import가 frontmatter 바로 아래에 올바르게 위치해 있으며, 미사용 import가 남아 있지 않은가?
 - [ ] 폐기 대상인 `Callout.astro`나 알라딘 OpenAPI 종료(2026.10.30)로 동작하지 않는 `BookCard.astro`를 사용하지 않았는가? (강조 박스는 `Alert.astro` 사용)
 - [ ] **주제별 특화 MDX 컴포넌트 활용**:
-  - 영화/드라마 포스트에서 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `YouTubeEmbed` 등 시각적 컴포넌트를 적절히 활용했는가?
+  - 영화/드라마 포스트에서 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `YouTubeEmbed` 등 시각적 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
   - 수치/시간대 설명 시 `Chart` / `ClockChart`, 다중 이미지 배치 시 `ImageRow` 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 컴포넌트를 적극 활용했는가?
 - [ ] 코드 블록(```) 언어 태그가 Shiki 표준 소문자 식별자(`typescript`, `java`, `bash`, `astro`, `yaml`, `mermaid` 등)이며, Mermaid 노드 라벨 내 특수문자/괄호가 큰따옴표(`"..."`)로 감싸져 있는가?
 - [ ] **물결표(`~`) 취소선 오인 방지**: 코드 블록 외부의 기간·수치 범위(예: `1~2주`)에 ASCII `~`가 들어가 취소선(`<del>`)으로 오인 파싱되는 곳이 없는가? (전각 물결표 `～` 또는 대시 `–` 사용 확인)

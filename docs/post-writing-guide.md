@@ -110,6 +110,8 @@ import YouTubeEmbed from '@/components/YouTubeEmbed.astro';
 
 ID는 `watch?v=` 뒤의 값. 예: `https://youtube.com/watch?v=abc123` → `id="abc123"`
 
+> **⚠️ 한국(`KR`) 재생 및 임베드 가능 여부 확인 필수**: 미국 방송사(HBO US 등) 공식 채널 영상은 한국 IP 차단(`availableCountries: ["US"]`)이 걸린 경우가 많습니다. 삽입 전 한국 로컬 환경(`gl=KR`)에서 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `"KR"` 허용 여부를 반드시 검증하고, 차단 시 글로벌 배급사(Warner Bros. Entertainment 등)나 국내 공식 채널 영상 ID를 사용하세요.
+
 ---
 
 ### MovieCard — 영화 정보 카드 (culture 섹션)

@@ -100,11 +100,26 @@ try {
 </figure>
 
 <script>
-  import { Chart, registerables } from 'chart.js';
-  Chart.register(...registerables);
+  async function initCharts() {
+    const canvases = document.querySelectorAll<HTMLCanvasElement>('canvas[data-chart-type]');
+    if (canvases.length === 0) return;
 
-  function initCharts() {
-    document.querySelectorAll<HTMLCanvasElement>('canvas[data-chart-type]').forEach(canvas => {
+    let ChartCtor: typeof import('chart.js').Chart;
+    try {
+      const { Chart, registerables } = await import('chart.js');
+      Chart.register(...registerables);
+      ChartCtor = Chart;
+    } catch {
+      // 모듈 로드 실패 시 빈 캔버스 영역을 숨기고 폴백 테이블 표시
+      canvases.forEach(canvas => {
+        const id = canvas.id;
+        document.getElementById(`${id}-wrapper`)?.classList.add('hidden');
+        document.getElementById(`${id}-fallback`)?.classList.remove('hidden');
+      });
+      return;
+    }
+
+    canvases.forEach(canvas => {
       if (canvas.dataset.initialized) return;
       canvas.dataset.initialized = 'true';
 
@@ -145,7 +160,7 @@ try {
               : undefined,
         };
 
-        new Chart(canvas, {
+        new ChartCtor(canvas, {
           type,
           data,
           options: { ...defaults, ...options },
