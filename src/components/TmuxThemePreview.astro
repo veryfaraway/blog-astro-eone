@@ -1,0 +1,1289 @@
+---
+interface Props {
+  lang?: 'ko' | 'en';
+  defaultTheme?: 'catppuccin' | 'tokyo-night' | 'dracula' | 'nord' | 'gruvbox' | 'minimal';
+}
+
+const { lang = 'ko', defaultTheme = 'catppuccin' } = Astro.props;
+
+const i18n = {
+  ko: {
+    eyebrow: 'Interactive Tmux Simulator',
+    title: '실시간 tmux 테마 & 상태바 시뮬레이터',
+    subtitle: '테마·세부 플레이버·상태바 옵션을 클릭해 색감을 비교하고, 바로 쓸 수 있는 .tmux.conf 설정을 복사하세요.',
+    themeLabel: '1. 테마 선택 (TOP 5 + 보너스)',
+    bonusBadge: '보너스 · 무플러그인',
+    variantLabel: '팔레트 변형',
+    posBottom: '상태바 하단',
+    posTop: '상태바 상단',
+    sepRounded: '캡슐형',
+    sepPowerline: '파워라인',
+    sepFlat: '플랫',
+    prefixBtn: 'Prefix 입력 시뮬레이션',
+    prefixActive: 'Prefix 대기 중 (C-a)',
+    paletteLabel: '핵심 Hex 팔레트 (클릭 시 복사)',
+    copiedHex: '복사됨:',
+    configTitle: '선택한 옵션이 반영된 .tmux.conf 스니펫',
+    copyBtn: '설정 복사',
+    copiedBtn: '복사 완료 ✓',
+    paneHint: '팁: 윈도우 탭(1～3)이나 분할 패인을 직접 클릭해 활성 강조 색상을 확인해보세요.',
+  },
+  en: {
+    eyebrow: 'Interactive Tmux Simulator',
+    title: 'Live tmux Theme & Status Bar Simulator',
+    subtitle: 'Switch themes, flavors, and status bar styles side by side, then copy the generated .tmux.conf snippet.',
+    themeLabel: '1. Choose Theme (TOP 5 + Bonus)',
+    bonusBadge: 'Bonus · Zero-Plugin',
+    variantLabel: 'Palette Flavor',
+    posBottom: 'Bar: Bottom',
+    posTop: 'Bar: Top',
+    sepRounded: 'Rounded',
+    sepPowerline: 'Powerline',
+    sepFlat: 'Flat',
+    prefixBtn: 'Simulate Prefix Key',
+    prefixActive: 'Prefix Active (C-a)',
+    paletteLabel: 'Official Hex Palette (Click to copy)',
+    copiedHex: 'Copied:',
+    configTitle: 'Generated .tmux.conf Snippet',
+    copyBtn: 'Copy Config',
+    copiedBtn: 'Copied ✓',
+    paneHint: 'Tip: Click window tabs (1–3) or either split pane to test active border & tab highlights.',
+  },
+}[lang];
+
+const themeButtons = [
+  {
+    id: 'catppuccin',
+    name: '1. Catppuccin',
+    tagKo: '파스텔 대세 · 4종',
+    tagEn: 'Pastel · 4 Flavors',
+    dots: ['#1e1e2e', '#cba6f7', '#89b4fa'],
+    isBonus: false,
+  },
+  {
+    id: 'tokyo-night',
+    name: '2. Tokyo Night',
+    tagKo: '네온 딥 다크 · 3종',
+    tagEn: 'Neon Deep · 3 Modes',
+    dots: ['#1a1b26', '#7aa2f7', '#bb9af7'],
+    isBonus: false,
+  },
+  {
+    id: 'dracula',
+    name: '3. Dracula',
+    tagKo: '고대비 퍼플·핑크',
+    tagEn: 'High-Contrast Purple',
+    dots: ['#282a36', '#bd93f9', '#ff79c6'],
+    isBonus: false,
+  },
+  {
+    id: 'nord',
+    name: '4. Nord',
+    tagKo: '북유럽 아이스 블루',
+    tagEn: 'Arctic Frost Blue',
+    dots: ['#2e3440', '#88c0d0', '#81a1c1'],
+    isBonus: false,
+  },
+  {
+    id: 'gruvbox',
+    name: '5. Gruvbox',
+    tagKo: '웜 레트로 · 다크/라이트',
+    tagEn: 'Warm Retro · 2 Modes',
+    dots: ['#282828', '#fabd2f', '#fe8019'],
+    isBonus: false,
+  },
+  {
+    id: 'minimal',
+    name: lang === 'ko' ? '+ 순정 p10k 커스텀' : '+ Pure .tmux.conf',
+    tagKo: '플러그인 0개 · 초경량',
+    tagEn: 'Zero-Plugin · Native',
+    dots: ['#181825', '#10b981', '#38bdf8'],
+    isBonus: true,
+  },
+];
+---
+
+<div
+  class="tmux-preview-root not-prose my-8 rounded-xl border border-border bg-card p-4 sm:p-6 text-foreground shadow-sm"
+  data-tmux-preview
+  data-lang={lang}
+  data-default-theme={defaultTheme}
+>
+  <!-- 헤더 -->
+  <div class="border-b border-border pb-4">
+    <div class="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      {i18n.eyebrow}
+    </div>
+    <div class="mt-0.5 text-base sm:text-lg font-bold text-foreground">
+      {i18n.title}
+    </div>
+    <p class="mt-1 text-xs sm:text-sm text-muted-foreground">
+      {i18n.subtitle}
+    </p>
+  </div>
+
+  <!-- 1. 테마 선택 탭 -->
+  <div class="mt-4">
+    <div class="mb-2 flex items-center justify-between">
+      <span class="text-xs font-semibold text-foreground">{i18n.themeLabel}</span>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" role="tablist" aria-label={i18n.themeLabel}>
+      {
+        themeButtons.map((t) => {
+          const isSelected = t.id === defaultTheme;
+          return (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={isSelected ? 'true' : 'false'}
+              data-theme-btn={t.id}
+              class:list={[
+                'tp-theme-btn group relative flex flex-col items-start rounded-lg border px-3 py-2 text-left transition cursor-pointer',
+                isSelected
+                  ? 'border-primary bg-primary/10 shadow-xs'
+                  : 'border-border bg-muted/35 hover:bg-muted/70',
+              ]}
+            >
+              <div class="flex w-full items-center justify-between gap-1.5">
+                <span class="text-xs font-bold text-foreground truncate">{t.name}</span>
+                <span class="flex items-center gap-1 shrink-0" aria-hidden="true">
+                  {t.dots.map((hex) => (
+                    <span
+                      class="inline-block h-2.5 w-2.5 rounded-full border border-black/15 dark:border-white/15"
+                      style={`background-color:${hex}`}
+                    />
+                  ))}
+                </span>
+              </div>
+              <span class="mt-0.5 text-[11px] text-muted-foreground">
+                {lang === 'ko' ? t.tagKo : t.tagEn}
+              </span>
+            </button>
+          );
+        })
+      }
+    </div>
+  </div>
+
+  <!-- 2. 세부 플레이버 & 상태바 인터랙션 바 -->
+  <div class="mt-3 flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between rounded-lg border border-border bg-muted/25 px-3 py-2.5">
+    <!-- 좌측: 플레이버 칩 컨테이너 (JS에서 테마별로 갱신) -->
+    <div class="flex flex-wrap items-center gap-1.5">
+      <span class="text-[11px] font-semibold text-muted-foreground mr-1">{i18n.variantLabel}:</span>
+      <div class="tp-variants flex flex-wrap items-center gap-1">
+        <button type="button" data-variant="mocha" class="tp-var-btn rounded-md border border-primary bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-foreground cursor-pointer">Mocha</button>
+        <button type="button" data-variant="macchiato" class="tp-var-btn rounded-md border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer">Macchiato</button>
+        <button type="button" data-variant="frappe" class="tp-var-btn rounded-md border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer">Frappé</button>
+        <button type="button" data-variant="latte" class="tp-var-btn rounded-md border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer">Latte</button>
+      </div>
+    </div>
+
+    <!-- 우측: 상태바 위치 / 구분자 모양 / Prefix 시뮬레이션 -->
+    <div class="flex flex-wrap items-center gap-1.5">
+      <!-- 위치 토글 -->
+      <div class="inline-flex rounded-md border border-border bg-background p-0.5" role="group">
+        <button
+          type="button"
+          data-pos="bottom"
+          class="tp-pos-btn rounded px-2 py-0.5 text-[11px] font-semibold bg-muted text-foreground cursor-pointer transition"
+        >
+          {i18n.posBottom}
+        </button>
+        <button
+          type="button"
+          data-pos="top"
+          class="tp-pos-btn rounded px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer transition"
+        >
+          {i18n.posTop}
+        </button>
+      </div>
+
+      <!-- 구분자 토글 -->
+      <div class="inline-flex rounded-md border border-border bg-background p-0.5" role="group">
+        <button
+          type="button"
+          data-sep="rounded"
+          class="tp-sep-btn rounded px-2 py-0.5 text-[11px] font-semibold bg-muted text-foreground cursor-pointer transition"
+        >
+          {i18n.sepRounded}
+        </button>
+        <button
+          type="button"
+          data-sep="powerline"
+          class="tp-sep-btn rounded px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer transition"
+        >
+          {i18n.sepPowerline}
+        </button>
+        <button
+          type="button"
+          data-sep="flat"
+          class="tp-sep-btn rounded px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer transition"
+        >
+          {i18n.sepFlat}
+        </button>
+      </div>
+
+      <!-- Prefix 키 시뮬레이션 -->
+      <button
+        type="button"
+        data-prefix-toggle
+        data-label-idle={i18n.prefixBtn}
+        data-label-active={i18n.prefixActive}
+        class="tp-prefix-btn inline-flex items-center gap-1 rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-semibold text-foreground hover:bg-muted transition cursor-pointer"
+      >
+        <span class="tp-prefix-dot h-2 w-2 rounded-full bg-emerald-500 transition"></span>
+        <span class="tp-prefix-text">{i18n.prefixBtn}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. 터미널 + tmux 상태바 라이브 캔버스 -->
+  <div
+    class="tp-terminal mt-4 overflow-hidden rounded-xl border border-black/15 dark:border-white/15 shadow-md transition-colors duration-200"
+    style="--tp-bg:#1e1e2e; --tp-mantle:#181825; --tp-surface:#313244; --tp-fg:#cdd6f4; --tp-muted:#6c7086; --tp-accent:#cba6f7; --tp-accent-fg:#11111b; --tp-secondary:#89b4fa; --tp-secondary-fg:#11111b; --tp-green:#a6e3a1; --tp-yellow:#f9e2af; --tp-peach:#fab387; --tp-red:#f38ba8; --tp-cyan:#89dceb; background-color:var(--tp-bg); color:var(--tp-fg);"
+  >
+    <!-- macOS 윈도우 타이틀바 -->
+    <div
+      class="flex items-center justify-between px-3.5 py-2 text-[11px] font-mono select-none border-b"
+      style="background-color:var(--tp-mantle); color:var(--tp-muted); border-color:var(--tp-surface);"
+    >
+      <div class="flex items-center gap-1.5">
+        <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f56]"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-[#27c93f]"></span>
+      </div>
+      <div class="tp-window-title truncate px-2 font-medium" style="color:var(--tp-fg); opacity:0.85;">
+        ghostty — tmux · Catppuccin (Mocha)
+      </div>
+      <div class="text-[10px] opacity-75">UTF-8 · 24-bit RGB</div>
+    </div>
+
+    <!-- 메인 터미널 바디 (flex-col 또는 flex-col-reverse로 상태바 상/하단 전환) -->
+    <div class="tp-body flex flex-col">
+      <!-- 분할 패인 영역 -->
+      <div class="grid grid-cols-1 md:grid-cols-12 font-mono text-[11.5px] leading-[1.6]">
+        <!-- 좌측 패인: Neovim 코드 에디터 -->
+        <div
+          data-pane="left"
+          class="tp-pane md:col-span-7 p-3 sm:p-3.5 border-b md:border-b-0 md:border-r transition-colors cursor-pointer"
+          style="border-color:var(--tp-accent);"
+        >
+          <div class="mb-2 flex items-center justify-between text-[10px]" style="color:var(--tp-muted);">
+            <span>nvim · src/server/session.ts</span>
+            <span class="tp-pane-badge rounded px-1.5 py-0.5 font-semibold" style="background-color:var(--tp-surface); color:var(--tp-accent);">ACTIVE PANE</span>
+          </div>
+          <div class="space-y-0.5 overflow-x-auto">
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 1 </span><span style="color:var(--tp-accent)">import</span> &#123; createPool &#125; <span style="color:var(--tp-accent)">from</span> <span style="color:var(--tp-green)">'@/lib/redis'</span>;</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 2 </span><span style="color:var(--tp-muted)">// Keep session TTL synced with edge cache</span></div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 3 </span><span style="color:var(--tp-accent)">export async function</span> <span style="color:var(--tp-secondary)">verifySession</span>(token: <span style="color:var(--tp-yellow)">string</span>) &#123;</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 4 </span>  <span style="color:var(--tp-accent)">const</span> ttl = <span style="color:var(--tp-peach)">3600</span>;</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 5 </span>  <span style="color:var(--tp-accent)">if</span> (!token) <span style="color:var(--tp-accent)">return</span> &#123; ok: <span style="color:var(--tp-peach)">false</span>, reason: <span style="color:var(--tp-red)">'expired'</span> &#125;;</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 6 </span>  <span style="color:var(--tp-accent)">const</span> session = <span style="color:var(--tp-accent)">await</span> createPool().<span style="color:var(--tp-secondary)">get</span>(token);</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 7 </span>  <span style="color:var(--tp-accent)">return</span> &#123; ok: <span style="color:var(--tp-peach)">true</span>, session, ttl &#125;;</div>
+            <div class="whitespace-pre"><span style="color:var(--tp-muted)"> 8 </span>&#125;</div>
+          </div>
+        </div>
+
+        <!-- 우측 패인: Shell + Git + 로그 -->
+        <div
+          data-pane="right"
+          class="tp-pane md:col-span-5 p-3 sm:p-3.5 border-t md:border-t-0 md:border-l transition-colors cursor-pointer"
+          style="border-color:var(--tp-surface);"
+        >
+          <div class="mb-2 flex items-center justify-between text-[10px]" style="color:var(--tp-muted);">
+            <span>zsh · ~/work/blog-astro</span>
+            <span class="tp-pane-badge rounded px-1.5 py-0.5 opacity-65" style="background-color:var(--tp-surface); color:var(--tp-muted);">PANE 2</span>
+          </div>
+          <div class="space-y-1 overflow-x-auto">
+            <div class="whitespace-pre">
+              <span style="color:var(--tp-secondary); font-weight:700;">~/blog-astro</span>
+              <span style="color:var(--tp-accent)"> on git:main</span>
+              <span style="color:var(--tp-yellow)"> *</span>
+            </div>
+            <div class="whitespace-pre">
+              <span style="color:var(--tp-green)">❯</span> pnpm check
+            </div>
+            <div class="whitespace-pre" style="color:var(--tp-muted);">14:52:09 [content] Synced 64 documents</div>
+            <div class="whitespace-pre" style="color:var(--tp-green);">✔ 0 errors · 0 warnings · 0 hints</div>
+            <div class="pt-1 whitespace-pre">
+              <span style="color:var(--tp-green)">❯</span> git status -sb
+            </div>
+            <div class="whitespace-pre">
+              <span style="color:var(--tp-yellow)"> M</span> src/components/TmuxThemePreview.astro
+            </div>
+            <div class="whitespace-pre">
+              <span style="color:var(--tp-cyan)">??</span> src/content/tools/en/2026/tmux-theme-top5.mdx
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- tmux 상태바 (가로 스크롤 안전 래퍼) -->
+      <div
+        class="tp-statusbar-wrap overflow-x-auto border-t"
+        style="background-color:var(--tp-mantle); border-color:var(--tp-surface); -webkit-overflow-scrolling:touch;"
+      >
+        <div class="tp-statusbar flex min-w-[540px] items-center justify-between px-2 py-1.5 font-mono text-[11px] select-none gap-2">
+          <!-- 좌측: 세션 배지 + 윈도우 목록 -->
+          <div class="flex items-center gap-1.5">
+            <!-- 세션 배지 -->
+            <span
+              class="tp-seg tp-session-badge inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold transition-colors"
+              style="background-color:var(--tp-green); color:var(--tp-accent-fg);"
+            >
+              <svg class="h-3 w-3 shrink-0" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M2 3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3zm2.5 2.5L7 8l-2.5 2.5 1 1L9 8 5.5 4.5l-1 1zM8.5 11h3v-1.5h-3V11z" />
+              </svg>
+              <span class="tp-session-text">work</span>
+            </span>
+
+            <!-- 윈도우 탭 1~3 -->
+            <button
+              type="button"
+              data-win="1"
+              class="tp-seg tp-win-tab inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-bold cursor-pointer transition-colors"
+              style="background-color:var(--tp-accent); color:var(--tp-accent-fg);"
+            >
+              <span>1</span>
+              <span>nvim*</span>
+            </button>
+            <button
+              type="button"
+              data-win="2"
+              class="tp-seg tp-win-tab inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium cursor-pointer transition-colors"
+              style="background-color:var(--tp-surface); color:var(--tp-fg);"
+            >
+              <span>2</span>
+              <span>server</span>
+            </button>
+            <button
+              type="button"
+              data-win="3"
+              class="tp-seg tp-win-tab inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium cursor-pointer transition-colors"
+              style="background-color:var(--tp-surface); color:var(--tp-muted);"
+            >
+              <span>3</span>
+              <span>ssh-prod-</span>
+            </button>
+          </div>
+
+          <!-- 우측: 경로 · 리소스 · 시각 모듈 -->
+          <div class="flex items-center gap-1.5">
+            <span
+              class="tp-seg inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium"
+              style="background-color:var(--tp-surface); color:var(--tp-fg);"
+            >
+              <svg class="h-3 w-3 shrink-0" style="color:var(--tp-peach);" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M1.75 2.5A1.75 1.75 0 0 1 3.5.75h2.44c.46 0 .91.18 1.24.51l.94.94h4.38c.97 0 1.75.78 1.75 1.75v8.3c0 .97-.78 1.75-1.75 1.75h-9A1.75 1.75 0 0 1 1.75 12.25V2.5z" />
+              </svg>
+              <span>blog-astro</span>
+            </span>
+            <span
+              class="tp-seg inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium"
+              style="background-color:var(--tp-surface); color:var(--tp-fg);"
+            >
+              <span style="color:var(--tp-cyan);">CPU</span>
+              <span>12%</span>
+            </span>
+            <span
+              class="tp-seg inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold"
+              style="background-color:var(--tp-secondary); color:var(--tp-secondary-fg);"
+            >
+              <span>23:40</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-1.5 text-[11px] text-muted-foreground">
+    {i18n.paneHint}
+  </div>
+
+  <!-- 4. 공식 팔레트 스와치 바 -->
+  <div class="mt-4 rounded-lg border border-border bg-muted/20 p-3">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="text-xs font-semibold text-foreground">{i18n.paletteLabel}</span>
+      <span class="tp-hex-toast text-[11px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 opacity-0 transition-opacity" data-prefix={i18n.copiedHex}></span>
+    </div>
+    <div class="tp-swatches grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+      <!-- 초기 SSR 스와치 (Catppuccin Mocha) -->
+      {
+        [
+          { label: 'base', hex: '#1e1e2e' },
+          { label: 'mantle', hex: '#181825' },
+          { label: 'surface0', hex: '#313244' },
+          { label: 'text', hex: '#cdd6f4' },
+          { label: 'mauve', hex: '#cba6f7' },
+          { label: 'blue', hex: '#89b4fa' },
+          { label: 'green', hex: '#a6e3a1' },
+          { label: 'peach', hex: '#fab387' },
+        ].map((sw) => (
+          <button
+            type="button"
+            data-hex={sw.hex}
+            class="tp-swatch-btn group flex flex-col items-start rounded-md border border-border bg-background p-1.5 text-left hover:border-primary transition cursor-pointer"
+          >
+            <span
+              class="h-4 w-full rounded-xs border border-black/10 dark:border-white/10"
+              style={`background-color:${sw.hex}`}
+            />
+            <span class="mt-1 text-[10px] font-semibold text-foreground truncate w-full">{sw.label}</span>
+            <span class="text-[10px] font-mono text-muted-foreground">{sw.hex}</span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- 5. 실시간 생성 .tmux.conf 스니펫 -->
+  <div class="mt-4 rounded-lg border border-border bg-zinc-950 text-zinc-100 overflow-hidden">
+    <div class="flex items-center justify-between border-b border-white/10 bg-zinc-900 px-3.5 py-2">
+      <span class="text-xs font-semibold text-zinc-200">{i18n.configTitle}</span>
+      <button
+        type="button"
+        data-copy-config
+        data-label-idle={i18n.copyBtn}
+        data-label-copied={i18n.copiedBtn}
+        class="tp-copy-btn rounded-md border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/20 transition cursor-pointer"
+      >
+        {i18n.copyBtn}
+      </button>
+    </div>
+    <pre class="tp-code-output m-0 overflow-x-auto p-3.5 font-mono text-[11.5px] leading-relaxed text-zinc-200"><code is:raw># ~/.tmux.conf — Catppuccin v2 (mocha)
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position bottom
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'catppuccin/tmux#v2.3.0'
+
+set -g @catppuccin_flavor "mocha"
+set -g @catppuccin_window_status_style "rounded"
+set -g status-left-length 100
+set -g status-right-length 100
+set -g status-left "#{E:@catppuccin_status_session}"
+set -g status-right "#{E:@catppuccin_status_directory}#{E:@catppuccin_status_date_time}"
+
+run '~/.tmux/plugins/tpm/tpm'</code></pre>
+  </div>
+</div>
+
+<style>
+  /* 파워라인(각진 화살표) 스타일일 때 세그먼트 모서리 제어 */
+  .tmux-preview-root[data-sep-mode='powerline'] .tp-seg {
+    border-radius: 2px;
+    clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%);
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .tmux-preview-root[data-sep-mode='flat'] .tp-seg {
+    border-radius: 3px;
+  }
+  /* 상태바 상단 배치 전환 */
+  .tmux-preview-root[data-pos-mode='top'] .tp-body {
+    flex-direction: column-reverse;
+  }
+  .tmux-preview-root[data-pos-mode='top'] .tp-statusbar-wrap {
+    border-top-width: 0;
+    border-bottom: 1px solid var(--tp-surface);
+  }
+</style>
+
+<script>
+  interface PaletteSpec {
+    label: string;
+    bg: string;
+    mantle: string;
+    surface: string;
+    fg: string;
+    muted: string;
+    accent: string;
+    accentFg: string;
+    secondary: string;
+    secondaryFg: string;
+    green: string;
+    yellow: string;
+    peach: string;
+    red: string;
+    cyan: string;
+    swatches: Array<{ label: string; hex: string }>;
+  }
+
+  interface ThemeEntry {
+    title: string;
+    variants: Record<string, PaletteSpec>;
+    buildConfig: (opts: {
+      variant: string;
+      pos: 'bottom' | 'top';
+      sep: 'rounded' | 'powerline' | 'flat';
+      lang: 'ko' | 'en';
+    }) => string;
+  }
+
+  const THEMES: Record<string, ThemeEntry> = {
+    catppuccin: {
+      title: 'Catppuccin',
+      variants: {
+        mocha: {
+          label: 'Mocha',
+          bg: '#1e1e2e',
+          mantle: '#181825',
+          surface: '#313244',
+          fg: '#cdd6f4',
+          muted: '#6c7086',
+          accent: '#cba6f7',
+          accentFg: '#11111b',
+          secondary: '#89b4fa',
+          secondaryFg: '#11111b',
+          green: '#a6e3a1',
+          yellow: '#f9e2af',
+          peach: '#fab387',
+          red: '#f38ba8',
+          cyan: '#89dceb',
+          swatches: [
+            { label: 'base', hex: '#1e1e2e' },
+            { label: 'mantle', hex: '#181825' },
+            { label: 'surface0', hex: '#313244' },
+            { label: 'text', hex: '#cdd6f4' },
+            { label: 'mauve', hex: '#cba6f7' },
+            { label: 'blue', hex: '#89b4fa' },
+            { label: 'green', hex: '#a6e3a1' },
+            { label: 'peach', hex: '#fab387' },
+          ],
+        },
+        macchiato: {
+          label: 'Macchiato',
+          bg: '#24273a',
+          mantle: '#1e2030',
+          surface: '#363a4f',
+          fg: '#cad3f5',
+          muted: '#6e738d',
+          accent: '#c6a0f6',
+          accentFg: '#181926',
+          secondary: '#8aadf4',
+          secondaryFg: '#181926',
+          green: '#a6da95',
+          yellow: '#eed49f',
+          peach: '#f5a97f',
+          red: '#ed8796',
+          cyan: '#91d7e3',
+          swatches: [
+            { label: 'base', hex: '#24273a' },
+            { label: 'mantle', hex: '#1e2030' },
+            { label: 'surface0', hex: '#363a4f' },
+            { label: 'text', hex: '#cad3f5' },
+            { label: 'mauve', hex: '#c6a0f6' },
+            { label: 'blue', hex: '#8aadf4' },
+            { label: 'green', hex: '#a6da95' },
+            { label: 'peach', hex: '#f5a97f' },
+          ],
+        },
+        frappe: {
+          label: 'Frappé',
+          bg: '#303446',
+          mantle: '#292c3c',
+          surface: '#414559',
+          fg: '#c6d0f5',
+          muted: '#737994',
+          accent: '#ca9ee6',
+          accentFg: '#232634',
+          secondary: '#8caaee',
+          secondaryFg: '#232634',
+          green: '#a6d189',
+          yellow: '#e5c890',
+          peach: '#ef9f76',
+          red: '#e78284',
+          cyan: '#99d1db',
+          swatches: [
+            { label: 'base', hex: '#303446' },
+            { label: 'mantle', hex: '#292c3c' },
+            { label: 'surface0', hex: '#414559' },
+            { label: 'text', hex: '#c6d0f5' },
+            { label: 'mauve', hex: '#ca9ee6' },
+            { label: 'blue', hex: '#8caaee' },
+            { label: 'green', hex: '#a6d189' },
+            { label: 'peach', hex: '#ef9f76' },
+          ],
+        },
+        latte: {
+          label: 'Latte (Light)',
+          bg: '#eff1f5',
+          mantle: '#dce0e8',
+          surface: '#ccd0da',
+          fg: '#4c4f69',
+          muted: '#6c6f85',
+          accent: '#8839ef',
+          accentFg: '#eff1f5',
+          secondary: '#1e66f5',
+          secondaryFg: '#eff1f5',
+          green: '#40a02b',
+          yellow: '#df8e1d',
+          peach: '#fe640b',
+          red: '#d20f39',
+          cyan: '#04a5e5',
+          swatches: [
+            { label: 'base', hex: '#eff1f5' },
+            { label: 'crust', hex: '#dce0e8' },
+            { label: 'surface0', hex: '#ccd0da' },
+            { label: 'text', hex: '#4c4f69' },
+            { label: 'mauve', hex: '#8839ef' },
+            { label: 'blue', hex: '#1e66f5' },
+            { label: 'green', hex: '#40a02b' },
+            { label: 'peach', hex: '#fe640b' },
+          ],
+        },
+      },
+      buildConfig: ({ variant, pos, sep }) => {
+        const winStyle = sep === 'rounded' ? 'rounded' : sep === 'powerline' ? 'slanted' : 'basic';
+        return `# ~/.tmux.conf — Catppuccin v2 (${variant})
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'catppuccin/tmux#v2.3.0'
+
+set -g @catppuccin_flavor "${variant}"
+set -g @catppuccin_window_status_style "${winStyle}"
+set -g status-left-length 100
+set -g status-right-length 100
+set -g status-left "#{E:@catppuccin_status_session}"
+set -g status-right "#{E:@catppuccin_status_directory}#{E:@catppuccin_status_date_time}"
+
+run '~/.tmux/plugins/tpm/tpm'`;
+      },
+    },
+
+    'tokyo-night': {
+      title: 'Tokyo Night',
+      variants: {
+        night: {
+          label: 'Night',
+          bg: '#1a1b26',
+          mantle: '#16161e',
+          surface: '#292e42',
+          fg: '#c0caf5',
+          muted: '#565f89',
+          accent: '#7aa2f7',
+          accentFg: '#16161e',
+          secondary: '#bb9af7',
+          secondaryFg: '#16161e',
+          green: '#9ece6a',
+          yellow: '#e0af68',
+          peach: '#ff9e64',
+          red: '#f7768e',
+          cyan: '#7dcfff',
+          swatches: [
+            { label: 'bg', hex: '#1a1b26' },
+            { label: 'bg_dark', hex: '#16161e' },
+            { label: 'highlight', hex: '#292e42' },
+            { label: 'fg', hex: '#c0caf5' },
+            { label: 'blue', hex: '#7aa2f7' },
+            { label: 'magenta', hex: '#bb9af7' },
+            { label: 'cyan', hex: '#7dcfff' },
+            { label: 'green', hex: '#9ece6a' },
+          ],
+        },
+        storm: {
+          label: 'Storm',
+          bg: '#24283b',
+          mantle: '#1f2335',
+          surface: '#292e42',
+          fg: '#c0caf5',
+          muted: '#565f89',
+          accent: '#7aa2f7',
+          accentFg: '#1f2335',
+          secondary: '#bb9af7',
+          secondaryFg: '#1f2335',
+          green: '#9ece6a',
+          yellow: '#e0af68',
+          peach: '#ff9e64',
+          red: '#f7768e',
+          cyan: '#7dcfff',
+          swatches: [
+            { label: 'bg', hex: '#24283b' },
+            { label: 'bg_dark', hex: '#1f2335' },
+            { label: 'highlight', hex: '#292e42' },
+            { label: 'fg', hex: '#c0caf5' },
+            { label: 'blue', hex: '#7aa2f7' },
+            { label: 'magenta', hex: '#bb9af7' },
+            { label: 'orange', hex: '#ff9e64' },
+            { label: 'red', hex: '#f7768e' },
+          ],
+        },
+        day: {
+          label: 'Day (Light)',
+          bg: '#e1e2e7',
+          mantle: '#d0d5e3',
+          surface: '#c4c8da',
+          fg: '#3760bf',
+          muted: '#6172b0',
+          accent: '#2e7de9',
+          accentFg: '#e1e2e7',
+          secondary: '#9854f1',
+          secondaryFg: '#e1e2e7',
+          green: '#587539',
+          yellow: '#8c6c3e',
+          peach: '#b15c00',
+          red: '#f52a65',
+          cyan: '#007197',
+          swatches: [
+            { label: 'bg', hex: '#e1e2e7' },
+            { label: 'bg_dark', hex: '#d0d5e3' },
+            { label: 'highlight', hex: '#c4c8da' },
+            { label: 'fg', hex: '#3760bf' },
+            { label: 'blue', hex: '#2e7de9' },
+            { label: 'magenta', hex: '#9854f1' },
+            { label: 'green', hex: '#587539' },
+            { label: 'red', hex: '#f52a65' },
+          ],
+        },
+      },
+      buildConfig: ({ variant, pos, lang }) => {
+        const comment =
+          lang === 'ko'
+            ? '# macOS 필수: brew install bash bc coreutils gawk jq'
+            : '# macOS prerequisite: brew install bash bc coreutils gawk jq';
+        return `# ~/.tmux.conf — Tokyo Night (${variant})
+${comment}
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'janoamaral/tokyo-night-tmux'
+
+set -g @tokyo-night-tmux_theme "${variant}"
+set -g @tokyo-night-tmux_show_path 1
+set -g @tokyo-night-tmux_path_format relative
+set -g @tokyo-night-tmux_show_datetime 1
+
+run '~/.tmux/plugins/tpm/tpm'`;
+      },
+    },
+
+    dracula: {
+      title: 'Dracula',
+      variants: {
+        classic: {
+          label: 'Classic Official',
+          bg: '#282a36',
+          mantle: '#1e1f29',
+          surface: '#44475a',
+          fg: '#f8f8f2',
+          muted: '#6272a4',
+          accent: '#bd93f9',
+          accentFg: '#282a36',
+          secondary: '#ff79c6',
+          secondaryFg: '#282a36',
+          green: '#50fa7b',
+          yellow: '#f1fa8c',
+          peach: '#ffb86c',
+          red: '#ff5555',
+          cyan: '#8be9fd',
+          swatches: [
+            { label: 'bg', hex: '#282a36' },
+            { label: 'current', hex: '#44475a' },
+            { label: 'fg', hex: '#f8f8f2' },
+            { label: 'comment', hex: '#6272a4' },
+            { label: 'purple', hex: '#bd93f9' },
+            { label: 'pink', hex: '#ff79c6' },
+            { label: 'green', hex: '#50fa7b' },
+            { label: 'cyan', hex: '#8be9fd' },
+          ],
+        },
+      },
+      buildConfig: ({ pos, sep }) => {
+        const powerline = sep === 'powerline' ? 'true' : 'false';
+        return `# ~/.tmux.conf — Dracula Official
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'dracula/tmux'
+
+set -g @dracula-show-powerline ${powerline}
+set -g @dracula-show-left-icon session
+set -g @dracula-border-contrast true
+set -g @dracula-plugins "git cpu-usage ram-usage time"
+
+run '~/.tmux/plugins/tpm/tpm'`;
+      },
+    },
+
+    nord: {
+      title: 'Nord',
+      variants: {
+        polar: {
+          label: 'Polar Night + Frost',
+          bg: '#2e3440',
+          mantle: '#242933',
+          surface: '#3b4252',
+          fg: '#eceff4',
+          muted: '#81a1c1',
+          accent: '#88c0d0',
+          accentFg: '#2e3440',
+          secondary: '#5e81ac',
+          secondaryFg: '#eceff4',
+          green: '#a3be8c',
+          yellow: '#ebcb8b',
+          peach: '#d08770',
+          red: '#bf616a',
+          cyan: '#8fbcbb',
+          swatches: [
+            { label: 'nord0', hex: '#2e3440' },
+            { label: 'nord1', hex: '#3b4252' },
+            { label: 'nord3', hex: '#4c566a' },
+            { label: 'nord6', hex: '#eceff4' },
+            { label: 'nord7', hex: '#8fbcbb' },
+            { label: 'nord8', hex: '#88c0d0' },
+            { label: 'nord9', hex: '#81a1c1' },
+            { label: 'nord14', hex: '#a3be8c' },
+          ],
+        },
+      },
+      buildConfig: ({ pos, sep }) => {
+        const noPatch = sep === 'flat' ? '\nset -g @nord_tmux_no_patched_font "1"' : '';
+        return `# ~/.tmux.conf — Nord (nordtheme/tmux)
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'nordtheme/tmux'${noPatch}
+
+run '~/.tmux/plugins/tpm/tpm'`;
+      },
+    },
+
+    gruvbox: {
+      title: 'Gruvbox',
+      variants: {
+        dark256: {
+          label: 'Dark 256',
+          bg: '#282828',
+          mantle: '#1d2021',
+          surface: '#3c3836',
+          fg: '#ebdbb2',
+          muted: '#928374',
+          accent: '#fabd2f',
+          accentFg: '#1d2021',
+          secondary: '#83a598',
+          secondaryFg: '#1d2021',
+          green: '#b8bb26',
+          yellow: '#fabd2f',
+          peach: '#fe8019',
+          red: '#fb4934',
+          cyan: '#8ec07c',
+          swatches: [
+            { label: 'bg0_h', hex: '#1d2021' },
+            { label: 'bg0', hex: '#282828' },
+            { label: 'bg1', hex: '#3c3836' },
+            { label: 'fg1', hex: '#ebdbb2' },
+            { label: 'yellow', hex: '#fabd2f' },
+            { label: 'orange', hex: '#fe8019' },
+            { label: 'green', hex: '#b8bb26' },
+            { label: 'blue', hex: '#83a598' },
+          ],
+        },
+        light256: {
+          label: 'Light 256',
+          bg: '#fbf1c7',
+          mantle: '#ebdbb2',
+          surface: '#d5c4a1',
+          fg: '#3c3836',
+          muted: '#7c6f64',
+          accent: '#b57614',
+          accentFg: '#fbf1c7',
+          secondary: '#076678',
+          secondaryFg: '#fbf1c7',
+          green: '#79740e',
+          yellow: '#b57614',
+          peach: '#af3a03',
+          red: '#9d0006',
+          cyan: '#427b58',
+          swatches: [
+            { label: 'bg0', hex: '#fbf1c7' },
+            { label: 'bg1', hex: '#ebdbb2' },
+            { label: 'bg2', hex: '#d5c4a1' },
+            { label: 'fg1', hex: '#3c3836' },
+            { label: 'yellow', hex: '#b57614' },
+            { label: 'orange', hex: '#af3a03' },
+            { label: 'green', hex: '#79740e' },
+            { label: 'blue', hex: '#076678' },
+          ],
+        },
+      },
+      buildConfig: ({ variant, pos }) => `# ~/.tmux.conf — Gruvbox (${variant})
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'egel/tmux-gruvbox'
+
+set -g @tmux-gruvbox '${variant}' # dark, dark256, light, light256
+set -g @tmux-gruvbox-statusbar-alpha 'true'
+
+run '~/.tmux/plugins/tpm/tpm'`,
+    },
+
+    minimal: {
+      title: 'Pure .tmux.conf (p10k Minimal)',
+      variants: {
+        'dark-native': {
+          label: 'Dark Transparent',
+          bg: '#14171f',
+          mantle: '#0f1117',
+          surface: '#1f2430',
+          fg: '#e2e8f0',
+          muted: '#64748b',
+          accent: '#38bdf8',
+          accentFg: '#0f172a',
+          secondary: '#334155',
+          secondaryFg: '#f8fafc',
+          green: '#10b981',
+          yellow: '#fbbf24',
+          peach: '#fb923c',
+          red: '#f43f5e',
+          cyan: '#22d3ee',
+          swatches: [
+            { label: 'bg (term)', hex: '#14171f' },
+            { label: 'surface', hex: '#1f2430' },
+            { label: 'fg', hex: '#e2e8f0' },
+            { label: 'muted', hex: '#64748b' },
+            { label: 'prefix-off', hex: '#10b981' },
+            { label: 'prefix-on', hex: '#f59e0b' },
+            { label: 'active-win', hex: '#38bdf8' },
+            { label: 'alert', hex: '#f43f5e' },
+          ],
+        },
+        'light-native': {
+          label: 'Light Transparent',
+          bg: '#f8fafc',
+          mantle: '#f1f5f9',
+          surface: '#e2e8f0',
+          fg: '#0f172a',
+          muted: '#64748b',
+          accent: '#0284c7',
+          accentFg: '#f8fafc',
+          secondary: '#cbd5e1',
+          secondaryFg: '#0f172a',
+          green: '#059669',
+          yellow: '#d97706',
+          peach: '#ea580c',
+          red: '#e11d48',
+          cyan: '#0891b2',
+          swatches: [
+            { label: 'bg (term)', hex: '#f8fafc' },
+            { label: 'surface', hex: '#e2e8f0' },
+            { label: 'fg', hex: '#0f172a' },
+            { label: 'muted', hex: '#64748b' },
+            { label: 'prefix-off', hex: '#059669' },
+            { label: 'prefix-on', hex: '#d97706' },
+            { label: 'active-win', hex: '#0284c7' },
+            { label: 'alert', hex: '#e11d48' },
+          ],
+        },
+      },
+      buildConfig: ({ variant, pos, lang }) => {
+        const isLight = variant === 'light-native';
+        const fg = isLight ? '#0f172a' : '#e2e8f0';
+        const muted = '#64748b';
+        const surface = isLight ? '#e2e8f0' : '#1f2430';
+        const active = isLight ? '#0284c7' : '#38bdf8';
+        const activeFg = isLight ? '#f8fafc' : '#0f172a';
+        const ok = isLight ? '#059669' : '#10b981';
+        const warn = isLight ? '#d97706' : '#f59e0b';
+        const note =
+          lang === 'ko'
+            ? '# 외부 플러그인·서브셸 호출 0개 — 원격 SSH 서버에도 그대로 복붙 가능'
+            : '# Zero external plugins or subshells — portable across any SSH server';
+        return `# ~/.tmux.conf — Pure Native Minimal (${isLight ? 'Light' : 'Dark'})
+${note}
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",*:RGB"
+set -g status-position ${pos}
+set -g status-style "bg=default,fg=${fg}"
+set -g status-left-length 40
+set -g status-right-length 80
+
+set -g status-left "#{?client_prefix,#[bg=${warn}#,fg=${activeFg}#,bold] WAIT ,#[bg=${ok}#,fg=${activeFg}#,bold] #S } "
+set -g window-status-separator " "
+set -g window-status-format "#[bg=${surface},fg=${muted}] #I:#W "
+set -g window-status-current-format "#[bg=${active},fg=${activeFg},bold] #I:#W#{?window_zoomed_flag, [Z],} "
+set -g status-right "#[fg=${muted}]#{b:pane_current_path} #[fg=${active},bold]%H:%M "
+
+set -g pane-border-style "fg=${surface}"
+set -g pane-active-border-style "fg=${active}"`;
+      },
+    },
+  };
+
+  function initTmuxPreviews() {
+    document.querySelectorAll<HTMLElement>('[data-tmux-preview]').forEach((root) => {
+      if (root.dataset.initialized === 'true') return;
+      root.dataset.initialized = 'true';
+
+      const lang = (root.dataset.lang === 'en' ? 'en' : 'ko') as 'ko' | 'en';
+      let currentTheme = root.dataset.defaultTheme || 'catppuccin';
+      if (!THEMES[currentTheme]) currentTheme = 'catppuccin';
+      let currentVariant = Object.keys(THEMES[currentTheme].variants)[0];
+      let currentPos: 'bottom' | 'top' = 'bottom';
+      let currentSep: 'rounded' | 'powerline' | 'flat' = 'rounded';
+      let isPrefixActive = false;
+      let activeWin = '1';
+      let activePane: 'left' | 'right' = 'left';
+
+      const terminalEl = root.querySelector<HTMLElement>('.tp-terminal')!;
+      const winTitleEl = root.querySelector<HTMLElement>('.tp-window-title')!;
+      const variantsWrap = root.querySelector<HTMLElement>('.tp-variants')!;
+      const swatchesWrap = root.querySelector<HTMLElement>('.tp-swatches')!;
+      const codeOutputEl = root.querySelector<HTMLElement>('.tp-code-output code')!;
+      const hexToastEl = root.querySelector<HTMLElement>('.tp-hex-toast')!;
+      const prefixBtn = root.querySelector<HTMLButtonElement>('[data-prefix-toggle]')!;
+      const prefixText = root.querySelector<HTMLElement>('.tp-prefix-text')!;
+      const prefixDot = root.querySelector<HTMLElement>('.tp-prefix-dot')!;
+      const sessionBadge = root.querySelector<HTMLElement>('.tp-session-badge')!;
+      const sessionText = root.querySelector<HTMLElement>('.tp-session-text')!;
+      const copyBtn = root.querySelector<HTMLButtonElement>('[data-copy-config]')!;
+
+      let toastTimer: ReturnType<typeof setTimeout> | null = null;
+
+      function showHexToast(hex: string) {
+        const prefix = hexToastEl.dataset.prefix || 'Copied:';
+        hexToastEl.textContent = `${prefix} ${hex}`;
+        hexToastEl.style.opacity = '1';
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          hexToastEl.style.opacity = '0';
+        }, 1600);
+      }
+
+      function renderVariants() {
+        const themeObj = THEMES[currentTheme];
+        variantsWrap.innerHTML = '';
+        Object.entries(themeObj.variants).forEach(([vKey, vSpec]) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.variant = vKey;
+          const active = vKey === currentVariant;
+          btn.className = active
+            ? 'tp-var-btn rounded-md border border-primary bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-foreground cursor-pointer transition'
+            : 'tp-var-btn rounded-md border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground cursor-pointer transition';
+          btn.textContent = vSpec.label;
+          btn.addEventListener('click', () => {
+            currentVariant = vKey;
+            renderAll();
+          });
+          variantsWrap.appendChild(btn);
+        });
+      }
+
+      function renderSwatches(palette: PaletteSpec) {
+        swatchesWrap.innerHTML = '';
+        palette.swatches.forEach((sw) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            'tp-swatch-btn group flex flex-col items-start rounded-md border border-border bg-background p-1.5 text-left hover:border-primary transition cursor-pointer';
+          btn.innerHTML = `
+            <span class="h-4 w-full rounded-xs border border-black/10 dark:border-white/10" style="background-color:${sw.hex}"></span>
+            <span class="mt-1 text-[10px] font-semibold text-foreground truncate w-full">${sw.label}</span>
+            <span class="text-[10px] font-mono text-muted-foreground">${sw.hex}</span>
+          `;
+          btn.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(sw.hex);
+              showHexToast(sw.hex);
+            } catch {
+              // ignore clipboard permission errors
+            }
+          });
+          swatchesWrap.appendChild(btn);
+        });
+      }
+
+      function renderAll() {
+        const themeObj = THEMES[currentTheme];
+        const palette = themeObj.variants[currentVariant];
+
+        // 1. 테마 탭 활성 상태
+        root.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((btn) => {
+          const isSel = btn.dataset.themeBtn === currentTheme;
+          btn.setAttribute('aria-selected', isSel ? 'true' : 'false');
+          btn.classList.toggle('border-primary', isSel);
+          btn.classList.toggle('bg-primary/10', isSel);
+          btn.classList.toggle('shadow-xs', isSel);
+          btn.classList.toggle('border-border', !isSel);
+          btn.classList.toggle('bg-muted/35', !isSel);
+        });
+
+        // 2. 위치 & 구분자 모드 속성 및 버튼 상태
+        root.dataset.posMode = currentPos;
+        root.dataset.sepMode = currentSep;
+
+        root.querySelectorAll<HTMLButtonElement>('.tp-pos-btn').forEach((btn) => {
+          const active = btn.dataset.pos === currentPos;
+          btn.classList.toggle('bg-muted', active);
+          btn.classList.toggle('font-semibold', active);
+          btn.classList.toggle('text-foreground', active);
+          btn.classList.toggle('font-medium', !active);
+          btn.classList.toggle('text-muted-foreground', !active);
+        });
+
+        root.querySelectorAll<HTMLButtonElement>('.tp-sep-btn').forEach((btn) => {
+          const active = btn.dataset.sep === currentSep;
+          btn.classList.toggle('bg-muted', active);
+          btn.classList.toggle('font-semibold', active);
+          btn.classList.toggle('text-foreground', active);
+          btn.classList.toggle('font-medium', !active);
+          btn.classList.toggle('text-muted-foreground', !active);
+        });
+
+        // 3. CSS 변수 적용
+        terminalEl.style.setProperty('--tp-bg', palette.bg);
+        terminalEl.style.setProperty('--tp-mantle', palette.mantle);
+        terminalEl.style.setProperty('--tp-surface', palette.surface);
+        terminalEl.style.setProperty('--tp-fg', palette.fg);
+        terminalEl.style.setProperty('--tp-muted', palette.muted);
+        terminalEl.style.setProperty('--tp-accent', palette.accent);
+        terminalEl.style.setProperty('--tp-accent-fg', palette.accentFg);
+        terminalEl.style.setProperty('--tp-secondary', palette.secondary);
+        terminalEl.style.setProperty('--tp-secondary-fg', palette.secondaryFg);
+        terminalEl.style.setProperty('--tp-green', palette.green);
+        terminalEl.style.setProperty('--tp-yellow', palette.yellow);
+        terminalEl.style.setProperty('--tp-peach', palette.peach);
+        terminalEl.style.setProperty('--tp-red', palette.red);
+        terminalEl.style.setProperty('--tp-cyan', palette.cyan);
+
+        winTitleEl.textContent = `ghostty — tmux · ${themeObj.title} (${palette.label})`;
+
+        // 4. Prefix 상태 반영
+        if (isPrefixActive) {
+          sessionBadge.style.backgroundColor = palette.peach;
+          sessionBadge.style.color = palette.accentFg;
+          sessionText.textContent = 'PREFIX';
+          prefixText.textContent = prefixBtn.dataset.labelActive || 'Prefix Active';
+          prefixDot.className = 'tp-prefix-dot h-2 w-2 rounded-full bg-amber-500 animate-pulse';
+          prefixBtn.classList.add('border-amber-500/70', 'bg-amber-500/10');
+        } else {
+          sessionBadge.style.backgroundColor = palette.green;
+          sessionBadge.style.color = palette.accentFg;
+          sessionText.textContent = 'work';
+          prefixText.textContent = prefixBtn.dataset.labelIdle || 'Simulate Prefix';
+          prefixDot.className = 'tp-prefix-dot h-2 w-2 rounded-full bg-emerald-500';
+          prefixBtn.classList.remove('border-amber-500/70', 'bg-amber-500/10');
+        }
+
+        // 5. 윈도우 탭 활성 상태
+        root.querySelectorAll<HTMLButtonElement>('.tp-win-tab').forEach((tab) => {
+          const isWin = tab.dataset.win === activeWin;
+          if (isWin) {
+            tab.style.backgroundColor = palette.accent;
+            tab.style.color = palette.accentFg;
+            tab.classList.add('font-bold');
+            tab.classList.remove('font-medium');
+          } else {
+            tab.style.backgroundColor = palette.surface;
+            tab.style.color = palette.fg;
+            tab.classList.remove('font-bold');
+            tab.classList.add('font-medium');
+          }
+        });
+
+        // 6. 분할 패인 활성 보더 상태
+        root.querySelectorAll<HTMLElement>('.tp-pane').forEach((pane) => {
+          const isAct = pane.dataset.pane === activePane;
+          const badge = pane.querySelector<HTMLElement>('.tp-pane-badge');
+          pane.style.borderColor = isAct ? palette.accent : palette.surface;
+          if (badge) {
+            badge.textContent = isAct ? 'ACTIVE PANE' : pane.dataset.pane === 'left' ? 'PANE 1' : 'PANE 2';
+            badge.style.color = isAct ? palette.accent : palette.muted;
+            badge.style.opacity = isAct ? '1' : '0.65';
+          }
+        });
+
+        // 7. 플레이버 버튼, 스와치, .tmux.conf 스니펫 갱신
+        renderVariants();
+        renderSwatches(palette);
+        codeOutputEl.textContent = themeObj.buildConfig({
+          variant: currentVariant,
+          pos: currentPos,
+          sep: currentSep,
+          lang,
+        });
+      }
+
+      // 이벤트 바인딩
+      root.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const next = btn.dataset.themeBtn;
+          if (!next || !THEMES[next]) return;
+          currentTheme = next;
+          currentVariant = Object.keys(THEMES[currentTheme].variants)[0];
+          renderAll();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.tp-pos-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          currentPos = btn.dataset.pos === 'top' ? 'top' : 'bottom';
+          renderAll();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.tp-sep-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const s = btn.dataset.sep;
+          currentSep = s === 'powerline' || s === 'flat' ? s : 'rounded';
+          renderAll();
+        });
+      });
+
+      prefixBtn.addEventListener('click', () => {
+        isPrefixActive = !isPrefixActive;
+        renderAll();
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.tp-win-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          activeWin = tab.dataset.win || '1';
+          renderAll();
+        });
+      });
+
+      root.querySelectorAll<HTMLElement>('.tp-pane').forEach((pane) => {
+        pane.addEventListener('click', () => {
+          activePane = pane.dataset.pane === 'right' ? 'right' : 'left';
+          renderAll();
+        });
+      });
+
+      let copyTimer: ReturnType<typeof setTimeout> | null = null;
+      copyBtn.addEventListener('click', async () => {
+        const snippet = codeOutputEl.textContent || '';
+        try {
+          await navigator.clipboard.writeText(snippet);
+          copyBtn.textContent = copyBtn.dataset.labelCopied || 'Copied ✓';
+          if (copyTimer) clearTimeout(copyTimer);
+          copyTimer = setTimeout(() => {
+            copyBtn.textContent = copyBtn.dataset.labelIdle || 'Copy';
+          }, 1600);
+        } catch {
+          // ignore clipboard permission errors
+        }
+      });
+
+      renderAll();
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initTmuxPreviews)
+    : initTmuxPreviews();
+  document.addEventListener('astro:page-load', initTmuxPreviews);
+</script>

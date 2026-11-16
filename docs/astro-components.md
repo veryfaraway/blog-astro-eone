@@ -328,6 +328,24 @@ import EvHybridCalculator from '@/components/EvHybridCalculator.astro';
 
 ---
 
+#### `TmuxThemePreview.astro`
+
+tmux 대중 테마 TOP 5(`Catppuccin` v2 · `Tokyo Night` · `Dracula` · `Nord` · `Gruvbox`)와 플러그인 없는 순정 `.tmux.conf` 커스텀까지 총 6종의 터미널·상태바 색감과 설정 스니펫을 실시간 비교하는 인터랙티브 시뮬레이터. 한/영(`lang="ko" | "en"`) 다국어 라벨, 서브 플레이버 전환, 상태바 상·하단/구분자 모양 토글, Prefix 키 점등 시뮬레이션, 공식 Hex 스와치 복사 및 `.tmux.conf` 원클릭 복사를 지원한다 (`tmux-theme-top5.mdx`).
+
+```mdx
+import TmuxThemePreview from '@/components/TmuxThemePreview.astro';
+
+<TmuxThemePreview lang="ko" />
+<TmuxThemePreview lang="en" defaultTheme="tokyo-night" />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `lang` | `'ko' \| 'en'` | `'ko'` | UI 라벨 및 생성 주석 언어 |
+| `defaultTheme` | `'catppuccin' \| 'tokyo-night' \| 'dracula' \| 'nord' \| 'gruvbox' \| 'minimal'` | `'catppuccin'` | 초기 선택 테마 |
+
+---
+
 #### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro` / `DolbyCinemaSeatMap.astro`
 
 특별관 좌석 판별 포스트 전용 인터랙티브 좌석 배치도 컴포넌트 (Props 없음).
