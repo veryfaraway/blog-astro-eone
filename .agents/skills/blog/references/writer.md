@@ -71,10 +71,20 @@
       - 주요 등장인물·제작진 섹션에 `<div class="flex flex-wrap gap-3">`로 감싼 `<PersonCard name="이름" role="역할" imdbId="nmXXXXXXX" />` 배치
       - 본문 문장 내 인물 언급 시 `<PersonInline name="이름" role="역할" imdbId="nmXXXXXXX" />` 활용
       - 공식 예고편이나 핵심 클립이 있을 때 `<YouTubeEmbed id="영상ID" title="영상 제목" />` 삽입
+    - **도서·장소 (`culture`, `life` 등)**:
+      - 도서 소개·추천 시 `<BookCard title="제목" isbn13="97911..." comment="추천 이유" />` 활용 (카카오 API + Google Books 하이브리드)
+      - 상영관·여행지·오프라인 명소 안내 시 `<PlaceCard name="장소명" category="..." address="..." info="..." />` 활용
+    - **주식·프로야구 (`money`, `life`, `culture` 등)**:
+      - 종목 소개 시 `<StockCard ticker="NVDA" sector="..." comment="..." />`, 문장 내 언급 시 `<StockInline ticker="SCHD" name="슈드" />` 활용
+      - 야구 선수 소개 시 `<BaseballPlayerCard name="선수명" ... />` (MLB는 `mlbId` 자동 조회, KBO는 `team`·`number`·`stats`·`kboId` 조합), 문장 내 언급 시 `<PlayerInline>` 활용
+    - **개발·오픈소스·앱 (`dev`, `tools` 등)**:
+      - 오픈소스 저장소 소개 시 `<GitHubRepoCard repo="owner/repo" />`
+      - 앱·CLI 유틸리티 소개 시 `<AppCard name="앱 이름" platform="macOS" href="..." brew="..." />` (`appStoreId` 지정 시 아이콘·평점 자동 조회)
+      - 주요 외부 문서·아티클 단독 인용 시 `<LinkPreviewCard url="https://..." />`
     - **데이터/시간대/이미지 그리드**:
       - 통계·수치 비교는 `<Chart type="bar|line|pie|doughnut|radar" data={...} caption="..." />`
       - 24시간 기준 시간대 안내(증시 시간, 일과표 등)는 `<ClockChart segments={[...]} caption="..." />`
-      - 2～4장의 비교·연속 이미지는 `<ImageRow cols={2} caption="...">`로 배치
+      - 본문 개념 일러스트·실사 사진은 `<CloudinaryImage publicId="posts/..." width={...} height={...} alt="구체적인 설명" />`로 삽입하며(`width`/`height` 동시 지정으로 CLS 방지 필수), 2～4장의 비교·연속 이미지는 `<ImageRow cols={2} caption="...">` 안에 `<CloudinaryImage>`를 배치합니다 (아직 업로드 전 슬롯이라면 오케스트레이터가 전달한 예정 `publicId` 또는 명확한 위치 마커를 배치)
     - **제휴/상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수 추가):
       - `<AffiliateLink href="..." provider="coupang|amazon|11st|other" />`
       - `<CoupangProductCard href="..." title="..." />` (`href` 직접 지정 기본)
@@ -99,16 +109,24 @@ tags:
   - "related-keyword"
 draft: false
 lang: ko
-thumbnail: "/images/posts/YYYY/slug-thumbnail.jpg"
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/{섹션}/YYYY/slug/thumbnail"
 ---
 
 import Alert from '@/components/Alert.astro';
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
 본문 첫 단락. 독자의 문제 상황을 즉시 짚고 메인 키워드를 자연스럽게 노출하는 훅.
 
 ## 문제의 본질 / 원인 분석
 
 설명...
+
+<CloudinaryImage
+  publicId="posts/{섹션}/YYYY/slug/fig-01-overview"
+  width={1408}
+  height={768}
+  alt="핵심 개념의 동작 원리를 직관적으로 보여주는 일러스트"
+/>
 
 <Alert type="warning" title="주의">
 실무에서 자주 놓치는 포인트나 주의할 점.
@@ -125,9 +143,11 @@ pnpm add @astrojs/check
 
 ### 주의 사항 (파싱 에러 원천 방지):
 - **Import 배치 및 미사용 금지**: MDX 컴포넌트 import는 반드시 frontmatter 바로 아래, 본문 시작 전에 위치해야 하며 사용하지 않는 import는 남기지 않습니다.
-- **썸네일 확장자 일치**: `thumbnail` 경로의 확장자(`.jpg`, `.png`, `.webp`)는 `public/images/posts/{연도}/`에 실제 저장되는 파일 확장자와 정확히 일치해야 합니다 (`image-generator` 산출물은 주로 `.jpg`).
+- **Cloudinary 이미지 및 썸네일 규격**:
+  - `thumbnail` frontmatter는 카카오톡·슬랙 등 OG 크롤러 호환성을 위해 `https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/{섹션}/{연도}/{slug}/thumbnail` 형식을 기본으로 사용합니다(오프라인 폴백 시에만 `/images/posts/` 로컬 경로 및 실제 확장자 일치 확인).
+  - `<CloudinaryImage>`는 CLS 방지를 위해 업로드 응답의 실제 `width`와 `height` 숫자를 반드시 함께 넣습니다.
 - **Shiki 언어 태그**: 코드 블록에는 Shiki가 인식하는 소문자 표준 식별자(`typescript`, `tsx`, `java`, `bash`, `astro`, `json`, `yaml`, `mermaid` 등)만 사용합니다.
-- **폐기 컴포넌트 사용 금지**: `Callout.astro`와 알라딘 OpenAPI 종료(2026.10.30)로 동작하지 않는 `BookCard.astro`는 절대 쓰지 말고 강조 박스는 `Alert.astro`를 사용합니다.
+- **폐기 컴포넌트 사용 금지**: `Callout.astro`는 절대 쓰지 말고 강조 박스는 `Alert.astro`를 사용합니다.
 - **물결표(`~`) 취소선 오인 주의**: 마크다운(GFM) 파서가 문단 내 연속된 ASCII 물결표(`~`)를 취소선(`<del>`)으로 오인하지 않도록, 날짜·기간·수치 범위(예: `1～2주`, `3～5월`, `20～30대`) 표기 시 반드시 **전각 물결표(`～`)** 또는 대시(`–`)를 사용합니다(코드 블록/인라인 코드 제외).
 - **볼드(`**`)·이탤릭(`*`) 내 괄호(`()`) 및 따옴표(`""`, `''`) 뒤 한글 조사 주의**:
   - `**단어(설명)**는`뿐 아니라 `*"인용문"*는`, `**'단어'**가`처럼 닫는 구두점(`)`, `"`, `'`) 바로 뒤에 공백 없이 한글 조사가 붙으면 CommonMark 우측 단어 경계(right-flanking delimiter) 규칙에 걸려 `**`나 `*`가 파싱되지 않고 화면에 그대로 노출됩니다.

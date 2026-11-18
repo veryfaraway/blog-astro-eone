@@ -80,6 +80,7 @@ SYNONYM_GROUPS: List[Tuple[str, ...]] = [
     ("코돌비", "코엑스 돌비", "코엑스 돌비시네마", "coex dolby"),
     ("남돌비", "남양주 돌비", "남양주 돌비시네마", "namyangju dolby"),
     ("로튼토마토", "로튼 토마토", "rotten tomatoes", "rotten-tomatoes"),
+    ("스타워즈", "스타 워즈", "star wars", "star-wars"),
     ("루미큐브", "rummikub"),
     ("밴드오브브라더스", "밴드 오브 브라더스", "band of brothers"),
     # 개발 / AI / 후원 / 결제 (dev)

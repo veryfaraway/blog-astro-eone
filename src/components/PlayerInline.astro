@@ -1,0 +1,78 @@
+---
+import { resolveBaseballTeam } from '../lib/baseball-teams';
+
+interface Props {
+  /** 선수 이름 */
+  name: string;
+  /** 소속 구단 코드 또는 한글명 (예: "KIA", "삼성", "SF") */
+  team?: string;
+  /** 등번호 (예: 5, 51) */
+  number?: number | string;
+  /** 포지션 (선택, 예: "3B", "CF") */
+  position?: string;
+  /** 투수 여부 (kboId 링크 분기용) */
+  role?: 'hitter' | 'pitcher';
+  /** KBO 공식 기록실 ID */
+  kboId?: string | number;
+  /** MLB 공식 ID */
+  mlbId?: string | number;
+  /** 외부 링크 직접 지정 */
+  profileUrl?: string;
+}
+
+const { name, team, number, position, role, kboId, mlbId, profileUrl } = Astro.props;
+
+const leagueHint = mlbId !== undefined ? 'MLB' : kboId !== undefined ? 'KBO' : undefined;
+const teamTheme = resolveBaseballTeam(team, leagueHint);
+const numStr = number !== undefined ? String(number).replace(/^#/, '') : undefined;
+
+const isPitcher = role === 'pitcher' || position === 'P' || position === 'SP' || position === 'RP';
+const kboSection = isPitcher ? 'PitcherDetail' : 'HitterDetail';
+
+const href =
+  profileUrl ??
+  (kboId !== undefined
+    ? `https://www.koreabaseball.com/Record/Player/${kboSection}/Basic.aspx?playerId=${encodeURIComponent(String(kboId))}`
+    : mlbId !== undefined
+      ? `https://www.mlb.com/player/${encodeURIComponent(String(mlbId))}`
+      : undefined);
+
+const metaParts = [team ? teamTheme.shortKo : undefined, position].filter(Boolean).join(' · ');
+---
+
+<span
+  class="player-inline not-prose inline-flex items-center gap-1 align-middle"
+  style={`--team-light: ${teamTheme.accentLight}; --team-dark: ${teamTheme.accentDark};`}
+>
+  <span class="player-chip inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1 font-mono text-[10px] font-bold">
+    {numStr ? `#${numStr}` : [...name][0]}
+  </span>
+
+  {href ? (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-medium text-foreground underline underline-offset-2 hover:opacity-75"
+    >
+      {name}
+    </a>
+  ) : (
+    <span class="font-medium text-foreground">{name}</span>
+  )}
+
+  {metaParts && <span class="text-xs text-muted-foreground">({metaParts})</span>}
+</span>
+
+<style>
+  .player-inline {
+    --team-accent: var(--team-light);
+  }
+  :global(.dark) .player-inline {
+    --team-accent: var(--team-dark);
+  }
+  .player-chip {
+    background-color: color-mix(in srgb, var(--team-accent) 14%, transparent);
+    color: var(--team-accent);
+  }
+</style>

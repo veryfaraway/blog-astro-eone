@@ -1,126 +1,320 @@
 ---
 interface Props {
+  /** 도서 제목 (API 미조회·실패 시 폴백으로도 사용) */
   title: string;
-  isbn13: string;
+  /** ISBN13 또는 ISBN10 (하이픈 유무 무관, 비워두면 API 조회를 건너뛰고 수동 Props만 표시) */
+  isbn13?: string;
+  /** 저자 수동 지정 (지정 시 API 조회값보다 우선) */
+  author?: string;
+  /** 출판사 수동 지정 */
+  publisher?: string;
+  /** 표지 이미지 URL 수동 지정 */
+  cover?: string;
+  /** 판매가/정가 수동 지정 (숫자 입력 시 원화 포맷, 문자열 입력 시 그대로 표시) */
+  price?: number | string;
+  /** 카드 하단 전체 폭으로 표시할 짧은 추천 코멘트 (2~3문장 이내 권장) */
   comment?: string;
+  /** 알라딘 상품 링크 (직접 지정 시 우선, 생략 시 ISBN 기반 일반 도서 정보 링크 제공) */
   aladinHref?: string;
+  /** 교보문고 상품 링크 (선택) */
+  kyoboHref?: string;
+  /** 예스24 상품 링크 (선택) */
+  yes24Href?: string;
+  /** 쿠팡 파트너스 제휴 링크 (선택 — 사용 시 포스트 frontmatter에 affiliate: true 권장) */
   coupangHref?: string;
+  /** 추가 래퍼 클래스 */
+  class?: string;
 }
 
-interface AladinItem {
-  title: string;
-  author: string;
-  publisher: string;
-  cover: string;
-  priceSales: number;
-  customerReviewRank: number;
-  link: string;
+interface BookMeta {
+  title?: string;
+  author?: string;
+  publisher?: string;
+  pubYear?: string;
+  cover?: string;
+  price?: number;
+  infoUrl?: string;
 }
 
-interface AladinResponse {
-  item?: AladinItem[];
+interface KakaoBookResponse {
+  documents?: Array<{
+    title?: string;
+    authors?: string[];
+    translators?: string[];
+    publisher?: string;
+    datetime?: string;
+    price?: number;
+    sale_price?: number;
+    thumbnail?: string;
+    url?: string;
+  }>;
 }
 
-const { title, isbn13, comment, aladinHref, coupangHref } = Astro.props;
+interface GoogleBooksResponse {
+  items?: Array<{
+    volumeInfo?: {
+      title?: string;
+      authors?: string[];
+      publisher?: string;
+      publishedDate?: string;
+      infoLink?: string;
+      imageLinks?: {
+        thumbnail?: string;
+        smallThumbnail?: string;
+      };
+    };
+  }>;
+}
 
-const ttbKey = import.meta.env.PUBLIC_ALADIN_TTB_KEY;
-let book: AladinItem | null = null;
+const g = globalThis as unknown as {
+  __bookMetaCache?: Map<string, Promise<BookMeta | null>>;
+};
+const bookCache = (g.__bookMetaCache ??= new Map());
 
-// 알라딘 API는 존재하지 않는 ISBN13에도 검증 없이 엉뚱한 상품을 반환하는 경우가 있어
-// isbn13이 비어 있으면(자리만 잡아둔 상태) fetch 자체를 건너뛴다.
-if (ttbKey && isbn13) {
+function upgradeKakaoThumb(url?: string): string | undefined {
+  if (!url) return undefined;
+  return url.replace('/R120x174', '/R240x348').replace(/^http:\/\//i, 'https://');
+}
+
+async function fetchKakaoBook(isbn: string, apiKey: string): Promise<BookMeta | null> {
   try {
-    // includeKey=1 → 응답 link 필드에 TTBKey가 자동 포함되어 그 자체로 제휴 링크가 됨
-    const url = `http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${ttbKey}&itemIdType=ISBN13&ItemId=${isbn13}&output=js&Version=20131101&Cover=Big&includeKey=1`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data: AladinResponse = await res.json();
-      if (data.item?.length) book = data.item[0];
-    }
+    const res = await fetch(
+      `https://dapi.kakao.com/v3/search/book?target=isbn&query=${encodeURIComponent(isbn)}`,
+      {
+        headers: { Authorization: `KakaoAK ${apiKey}` },
+        signal: AbortSignal.timeout(4000),
+      }
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as KakaoBookResponse;
+    const doc = data.documents?.[0];
+    if (!doc) return null;
+
+    const authors = doc.authors?.filter(Boolean) ?? [];
+    const translators = doc.translators?.filter(Boolean) ?? [];
+    const authorText =
+      authors.length > 0
+        ? translators.length > 0
+          ? `${authors.join(', ')} (${translators.join(', ')} 옮김)`
+          : authors.join(', ')
+        : undefined;
+
+    const effectivePrice =
+      typeof doc.sale_price === 'number' && doc.sale_price > 0
+        ? doc.sale_price
+        : typeof doc.price === 'number' && doc.price > 0
+          ? doc.price
+          : undefined;
+
+    return {
+      title: doc.title,
+      author: authorText,
+      publisher: doc.publisher || undefined,
+      pubYear: doc.datetime ? doc.datetime.slice(0, 4) : undefined,
+      cover: upgradeKakaoThumb(doc.thumbnail),
+      price: effectivePrice,
+      infoUrl: doc.url,
+    };
   } catch {
-    // fetch 실패 → graceful degradation
+    return null;
   }
 }
 
-const displayTitle = book?.title ?? title;
-const author        = book?.author;
-const publisher     = book?.publisher;
-const cover         = book?.cover;
-const price         = book?.priceSales;
-// 알라딘 customerReviewRank는 0~10(0.5 단위) 스케일 → 5점 만점으로 환산
-const rating = book?.customerReviewRank ? (book.customerReviewRank / 2).toFixed(1) : undefined;
-// 알라딘 API는 JSON 응답에서도 link의 '&'를 '&amp;'로 잘못 이스케이프해서 내려줌
-// → 그대로 쓰면 ttbkey/partner 파라미터명이 깨져 제휴 추적이 안 되므로 복원 필요
-const purchaseLink = aladinHref ?? book?.link?.replace(/&amp;/g, '&');
+async function fetchGoogleBook(isbn: string): Promise<BookMeta | null> {
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(isbn)}`,
+      { signal: AbortSignal.timeout(4000) }
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as GoogleBooksResponse;
+    const info = data.items?.[0]?.volumeInfo;
+    if (!info) return null;
+
+    const rawThumb = info.imageLinks?.thumbnail ?? info.imageLinks?.smallThumbnail;
+    const secureCover = rawThumb ? rawThumb.replace(/^http:\/\//i, 'https://') : undefined;
+
+    return {
+      title: info.title,
+      author: info.authors?.length ? info.authors.join(', ') : undefined,
+      publisher: info.publisher,
+      pubYear: info.publishedDate?.slice(0, 4),
+      cover: secureCover,
+      infoUrl: info.infoLink,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function resolveBookByIsbn(rawIsbn: string): Promise<BookMeta | null> {
+  if (!bookCache.has(rawIsbn)) {
+    bookCache.set(
+      rawIsbn,
+      (async () => {
+        const kakaoKey =
+          import.meta.env.KAKAO_REST_API_KEY ||
+          import.meta.env.PUBLIC_KAKAO_REST_API_KEY ||
+          process.env.KAKAO_REST_API_KEY;
+
+        // 1순위: 카카오 책 검색 API (국내 도서 커버리지 최상)
+        if (kakaoKey) {
+          const kakao = await fetchKakaoBook(rawIsbn, kakaoKey);
+          if (kakao) return kakao;
+        }
+
+        // 2순위: Google Books 무인증 조회 (해외 원서 및 키 미설정 환경 폴백)
+        return await fetchGoogleBook(rawIsbn);
+      })()
+    );
+  }
+  return bookCache.get(rawIsbn)!;
+}
+
+const {
+  title,
+  isbn13 = '',
+  author: manualAuthor,
+  publisher: manualPublisher,
+  cover: manualCover,
+  price: manualPrice,
+  comment,
+  aladinHref,
+  kyoboHref,
+  yes24Href,
+  coupangHref,
+  class: className,
+} = Astro.props;
+
+const cleanIsbn = isbn13.replace(/[-\s]/g, '').trim();
+const isValidIsbn = /^(?:\d{10}|\d{13}|\d{9}[\dXx])$/.test(cleanIsbn);
+
+const fetched = isValidIsbn ? await resolveBookByIsbn(cleanIsbn) : null;
+
+const displayTitle = title || fetched?.title || '도서 정보';
+const displayAuthor = manualAuthor ?? fetched?.author;
+const displayPublisher = manualPublisher ?? fetched?.publisher;
+const pubYear = fetched?.pubYear;
+const displayCover = manualCover ?? fetched?.cover;
+
+const formattedPrice =
+  manualPrice !== undefined
+    ? typeof manualPrice === 'number'
+      ? `${manualPrice.toLocaleString('ko-KR')}원`
+      : manualPrice
+    : fetched?.price !== undefined && fetched.price > 0
+      ? `${fetched.price.toLocaleString('ko-KR')}원`
+      : undefined;
+
+// 우측 구매·정보 버튼 목록 구성 (지정된 서점 링크 우선, 아무 링크도 없고 ISBN만 있으면 알라딘 ISBN 상세페이지 제공)
+interface ActionBtn {
+  label: string;
+  subText: string;
+  href: string;
+  badgeBg: string;
+  isAffiliate?: boolean;
+}
+
+const actions: ActionBtn[] = [];
+if (aladinHref) {
+  actions.push({ label: '알라딘', subText: '보러가기', href: aladinHref, badgeBg: '#2F9DDC', isAffiliate: true });
+}
+if (kyoboHref) {
+  actions.push({ label: '교보문고', subText: '보러가기', href: kyoboHref, badgeBg: '#474C98' });
+}
+if (yes24Href) {
+  actions.push({ label: 'YES24', subText: '보러가기', href: yes24Href, badgeBg: '#196AB3' });
+}
+if (coupangHref) {
+  actions.push({ label: '쿠팡', subText: '구매하기', href: coupangHref, badgeBg: '#E94B22', isAffiliate: true });
+}
+
+if (actions.length === 0 && isValidIsbn) {
+  const isKoreanIsbn = cleanIsbn.startsWith('97889') || cleanIsbn.startsWith('97911');
+  actions.push(
+    isKoreanIsbn
+      ? {
+          label: '알라딘',
+          subText: '도서 정보',
+          href: `https://www.aladin.co.kr/shop/wproduct.aspx?ISBN=${encodeURIComponent(cleanIsbn)}`,
+          badgeBg: '#2F9DDC',
+        }
+      : {
+          label: '교보문고',
+          subText: '도서 검색',
+          href: `https://search.kyobobook.co.kr/search?keyword=${encodeURIComponent(cleanIsbn)}`,
+          badgeBg: '#474C98',
+        }
+  );
+}
 ---
 
-<div class="not-prose my-6 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm">
-  <!-- 1행: (표지 + 정보) | 구매 버튼 -->
-  <div class="flex items-stretch gap-4">
-    <!-- Cover -->
-    <div class="flex h-32 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-2xl">
-      {cover
-        ? <img src={cover} alt={`${displayTitle} 표지`} class="h-full w-full object-cover" loading="lazy" />
-        : '📖'
-      }
-    </div>
-
-    <!-- Info -->
-    <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
-      <h3 class="line-clamp-2 font-semibold leading-snug text-foreground">{displayTitle}</h3>
-
-      <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-        {rating && (
-          <span class="flex items-center gap-0.5 font-semibold text-amber-500 dark:text-amber-400">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            {rating}
-          </span>
+<div class:list={['@container not-prose my-6 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm', className]}>
+  <!-- 1행: (표지 + 도서 메타데이터) | 서점·구매 버튼 -->
+  <div class="flex flex-col gap-4 @[480px]:flex-row @[480px]:items-stretch">
+    <div class="flex min-w-0 flex-1 items-center gap-4">
+      <!-- Cover -->
+      <div class="flex h-28 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted text-2xl shadow-2xs">
+        {displayCover ? (
+          <img
+            src={displayCover}
+            alt={`${displayTitle} 표지`}
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          '📖'
         )}
-        {author && <span>{author}</span>}
-        {publisher && <span>{publisher}</span>}
       </div>
 
-      {price !== undefined && price > 0 && (
-        <p class="text-sm font-semibold text-foreground">{price.toLocaleString()}원</p>
-      )}
+      <!-- Info -->
+      <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+        <h3 class="line-clamp-2 text-sm font-semibold leading-snug text-foreground @[480px]:text-base">
+          {displayTitle}
+        </h3>
+
+        {(displayAuthor || displayPublisher || pubYear) && (
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+            {displayAuthor && <span class="line-clamp-1">{displayAuthor}</span>}
+            {displayPublisher && <span>· {displayPublisher}</span>}
+            {pubYear && <span class="font-mono text-[11px]">({pubYear})</span>}
+          </div>
+        )}
+
+        {formattedPrice && (
+          <p class="font-mono text-sm font-semibold tabular-nums text-foreground">
+            {formattedPrice}
+          </p>
+        )}
+      </div>
     </div>
 
-    <!-- Buttons: 폭 고정 컬럼으로 오른쪽에 세로 배치 (버튼 2개뿐이라 하단 여백을 채우는 대신 옆으로) -->
-    {(purchaseLink || coupangHref) && (
-      <div class="flex w-24 shrink-0 flex-col justify-center gap-2 border-l border-border pl-4">
-        {/* 두 버튼은 동일한 스타일(아웃라인)로 대등하게 배치 — 배지 색상만 브랜드사 실제 컬러를 반영해 구분 */}
-        {purchaseLink && (
+    <!-- 우측(좁은 폭에서는 하단 가로열): 서점/구매 버튼 -->
+    {actions.length > 0 && (
+      <div class="flex shrink-0 flex-row gap-2 border-t border-border pt-3 @[480px]:w-26 @[480px]:flex-col @[480px]:justify-center @[480px]:border-l @[480px]:border-t-0 @[480px]:pl-4 @[480px]:pt-0">
+        {actions.map((btn) => (
           <a
-            href={purchaseLink}
+            href={btn.href}
             target="_blank"
-            rel="noopener noreferrer nofollow"
-            class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+            rel={btn.isAffiliate ? 'noopener noreferrer nofollow' : 'noopener noreferrer'}
+            class="flex flex-1 flex-row items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted @[480px]:flex-initial @[480px]:flex-col @[480px]:gap-1 @[480px]:px-2"
           >
-            <span class="rounded bg-[#2F9DDC] px-1.5 py-0.5 text-[9px] font-bold text-white">알라딘</span>
-            구매하기
+            <span
+              class="rounded px-1.5 py-0.5 text-[9px] font-bold text-white"
+              style={`background-color: ${btn.badgeBg};`}
+            >
+              {btn.label}
+            </span>
+            <span>{btn.subText}</span>
           </a>
-        )}
-        {coupangHref && (
-          <a
-            href={coupangHref}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            class="flex w-full flex-col items-center gap-1 rounded-md border border-border px-2 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-          >
-            <span class="rounded bg-[#E94B22] px-1.5 py-0.5 text-[9px] font-bold text-white">쿠팡</span>
-            구매하기
-          </a>
-        )}
+        ))}
       </div>
     )}
   </div>
 
-  <!-- 2행: comment — 카드 전체 폭을 가로지른다(1행 전체 컬럼을 span하는 효과).
-       좁은 가운데 컬럼에 두면 3줄로 접히면서 잘리고 버튼 컬럼 아래는 비어 보여서 행을 분리했다. -->
+  <!-- 2행: 추천 코멘트 (카드 전체 폭) -->
   {comment && (
-    <p class="mt-3 border-t border-border pt-3 text-sm leading-relaxed text-foreground">
+    <p class="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
       {comment}
     </p>
   )}

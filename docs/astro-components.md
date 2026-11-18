@@ -428,42 +428,231 @@ import PersonInline from '@/components/PersonInline.astro';
 
 ---
 
-#### `BookCard.astro` (⚠️ 신규 사용 금지 — 알라딘 OpenAPI 서비스 종료)
+#### `BookCard.astro`
 
-> **⚠️ 2026년 10월 30일 자로 알라딘 OpenAPI(TTB Key) 서비스가 공식 전면 종료되었습니다.** (신규 키 발급 종료: 2026.09.04 / 전체 API 종료: 2026.10.30). 이에 따라 `BookCard.astro`의 알라딘 도서 정보 조회 및 제휴 링크 자동 생성이 더 이상 동작하지 않으므로 **신규 포스트에서는 `BookCard.astro`를 사용하지 마세요.** 기존 포스트 호환(title 폴백 렌더링) 목적으로만 컴포넌트 파일이 유지됩니다.
+도서 정보 카드 (**3단 하이브리드 구조**: ① 카카오 책 검색 REST API → ② Google Books 무인증 API 폴백 → ③ 수동 Props 오버라이드).
 
-도서 정보 카드. 알라딘 Open API로 표지·저자·출판사·가격·평점을 빌드 타임에 fetch. API 요청에 `includeKey=1`을 붙여 응답 `link`에 TTBKey가 자동 포함된 제휴 링크를 그대로 받아오므로, 대시보드에서 책마다 수동으로 "링크 만들기"를 할 필요가 없다. API 키 없거나 fetch 실패 시 title만 표시(폴백).
+> **환경변수 (선택 권장)**: `KAKAO_REST_API_KEY` ([Kakao Developers](https://developers.kakao.com)에서 심사 없이 즉시 발급, 일 30,000건 무료).
+> - 키가 설정되어 있으면 국내 신간·번역서·전문서의 고화질 표지·저자·역자·출판사·판매가를 빌드 타임에 자동 완성하며, 기존 포스트들의 `isbn13` 기반 카드도 코드 수정 없이 동작한다.
+> - 키가 없거나 해외 원서 ISBN인 경우 자동으로 **Google Books API**로 폴백하며, 모든 API 조회가 실패하거나 `isbn13`을 비워둔 경우에도 `title`·`author`·`cover` 등 수동 Props와 `📖` 아이콘으로 안전하게 렌더링된다.
+> - *(이력: 기존 알라딘 OpenAPI가 2026.10.30 전면 종료됨에 따라 카카오 + Google Books + 수동 폴백 하이브리드 구조로 리뉴얼됨)*
 
-레이아웃은 **2행 구성**이다. 1행은 표지(왼쪽) · 제목/평점/저자/가격(가운데, 가변폭) · 구매 버튼(오른쪽, 폭 고정 컬럼에 세로 스택), 2행은 `comment`가 카드 전체 폭을 가로지른다(1행의 모든 컬럼을 span하는 효과). 버튼이 최대 2개뿐이라 하단에 별도 행으로 두면 여백이 휑해서 오른쪽 고정폭 컬럼으로 옮겼고, `comment`는 좁은 가운데 컬럼에 두면 3줄로 접히며 잘리는 반면 버튼 컬럼 아래는 비어 보여서 아예 행을 분리했다. `comment`가 없으면 1행만 렌더링되므로 기존과 동일한 한 줄짜리 카드다. 알라딘/쿠팡 버튼은 동일한 아웃라인 스타일로 대등하게 배치하고, 배지 색상만 각사 실제 브랜드 컬러(알라딘 `#2F9DDC`, 쿠팡 `#E94B22`)로 구분해 어느 한쪽이 "주" 버튼처럼 보이지 않게 했다 — 두 링크를 나란히 두면 독자가 이미 쓰던 플랫폼으로 갈 수 있어 전환율에 유리하다 (도서정가제로 가격은 어느 쪽이든 동일). 카드 자체에는 면책 문구가 없으므로, 구매 링크를 실제로 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것 (money 섹션이 아니어도 동작함).
-
-`comment` prop으로 "왜 이 책을 추천하는지" 짧은 코멘트를 카드 안에 넣을 수 있다 — 목록에서 책 소개를 반복 서술하지 않고 카드 하나로 정보를 통일할 때 유용하다 (예: "1. 『제목』" + 그 아래 `comment`로 추천 이유가 담긴 `BookCard`).
-
-**분권(상/하, 1권/2권) 도서**는 BookCard 하나로 표현할 수 없으므로, `<div class="grid gap-3 md:grid-cols-2 items-start">`로 감싸 두 개를 나란히 배치한다. `comment`는 대표(1권) 카드에만 넣고 나머지는 짧게 안내만 하면 중복을 피할 수 있다. 이때 `items-start`가 없으면 comment가 있는 카드의 높이에 맞춰 옆 카드가 늘어나면서 아래쪽에 빈 공간이 생기므로 반드시 함께 붙일 것.
-
-> **주의**: 알라딘 API는 존재하지 않는 ISBN13을 넣어도 검증 없이 관련 없는 상품을 반환하는 경우가 있다(예: `0000000000000` → 전혀 다른 중고책). 아직 정확한 ISBN13을 모를 때는 값을 넣지 말고 **비워둘 것**(`isbn13=""`) — 컴포넌트가 fetch 자체를 건너뛰고 `title`만 표시하는 안전한 폴백으로 동작한다.
-
-> **환경변수**: `PUBLIC_ALADIN_TTB_KEY` 필요. 알라딘 회원가입 후 '나의 계정 > TTB/API > TTB 사이트/블로그 등록관리'에서 발급 (승인 1~2일 소요).
+레이아웃은 **2행 구성**이다(`@container` 반응형 대응). 1행은 표지(왼쪽) · 제목/저자/출판사/가격(가운데) · 서점/구매 버튼(오른쪽 세로 스택, 좁은 폭에서는 하단 가로열), 2행은 `comment`가 카드 전체 폭을 가로지른다. 서점 링크(`aladinHref`·`kyoboHref`·`yes24Href`·`coupangHref`)를 하나도 넘기지 않아도 유효한 `isbn13`이 있으면 국내 도서는 알라딘 ISBN 상세페이지, 해외 도서는 교보문고 검색 링크 버튼을 기본 제공한다. 쿠팡 파트너스(`coupangHref`) 등 제휴 링크를 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것.
 
 ```mdx
 import BookCard from '@/components/BookCard.astro';
 
 <BookCard title="나미야 잡화점의 기적" isbn13="9788901194492" />
 <BookCard
-  title="나미야 잡화점의 기적"
-  isbn13="9788901194492"
-  comment="추리물이라기보다 따뜻한 판타지에 가까워 입문용으로 좋다."
-  aladinHref="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=...&partner=TTBKey"
+  title="돈의 심리학"
+  isbn13="9791157844685"
+  comment="투자 수익률은 지능지수보다 시간과 복리를 대하는 태도에서 갈린다는 점을 담백하게 짚어준다."
+  kyoboHref="https://search.kyobobook.co.kr/search?keyword=9791157844685"
   coupangHref="https://link.coupang.com/..."
 />
 ```
 
 | Prop | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
-| `title` | `string` | — | 도서 제목 (API 실패 시 폴백으로 사용) |
-| `isbn13` | `string` | — | ISBN13 (하이픈 없이 13자리). 모르면 빈 문자열로 두면 fetch를 건너뛰고 title만 표시(안전한 폴백) |
-| `comment` | `string` | — | 카드 하단 행에 카드 전체 폭으로 표시할 짧은 추천 코멘트 (말줄임 없이 전부 노출되므로 2~3문장 이내로) |
-| `aladinHref` | `string` | API의 `link`(TTBKey 자동 포함) | 특정 링크로 강제 지정하고 싶을 때만 사용. 보통 비워두면 API가 반환하는 제휴 링크가 그대로 쓰임 |
-| `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (선택) |
+| `title` | `string` | — | 도서 제목 (필수) |
+| `isbn13` | `string` | `''` | ISBN13 또는 ISBN10 (하이픈 유무 무관). 비워두면 API 조회를 건너뛰고 수동 Props만 표시 |
+| `author` | `string` | API 자동 | 저자 수동 오버라이드 |
+| `publisher` | `string` | API 자동 | 출판사 수동 오버라이드 |
+| `cover` | `string` | API 자동 | 표지 이미지 URL 수동 오버라이드 |
+| `price` | `number \| string` | API 자동 | 판매가/정가 수동 지정 |
+| `comment` | `string` | — | 카드 하단 전체 폭으로 표시할 짧은 추천 코멘트 (2～3문장 이내 권장) |
+| `aladinHref` | `string` | ISBN 상세링크 | 알라딘 상품 링크 |
+| `kyoboHref` | `string` | — | 교보문고 상품 링크 |
+| `yes24Href` | `string` | — | YES24 상품 링크 |
+| `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (사용 시 frontmatter `affiliate: true` 권장) |
+
+---
+
+#### `StockCard.astro` / `StockInline.astro`
+
+주식·ETF·지수 종목 정보 카드 (`money` 섹션 등). 별도 API 키 없이 **Yahoo Finance Chart API v8**로 빌드 타임에 종목명·거래소·종가·일간 등락률·52주 고저 위치 바·최근 1개월 순수 SVG 스파크라인을 자동 생성한다(동일 티커 인메모리 캐시 및 오프라인 시 `/vault` 로컬 주가 데이터 폴백 지원).
+
+- 정적 빌드(SSG) 특성상 독자가 작성 시점과 현재가를 혼동하지 않도록 우측 하단에 **`YYYY.MM.DD 종가`** 기준일을 함께 표시한다.
+- 국내 6자리 종목코드(`005930` 등)를 넘기면 자동으로 `.KS`/`.KQ` 시세를 조회하고, 외부 클릭 링크는 한국 독자에게 익숙한 **네이버 증권**으로 연결한다(해외 종목은 Yahoo Finance 연결).
+- `StockInline`은 본문 문장 중간에 삽입하는 인라인 티커 칩(`$SCHD`, `삼성전자 005930`)으로 API 호출 없이 즉시 렌더링된다.
+
+```mdx
+import StockCard from '@/components/StockCard.astro';
+import StockInline from '@/components/StockInline.astro';
+
+<StockCard
+  ticker="NVDA"
+  sector="반도체 · AI"
+  website="nvidia.com"
+  comment="데이터센터 GPU 생태계 독점력을 바탕으로 실적 성장을 이어가는 핵심 AI 인프라 종목."
+/>
+<StockCard ticker="005930" name="삼성전자" market="KOSPI" sector="반도체" />
+
+<!-- 인라인 -->
+배당 성장 포트폴리오의 코어로 <StockInline ticker="SCHD" name="슈드" />와 <StockInline ticker="005930" name="삼성전자" />를 담았다.
+```
+
+| Prop (`StockCard`) | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `ticker` | `string` | — | 종목 티커 (예: `"NVDA"`, `"SCHD"`, `"005930"`, `"^GSPC"`) |
+| `name` | `string` | API 종목명 | 표시할 종목명 오버라이드 및 폴백 |
+| `market` | `string` | API 거래소명 | `"KOSPI"`, `"KOSDAQ"`, `"NASDAQ"`, `"ETF"` 등 시장 배지 및 조회 힌트 |
+| `sector` | `string` | — | 섹터·테마 라벨 (예: `"반도체"`, `"배당성장"`) |
+| `website` | `string` | — | 기업 공식 도메인 지정 시 파비콘 표시 (예: `"nvidia.com"`) |
+| `href` | `string` | 네이버/Yahoo | 외부 시세 페이지 URL 직접 지정 |
+| `comment` | `string` | — | 카드 하단 전체 폭 투자 메모 |
+| `price` / `changePercent` / `asOf` | `number \| string` | API 자동 | 수동 가격·등락률·기준일 지정 시 API 호출 생략 |
+
+---
+
+#### `BaseballPlayerCard.astro` / `PlayerInline.astro`
+
+프로야구(MLB · KBO · NPB) 선수 프로필 및 시즌 성적 카드.
+- **MLB 선수**: 무료·무인증 공식 MLB Stats API(`mlbId`)를 통해 소속 구단·등번호·포지션·투타(`우투좌타` 등 한글 자동 변환)·시즌 핵심 성적과 공식 헤드샷을 빌드 타임에 자동 조회한다.
+- **KBO 선수**: 공개 Open API 부재 및 선수 사진 초상권/구단 엠블럼 저작권 이슈를 피하기 위해, 구단 코드(`team="KIA" | "삼성" | "LG" | "두산" | "KT" | "SSG" | "롯데" | "한화" | "NC" | "키움"`) 지정 시 **구단 고유 컬러 좌측 포인트 보더(다크모드 명도 자동 보정) + 등번호 유니폼 타일(`#5`, `#18`)**을 렌더링하며, `kboId` 지정 시 KBO 공식 기록실로 연결한다.
+- `PlayerInline`은 문장 중간에 삽입하는 등번호 배지 + 선수명 인라인 컴포넌트다.
+
+```mdx
+import BaseballPlayerCard from '@/components/BaseballPlayerCard.astro';
+import PlayerInline from '@/components/PlayerInline.astro';
+
+<!-- MLB 자동 조회 -->
+<BaseballPlayerCard name="이정후" mlbId="808982" />
+
+<!-- KBO 구단 프리셋 + 시즌 성적 -->
+<BaseballPlayerCard
+  name="김도영"
+  team="KIA"
+  number={5}
+  position="3B"
+  batsThrows="우투우타"
+  season="2024 KBO"
+  kboId="52605"
+  stats={{ avg: '.347', hr: 38, rbi: 109, sb: 40, ops: '1.067' }}
+  comment="KBO 역대 최연소 30홈런–30도루를 달성한 내야 핵심."
+/>
+
+<!-- 인라인 -->
+타석에는 <PlayerInline name="김도영" team="KIA" number={5} position="3B" kboId="52605" />이 들어섰다.
+```
+
+| Prop (`BaseballPlayerCard`) | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `name` | `string` | — | 선수 이름 |
+| `team` | `string` | MLB 자동 | 구단 코드 또는 한글명 (`"KIA"`, `"삼성"`, `"LG"`, `"SF"`, `"LAD"` 등) |
+| `number` | `number \| string` | MLB 자동 | 등번호 (예: `5`, `"51"`) |
+| `position` | `string` | MLB 자동 | 포지션 약칭 (`"3B"`, `"CF"`, `"SP"`, `"RP"`, `"C"`, `"DH"` 등) |
+| `batsThrows` | `string` | MLB 자동 | 투타 표기 (예: `"우투우타"`, `"우투좌타"`) |
+| `role` | `'hitter' \| 'pitcher' \| 'twp'` | 포지션 추론 | 투타겸업 선수 스탯 선택 및 KBO 기록실 타자/투수 링크 분기 |
+| `season` | `string \| number` | 최신 시즌 | 성적 기준 연도/라벨 (예: `2025`, `"2024 KBO"`) |
+| `stats` | `PlayerStatsObject \| { label, value }[]` | MLB 자동 | 타자(`avg`, `hr`, `rbi`, `sb`, `ops`, `war` 등) 또는 투수(`era`, `wins`, `losses`, `record`, `saves`, `ip`, `so`, `whip`) 주요 지표 |
+| `mlbId` / `kboId` / `profileUrl` | `string \| number` | — | MLB 공식 ID / KBO 기록실 ID / 커스텀 프로필 링크 |
+| `showHeadshot` | `boolean` | `true` | `false` 지정 시 MLB 선수도 등번호 유니폼 타일로 표시 |
+| `comment` | `string` | — | 카드 하단 전체 폭 스카우팅 메모 |
+
+---
+
+#### `GitHubRepoCard.astro`
+
+GitHub 오픈소스 저장소 소개 카드 (`dev` · `tools` 섹션). 빌드 타임에 GitHub REST API로 설명·주 사용 언어(공식 컬러 도트)·Star/Fork 수·SPDX 라이선스를 조회해 렌더링하며, API 한도 초과나 오프라인 시에도 `owner / repo` 링크 카드로 안전하게 폴백한다(`GITHUB_TOKEN` 환경변수 설정 시 시간당 5,000회 조회 가능).
+
+```mdx
+import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
+
+<GitHubRepoCard repo="withastro/astro" />
+<GitHubRepoCard repo="catppuccin/tmux" comment="tmux 상태바 색감을 깔끔하게 잡아주는 대표 테마 플러그인." />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `repo` | `string` | — | `"owner/repo"` 또는 GitHub 저장소 전체 URL |
+| `description` | `string` | API 자동 | 저장소 설명 오버라이드 |
+| `language` | `string` | API 자동 | 주 언어 오버라이드 |
+| `comment` | `string` | — | 카드 하단 코멘트 |
+
+---
+
+#### `AppCard.astro`
+
+macOS · iOS · CLI 애플리케이션 및 유틸리티 소개 카드 (`tools` 섹션).
+- `appStoreId`를 지정하면 별도 키 없이 Apple 공식 iTunes Lookup API로 **고해상도 앱 아이콘·평점·카테고리·가격·스토어 링크**를 빌드 타임에 자동 완성한다.
+- `brew` prop을 넘기면 카드 하단에 **`$ brew install ...` 원클릭 복사 바**와 `/tools/install-homebrew-2026` 안내 링크가 함께 렌더링된다.
+
+```mdx
+import AppCard from '@/components/AppCard.astro';
+
+<AppCard
+  name="Ghostty"
+  platform={["macOS", "Linux"]}
+  category="터미널 에뮬레이터"
+  price="무료 · 오픈소스"
+  href="https://ghostty.org"
+  brew="--cask ghostty"
+  description="네이티브 UI와 GPU 가속 렌더링을 결합한 고속 터미널 에뮬레이터."
+/>
+<AppCard name="Magnet" appStoreId="441258766" platform="macOS" />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `name` | `string` | — | 앱·도구 이름 |
+| `description` | `string` | 스토어 첫 줄 | 한줄 요약 설명 |
+| `category` | `string` | 스토어 장르 | 분류 라벨 |
+| `platform` | `string \| string[]` | — | 지원 플랫폼 배지 (`"macOS"`, `["macOS", "iOS"]` 등) |
+| `price` | `string` | 스토어 가격 | 가격 정책 표기 (`"무료"`, `"무료 · 오픈소스"` 등) |
+| `brew` | `string` | — | Homebrew 패키지명 또는 전체 설치 명령어 (원클릭 복사 바 생성) |
+| `appStoreId` | `string \| number` | — | Apple App Store ID (`"441258766"` 등) |
+| `href` / `icon` | `string` | 자동 추론 | 공식 사이트 URL(파비콘 자동 활용) / 커스텀 아이콘 URL |
+| `comment` | `string` | — | 카드 하단 추천 코멘트 |
+
+---
+
+#### `PlaceCard.astro`
+
+상영관·여행지·전시·맛집 등 오프라인 장소 안내 카드 (`culture` · `life` 섹션). 별도 유료 지도 API 키 없이 **네이버 지도 · 카카오맵 · Google 지도** 검색/공유 딥링크 버튼을 깔끔하게 묶어 제공한다(`abroad={true}` 설정 시 해외 여행지용으로 Google 지도 버튼만 노출).
+
+```mdx
+import PlaceCard from '@/components/PlaceCard.astro';
+
+<PlaceCard
+  name="CGV 용산아이파크몰 IMAX"
+  category="특별관 · 영화관"
+  address="서울 용산구 한강대로23길 55 아이파크몰 6층"
+  info="용산역 1번 출구 직결 · 티켓 인증 시 주차 3시간 할인"
+/>
+<PlaceCard name="도쿄 타워" category="전망대" query="Tokyo Tower" abroad={true} />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `name` | `string` | — | 장소명 |
+| `category` | `string` | — | 장소 분류 배지 |
+| `address` | `string` | — | 주소 표기 |
+| `info` | `string` | — | 교통·주차·영업시간 등 실용 팁 한줄 |
+| `query` | `string` | `name` | 지도 검색 키워드 오버라이드 |
+| `naverUrl` / `kakaoUrl` / `googleUrl` | `string` | 검색 링크 | 각 지도 서비스의 특정 장소 공유 URL 직접 지정 |
+| `abroad` | `boolean` | `false` | `true` 시 네이버·카카오 버튼을 생략하고 Google 지도만 표시 |
+| `image` / `comment` | `string` | — | 장소 썸네일 이미지 URL / 하단 방문 코멘트 |
+
+---
+
+#### `LinkPreviewCard.astro`
+
+참고 아티클·공식 문서·외부 웹페이지를 노션 북마크 블록 형태로 보여주는 범용 링크 카드 (전 섹션 공통). 빌드 타임에 대상 페이지 `<head>`의 Open Graph(`og:title`, `og:description`, `og:image`, `og:site_name`) 메타태그를 파싱하며, 봇 차단 사이트나 오프라인 시에도 도메인 파비콘 + 제목/호스트명 카드로 깔끔하게 폴백한다.
+
+```mdx
+import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
+
+<LinkPreviewCard url="https://docs.astro.build/en/getting-started/" />
+<LinkPreviewCard url="https://example.com/post" title="수동 지정 제목" comment="핵심 레퍼런스 아티클." />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `url` | `string` | — | 대상 URL |
+| `title` / `description` / `siteName` | `string` | OG 자동 | 제목·요약·사이트명 수동 오버라이드 및 차단 대비 폴백 |
+| `image` | `string \| false` | OG 자동 | 썸네일 URL 직접 지정 (`false` 전달 시 썸네일 숨김) |
+| `comment` | `string` | — | 카드 하단 코멘트 |
 
 ---
 
@@ -618,4 +807,3 @@ const { required, optional = 'a' } = Astro.props;
 | 컴포넌트 | 대체 | 비고 |
 |---------|------|------|
 | `Callout.astro` | `Alert.astro` | `global.css`의 `.alert-*` 클래스 의존, 아이콘 없음. 기존 포스트 호환용으로만 존재 — 신규 사용 금지 |
-| `BookCard.astro` | 일반 텍스트 또는 `CoupangProductCard` / `AffiliateLink` | 알라딘 OpenAPI(TTB Key) 서비스 전면 종료(2026.10.30)로 도서 정보 및 제휴 링크 조회 불가 — 신규 포스트 사용 금지 |

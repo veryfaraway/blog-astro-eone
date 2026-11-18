@@ -55,9 +55,11 @@
 
 ## 3. 마크다운·MDX 및 컴포넌트 규칙
 
-- **컴포넌트 import 및 폐기 목록**: MDX import는 frontmatter 바로 아래, 본문 시작 전에 배치(미사용 import 금지). 강조 박스는 `Alert.astro`를 사용하며, **폐기 예정인 `Callout.astro`와 알라딘 OpenAPI 종료(2026.10.30)로 동작하지 않는 `BookCard.astro`는 절대 사용 금지**.
+- **컴포넌트 import 및 폐기 목록**: MDX import는 frontmatter 바로 아래, 본문 시작 전에 배치(미사용 import 금지). 강조 박스는 `Alert.astro`를 사용하며, **폐기 예정인 `Callout.astro`는 절대 사용 금지**.
 - **주제별 MDX 컴포넌트 적극 활용** (기존 컴포넌트로 해결 가능하면 신규 제작 금지, 상세 Props는 [`docs/astro-components.md`](docs/astro-components.md) 참조):
-  - **영화·인물·영상**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `YouTubeEmbed`(`id="영상ID"`)
+  - **영화·인물·도서·영상·장소**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13` 카카오+Google Books 하이브리드), `PlaceCard`(네이버·카카오·Google 지도 딥링크), `YouTubeEmbed`(`id="영상ID"`)
+  - **주식·프로야구**: `StockCard` / `StockInline`(`ticker`, Yahoo Finance 자동 조회), `BaseballPlayerCard` / `PlayerInline`(MLB `mlbId` 자동 조회 · KBO 구단 컬러/등번호 타일)
+  - **개발·앱·북마크**: `GitHubRepoCard`(`repo="owner/name"`), `AppCard`(`appStoreId` 아이콘 자동 조회 · `brew` 원클릭 복사), `LinkPreviewCard`(OG 북마크)
   - **데이터·시간대·이미지**: `Chart`(`bar | line | pie | doughnut | radar`), `ClockChart`(24시간 원형 시간대), `ImageRow`(2～4열 그리드), `CloudinaryImage`
   - **제휴·상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수): `AffiliateLink`, `CoupangProductCard`(`href` + `title` 직접 지정 권장)
 - **`YouTubeEmbed` 한국(`KR`) 지역 제한 및 임베드 허용 검증 필수**: 미국 방송사·OTT 본사 채널(HBO, Hulu, Peacock, Paramount+ 등) 영상은 북미(`US`) 전용 지역 제한(Geo-block)이 걸려 한국에서 재생 불가 오류가 빈발하며, 웹 검색(`search_web`)만으로는 이를 걸러내지 못합니다. `YouTubeEmbed` 사용 시 반드시 `https://www.youtube.com/watch?v={id}&gl=KR` 응답(`ytInitialPlayerResponse`)에서 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `availableCountries` 내 `"KR"` 포함(또는 국가 제한 없음) 여부를 직접 검증하고, 차단된 경우 글로벌 배급사(Warner Bros. Entertainment, Sony Pictures 등)나 국내 공식 채널 영상으로 대체합니다.

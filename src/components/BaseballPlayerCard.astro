@@ -1,0 +1,430 @@
+---
+import { resolveBaseballTeam } from '../lib/baseball-teams';
+
+export interface PlayerStatItem {
+  label: string;
+  value: string | number;
+}
+
+export interface PlayerStatsObject {
+  // 타자 지표
+  avg?: string | number;
+  hr?: string | number;
+  rbi?: string | number;
+  ops?: string | number;
+  obp?: string | number;
+  slg?: string | number;
+  sb?: string | number;
+  hits?: string | number;
+  war?: string | number;
+  wrcPlus?: string | number;
+  // 투수 지표
+  era?: string | number;
+  record?: string;
+  wins?: number;
+  losses?: number;
+  saves?: number;
+  holds?: number;
+  so?: string | number;
+  whip?: string | number;
+  ip?: string | number;
+}
+
+interface Props {
+  /** 선수 이름 (예: "김도영", "이정후", "원태인") */
+  name: string;
+  /** 영문명 또는 보조 표기 (MLB API 조회 시 영문명이 다를 때 자동 보조 표기됨) */
+  subName?: string;
+  /** 소속 구단 코드 또는 한글 구단명 (예: "KIA", "삼성", "LG", "한화", "SF", "LAD") */
+  team?: string;
+  /** 리그 구분 ("KBO" | "MLB" | "NPB") */
+  league?: 'KBO' | 'MLB' | 'NPB';
+  /** 등번호 (예: 5, "51") */
+  number?: number | string;
+  /** 포지션 (예: "3B", "CF", "SP", "RP", "C", "SS", "DH") */
+  position?: string;
+  /** 투타 정보 (예: "우투우타", "우투좌타", "좌투좌타") */
+  batsThrows?: string;
+  /** 타자/투수 역할 힌트 (오타니 같은 투타겸업이나 KBO 기록실 링크 분기용) */
+  role?: 'hitter' | 'pitcher' | 'twp';
+  /** 성적 기준 시즌 라벨 또는 조회 연도 (예: 2026, "2024 KBO", "2025 MLB") */
+  season?: string | number;
+  /** 주요 성적 객체 또는 { label, value } 배열 (MLB ID 사용 시 생략하면 자동 조회) */
+  stats?: PlayerStatsObject | PlayerStatItem[];
+  /** MLB 공식 선수 ID (예: "808982" 이정후, "660271" 오타니) — 지정 시 빌드 타임 자동 조회 */
+  mlbId?: string | number;
+  /** KBO 공식 기록실 playerId (예: "52605") — 지정 시 KBO 공식 프로필로 링크 연결 */
+  kboId?: string | number;
+  /** 외부 프로필 URL 직접 지정 (지정 시 kboId/mlbId 링크보다 우선) */
+  profileUrl?: string;
+  /** 프로필 이미지 직접 지정 */
+  image?: string;
+  /** MLB 선수 헤드샷 표시 여부 (기본 true, false 지정 시 KBO와 동일한 등번호 유니폼 타일로 통일) */
+  showHeadshot?: boolean;
+  /** 카드 하단 전체 폭에 표시할 한줄 스카우팅 코멘트·메모 */
+  comment?: string;
+  /** 추가 래퍼 클래스 */
+  class?: string;
+}
+
+interface MlbPersonSplit {
+  season?: string;
+  team?: { id?: number; name?: string };
+  sport?: { id?: number };
+  stat?: Record<string, string | number | undefined>;
+}
+
+interface MlbPerson {
+  id: number;
+  fullName?: string;
+  primaryNumber?: string;
+  primaryPosition?: { code?: string; abbreviation?: string; type?: string };
+  batSide?: { code?: string };
+  pitchHand?: { code?: string };
+  currentTeam?: { id?: number; name?: string };
+  stats?: Array<{
+    group?: { displayName?: string };
+    splits?: MlbPersonSplit[];
+  }>;
+}
+
+interface MlbPersonResponse {
+  people?: MlbPerson[];
+}
+
+const g = globalThis as unknown as {
+  __mlbPlayerCache?: Map<string, Promise<MlbPerson | null>>;
+};
+const mlbCache = (g.__mlbPlayerCache ??= new Map());
+
+async function fetchMlbPlayer(id: string): Promise<MlbPerson | null> {
+  if (!mlbCache.has(id)) {
+    mlbCache.set(
+      id,
+      (async () => {
+        try {
+          const hydrate = 'currentTeam,stats(group=[hitting,pitching],type=yearByYear)';
+          const url = `https://statsapi.mlb.com/api/v1/people/${encodeURIComponent(id)}?hydrate=${encodeURIComponent(hydrate)}`;
+          const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
+          if (!res.ok) return null;
+          const data = (await res.json()) as MlbPersonResponse;
+          return data.people?.[0] ?? null;
+        } catch {
+          return null;
+        }
+      })()
+    );
+  }
+  return mlbCache.get(id)!;
+}
+
+function formatBatsThrowsKo(pitchCode?: string, batCode?: string): string | undefined {
+  if (!pitchCode && !batCode) return undefined;
+  const pMap: Record<string, string> = { R: '우투', L: '좌투', S: '양투' };
+  const bMap: Record<string, string> = { R: '우타', L: '좌타', S: '양타' };
+  const p = pitchCode ? (pMap[pitchCode] ?? '') : '';
+  const b = batCode ? (bMap[batCode] ?? '') : '';
+  return `${p}${b}` || undefined;
+}
+
+function normalizeStats(input?: PlayerStatsObject | PlayerStatItem[]): PlayerStatItem[] {
+  if (!input) return [];
+  if (Array.isArray(input)) return input;
+
+  const items: PlayerStatItem[] = [];
+  const recordStr =
+    input.record ??
+    (input.wins !== undefined || input.losses !== undefined
+      ? `${input.wins ?? 0}승 ${input.losses ?? 0}패`
+      : undefined);
+
+  // 투수 지표 우선 체크
+  if (input.era !== undefined) items.push({ label: 'ERA', value: input.era });
+  if (recordStr !== undefined) items.push({ label: 'W-L', value: recordStr });
+  if (input.saves !== undefined) items.push({ label: 'SV', value: input.saves });
+  if (input.holds !== undefined) items.push({ label: 'HLD', value: input.holds });
+  if (input.ip !== undefined) items.push({ label: 'IP', value: input.ip });
+  if (input.so !== undefined) items.push({ label: 'SO', value: input.so });
+  if (input.whip !== undefined) items.push({ label: 'WHIP', value: input.whip });
+
+  // 타자 지표 체크
+  if (input.avg !== undefined) items.push({ label: 'AVG', value: input.avg });
+  if (input.hr !== undefined) items.push({ label: 'HR', value: input.hr });
+  if (input.rbi !== undefined) items.push({ label: 'RBI', value: input.rbi });
+  if (input.sb !== undefined) items.push({ label: 'SB', value: input.sb });
+  if (input.hits !== undefined) items.push({ label: 'H', value: input.hits });
+  if (input.obp !== undefined) items.push({ label: 'OBP', value: input.obp });
+  if (input.slg !== undefined) items.push({ label: 'SLG', value: input.slg });
+  if (input.ops !== undefined) items.push({ label: 'OPS', value: input.ops });
+  if (input.wrcPlus !== undefined) items.push({ label: 'wRC+', value: input.wrcPlus });
+  if (input.war !== undefined) items.push({ label: 'WAR', value: input.war });
+
+  return items.slice(0, 5);
+}
+
+const {
+  name,
+  subName,
+  team,
+  league,
+  number,
+  position,
+  batsThrows,
+  role,
+  season,
+  stats,
+  mlbId,
+  kboId,
+  profileUrl,
+  image,
+  showHeadshot = true,
+  comment,
+  class: className,
+} = Astro.props;
+
+const mlbIdStr = mlbId !== undefined ? String(mlbId).trim() : undefined;
+const kboIdStr = kboId !== undefined ? String(kboId).trim() : undefined;
+
+const mlbPerson = mlbIdStr ? await fetchMlbPlayer(mlbIdStr) : null;
+
+const resolvedPosition = position ?? mlbPerson?.primaryPosition?.abbreviation;
+const isPitcher =
+  role === 'pitcher' ||
+  (!role &&
+    (resolvedPosition === 'P' ||
+      resolvedPosition === 'SP' ||
+      resolvedPosition === 'RP' ||
+      resolvedPosition === 'CP' ||
+      mlbPerson?.primaryPosition?.type === 'Pitcher'));
+
+// MLB 시즌 스플릿 선택
+const requestedYear = season !== undefined ? String(season).match(/\b(19|20)\d{2}\b/)?.[0] : undefined;
+let autoStats: PlayerStatItem[] = [];
+let autoSeasonLabel: string | undefined;
+
+if (!stats && mlbPerson?.stats) {
+  const targetGroup = isPitcher ? 'pitching' : 'hitting';
+  const statGroup = mlbPerson.stats.find((g) => g.group?.displayName === targetGroup);
+  const mlbSplits = (statGroup?.splits ?? []).filter((s) => !s.sport?.id || s.sport.id === 1);
+
+  if (mlbSplits.length > 0) {
+    const targetYear = requestedYear ?? mlbSplits.at(-1)?.season;
+    const yearSplits = mlbSplits.filter((s) => s.season === targetYear);
+    // 이적 시즌의 경우 team 필드가 비어 있는 합산(Total) 스플릿 우선 선택
+    const chosen = yearSplits.find((s) => !s.team) ?? yearSplits.at(-1) ?? mlbSplits.at(-1);
+    const st = chosen?.stat;
+    if (st) {
+      autoSeasonLabel = chosen?.season ? `${chosen.season} MLB` : undefined;
+      if (isPitcher) {
+        autoStats = normalizeStats({
+          era: st.era,
+          record: st.wins !== undefined ? `${st.wins}-${st.losses ?? 0}` : undefined,
+          saves: typeof st.saves === 'number' && st.saves > 0 ? st.saves : undefined,
+          so: st.strikeOuts,
+          whip: st.whip,
+        });
+      } else {
+        autoStats = normalizeStats({
+          avg: st.avg,
+          hr: st.homeRuns,
+          rbi: st.rbi,
+          ops: st.ops,
+        });
+      }
+    }
+  }
+}
+
+const resolvedStats = stats ? normalizeStats(stats) : autoStats;
+const resolvedLeague = league ?? (mlbIdStr ? 'MLB' : kboIdStr ? 'KBO' : undefined);
+const resolvedTeamInput = team ?? mlbPerson?.currentTeam?.name;
+const teamTheme = resolveBaseballTeam(resolvedTeamInput, resolvedLeague === 'NPB' ? undefined : resolvedLeague);
+
+const resolvedNumber = number !== undefined ? String(number).replace(/^#/, '') : mlbPerson?.primaryNumber;
+const resolvedBatsThrows =
+  batsThrows ?? formatBatsThrowsKo(mlbPerson?.pitchHand?.code, mlbPerson?.batSide?.code);
+
+const resolvedSubName =
+  subName ??
+  (mlbPerson?.fullName && mlbPerson.fullName.toLowerCase() !== name.toLowerCase()
+    ? mlbPerson.fullName
+    : undefined);
+
+const resolvedSeasonLabel =
+  season !== undefined
+    ? /^\d{4}$/.test(String(season).trim())
+      ? `${season} ${teamTheme.league !== 'OTHER' ? teamTheme.league : (resolvedLeague ?? '시즌')}`
+      : String(season)
+    : autoSeasonLabel;
+
+const mlbHeadshotUrl =
+  mlbIdStr && showHeadshot
+    ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/${mlbIdStr}/headshot/67/current`
+    : undefined;
+const displayImage = image ?? mlbHeadshotUrl;
+
+// 외부 링크 결정 (profileUrl > kboId 공식 기록실 > mlbId MLB.com)
+const kboSection = isPitcher ? 'PitcherDetail' : 'HitterDetail';
+const resolvedHref =
+  profileUrl ??
+  (kboIdStr
+    ? `https://www.koreabaseball.com/Record/Player/${kboSection}/Basic.aspx?playerId=${encodeURIComponent(kboIdStr)}`
+    : mlbIdStr
+      ? `https://www.mlb.com/player/${encodeURIComponent(mlbIdStr)}`
+      : undefined);
+
+const initials = name.includes(' ')
+  ? name
+      .split(' ')
+      .map((n) => [...n][0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  : [...name].slice(0, 2).join('');
+
+const Tag = resolvedHref ? 'a' : 'div';
+const linkProps = resolvedHref
+  ? { href: resolvedHref, target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+<div
+  class:list={[
+    'baseball-card @container not-prose my-6 overflow-hidden rounded-xl border border-border bg-card text-sm',
+    className,
+  ]}
+  style={`--team-light: ${teamTheme.accentLight}; --team-dark: ${teamTheme.accentDark};`}
+>
+  <Tag
+    {...linkProps}
+    class:list={[
+      'flex flex-col gap-3.5 p-4 @[520px]:flex-row @[520px]:items-center @[520px]:justify-between @[520px]:gap-4',
+      resolvedHref && 'transition-colors hover:bg-muted/50',
+    ]}
+  >
+    <!-- 좌측: 아바타(헤드샷 또는 유니폼 등번호 타일) + 선수 프로필 -->
+    <div class="flex min-w-0 items-center gap-3.5">
+      <div class="relative shrink-0">
+        {displayImage ? (
+          <div class="h-16 w-16 overflow-hidden rounded-xl border border-border bg-muted">
+            <img
+              src={displayImage}
+              alt={`${name} 프로필`}
+              class="h-full w-full object-cover object-top"
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div class="jersey-tile flex h-16 w-16 flex-col items-center justify-center rounded-xl border">
+            <span class="jersey-team text-[9px] font-bold uppercase tracking-wider">
+              {teamTheme.shortKo}
+            </span>
+            <span class="jersey-num font-mono text-lg font-extrabold leading-tight tracking-tight">
+              {resolvedNumber ? `#${resolvedNumber}` : initials}
+            </span>
+          </div>
+        )}
+
+        {displayImage && resolvedNumber && (
+          <span class="jersey-pill absolute -bottom-1 -right-1 rounded-md border border-background px-1.5 py-px font-mono text-[10px] font-bold text-white shadow-xs">
+            #{resolvedNumber}
+          </span>
+        )}
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="team-badge rounded px-1.5 py-0.5 text-[10px] font-bold tracking-tight">
+            {teamTheme.nameKo}
+          </span>
+          {resolvedPosition && (
+            <span class="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-semibold text-foreground">
+              {resolvedPosition}
+            </span>
+          )}
+          {resolvedBatsThrows && (
+            <span class="text-[11px] text-muted-foreground">
+              {resolvedBatsThrows}
+            </span>
+          )}
+        </div>
+
+        <div class="mt-1 flex flex-wrap items-baseline gap-1.5">
+          <h3 class="truncate text-base font-bold leading-snug text-foreground">
+            {name}
+          </h3>
+          {resolvedSubName && (
+            <span class="truncate text-xs text-muted-foreground">
+              {resolvedSubName}
+            </span>
+          )}
+        </div>
+
+        {resolvedSeasonLabel && resolvedStats.length === 0 && (
+          <p class="mt-0.5 text-[11px] text-muted-foreground">{resolvedSeasonLabel}</p>
+        )}
+      </div>
+    </div>
+
+    <!-- 우측: 시즌 핵심 성적 그리드 -->
+    {resolvedStats.length > 0 && (
+      <div class="flex shrink-0 flex-col items-stretch gap-1 @[520px]:items-end">
+        {resolvedSeasonLabel && (
+          <span class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            {resolvedSeasonLabel}
+          </span>
+        )}
+        <div
+          class="grid gap-1.5"
+          style={`grid-template-columns: repeat(${Math.min(resolvedStats.length, 5)}, minmax(0, 1fr));`}
+        >
+          {resolvedStats.map((item) => (
+            <div class="flex min-w-[52px] flex-col items-center justify-center rounded-lg border border-border/60 bg-muted/45 px-2 py-1.5 text-center">
+              <span class="font-mono text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {item.label}
+              </span>
+              <span class="mt-0.5 font-mono text-xs font-bold tabular-nums text-foreground sm:text-[13px]">
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </Tag>
+
+  <!-- 2행: 선수 코멘트·스카우팅 메모 (선택) -->
+  {comment && (
+    <p class="border-t border-border px-4 py-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+      {comment}
+    </p>
+  )}
+</div>
+
+<style>
+  .baseball-card {
+    --team-accent: var(--team-light);
+    border-left: 3px solid var(--team-accent);
+  }
+  :global(.dark) .baseball-card {
+    --team-accent: var(--team-dark);
+  }
+
+  .jersey-tile {
+    background-color: color-mix(in srgb, var(--team-accent) 10%, transparent);
+    border-color: color-mix(in srgb, var(--team-accent) 26%, transparent);
+  }
+  .jersey-team {
+    color: color-mix(in srgb, var(--team-accent) 85%, var(--foreground));
+  }
+  .jersey-num {
+    color: var(--team-accent);
+  }
+  .jersey-pill {
+    background-color: var(--team-light);
+  }
+  .team-badge {
+    background-color: color-mix(in srgb, var(--team-accent) 12%, transparent);
+    color: var(--team-accent);
+  }
+</style>

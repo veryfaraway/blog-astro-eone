@@ -1,0 +1,144 @@
+---
+interface Props {
+  /** 장소명 (예: "CGV 용산아이파크몰 IMAX", "메가박스 코엑스 돌비시네마") */
+  name: string;
+  /** 분류 배지 (예: "특별관 · 영화관", "카페", "전시", "여행 스팟") */
+  category?: string;
+  /** 도로명·지번 주소 */
+  address?: string;
+  /** 교통편·주차·영업시간 등 핵심 방문 팁 한줄 */
+  info?: string;
+  /** 지도 검색 키워드 오버라이드 (생략 시 name 사용) */
+  query?: string;
+  /** 네이버 지도 공유 URL 직접 지정 */
+  naverUrl?: string;
+  /** 카카오맵 공유 URL 직접 지정 */
+  kakaoUrl?: string;
+  /** Google Maps URL 직접 지정 */
+  googleUrl?: string;
+  /** 해외 장소 여부 (true 설정 시 국내 전용 네이버·카카오 버튼을 생략하고 Google 지도만 노출) */
+  abroad?: boolean;
+  /** 썸네일 사진 URL (선택) */
+  image?: string;
+  /** 카드 하단 전체 폭 방문 코멘트·메모 */
+  comment?: string;
+  /** 추가 래퍼 클래스 */
+  class?: string;
+}
+
+const {
+  name,
+  category,
+  address,
+  info,
+  query,
+  naverUrl,
+  kakaoUrl,
+  googleUrl,
+  abroad = false,
+  image,
+  comment,
+  class: className,
+} = Astro.props;
+
+const searchKeyword = encodeURIComponent((query ?? name).trim());
+
+const resolvedNaver =
+  naverUrl ?? (!abroad ? `https://map.naver.com/p/search/${searchKeyword}` : undefined);
+const resolvedKakao =
+  kakaoUrl ?? (!abroad ? `https://map.kakao.com/link/search/${searchKeyword}` : undefined);
+const resolvedGoogle =
+  googleUrl ?? `https://www.google.com/maps/search/?api=1&query=${searchKeyword}`;
+---
+
+<div class:list={['@container not-prose my-6 overflow-hidden rounded-xl border border-border bg-card p-4 text-sm', className]}>
+  <div class="flex flex-col gap-3.5 @[520px]:flex-row @[520px]:items-center @[520px]:justify-between @[520px]:gap-4">
+    <!-- 좌측: 사진 또는 핀 아이콘 + 장소 메타데이터 -->
+    <div class="flex min-w-0 flex-1 items-start gap-3.5">
+      {image ? (
+        <div class="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border/60 bg-muted">
+          <img src={image} alt={name} class="h-full w-full object-cover" loading="lazy" />
+        </div>
+      ) : (
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted/70 text-foreground/80">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+      )}
+
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-1.5">
+          {category && (
+            <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+              {category}
+            </span>
+          )}
+          {abroad && (
+            <span class="rounded border border-border px-1.5 py-px font-mono text-[10px] text-muted-foreground">
+              해외
+            </span>
+          )}
+        </div>
+
+        <h3 class="mt-0.5 text-sm font-bold leading-snug text-foreground @[480px]:text-base">
+          {name}
+        </h3>
+
+        {address && (
+          <p class="mt-0.5 text-xs text-muted-foreground">
+            {address}
+          </p>
+        )}
+
+        {info && (
+          <p class="mt-1 text-xs font-medium text-foreground/80">
+            {info}
+          </p>
+        )}
+      </div>
+    </div>
+
+    <!-- 우측: 지도 앱 바로가기 버튼 그룹 -->
+    <div class="flex shrink-0 flex-wrap items-center gap-1.5 @[520px]:flex-col @[520px]:items-stretch">
+      {resolvedNaver && (
+        <a
+          href={resolvedNaver}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          <span class="h-2 w-2 rounded-full bg-[#03C75A]" aria-hidden="true" />
+          네이버 지도
+        </a>
+      )}
+      {resolvedKakao && (
+        <a
+          href={resolvedKakao}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          <span class="h-2 w-2 rounded-full bg-[#FEE500] ring-1 ring-black/15" aria-hidden="true" />
+          카카오맵
+        </a>
+      )}
+      <a
+        href={resolvedGoogle}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+      >
+        <span class="h-2 w-2 rounded-full bg-[#4285F4]" aria-hidden="true" />
+        Google 지도
+      </a>
+    </div>
+  </div>
+
+  {comment && (
+    <p class="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+      {comment}
+    </p>
+  )}
+</div>

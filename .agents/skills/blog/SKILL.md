@@ -16,10 +16,11 @@ description: >-
 
 ```mermaid
 flowchart TD
-    Start["0단계: 주제 입력 · 트렌드/유입 점검 · 메타데이터 확정"] --> Phase1["Phase 1: 리서치 (researcher)\n[출처 신뢰도 Tier 1~4 + 내부 아카이브/태그 스캔]"]
-    Phase1 --> Phase2["Phase 2: 본문 집필 (writer) & 시각화 (visual)\n[SEO 최적화 + 탈-AI 어투 + MDX 컴포넌트 + 썸네일 생성]"]
-    Phase2 --> Phase3["Phase 3: 독립 검수 (reviewer)\n[팩트/API 스펙 · SEO · 문체 · CommonMark/MDX 규격 감사]"]
-    Phase3 --> Phase4["Phase 4: 수정사항 반영 · 에셋 복사 · 빌드 검증 (메인)\n[src/content/{섹션}/ko/{연도}/{slug}.mdx]"]
+    Start["0단계: 주제 입력 · 트렌드/유입 점검 · 시각 슬롯 기획"] --> Phase1["Phase 1: 리서치 (researcher)\n[출처 신뢰도 Tier 1~4 + 내부 아카이브/태그 스캔]"]
+    Phase1 --> Phase2["Phase 2: 본문 집필 (writer) & 시각 에셋 생성 (image-generator)\n[SEO + 탈-AI 어투 + MDX 컴포넌트 + 썸네일·본문 일러스트 다중 생성]"]
+    Phase2 --> Upload["Cloudinary MCP 업로드 (메인)\n[posts/{섹션}/{연도}/{slug} 업로드 → thumbnail URL · CloudinaryImage 반영]"]
+    Upload --> Phase3["Phase 3: 독립 검수 (reviewer)\n[팩트/API 스펙 · SEO · 문체 · CloudinaryImage/MDX 규격 감사]"]
+    Phase3 --> Phase4["Phase 4: 수정사항 반영 · KR 영상 검증 · 정적 빌드 검증 (메인)\n[src/content/{섹션}/ko/{연도}/{slug}.mdx]"]
 ```
 
 ---
@@ -58,13 +59,13 @@ flowchart TD
   - 웹 검색 및 최신 공식 기술 문서·릴리스 노트 탐색 (최신 버전 API의 **정확한 메서드/어노테이션 속성명** 및 **정식(Final) vs 프리뷰(Preview) 상태** 교차 검증 필수)
   - **출처 신뢰도 점수 부여**: Tier 1(9~10점: 공식 문서/표준/논문)부터 Tier 4(1~3점: 미검증 블로그)까지 가산점 부여
   - **블로그 내부 아카이브 및 태그 규칙 스캔**: `src/content/{섹션}/ko/` 하위 **모든 연도 폴더**(`2024/`, `2025/`, `2026/` 등)와 공통 레퍼런스 가이드(`docs/post-writing-guide.md`)를 탐색하여 주제 중복을 피하고, 자연스러운 **내부 링크 후보**와 **기존 태그 표기 규칙**(영문 소문자 kebab-case 등)을 함께 수집
-  - **MDX 컴포넌트용 식별자 조사**: 영화/드라마 주제는 IMDb 작품 ID(`ttXXXXXXX`) 및 주요 인물 IMDb ID(`nmXXXXXXX`), 관련 공식 YouTube 영상 ID 후보 2~3개(미국 내수용 채널의 한국 지역 차단에 대비해 글로벌 배급사·국내 공식 채널 포함) 등을 함께 수집 (`BookCard`는 알라딘 OpenAPI 종료로 사용하지 않음)
+  - **MDX 컴포넌트용 식별자 조사**: 주제에 따라 영화/드라마 IMDb ID(`ttXXXXXXX` · 인물 `nmXXXXXXX`), 도서 ISBN13(`BookCard`), 주식 티커(`StockCard`), MLB/KBO 선수 ID(`mlbId` · `kboId`), 오픈소스 저장소(`owner/repo`), App Store ID(`appStoreId`), 관련 공식 YouTube 영상 ID 후보 2~3개(미국 내수용 채널의 한국 지역 차단에 대비해 글로벌 배급사·국내 공식 채널 포함) 등을 함께 수집
   - 팩트 시트, 불확실/상충 정보, 실무 코드 예시·내부 링크·컴포넌트 식별자, SEO 추천 키워드 산출
 
 ---
 
-### Phase 2: 본문 집필 (Writer) & 시각화 (Visual)
-> **핵심 원칙**: 본문 전체는 문맥의 일관성을 위해 하나의 `writer` 에이전트가 처음부터 끝까지 완성하며, 썸네일 이미지 생성(`image-generator`)은 `writer`와 병렬로 호출할 수 있습니다.
+### Phase 2: 본문 집필 (Writer) · 시각 에셋 생성 & Cloudinary 업로드
+> **핵심 원칙**: 본문 전체는 문맥의 일관성을 위해 하나의 `writer` 에이전트가 처음부터 끝까지 완성하며, 대표 썸네일과 본문 섹션별 일러스트 생성(`image-generator`)은 `writer`와 병렬로 적극 호출한 뒤 **Cloudinary MCP**로 바로 업로드하여 Git/Netlify를 가볍게 유지합니다.
 
 #### 1) 본문 집필 (Writer)
 - **에이전트 설정**:
@@ -76,13 +77,21 @@ flowchart TD
   - **탈(脫) AI 어투**: 금지어 전면 배제, 첫 2문장 직격 훅, 단문·복문 호흡 변주 및 생생한 실무 맥락 서술
   - **SEO, 적정 분량 및 내부 연결성**: 60자 이내 타이틀, 120~160자 description, H2/H3 계층, 첫 단락 키워드 노출, 유형별 적정 분량 준수(기본 `2,500～4,000자`, SEO 목적 최소 `1,500자` 이상, 심층편 `4,500～7,000자` 이내 — 억지 늘리기 금지), 기존 연관 포스트 내부 링크 연결, **기존 태그 표기(소문자 kebab-case 등) 재사용**
   - **팩트 무결성**: Phase 1의 Tier 1~2 팩트 위주 서술, 불확실한 정보는 단정하지 않음
-  - **규격 및 MDX 컴포넌트 적극 활용**: Frontmatter 스키마 준수, Shiki 소문자 언어 태그, CommonMark 구두점 경계 규칙(`~` → `～`/`–`, 볼드·이탤릭 내 `()`/`""` 뒤 한글 조사 분리), `<Alert>` 외 주제별 전용 컴포넌트(`MovieCard`, `PersonCard`, `PersonInline`, `YouTubeEmbed`, `Chart`, `ClockChart`, `ImageRow`, `AffiliateLink`, `CoupangProductCard`) 적극 배치 (`Callout`, `BookCard` 절대 사용 금지)
+  - **규격 및 MDX 컴포넌트 적극 활용**: Frontmatter 스키마 준수, Shiki 소문자 언어 태그, CommonMark 구두점 경계 규칙(`~` → `～`/`–`, 볼드·이탤릭 내 `()`/`""` 뒤 한글 조사 분리), `<Alert>` 외 주제별 전용 컴포넌트(`CloudinaryImage`, `ImageRow`, `MovieCard`, `PersonCard`, `PersonInline`, `BookCard`, `StockCard`, `StockInline`, `BaseballPlayerCard`, `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `YouTubeEmbed`, `Chart`, `ClockChart`, `AffiliateLink`, `CoupangProductCard`) 적극 배치 (`Callout` 절대 사용 금지)
 
-#### 2) 시각화 및 썸네일 (Visual) — 병렬 실행 가능
-- **다이어그램**: 본문 흐름에 필요한 Mermaid 코드는 `writer`가 직접 삽입합니다.
-- **썸네일 이미지**:
-  - **자동 생성(권장)**: 내장 `image-generator` 서브에이전트(`Role: "Thumbnail Designer"`)를 호출합니다. `image-generator`는 워크스페이스 `public/`에 직접 쓰지 않고 대화 아티팩트 디렉터리(`<appDataDir>/brain/<conversation-id>/`)에 이미지(주로 `.jpg`)를 저장한 뒤 파일 경로를 반환하므로, **Phase 4에서 메인 세션이 `public/images/posts/{연도}/{slug}-thumbnail.{ext}`로 복사하고 확장자를 동기화**합니다.
-  - **외부 툴 프롬프트 산출**: [`.agents/skills/blog/references/visual.md`](references/visual.md)에 따라 최적화된 프롬프트를 작성해 제공합니다.
+#### 2) 시각 에셋 적극 생성 및 Cloudinary MCP 업로드 — 병렬 실행 가능
+상세 규칙과 호출 스키마는 [`.agents/skills/blog/references/visual.md`](references/visual.md)를 따릅니다.
+- **다이어그램 / 차트**: 흐름도·아키텍처는 Mermaid 코드 블록으로, 정량 데이터·시간대는 `<Chart>` / `<ClockChart>`로 `writer`가 직접 삽입합니다.
+- **썸네일 + 본문 일러스트 다중 생성 (`image-generator`)**:
+  - 대표 썸네일(`16:9`) 1장뿐 아니라, 독자의 직관적 이해와 스크롤 호흡 전환에 도움이 되는 **본문 핵심 개념·비교 일러스트(표준 글 1～2장, 심층 글 2～4장)**를 내장 `image-generator` 서브에이전트(`Role: "Visual Illustrator"`)로 적극 생성합니다(이미지 내부 텍스트·숫자 삽입 금지).
+  - 필요 시 기존 Cloudinary 계정의 `media/...` · `library/...` 에셋을 `cloudinary` MCP의 `search-assets`로 검색해 재사용할 수도 있습니다.
+- **Cloudinary MCP 직행 업로드 (로컬 `public/` 복사 생략)**:
+  - `image-generator`가 반환한 아티팩트 디렉터리 이미지 파일(`file:///절대경로`)을 메인 세션이 `cloudinary` MCP(`execute_tool` → `upload-asset`)로 업로드합니다:
+    - `folder`: `"posts/{섹션}/{연도}/{slug}"`
+    - `public_id`: `"thumbnail"` 및 `"fig-01-{영문키워드}"`, `"fig-02-{영문키워드}"` 등 (폴더 경로 중복 기입 금지)
+  - 업로드 응답의 `public_id`, `width`, `height`를 받아 초안 `.mdx`에 즉시 반영합니다 (`Phase 3` 검수 전 반영 권장):
+    - Frontmatter `thumbnail`: `"https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/{반환된_public_id}"` (카카오톡·슬랙 등 OG 크롤러 호환용 `f_jpg` 고정)
+    - 본문 이미지: `<CloudinaryImage publicId="{반환된_public_id}" width={width} height={height} alt="구체적인 설명" />` (비교 세트는 `<ImageRow>`로 묶음)
 
 ---
 
@@ -96,14 +105,14 @@ flowchart TD
   1. **팩트 및 코드 스펙 무결성**: 리서치 자료와의 일치성, 구버전 레거시 API 속성 혼입 여부, Preview/정식 기능 구분, 코드 스니펫 import/컴파일 완결성
   2. **탈-AI 어투**: 금지어 포함 여부, 첫 2문장 훅 및 문장 리듬 점검
   3. **SEO, 분량 적정성 및 태그 일관성**: 타이틀/디스크립션 길이 및 키워드 배치, 헤딩 구조, 본문 분량 및 밀도 적정성(1,500자 미만 Thin Content 또는 7,000자 초과 과밀 여부, 장문 상단 요약표 유무), 기존 블로그 태그 컨벤션 일치 여부, 내부 링크 유효성
-  4. **기술 규격 및 CommonMark/MDX 안전성**: Frontmatter 필수 필드 및 `thumbnail` 실제 확장자 일치 여부, Shiki 소문자 언어 태그, `～`/`–` 범위 표기, 볼드/이탤릭 내 괄호·따옴표+조사 미파싱 노출 여부, 전용 컴포넌트 적절 활용 여부 (`Callout`, `BookCard` 사용 시 즉시 필수 수정)
+  4. **기술 규격 및 CommonMark/MDX 안전성**: Frontmatter 필수 필드 및 `thumbnail` URL(`w_1200,q_auto,f_jpg` OG 호환 포맷) 검증, `<CloudinaryImage>`의 CLS 방지용 `width`·`height` 및 구체적인 `alt` 포함 여부, Shiki 소문자 언어 태그, `～`/`–` 범위 표기, 볼드/이탤릭 내 괄호·따옴표+조사 미파싱 노출 여부, 전용 컴포넌트 적절 활용 여부 (`Callout` 사용 시 즉시 필수 수정)
 - **출력**: `[🚨 필수 수정]`, `[💡 권장 개선]`, `[✅ 통과 항목]`으로 정리된 수정안 보고서
 
 ---
 
-### Phase 4: 반영, 에셋 배치 및 최종 빌드 검증 (메인 세션)
-1. **검수 반영**: 메인 세션이 `reviewer`의 `[🚨 필수 수정]` 항목을 초안에 즉시 반영하고, `[💡 권장 개선]` 사항을 검토하여 적용합니다.
-2. **썸네일 에셋 복사 및 확장자 동기화**: `image-generator`가 반환한 아티팩트 이미지 파일을 `public/images/posts/{연도}/{slug}-thumbnail.{ext}`로 복사하고, 포스트 frontmatter의 `thumbnail: "/images/posts/{연도}/{slug}-thumbnail.{ext}"` 경로 및 실제 확장자(`.jpg` / `.png` / `.webp`)가 정확히 일치하는지 확인합니다.
+### Phase 4: 검수 반영, KR 영상 검증 및 정적 빌드 검증 (메인 세션)
+1. **검수 반영**: 메인 세션이 `reviewer`의 `[🚨 필수 수정]` 항목을 초안에 즉시 반영하고, `[💡 권장 개선]` 사항(추가 시각 자료 보강 등 포함)을 검토하여 적용합니다.
+2. **시각 에셋 최종 점검**: frontmatter `thumbnail`의 Cloudinary URL과 본문 `<CloudinaryImage>`의 `publicId`·`width`·`height`가 누락 없이 매핑되었는지, 불필요한 로컬 이미지 파일이 `public/`에 생성되지 않았는지 확인합니다.
 3. **`YouTubeEmbed` 한국(`KR`) 재생·임베드 검증** (해당 컴포넌트 사용 시 필수):
    - 읽기 전용 샌드박스에서 실행되는 `research`/`reviewer` 서브에이전트의 `search_web`은 클라우드 서버 기준이라 미국 전용 지역 제한(`availableCountries: ["US"]`)을 걸러내지 못합니다.
    - 본문에 `<YouTubeEmbed id="..." />`가 포함된 경우, 메인 세션이 한국 기준(`https://www.youtube.com/watch?v={id}&gl=KR`의 `ytInitialPlayerResponse`)으로 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `availableCountries` 내 `"KR"` 포함(또는 제한 없음) 여부를 직접 검증하고, 차단된 경우 글로벌 배급사·국내 공식 채널 후보 영상으로 교체합니다.
@@ -111,4 +120,4 @@ flowchart TD
    - 최종 완성본이 `src/content/{섹션}/ko/{연도}/{slug}.mdx`에 저장되었는지 확인합니다.
    - `pnpm build`를 실행하여 Astro 콘텐츠 스키마, MDX 컴포넌트 파싱, Shiki 코드 하이라이팅, Mermaid 구문, Pagefind 인덱싱이 에러 없이 통과하는지 검증합니다.
    - 빌드된 `dist/{섹션}/{slug}/index.html`에서 미파싱된 `**`·`*` 기호 노출이나 의도치 않은 `<del>`(취소선) 태그가 없는지 최종 점검합니다.
-5. **결과 보고**: 사용자에게 결과물 요약(글자 수, 주요 SEO 키워드, 채택 출처 티어, 생성된 포스트 및 썸네일 파일 링크)을 간결하게 보고합니다.
+5. **결과 보고**: 사용자에게 결과물 요약(글자 수, 주요 SEO 키워드, 채택 출처 티어, 생성된 포스트 파일 링크 및 업로드된 Cloudinary 에셋 목록)을 간결하게 보고합니다.

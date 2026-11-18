@@ -1,0 +1,217 @@
+---
+interface Props {
+  /** "owner/repo" 또는 GitHub 저장소 URL (예: "catppuccin/tmux", "withastro/astro") */
+  repo: string;
+  /** 설명 오버라이드 (생략 시 GitHub API description 사용) */
+  description?: string;
+  /** 주 언어 오버라이드 (생략 시 GitHub API language 사용) */
+  language?: string;
+  /** 카드 하단 전체 폭에 표시할 활용 팁·코멘트 */
+  comment?: string;
+  /** 추가 래퍼 클래스 */
+  class?: string;
+}
+
+interface GitHubRepoData {
+  full_name: string;
+  description?: string | null;
+  html_url: string;
+  stargazers_count?: number;
+  forks_count?: number;
+  language?: string | null;
+  archived?: boolean;
+  license?: { spdx_id?: string | null } | null;
+  owner?: { avatar_url?: string; login?: string };
+}
+
+const LANG_COLORS: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  Python: '#3572A5',
+  Rust: '#dea584',
+  Go: '#00ADD8',
+  Zig: '#ec915c',
+  Shell: '#89e051',
+  Astro: '#ff5a03',
+  Lua: '#000080',
+  Swift: '#F05138',
+  Kotlin: '#A97BFF',
+  Java: '#b07219',
+  'C++': '#f34b7d',
+  C: '#555555',
+  'C#': '#178600',
+  Ruby: '#701516',
+  PHP: '#4F5D95',
+  HTML: '#e34c26',
+  CSS: '#563d7c',
+  Vue: '#41b883',
+  Svelte: '#ff3e00',
+  MDX: '#fcb32c',
+  Dockerfile: '#384d54',
+};
+
+const g = globalThis as unknown as {
+  __ghRepoCache?: Map<string, Promise<GitHubRepoData | null>>;
+};
+const repoCache = (g.__ghRepoCache ??= new Map());
+
+function parseOwnerRepo(input: string): string {
+  return input
+    .trim()
+    .replace(/^https?:\/\/github\.com\//i, '')
+    .replace(/\.git$/i, '')
+    .replace(/^\/+|\/+$/g, '')
+    .split('/')
+    .slice(0, 2)
+    .join('/');
+}
+
+function formatCompactCount(n?: number): string | undefined {
+  if (typeof n !== 'number') return undefined;
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`;
+  return String(n);
+}
+
+async function fetchRepo(slug: string): Promise<GitHubRepoData | null> {
+  if (!slug.includes('/')) return null;
+  if (!repoCache.has(slug)) {
+    repoCache.set(
+      slug,
+      (async () => {
+        try {
+          const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN;
+          const headers: Record<string, string> = {
+            Accept: 'application/vnd.github+json',
+            'User-Agent': 'blog-astro-eone',
+          };
+          if (token) headers.Authorization = `Bearer ${token}`;
+
+          const res = await fetch(`https://api.github.com/repos/${slug}`, {
+            headers,
+            signal: AbortSignal.timeout(4000),
+          });
+          if (!res.ok) return null;
+          return (await res.json()) as GitHubRepoData;
+        } catch {
+          return null;
+        }
+      })()
+    );
+  }
+  return repoCache.get(slug)!;
+}
+
+const {
+  repo,
+  description: manualDesc,
+  language: manualLang,
+  comment,
+  class: className,
+} = Astro.props;
+
+const repoSlug = parseOwnerRepo(repo);
+const data = await fetchRepo(repoSlug);
+
+const [ownerName = '', repoName = repoSlug] = (data?.full_name ?? repoSlug).split('/');
+const repoUrl = data?.html_url ?? `https://github.com/${repoSlug}`;
+const displayDesc = manualDesc ?? data?.description ?? undefined;
+const displayLang = manualLang ?? data?.language ?? undefined;
+const langColor = displayLang ? (LANG_COLORS[displayLang] ?? '#8b949e') : undefined;
+const stars = formatCompactCount(data?.stargazers_count);
+const forks = formatCompactCount(data?.forks_count);
+const license =
+  data?.license?.spdx_id && data.license.spdx_id !== 'NOASSERTION'
+    ? data.license.spdx_id
+    : undefined;
+const avatarUrl = data?.owner?.avatar_url ? `${data.owner.avatar_url}&s=96` : undefined;
+---
+
+<div class:list={['@container not-prose my-6 overflow-hidden rounded-xl border border-border bg-card text-sm', className]}>
+  <a
+    href={repoUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="flex items-start justify-between gap-4 p-4 transition-colors hover:bg-muted/50"
+  >
+    <!-- 좌측: 소유자 아바타 (또는 GitHub 아이콘) -->
+    <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted text-foreground">
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={ownerName} class="h-full w-full object-cover" loading="lazy" />
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+      )}
+    </div>
+
+    <!-- 중앙: owner/repo 제목 + 설명 + 메타 정보(언어·스타·포크·라이선스) -->
+    <div class="min-w-0 flex-1">
+      <div class="flex items-start justify-between gap-2">
+        <h3 class="truncate font-mono text-sm font-semibold leading-snug text-foreground @[460px]:text-base">
+          {ownerName && <span class="font-normal text-muted-foreground">{ownerName} / </span>}
+          <span>{repoName}</span>
+        </h3>
+
+        <div class="flex shrink-0 items-center gap-1.5">
+          {data?.archived && (
+            <span class="rounded border border-amber-500/30 bg-amber-500/10 px-1.5 py-px text-[10px] font-semibold text-amber-700 dark:text-amber-300">
+              Archived
+            </span>
+          )}
+          <span class="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">
+            GitHub ↗
+          </span>
+        </div>
+      </div>
+
+      {displayDesc && (
+        <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+          {displayDesc}
+        </p>
+      )}
+
+      {(displayLang || stars || forks || license) && (
+        <div class="mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-muted-foreground">
+          {displayLang && (
+            <span class="inline-flex items-center gap-1.5">
+              <span
+                class="h-2.5 w-2.5 rounded-full border border-black/10 dark:border-white/15"
+                style={`background-color: ${langColor};`}
+              />
+              <span>{displayLang}</span>
+            </span>
+          )}
+
+          {stars && (
+            <span class="inline-flex items-center gap-1 font-mono tabular-nums">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              {stars}
+            </span>
+          )}
+
+          {forks && (
+            <span class="inline-flex items-center gap-1 font-mono tabular-nums">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/>
+              </svg>
+              {forks}
+            </span>
+          )}
+
+          {license && (
+            <span class="font-mono text-[11px]">{license}</span>
+          )}
+        </div>
+      )}
+    </div>
+  </a>
+
+  {comment && (
+    <p class="border-t border-border px-4 py-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+      {comment}
+    </p>
+  )}
+</div>

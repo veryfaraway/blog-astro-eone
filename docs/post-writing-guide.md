@@ -147,6 +147,63 @@ IMDb 인물 ID는 `nm`으로 시작. 예: `imdb.com/name/nm0188744` → `nm01887
 
 ---
 
+### StockCard / StockInline — 주식·ETF 카드 (money 섹션)
+
+```mdx
+import StockCard from '@/components/StockCard.astro';
+import StockInline from '@/components/StockInline.astro';
+
+<StockCard ticker="NVDA" sector="반도체 · AI" website="nvidia.com" comment="핵심 AI 인프라 종목." />
+<StockCard ticker="005930" name="삼성전자" market="KOSPI" sector="반도체" />
+
+본문 내 언급: <StockInline ticker="SCHD" name="슈드" />와 <StockInline ticker="005930" name="삼성전자" />.
+```
+
+---
+
+### BaseballPlayerCard / PlayerInline — 프로야구 선수 카드
+
+```mdx
+import BaseballPlayerCard from '@/components/BaseballPlayerCard.astro';
+import PlayerInline from '@/components/PlayerInline.astro';
+
+<BaseballPlayerCard name="이정후" mlbId="808982" />
+<BaseballPlayerCard
+  name="김도영"
+  team="KIA"
+  number={5}
+  position="3B"
+  batsThrows="우투우타"
+  season="2024 KBO"
+  kboId="52605"
+  stats={{ avg: '.347', hr: 38, rbi: 109, ops: '1.067' }}
+/>
+
+본문 내 언급: <PlayerInline name="김도영" team="KIA" number={5} position="3B" kboId="52605" />.
+```
+
+---
+
+### GitHubRepoCard / AppCard / BookCard / PlaceCard / LinkPreviewCard
+
+```mdx
+import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
+import AppCard from '@/components/AppCard.astro';
+import BookCard from '@/components/BookCard.astro';
+import PlaceCard from '@/components/PlaceCard.astro';
+import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
+
+<GitHubRepoCard repo="catppuccin/tmux" />
+<AppCard name="Ghostty" platform="macOS" href="https://ghostty.org" brew="--cask ghostty" />
+<BookCard title="돈의 심리학" isbn13="9791157844685" comment="복리를 대하는 태도를 짚어주는 책." />
+<PlaceCard name="CGV 용산아이파크몰 IMAX" category="특별관" address="서울 용산구 한강대로23길 55" />
+<LinkPreviewCard url="https://docs.astro.build/en/getting-started/" />
+```
+
+상세 Props는 [`docs/astro-components.md`](astro-components.md) 참조.
+
+---
+
 ### CloudinaryImage — 반응형 이미지
 
 ```mdx

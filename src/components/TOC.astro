@@ -14,7 +14,7 @@ const filtered = headings.filter(h => h.depth <= 3);
 ---
 
 {filtered.length > 0 && (
-  <nav class="toc text-sm" aria-label="목차">
+  <nav class="toc text-sm" aria-label="목차" data-pagefind-ignore>
     <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">목차</p>
     <ul class="space-y-1.5">
       {filtered.map(({ depth, slug, text }) => (

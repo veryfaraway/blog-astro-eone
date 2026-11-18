@@ -40,12 +40,12 @@
 - [ ] **태그 컨벤션 및 내부 링크**: `tags`가 기존 포스트의 표기 규칙(영문 소문자 kebab-case 등)과 일치하여 불필요한 중복 태그를 만들지 않는가? 본문 내 내부 링크(`/{섹션}/{slug}`) 경로가 실제 존재하는 포스트와 일치하는가?
 
 ### ④ 블로그 기술 규격 및 CommonMark 안전성 (Astro & MDX Spec)
-- [ ] [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md)의 frontmatter 필수 필드(`title`, `description`, `date`, `category`, `tags`, `lang`, `draft`)가 온전한가? (제휴 컴포넌트 사용 시 `affiliate: true` 포함 여부, `thumbnail` 지정 시 실제 파일 확장자 `.jpg`/`.png`/`.webp` 일치 여부)
+- [ ] [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md)의 frontmatter 필수 필드(`title`, `description`, `date`, `category`, `tags`, `lang`, `draft`)가 온전한가? (제휴 컴포넌트 사용 시 `affiliate: true` 포함 여부, `thumbnail` 지정 시 Cloudinary OG 호환 URL `.../image/upload/w_1200,q_auto,f_jpg/posts/...` 형식 또는 로컬 폴백 시 실제 파일 확장자 일치 여부)
 - [ ] MDX 컴포넌트 import가 frontmatter 바로 아래에 올바르게 위치해 있으며, 미사용 import가 남아 있지 않은가?
-- [ ] 폐기 대상인 `Callout.astro`나 알라딘 OpenAPI 종료(2026.10.30)로 동작하지 않는 `BookCard.astro`를 사용하지 않았는가? (강조 박스는 `Alert.astro` 사용)
-- [ ] **주제별 특화 MDX 컴포넌트 활용**:
-  - 영화/드라마 포스트에서 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `YouTubeEmbed` 등 시각적 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
-  - 수치/시간대 설명 시 `Chart` / `ClockChart`, 다중 이미지 배치 시 `ImageRow` 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 컴포넌트를 적극 활용했는가?
+- [ ] 폐기 대상인 `Callout.astro`를 사용하지 않았는가? (강조 박스는 `Alert.astro` 사용)
+- [ ] **주제별 특화 MDX 컴포넌트 및 시각 에셋 활용**:
+  - 주제 성격에 맞춰 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13`), `StockCard` / `StockInline`, `BaseballPlayerCard` / `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `YouTubeEmbed` 등 전용 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
+  - 수치/시간대 설명 시 `Chart` / `ClockChart`, 본문 시각 자료에 `CloudinaryImage`(`publicId`, CLS 방지용 `width`·`height`, 구체적인 `alt` 모두 포함 여부) 및 다중 비교 시 `ImageRow` 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 컴포넌트를 적극 활용했는가?
 - [ ] 코드 블록(```) 언어 태그가 Shiki 표준 소문자 식별자(`typescript`, `java`, `bash`, `astro`, `yaml`, `mermaid` 등)이며, Mermaid 노드 라벨 내 특수문자/괄호가 큰따옴표(`"..."`)로 감싸져 있는가?
 - [ ] **물결표(`~`) 취소선 오인 방지**: 코드 블록 외부의 기간·수치 범위(예: `1~2주`)에 ASCII `~`가 들어가 취소선(`<del>`)으로 오인 파싱되는 곳이 없는가? (전각 물결표 `～` 또는 대시 `–` 사용 확인)
 - [ ] **볼드(`**`)·이탤릭(`*`) 구두점 경계 미파싱 방지**: `**단어(설명)**는`뿐 아니라 `*"인용문"*는`, `**'단어'**가`처럼 닫는 괄호·따옴표(`)`, `"`, `'`) 바로 뒤에 한글 조사가 붙어 `**` 또는 `*` 마커가 그대로 노출되는 곳이 없는가?

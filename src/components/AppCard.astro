@@ -1,0 +1,266 @@
+---
+interface Props {
+  /** 앱·유틸리티 이름 (예: "Ghostty", "Raycast", "Magnet") */
+  name: string;
+  /** 한줄 요약 설명 */
+  description?: string;
+  /** 분류·카테고리 (생략 시 App Store 장르명 사용, 예: "터미널", "생산성") */
+  category?: string;
+  /** 지원 플랫폼 (예: "macOS", ["macOS", "iOS"], "CLI · Cross-platform") */
+  platform?: string | string[];
+  /** 가격 정책 (예: "무료", "무료 · 오픈소스", "₩14,000", "구독형") */
+  price?: string;
+  /** Homebrew 설치 명령어 또는 패키지명 (예: "--cask ghostty", "ripgrep", "brew install --cask raycast") */
+  brew?: string;
+  /** Apple App Store ID (예: "441258766" 또는 "id441258766" — 지정 시 무료 iTunes API로 아이콘·평점·가격 자동 조회) */
+  appStoreId?: string | number;
+  /** App Store 국가 코드 (기본 "kr", 미등록 시 "us" 자동 폴백) */
+  country?: string;
+  /** 앱 아이콘 이미지 URL 수동 지정 */
+  icon?: string;
+  /** 공식 사이트 또는 다운로드 페이지 URL */
+  href?: string;
+  /** 카드 하단 추천 코멘트 */
+  comment?: string;
+  /** 추가 래퍼 클래스 */
+  class?: string;
+}
+
+interface ItunesAppInfo {
+  trackName?: string;
+  artworkUrl512?: string;
+  artworkUrl100?: string;
+  primaryGenreName?: string;
+  formattedPrice?: string;
+  averageUserRating?: number;
+  trackViewUrl?: string;
+  description?: string;
+}
+
+interface ItunesLookupResponse {
+  resultCount?: number;
+  results?: ItunesAppInfo[];
+}
+
+const g = globalThis as unknown as {
+  __itunesAppCache?: Map<string, Promise<ItunesAppInfo | null>>;
+};
+const appCache = (g.__itunesAppCache ??= new Map());
+
+async function lookupItunes(id: string, country: string): Promise<ItunesAppInfo | null> {
+  const res = await fetch(
+    `https://itunes.apple.com/lookup?id=${encodeURIComponent(id)}&country=${encodeURIComponent(country)}`,
+    { signal: AbortSignal.timeout(4000) }
+  );
+  if (!res.ok) return null;
+  const json = (await res.json()) as ItunesLookupResponse;
+  return json.results?.[0] ?? null;
+}
+
+async function getAppStoreInfo(rawId: string, preferredCountry: string): Promise<ItunesAppInfo | null> {
+  const cleanId = rawId.replace(/^id/i, '').trim();
+  if (!/^\d+$/.test(cleanId)) return null;
+  const key = `${cleanId}:${preferredCountry}`;
+  if (!appCache.has(key)) {
+    appCache.set(
+      key,
+      (async () => {
+        try {
+          const primary = await lookupItunes(cleanId, preferredCountry);
+          if (primary) return primary;
+          if (preferredCountry.toLowerCase() !== 'us') {
+            return await lookupItunes(cleanId, 'us');
+          }
+        } catch {
+          // 네트워크 실패 시 폴백
+        }
+        return null;
+      })()
+    );
+  }
+  return appCache.get(key)!;
+}
+
+const {
+  name,
+  description: manualDesc,
+  category: manualCategory,
+  platform,
+  price: manualPrice,
+  brew,
+  appStoreId,
+  country = 'kr',
+  icon: manualIcon,
+  href: manualHref,
+  comment,
+  class: className,
+} = Astro.props;
+
+const storeInfo =
+  appStoreId !== undefined ? await getAppStoreInfo(String(appStoreId), country) : null;
+
+const displayName = name || storeInfo?.trackName || 'App';
+const displayCategory = manualCategory ?? storeInfo?.primaryGenreName;
+const displayPrice = manualPrice ?? storeInfo?.formattedPrice;
+const rating =
+  typeof storeInfo?.averageUserRating === 'number' && storeInfo.averageUserRating > 0
+    ? storeInfo.averageUserRating.toFixed(1)
+    : undefined;
+
+const firstLineDesc = storeInfo?.description
+  ? storeInfo.description.split(/\r?\n/).find((line) => line.trim().length > 0)?.trim()
+  : undefined;
+const displayDesc = manualDesc ?? firstLineDesc;
+
+const platformList = Array.isArray(platform)
+  ? platform
+  : platform
+    ? [platform]
+    : appStoreId !== undefined
+      ? ['App Store']
+      : [];
+
+const resolvedHref = manualHref ?? storeInfo?.trackViewUrl;
+
+let domainFavicon: string | undefined;
+if (!manualIcon && !storeInfo?.artworkUrl512 && !storeInfo?.artworkUrl100 && resolvedHref) {
+  try {
+    const host = new URL(resolvedHref).hostname;
+    domainFavicon = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64`;
+  } catch {
+    // 잘못된 URL 무시
+  }
+}
+
+const displayIcon = manualIcon ?? storeInfo?.artworkUrl512 ?? storeInfo?.artworkUrl100;
+const monogram = [...displayName].slice(0, 2).join('').toUpperCase();
+
+const brewCommand = brew
+  ? brew.trim().startsWith('brew ')
+    ? brew.trim()
+    : `brew install ${brew.trim()}`
+  : undefined;
+
+const TopTag = resolvedHref ? 'a' : 'div';
+const topLinkProps = resolvedHref
+  ? { href: resolvedHref, target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+<div class:list={['@container not-prose my-6 overflow-hidden rounded-xl border border-border bg-card text-sm', className]}>
+  <TopTag
+    {...topLinkProps}
+    class:list={[
+      'flex items-center justify-between gap-4 p-4',
+      resolvedHref && 'transition-colors hover:bg-muted/50',
+    ]}
+  >
+    <!-- 좌측: 앱 아이콘 (스쿼클) -->
+    <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-muted font-mono text-sm font-bold text-foreground shadow-2xs">
+      {displayIcon ? (
+        <img src={displayIcon} alt={`${displayName} 아이콘`} class="h-full w-full object-cover" loading="lazy" />
+      ) : domainFavicon ? (
+        <img src={domainFavicon} alt="" width="32" height="32" class="h-8 w-8 rounded-md object-contain" loading="lazy" />
+      ) : (
+        monogram
+      )}
+    </div>
+
+    <!-- 중앙: 이름 · 플랫폼/카테고리/평점 · 요약 -->
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <h3 class="truncate text-sm font-bold leading-snug text-foreground @[460px]:text-base">
+          {displayName}
+        </h3>
+        {platformList.map((p) => (
+          <span class="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">
+            {p}
+          </span>
+        ))}
+      </div>
+
+      {(rating || displayCategory || displayPrice) && (
+        <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+          {rating && (
+            <span class="inline-flex items-center gap-0.5 font-semibold text-amber-500 dark:text-amber-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              {rating}
+            </span>
+          )}
+          {displayCategory && <span>{displayCategory}</span>}
+          {displayPrice && (
+            <span class="font-medium text-foreground/85">
+              {displayCategory || rating ? `· ${displayPrice}` : displayPrice}
+            </span>
+          )}
+        </div>
+      )}
+
+      {displayDesc && (
+        <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+          {displayDesc}
+        </p>
+      )}
+    </div>
+
+    <!-- 우측: 바로가기 뱃지 -->
+    {resolvedHref && (
+      <span class="hidden shrink-0 items-center gap-1 rounded-md border border-border bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-foreground @[440px]:inline-flex">
+        {appStoreId !== undefined && !manualHref ? 'App Store' : '공식 사이트'}
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+        </svg>
+      </span>
+    )}
+  </TopTag>
+
+  <!-- Homebrew 스니펫 원클릭 복사 바 (선택) -->
+  {brewCommand && (
+    <div class="flex items-center justify-between gap-2 border-t border-border bg-muted/35 px-4 py-2">
+      <div class="flex min-w-0 items-center gap-2 font-mono text-xs text-foreground">
+        <span class="select-none text-muted-foreground">$</span>
+        <code class="truncate">{brewCommand}</code>
+      </div>
+      <div class="flex shrink-0 items-center gap-2">
+        <a
+          href="/tools/install-homebrew-2026"
+          class="hidden text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline @[500px]:inline"
+        >
+          Homebrew 안내
+        </a>
+        <button
+          type="button"
+          data-brew-copy={brewCommand}
+          class="cursor-pointer rounded border border-border bg-card px-2 py-0.5 font-mono text-[11px] font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          복사
+        </button>
+      </div>
+    </div>
+  )}
+
+  <!-- 하단 추천 코멘트 (선택) -->
+  {comment && (
+    <p class="border-t border-border px-4 py-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+      {comment}
+    </p>
+  )}
+</div>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>('[data-brew-copy]');
+    if (!target) return;
+    const cmd = target.getAttribute('data-brew-copy');
+    if (!cmd) return;
+    navigator.clipboard?.writeText(cmd).then(() => {
+      const prev = target.textContent;
+      target.textContent = '복사됨 ✓';
+      setTimeout(() => {
+        target.textContent = prev;
+      }, 1500);
+    });
+  });
+</script>

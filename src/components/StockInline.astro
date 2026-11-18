@@ -1,0 +1,38 @@
+---
+interface Props {
+  /** 종목 티커 (예: "NVDA", "SCHD", "005930") */
+  ticker: string;
+  /** 본문에 함께 노출할 종목명 (예: "삼성전자", "슈드") */
+  name?: string;
+  /** 국내 종목 시장 구분 힌트 */
+  market?: 'US' | 'KOSPI' | 'KOSDAQ';
+  /** 외부 링크 직접 지정 */
+  href?: string;
+}
+
+const { ticker, name, market, href } = Astro.props;
+
+const cleanInput = ticker.trim();
+const krMatch = cleanInput.match(/^(\d{6})(?:\.(KS|KQ))?$/i);
+const isKrStock = Boolean(krMatch) || market === 'KOSPI' || market === 'KOSDAQ';
+const krCode = krMatch?.[1];
+const displayTicker = krCode ?? cleanInput.toUpperCase();
+
+const resolvedHref =
+  href ??
+  (krCode
+    ? `https://finance.naver.com/item/main.naver?code=${krCode}`
+    : `https://finance.yahoo.com/quote/${encodeURIComponent(cleanInput.toUpperCase())}/`);
+---
+
+<a
+  href={resolvedHref}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="not-prose inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-1.5 py-0.5 align-baseline text-xs font-medium text-foreground transition-colors hover:bg-muted"
+>
+  {name && <span class="font-medium text-foreground">{name}</span>}
+  <span class:list={['font-mono text-[11px] font-semibold', name ? 'text-muted-foreground' : 'text-foreground']}>
+    {isKrStock ? displayTicker : `$${displayTicker.replace(/^\$/, '')}`}
+  </span>
+</a>
