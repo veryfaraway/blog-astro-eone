@@ -2,7 +2,7 @@
 title: "2026 KBO 개막! 알고 보면 두 배 재미있는 관전 포인트"
 description: "아시아쿼터 도입, 역대급 FA 이적, 팀별 외국인 선수 변경 총정리. 직관·집관 전 필독!"
 date: 2026-03-27
-category: 주절주절
+category: 열광의 도가니탕
 tags:
   - "프로야구"
 draft: false

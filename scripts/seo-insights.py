@@ -69,6 +69,9 @@ SYNONYM_GROUPS: List[Tuple[str, ...]] = [
     ("공매도", "short-selling", "short selling"),
     ("마진콜", "margin-call", "margin call"),
     ("리밸런싱", "rebalancing", "reconstitution"),
+    ("13f", "13f공시", "13f 공시", "13f 보고서", "form 13f", "sec 13f"),
+    ("버크셔", "버크셔해서웨이", "버크셔 해서웨이", "워런버핏", "워런 버핏", "워렌버핏", "워렌 버핏", "berkshire", "berkshire hathaway"),
+    ("드러켄밀러", "스탠리 드러켄밀러", "듀케인", "druckenmiller", "duquesne"),
     # 영화 / 특별관 / 문화 (culture)
     ("아이맥스", "아맥", "imax"),
     ("용아맥", "용산 아이맥스", "용산 imax", "cgv 용산 아이맥스", "yongamac"),

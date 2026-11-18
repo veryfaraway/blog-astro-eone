@@ -14,7 +14,7 @@
   src/content/
   ├── life/      # 일상/종교/육아/자동차/아쿠아리움
   ├── money/     # 경제/투자/절약/제품리뷰 (리퍼럴 제휴)
-  ├── culture/   # 영화/영어학습/여행
+  ├── culture/   # 영화/게임/영어학습/여행/스포츠
   ├── tools/     # macOS/터미널/개발환경/앱
   └── dev/       # 개발/AI/Backend/Frontend/DevOps/트렌드
   ```

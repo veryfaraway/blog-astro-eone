@@ -11,7 +11,7 @@
 blog.eone.one/
 ├── /life/      # 일상/종교/육아/자동차/아쿠아리움
 ├── /money/     # 경제/투자/절약/제품리뷰 (제휴 수입)
-├── /culture/   # 영화/드라마/게임/영어/여행
+├── /culture/   # 영화/드라마/게임/영어/여행/스포츠
 ├── /tools/     # macOS/터미널/개발환경/앱
 └── /dev/       # 개발/AI/Backend/Frontend/DevOps
 ```
@@ -22,7 +22,7 @@ blog.eone.one/
 |------|--------------|
 | `life` | `주절주절`, `생활의발견`, `마굿간`, `Christian` |
 | `money` | `스노볼`, `자린고비`, `나만 당할 수 없지`, `황금수갑` |
-| `culture` | `아는 척하기 딱 좋은`, `스포일러 지뢰찾기`, `비행기 값이 안 아까운`, `공부를 이만큼 했으면` |
+| `culture` | `아는 척하기 딱 좋은`, `스포일러 지뢰찾기`, `공부를 이만큼 했으면`, `여행은 계획이 반`, `열광의 도가니탕` |
 | `tools` | `macOS`, `Tools` |
 | `dev` | `Backend`, `Frontend`, `DevOps`, `Trends`, `Data` |
 
@@ -304,5 +304,6 @@ import AdSlot from '@/components/AdSlot.astro';
 | 도구 | 참조할 포스트 |
 |------|--------------|
 | Homebrew 설치 | `/tools/install-homebrew-2026` (`src/content/tools/ko/2026/install-homebrew-2026.md`) — Apple Silicon(`/opt/homebrew`)/Intel(`/usr/local`) 경로 차이, PATH(`brew shellenv`) 설정 포함. `brew install ...`로 패키지 설치가 필요한 포스트를 쓸 때는 설치 과정을 다시 쓰지 말고 이 글을 링크로 안내할 것 |
+| SEC 13F 공시 개념·일정·사각지대 | `/money/13f-sec-top10-investors-guide` (`src/content/money/ko/2026/13f-sec-top10-investors-guide.mdx`) — 13F 기본 개념, 연 4회 제출 마감일, 45일 시차 및 옵션·비미국 주식 착시, 장기투자 대가 TOP 10 총정리. 분기별 13F 정기 연재(`series: "월가 전설들의 13F 투자 일지"`, 슬러그 `13f-YYYY-qN-...`)를 쓸 때는 13F 기본 설명을 중복 서술하지 말고 이 글을 링크로 참조할 것 |
 
 새로 이런 "레퍼런스 포스트"가 생기면 이 표에 추가한다.

@@ -104,3 +104,14 @@
   from = "/:section/ko/:year/:slug"
   to = "/:section/:slug"
   status = 301
+
+# life → culture 스포츠(야구) 포스트 이전 301 리다이렉트
+[[redirects]]
+  from = "/life/2026-kbo-season-preview"
+  to = "/culture/2026-kbo-season-preview"
+  status = 301
+
+[[redirects]]
+  from = "/life/2026-kbo-review-2027-draft"
+  to = "/culture/2026-kbo-review-2027-draft"
+  status = 301

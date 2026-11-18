@@ -15,7 +15,7 @@
 |------|------|
 | **Life** | 일상 · 종교 · 육아 · 자동차 · 아쿠아리움 |
 | **Money** | 경제 · 투자 · 절약 · 제품 리뷰 |
-| **Culture** | 영화 · 영어 · 여행 |
+| **Culture** | 영화 · 게임 · 여행 |
 | **Tools** | macOS · 터미널 · 개발 환경 |
 | **Dev** | 개발 · AI · Backend · Frontend · DevOps |
 
