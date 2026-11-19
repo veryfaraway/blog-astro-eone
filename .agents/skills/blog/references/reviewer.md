@@ -43,9 +43,13 @@
 - [ ] [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md)의 frontmatter 필수 필드(`title`, `description`, `date`, `category`, `tags`, `lang`, `draft`)가 온전한가? (제휴 컴포넌트 사용 시 `affiliate: true` 포함 여부, `thumbnail` 지정 시 Cloudinary OG 호환 URL `.../image/upload/w_1200,q_auto,f_jpg/posts/...` 형식 또는 로컬 폴백 시 실제 파일 확장자 일치 여부)
 - [ ] MDX 컴포넌트 import가 frontmatter 바로 아래에 올바르게 위치해 있으며, 미사용 import가 남아 있지 않은가?
 - [ ] 폐기 대상인 `Callout.astro`를 사용하지 않았는가? (강조 박스는 `Alert.astro` 사용)
-- [ ] **주제별 특화 MDX 컴포넌트 및 시각 에셋 활용**:
+- [ ] **주제별 특화 MDX 컴포넌트 및 시각 자료 목적성 감사**:
   - 주제 성격에 맞춰 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13`), `StockCard` / `StockInline`, `BaseballPlayerCard` / `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `YouTubeEmbed` 등 전용 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
-  - 수치/시간대 설명 시 `Chart` / `ClockChart`, 본문 시각 자료에 `CloudinaryImage`(`publicId`, CLS 방지용 `width`·`height`, 구체적인 `alt` 모두 포함 여부) 및 다중 비교 시 `ImageRow` 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 컴포넌트를 적극 활용했는가?
+  - 수치/시간대·흐름 설명 시 `Chart` / `ClockChart` / `Mermaid` / 커스텀 SVG 도식 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 수단을 적재적소에 활용했는가?
+  - **장식용 이미지 남발 및 캡션·문맥 연동 감사**:
+    - 본문 이미지가 단락 구분용 추상 은유 배너('체스말', '천칭 저울', '등대', '방패' 등)로 쓰이지 않고, 실제 내용 이해·현장감을 돕는 구체적 대상(사료, 풍경, 제품 구성도, 인물 캐리커처 등)인가? 코드·IT 글에 의미 없는 감성 AI 일러스트가 억지로 들어갔다면 **삭제**하거나 `Mermaid`/커스텀 SVG 도식으로 교체하도록 제안할 것 (`0장`도 정상).
+    - 이미지가 `##` H2 소제목 바로 아래에 문맥 없이 구분선처럼 놓이지 않고, 관련 문단 설명 흐름과 자연스럽게 연결되어 있는가?
+    - 단독 `<CloudinaryImage>`에 CLS 방지용 `width`·`height`, 구체적인 `alt`뿐 아니라 독자의 이해를 돕는 **`caption`**이 달려 있는가? 외부 퍼블릭 도메인·공식 자료 인용 시 `credit`·`creditUrl` 출처 표기가 누락되지 않았는가?
 - [ ] 코드 블록(```) 언어 태그가 Shiki 표준 소문자 식별자(`typescript`, `java`, `bash`, `astro`, `yaml`, `mermaid` 등)이며, Mermaid 노드 라벨 내 특수문자/괄호가 큰따옴표(`"..."`)로 감싸져 있는가?
 - [ ] **물결표(`~`) 취소선 오인 방지**: 코드 블록 외부의 기간·수치 범위(예: `1~2주`)에 ASCII `~`가 들어가 취소선(`<del>`)으로 오인 파싱되는 곳이 없는가? (전각 물결표 `～` 또는 대시 `–` 사용 확인)
 - [ ] **볼드(`**`)·이탤릭(`*`) 구두점 경계 미파싱 방지**: `**단어(설명)**는`뿐 아니라 `*"인용문"*는`, `**'단어'**가`처럼 닫는 괄호·따옴표(`)`, `"`, `'`) 바로 뒤에 한글 조사가 붙어 `**` 또는 `*` 마커가 그대로 노출되는 곳이 없는가?

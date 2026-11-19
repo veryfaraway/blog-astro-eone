@@ -22,6 +22,10 @@ interface Props {
   yes24Href?: string;
   /** 쿠팡 파트너스 제휴 링크 (선택 — 사용 시 포스트 frontmatter에 affiliate: true 권장) */
   coupangHref?: string;
+  /** Amazon 제휴/상품 링크 (선택 — 사용 시 포스트 frontmatter에 affiliate: true 권장) */
+  amazonHref?: string;
+  /** 표시 언어 ('ko' 기본, 영문 포스트에서는 'en' 지정 시 버튼·폴백 문구 영문 전환) */
+  lang?: 'ko' | 'en';
   /** 추가 래퍼 클래스 */
   class?: string;
 }
@@ -71,9 +75,9 @@ const g = globalThis as unknown as {
 };
 const bookCache = (g.__bookMetaCache ??= new Map());
 
-function upgradeKakaoThumb(url?: string): string | undefined {
+function normalizeKakaoThumb(url?: string): string | undefined {
   if (!url) return undefined;
-  return url.replace('/R120x174', '/R240x348').replace(/^http:\/\//i, 'https://');
+  return url.replace(/^http:\/\//i, 'https://');
 }
 
 async function fetchKakaoBook(isbn: string, apiKey: string): Promise<BookMeta | null> {
@@ -111,7 +115,7 @@ async function fetchKakaoBook(isbn: string, apiKey: string): Promise<BookMeta | 
       author: authorText,
       publisher: doc.publisher || undefined,
       pubYear: doc.datetime ? doc.datetime.slice(0, 4) : undefined,
-      cover: upgradeKakaoThumb(doc.thumbnail),
+      cover: normalizeKakaoThumb(doc.thumbnail),
       price: effectivePrice,
       infoUrl: doc.url,
     };
@@ -147,28 +151,35 @@ async function fetchGoogleBook(isbn: string): Promise<BookMeta | null> {
   }
 }
 
-async function resolveBookByIsbn(rawIsbn: string): Promise<BookMeta | null> {
-  if (!bookCache.has(rawIsbn)) {
+async function resolveBookByIsbn(rawIsbn: string, lang: 'ko' | 'en' = 'ko'): Promise<BookMeta | null> {
+  const cacheKey = `${lang}:${rawIsbn}`;
+  if (!bookCache.has(cacheKey)) {
     bookCache.set(
-      rawIsbn,
+      cacheKey,
       (async () => {
+        // 영문 모드(lang="en")는 영문 메타데이터·표지를 위해 Google Books를 1순위로 조회
+        if (lang === 'en') {
+          const google = await fetchGoogleBook(rawIsbn);
+          if (google) return google;
+        }
+
         const kakaoKey =
           import.meta.env.KAKAO_REST_API_KEY ||
           import.meta.env.PUBLIC_KAKAO_REST_API_KEY ||
           process.env.KAKAO_REST_API_KEY;
 
-        // 1순위: 카카오 책 검색 API (국내 도서 커버리지 최상)
+        // 한국어 모드 1순위: 카카오 책 검색 API (국내 도서 커버리지 최상)
         if (kakaoKey) {
           const kakao = await fetchKakaoBook(rawIsbn, kakaoKey);
           if (kakao) return kakao;
         }
 
-        // 2순위: Google Books 무인증 조회 (해외 원서 및 키 미설정 환경 폴백)
-        return await fetchGoogleBook(rawIsbn);
+        // 폴백: Google Books 무인증 조회 (해외 원서 및 키 미설정 환경)
+        return lang === 'en' ? null : await fetchGoogleBook(rawIsbn);
       })()
     );
   }
-  return bookCache.get(rawIsbn)!;
+  return bookCache.get(cacheKey)!;
 }
 
 const {
@@ -183,15 +194,18 @@ const {
   kyoboHref,
   yes24Href,
   coupangHref,
+  amazonHref,
+  lang = 'ko',
   class: className,
 } = Astro.props;
 
+const isEn = lang === 'en';
 const cleanIsbn = isbn13.replace(/[-\s]/g, '').trim();
 const isValidIsbn = /^(?:\d{10}|\d{13}|\d{9}[\dXx])$/.test(cleanIsbn);
 
-const fetched = isValidIsbn ? await resolveBookByIsbn(cleanIsbn) : null;
+const fetched = isValidIsbn ? await resolveBookByIsbn(cleanIsbn, lang) : null;
 
-const displayTitle = title || fetched?.title || '도서 정보';
+const displayTitle = title || fetched?.title || (isEn ? 'Book Info' : '도서 정보');
 const displayAuthor = manualAuthor ?? fetched?.author;
 const displayPublisher = manualPublisher ?? fetched?.publisher;
 const pubYear = fetched?.pubYear;
@@ -200,52 +214,105 @@ const displayCover = manualCover ?? fetched?.cover;
 const formattedPrice =
   manualPrice !== undefined
     ? typeof manualPrice === 'number'
-      ? `${manualPrice.toLocaleString('ko-KR')}원`
+      ? isEn
+        ? `$${manualPrice.toLocaleString('en-US')}`
+        : `${manualPrice.toLocaleString('ko-KR')}원`
       : manualPrice
-    : fetched?.price !== undefined && fetched.price > 0
+    : !isEn && fetched?.price !== undefined && fetched.price > 0
       ? `${fetched.price.toLocaleString('ko-KR')}원`
       : undefined;
 
-// 우측 구매·정보 버튼 목록 구성 (지정된 서점 링크 우선, 아무 링크도 없고 ISBN만 있으면 알라딘 ISBN 상세페이지 제공)
+// 우측 구매·정보 버튼 목록 구성 (지정된 서점·제휴 링크 우선, 아무 링크도 없고 ISBN만 있으면 기본 도서 정보 링크 폴백)
 interface ActionBtn {
   label: string;
   subText: string;
   href: string;
   badgeBg: string;
+  badgeTextColor?: string;
   isAffiliate?: boolean;
 }
 
 const actions: ActionBtn[] = [];
+if (coupangHref) {
+  actions.push({
+    label: isEn ? 'Coupang' : '쿠팡',
+    subText: isEn ? 'Buy' : '구매하기',
+    href: coupangHref,
+    badgeBg: '#E94B22',
+    isAffiliate: true,
+  });
+}
+if (amazonHref) {
+  actions.push({
+    label: 'Amazon',
+    subText: isEn ? 'Buy' : '구매하기',
+    href: amazonHref,
+    badgeBg: '#FF9900',
+    badgeTextColor: '#171717',
+    isAffiliate: true,
+  });
+}
 if (aladinHref) {
-  actions.push({ label: '알라딘', subText: '보러가기', href: aladinHref, badgeBg: '#2F9DDC', isAffiliate: true });
+  actions.push({
+    label: isEn ? 'Aladin' : '알라딘',
+    subText: isEn ? 'View' : '보러가기',
+    href: aladinHref,
+    badgeBg: '#2F9DDC',
+  });
 }
 if (kyoboHref) {
-  actions.push({ label: '교보문고', subText: '보러가기', href: kyoboHref, badgeBg: '#474C98' });
+  actions.push({
+    label: isEn ? 'Kyobo' : '교보문고',
+    subText: isEn ? 'View' : '보러가기',
+    href: kyoboHref,
+    badgeBg: '#474C98',
+  });
 }
 if (yes24Href) {
-  actions.push({ label: 'YES24', subText: '보러가기', href: yes24Href, badgeBg: '#196AB3' });
-}
-if (coupangHref) {
-  actions.push({ label: '쿠팡', subText: '구매하기', href: coupangHref, badgeBg: '#E94B22', isAffiliate: true });
+  actions.push({
+    label: 'YES24',
+    subText: isEn ? 'View' : '보러가기',
+    href: yes24Href,
+    badgeBg: '#196AB3',
+  });
 }
 
 if (actions.length === 0 && isValidIsbn) {
-  const isKoreanIsbn = cleanIsbn.startsWith('97889') || cleanIsbn.startsWith('97911');
-  actions.push(
-    isKoreanIsbn
-      ? {
-          label: '알라딘',
-          subText: '도서 정보',
-          href: `https://www.aladin.co.kr/shop/wproduct.aspx?ISBN=${encodeURIComponent(cleanIsbn)}`,
-          badgeBg: '#2F9DDC',
-        }
-      : {
-          label: '교보문고',
-          subText: '도서 검색',
-          href: `https://search.kyobobook.co.kr/search?keyword=${encodeURIComponent(cleanIsbn)}`,
-          badgeBg: '#474C98',
-        }
-  );
+  if (isEn) {
+    actions.push(
+      fetched?.infoUrl
+        ? {
+            label: 'Google',
+            subText: 'Book Info',
+            href: fetched.infoUrl,
+            badgeBg: '#4285F4',
+          }
+        : {
+            label: 'Amazon',
+            subText: 'Search',
+            href: `https://www.amazon.com/s?k=${encodeURIComponent(cleanIsbn)}`,
+            badgeBg: '#FF9900',
+            badgeTextColor: '#171717',
+          }
+    );
+  } else {
+    const isKoreanIsbn = cleanIsbn.startsWith('97889') || cleanIsbn.startsWith('97911');
+    actions.push(
+      isKoreanIsbn
+        ? {
+            label: '알라딘',
+            subText: '도서 정보',
+            href: `https://www.aladin.co.kr/shop/wproduct.aspx?ISBN=${encodeURIComponent(cleanIsbn)}`,
+            badgeBg: '#2F9DDC',
+          }
+        : {
+            label: '교보문고',
+            subText: '도서 검색',
+            href: `https://search.kyobobook.co.kr/search?keyword=${encodeURIComponent(cleanIsbn)}`,
+            badgeBg: '#474C98',
+          }
+    );
+  }
 }
 ---
 
@@ -258,9 +325,10 @@ if (actions.length === 0 && isValidIsbn) {
         {displayCover ? (
           <img
             src={displayCover}
-            alt={`${displayTitle} 표지`}
+            alt={isEn ? `${displayTitle} cover` : `${displayTitle} 표지`}
             class="h-full w-full object-cover"
             loading="lazy"
+            referrerpolicy="no-referrer"
           />
         ) : (
           '📖'
@@ -300,8 +368,8 @@ if (actions.length === 0 && isValidIsbn) {
             class="flex flex-1 flex-row items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted @[480px]:flex-initial @[480px]:flex-col @[480px]:gap-1 @[480px]:px-2"
           >
             <span
-              class="rounded px-1.5 py-0.5 text-[9px] font-bold text-white"
-              style={`background-color: ${btn.badgeBg};`}
+              class="rounded px-1.5 py-0.5 text-[9px] font-bold"
+              style={`background-color: ${btn.badgeBg}; color: ${btn.badgeTextColor ?? '#ffffff'};`}
             >
               {btn.label}
             </span>

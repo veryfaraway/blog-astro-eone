@@ -81,6 +81,9 @@ Researcher는 메인 세션에 아래 4가지 고정 섹션으로 정리하여 �
   - **도서 (`BookCard`)**: 추천·인용 도서의 정확한 ISBN13 (`isbn13="97911..."` — 카카오 책 검색 + Google Books 하이브리드 자동 조회용)
   - **주식·프로야구 (`StockCard` / `BaseballPlayerCard`)**: 정확한 종목 티커(`NVDA`, `005930` 등) 및 MLB 공식 선수 ID(`mlbId`)·KBO 기록실 `kboId` / 시즌 성적
   - **오픈소스·앱 (`GitHubRepoCard` / `AppCard`)**: 정확한 `"owner/repo"` 슬러그, Apple App Store ID(`appStoreId`), Homebrew 설치 패키지명(`brew`)
+- **[검증된 원본 시각 레퍼런스 후보]** (주제 이해에 실물·사료·공식 도표가 유익할 때 조사):
+  - 역사 유물·사료·성화·실제 지리 풍경(예: Wikimedia Commons의 Public Domain / CC0 / CC BY-SA 원본 파일 직접 URL `https://upload.wikimedia.org/...` 및 원저작자·라이선스명·문서 페이지 URL)
+  - 공식 기술 문서 아키텍처·오픈소스 리포지토리 공개 다이어그램·공식 프레스킷 이미지 URL 및 출처 표기 정보 (워터마크 유료 스톡 이미지나 출처 불명 블로그 이미지 제외)
 
 ### 4. SEO 추천 키워드 및 검색 의도 분석
 - **메인 키워드**: (검색량이 높고 글의 주제를 관통하는 1~2개 키워드)

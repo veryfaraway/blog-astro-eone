@@ -81,10 +81,12 @@
       - 오픈소스 저장소 소개 시 `<GitHubRepoCard repo="owner/repo" />`
       - 앱·CLI 유틸리티 소개 시 `<AppCard name="앱 이름" platform="macOS" href="..." brew="..." />` (`appStoreId` 지정 시 아이콘·평점 자동 조회)
       - 주요 외부 문서·아티클 단독 인용 시 `<LinkPreviewCard url="https://..." />`
-    - **데이터/시간대/이미지 그리드**:
+    - **데이터/시간대/커스텀 도식 및 본문 이미지 (`0～N장` 자율, 장식용 배너 금지)**:
       - 통계·수치 비교는 `<Chart type="bar|line|pie|doughnut|radar" data={...} caption="..." />`
       - 24시간 기준 시간대 안내(증시 시간, 일과표 등)는 `<ClockChart segments={[...]} caption="..." />`
-      - 본문 개념 일러스트·실사 사진은 `<CloudinaryImage publicId="posts/..." width={...} height={...} alt="구체적인 설명" />`로 삽입하며(`width`/`height` 동시 지정으로 CLS 방지 필수), 2～4장의 비교·연속 이미지는 `<ImageRow cols={2} caption="...">` 안에 `<CloudinaryImage>`를 배치합니다 (아직 업로드 전 슬롯이라면 오케스트레이터가 전달한 예정 `publicId` 또는 명확한 위치 마커를 배치)
+      - 메모리/락 구조, 시스템 계층, 입출력 구성도 등 **한글·영문 라벨이 필수인 기술·구조 도해**는 텍스트가 깨지는 AI 이미지 대신 `Mermaid` 또는 깔끔한 **반응형 인라인 SVG 도식**(`<figure class="not-prose my-6">` + `viewBox` + 다크모드 호환 컬러 + `<figcaption>`)으로 직접 작성합니다.
+      - **본문 래스터 이미지(`<CloudinaryImage>`)는 의무 할당량이 없습니다(`0장` 허용)**: 코드 설명·백엔드·트러블슈팅 글에는 억지로 추상 메타포 일러스트('체스말', '등대', '방패' 등)를 넣지 마세요. 반대로 절기·역사 장면(트리·교회·구유 등), 제품 구성도, 인물 캐리커처, 여행지 풍경, 실제 사료 사진처럼 **내용 이해와 현장감에 실질적 도움을 주는 주제라면 개수 제한 없이** 필요한 문단 흐름 속에 자연스럽게 배치합니다 (**H2 소제목 바로 밑에 문맥 없이 구분선처럼 꽂아 넣기 금지**).
+      - `<CloudinaryImage>` 단독 삽입 시 CLS 방지용 `width`·`height`, `alt`와 함께 **독자가 이미지에서 무엇을 봐야 하는지 짚어주는 `caption` prop을 반드시 포함**하고(외부 원본 인용 시 `credit`·`creditUrl` 병기), 앞뒤 본문 문장에서 자연스럽게 맥락을 이어줍니다. 2～4장 비교·연속 이미지는 `<ImageRow cols={2} caption="...">`로 묶습니다.
     - **제휴/상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수 추가):
       - `<AffiliateLink href="..." provider="coupang|amazon|11st|other" />`
       - `<CoupangProductCard href="..." title="..." />` (`href` 직접 지정 기본)
@@ -117,15 +119,16 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
 본문 첫 단락. 독자의 문제 상황을 즉시 짚고 메인 키워드를 자연스럽게 노출하는 훅.
 
-## 문제의 본질 / 원인 분석
+## 문제의 본질 / 핵심 배경
 
-설명...
+대상을 구체적으로 짚어주는 본문 문단 설명... (코드·IT 글이라 별도 래스터 이미지가 불필요하면 생략하고 Mermaid·코드에 집중하며, 실물·풍경·구성도·캐리커처 등 이해를 돕는 이미지가 있을 때만 문단 흐름 속에 배치)
 
 <CloudinaryImage
-  publicId="posts/{섹션}/YYYY/slug/fig-01-overview"
-  width={1408}
+  publicId="posts/{섹션}/YYYY/slug/fig-01-concrete-subject"
+  width={1376}
   height={768}
-  alt="핵심 개념의 동작 원리를 직관적으로 보여주는 일러스트"
+  alt="본문 설명 대상을 구체적으로 묘사한 접근성 텍스트"
+  caption="독자가 이미지에서 확인해야 할 핵심 구조·장면 포인트 설명"
 />
 
 <Alert type="warning" title="주의">
@@ -145,7 +148,7 @@ pnpm add @astrojs/check
 - **Import 배치 및 미사용 금지**: MDX 컴포넌트 import는 반드시 frontmatter 바로 아래, 본문 시작 전에 위치해야 하며 사용하지 않는 import는 남기지 않습니다.
 - **Cloudinary 이미지 및 썸네일 규격**:
   - `thumbnail` frontmatter는 카카오톡·슬랙 등 OG 크롤러 호환성을 위해 `https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/{섹션}/{연도}/{slug}/thumbnail` 형식을 기본으로 사용합니다(오프라인 폴백 시에만 `/images/posts/` 로컬 경로 및 실제 확장자 일치 확인).
-  - `<CloudinaryImage>`는 CLS 방지를 위해 업로드 응답의 실제 `width`와 `height` 숫자를 반드시 함께 넣습니다.
+  - `<CloudinaryImage>`는 CLS 방지를 위해 업로드 응답의 실제 `width`와 `height` 숫자를 반드시 함께 넣고, 단독 사용 시 읽는 포인트를 안내하는 `caption`(및 외부 자료 인용 시 `credit`·`creditUrl`)을 지정합니다. (본문에 `<CloudinaryImage>`를 쓰지 않는 포스트에서는 상단 import에서도 제외할 것)
 - **Shiki 언어 태그**: 코드 블록에는 Shiki가 인식하는 소문자 표준 식별자(`typescript`, `tsx`, `java`, `bash`, `astro`, `json`, `yaml`, `mermaid` 등)만 사용합니다.
 - **폐기 컴포넌트 사용 금지**: `Callout.astro`는 절대 쓰지 말고 강조 박스는 `Alert.astro`를 사용합니다.
 - **물결표(`~`) 취소선 오인 주의**: 마크다운(GFM) 파서가 문단 내 연속된 ASCII 물결표(`~`)를 취소선(`<del>`)으로 오인하지 않도록, 날짜·기간·수치 범위(예: `1～2주`, `3～5월`, `20～30대`) 표기 시 반드시 **전각 물결표(`～`)** 또는 대시(`–`)를 사용합니다(코드 블록/인라인 코드 제외).

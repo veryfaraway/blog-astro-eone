@@ -437,7 +437,7 @@ import PersonInline from '@/components/PersonInline.astro';
 > - 키가 없거나 해외 원서 ISBN인 경우 자동으로 **Google Books API**로 폴백하며, 모든 API 조회가 실패하거나 `isbn13`을 비워둔 경우에도 `title`·`author`·`cover` 등 수동 Props와 `📖` 아이콘으로 안전하게 렌더링된다.
 > - *(이력: 기존 알라딘 OpenAPI가 2026.10.30 전면 종료됨에 따라 카카오 + Google Books + 수동 폴백 하이브리드 구조로 리뉴얼됨)*
 
-레이아웃은 **2행 구성**이다(`@container` 반응형 대응). 1행은 표지(왼쪽) · 제목/저자/출판사/가격(가운데) · 서점/구매 버튼(오른쪽 세로 스택, 좁은 폭에서는 하단 가로열), 2행은 `comment`가 카드 전체 폭을 가로지른다. 서점 링크(`aladinHref`·`kyoboHref`·`yes24Href`·`coupangHref`)를 하나도 넘기지 않아도 유효한 `isbn13`이 있으면 국내 도서는 알라딘 ISBN 상세페이지, 해외 도서는 교보문고 검색 링크 버튼을 기본 제공한다. 쿠팡 파트너스(`coupangHref`) 등 제휴 링크를 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것.
+레이아웃은 **2행 구성**이다(`@container` 반응형 대응). 1행은 표지(왼쪽) · 제목/저자/출판사/가격(가운데) · 서점/구매 버튼(오른쪽 세로 스택, 좁은 폭에서는 하단 가로열), 2행은 `comment`가 카드 전체 폭을 가로지른다. 서점·제휴 링크(`coupangHref`·`amazonHref`·`aladinHref`·`kyoboHref`·`yes24Href`)를 하나도 넘기지 않아도 유효한 `isbn13`이 있으면 한국어 포스트(`lang="ko"`)는 국내 도서 알라딘 / 해외 도서 교보문고 링크를, 영문 포스트(`lang="en"`)는 Google Books / Amazon 검색 링크를 기본 폴백으로 제공한다. 쿠팡 파트너스(`coupangHref`)나 Amazon(`amazonHref`) 등 제휴 링크를 넣는 포스트는 frontmatter에 `affiliate: true`를 설정해 상단 `AffiliateNotice`로 공시할 것.
 
 ```mdx
 import BookCard from '@/components/BookCard.astro';
@@ -447,8 +447,14 @@ import BookCard from '@/components/BookCard.astro';
   title="돈의 심리학"
   isbn13="9791157844685"
   comment="투자 수익률은 지능지수보다 시간과 복리를 대하는 태도에서 갈린다는 점을 담백하게 짚어준다."
-  kyoboHref="https://search.kyobobook.co.kr/search?keyword=9791157844685"
   coupangHref="https://link.coupang.com/..."
+/>
+<BookCard
+  title="The Three-Body Problem"
+  isbn13="9780765382030"
+  lang="en"
+  amazonHref="https://amzn.to/..."
+  comment="Cixin Liu's Hugo Award-winning sci-fi novel that inspired the Netflix series."
 />
 ```
 
@@ -461,10 +467,12 @@ import BookCard from '@/components/BookCard.astro';
 | `cover` | `string` | API 자동 | 표지 이미지 URL 수동 오버라이드 |
 | `price` | `number \| string` | API 자동 | 판매가/정가 수동 지정 |
 | `comment` | `string` | — | 카드 하단 전체 폭으로 표시할 짧은 추천 코멘트 (2～3문장 이내 권장) |
-| `aladinHref` | `string` | ISBN 상세링크 | 알라딘 상품 링크 |
+| `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (사용 시 frontmatter `affiliate: true` 권장) |
+| `amazonHref` | `string` | — | Amazon 제휴/상품 링크 (사용 시 frontmatter `affiliate: true` 권장) |
+| `aladinHref` | `string` | ISBN 상세링크(`ko`) | 알라딘 상품 링크 |
 | `kyoboHref` | `string` | — | 교보문고 상품 링크 |
 | `yes24Href` | `string` | — | YES24 상품 링크 |
-| `coupangHref` | `string` | — | 쿠팡 파트너스 링크 (사용 시 frontmatter `affiliate: true` 권장) |
+| `lang` | `'ko' \| 'en'` | `'ko'` | 표시 언어 (`'en'` 지정 시 버튼·alt·폴백 문구 영문 전환) |
 
 ---
 
@@ -658,32 +666,43 @@ import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
 
 #### `CloudinaryImage.astro`
 
-Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성.
+Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성 + 선택적 하단 캡션(`caption`) 및 출처 표기(`credit`/`creditUrl`) 지원.
 
 > **환경변수**: `PUBLIC_CLOUDINARY_CLOUD_NAME` 필요.
 
 ```mdx
 import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
-<CloudinaryImage publicId="v123/photo.jpg" alt="사진 설명" />
 <CloudinaryImage
   publicId="v123/photo.jpg"
   alt="사진 설명"
   width={1200}
   height={800}
-  sizes="(max-width: 768px) 100vw, 800px"
+  caption="본문 이해를 돕는 이미지 핵심 읽는 포인트 설명"
+/>
+<CloudinaryImage
+  publicId="posts/life/2026/advent/fig-01-wichern-wreath"
+  alt="1839년 독일 함부르크 라우에 하우스의 수레바퀴 대림환"
+  width={1200}
+  height={800}
+  caption="비헤른 목사가 마차 바퀴로 만든 초기 대림환 구조"
+  credit="Wikimedia Commons, Public Domain"
+  creditUrl="https://commons.wikimedia.org/wiki/..."
 />
 ```
 
 | Prop | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
 | `publicId` | `string` | — | Cloudinary public ID |
-| `alt` | `string` | — | 접근성 alt 텍스트 |
-| `sizes` | `string` | `(max-width:1200px) 100vw, 1200px` | 반응형 sizes 힌트 |
+| `alt` | `string` | — | 접근성 및 SEO용 구체적 alt 텍스트 |
+| `sizes` | `string` | `(max-width: 1200px) 100vw, 1200px` | 반응형 sizes 힌트 |
 | `width` | `number` | — | 원본 너비 (지정 시 aspect-ratio로 CLS 방지) |
 | `height` | `number` | — | 원본 높이 (width와 함께 지정) |
+| `caption` | `string` | — | 이미지 하단 `<figcaption>` 설명 문구 (독자가 주목할 포인트 안내) |
+| `credit` | `string` | — | 외부 사료·퍼블릭 도메인·공식 자료 인용 시 출처/라이선스 표기 |
+| `creditUrl` | `string` | — | `credit`에 연결할 원본 출처 URL (`target="_blank"` 자동 적용) |
 
-> `width` / `height`를 모두 지정하면 이미지 로드 전에도 공간이 확보되어 레이아웃 시프트(CLS)가 방지됩니다.
+> `width` / `height`를 모두 지정하면 이미지 로드 전에도 공간이 확보되어 레이아웃 시프트(CLS)가 방지됩니다. 본문 내 단독 삽입 시 독자의 이해를 돕는 `caption` 지정을 권장합니다.
 
 ---
 

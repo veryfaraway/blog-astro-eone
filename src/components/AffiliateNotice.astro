@@ -1,4 +1,10 @@
 ---
+interface Props {
+  lang?: 'ko' | 'en';
+}
+
+const { lang = 'ko' } = Astro.props;
+const isEn = lang === 'en';
 ---
 <div
   class="relative mt-8 mb-6 px-4 pt-5 pb-4 rounded-lg border border-border bg-card shadow-sm"
@@ -7,9 +13,11 @@
   data-pagefind-ignore
 >
   <span class="absolute -top-3 left-4 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-    제휴
+    {isEn ? 'Affiliate' : '제휴'}
   </span>
   <p class="text-sm text-muted-foreground italic m-0">
-    본 글에는 제휴 링크가 포함되어 있으며, 해당 링크를 통해 구매가 이루어질 경우 일정 수수료를 제공받을 수 있습니다.
+    {isEn
+      ? 'This post contains affiliate links. If you make a purchase through these links, I may earn a small commission at no extra cost to you.'
+      : '본 글에는 제휴 링크가 포함되어 있으며, 해당 링크를 통해 구매가 이루어질 경우 일정 수수료를 제공받을 수 있습니다.'}
   </p>
 </div>

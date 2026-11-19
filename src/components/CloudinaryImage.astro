@@ -5,6 +5,9 @@ interface Props {
   sizes?: string;
   width?: number;
   height?: number;
+  caption?: string;
+  credit?: string;
+  creditUrl?: string;
 }
 
 const {
@@ -13,6 +16,9 @@ const {
   sizes = '(max-width: 1200px) 100vw, 1200px',
   width,
   height,
+  caption,
+  credit,
+  creditUrl,
 } = Astro.props;
 
 const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -53,6 +59,29 @@ const aspectRatio = width && height ? `${width} / ${height}` : undefined;
         class="block h-auto w-full"
       />
     </div>
+    {(caption || credit) && (
+      <figcaption class="mt-2 text-center text-sm text-muted-foreground">
+        {caption && <span>{caption}</span>}
+        {credit && (
+          <span class:list={['text-xs opacity-80', caption && 'ml-1.5']}>
+            (출처:{' '}
+            {creditUrl ? (
+              <a
+                href={creditUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline underline-offset-2 hover:text-foreground"
+              >
+                {credit}
+              </a>
+            ) : (
+              credit
+            )}
+            )
+          </span>
+        )}
+      </figcaption>
+    )}
   </figure>
 ) : (
   <div class="not-prose my-6 rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">

@@ -209,11 +209,25 @@ import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
 ```mdx
 import CloudinaryImage from '@/components/CloudinaryImage.astro';
 
-<CloudinaryImage publicId="v123/photo.jpg" alt="사진 설명" />
-<CloudinaryImage publicId="v123/photo.jpg" alt="사진 설명" width={1200} height={800} />
+<CloudinaryImage
+  publicId="v123/photo.jpg"
+  alt="사진 설명"
+  width={1200}
+  height={800}
+  caption="독자가 확인해야 할 핵심 포인트 설명"
+/>
+<CloudinaryImage
+  publicId="posts/..."
+  alt="원본 자료 설명"
+  width={1200}
+  height={800}
+  caption="설명 문구"
+  credit="Wikimedia Commons (Public Domain)"
+  creditUrl="https://commons.wikimedia.org/..."
+/>
 ```
 
-`width` / `height` 모두 지정 시 레이아웃 시프트(CLS) 방지.
+`width` / `height` 모두 지정 시 레이아웃 시프트(CLS) 방지. 본문 이해를 돕는 `caption` 지정을 권장하며, 외부 퍼블릭 도메인·공식 자료 인용 시 `credit`·`creditUrl`로 출처를 명시한다.
 
 ---
 
