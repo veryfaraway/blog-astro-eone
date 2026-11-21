@@ -1,0 +1,213 @@
+---
+title: "삐익 소리와 이불 속 애플 II — FC-30부터 MSX를 부러워하던 8비트 시절"
+description: "카세트테이프 FSK 로딩음 볼륨과 헤드 나사를 맞춰야 했던 공학적 이유부터 금성 패미콤 FC-30 입문기, 이불 뒤집어쓰고 몰래 즐기던 일체형 애플 II와 5.25인치 듀얼 드라이브의 사치, 친구네 MSX를 부러워했던 6502·Z80 아키텍처 차이까지 되짚어 봅니다."
+date: 2026-11-21T01:00:00Z
+category: "Trends"
+tags:
+  - "AppleII"
+  - "MSX"
+  - "8비트"
+  - "레트로게임"
+  - "아키텍처"
+  - "애플"
+  - "레트로 PC"
+draft: false
+lang: ko
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/dev/2026/retro-pc-history-8bit-apple2-msx/thumbnail"
+series: "삐익 소리로 기억하는 나의 PC 연대기"
+series_order: 1
+---
+
+import Alert from '@/components/Alert.astro';
+import PersonInline from '@/components/PersonInline.astro';
+import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
+
+카세트 데크의 볼륨 다이얼을 6과 7 사이에 맞추고 `PLAY` 버튼을 누르면, 방 안 가득 날카로운 "삐익— 치지직—" 소리가 울려 퍼졌습니다. 숨죽여 기다리다 `ERR`가 뜨면 테이프를 되감아야 했고, 무사히 로딩을 넘긴 밤이면 이불을 뒤집어쓴 채 일체형 **애플 II**의 초록빛 모니터로 빨려 들어가곤 했죠. **금성 패미콤 FC-30**으로 입문해 친구 집 **MSX**를 속으로 부러워하던 1980년대 8비트 시절의 기록입니다.
+
+| 구분 | 금성 패미콤 FC-30 (입문) | 애플 II 일체형 호환기 (내 첫 PC) | MSX1 / MSX2 (친구네 로망) |
+| :--- | :--- | :--- | :--- |
+| **출시·배경** | 1983년 10월 금성사 (영국 ZX81 기반) | 1977년 원작 · 세운상가 일체형 클론 | 1983·1985년 가전 연합 표준 규격 |
+| **CPU** | Zilog Z80A (3.25MHz) | MOS 6502 (1.023MHz) | Zilog Z80A (3.58MHz) |
+| **그래픽** | 흑백 텍스트·블록 그래픽 | 전용 칩 없음 (NTSC 위상차 6색 아티팩트) | 전용 VDP (`TMS9918A` / `V9938`, 스프라이트 32개) |
+| **사운드** | 별도 음원 칩 없음 | `$C030` 1비트 스피커 (CPU 직접 토글) | `AY-3-8910` 3채널 PSG (카트리지 SCC 확장) |
+| **주 저장장치** | 일반 오디오 카세트테이프 | 5.25인치 디스켓 (단면 140KB × 듀얼) | 롬팩 슬롯 + 카세트 / 3.5인치 디스켓 |
+| **기억 속 인상** | 볼륨과 헤드 각도에 목숨 걸던 입문기 | 이불 속 초록 불빛과 시력을 맞바꾼 PC | 오락실 같던 색감과 3화음 BGM의 제왕 |
+
+---
+
+## 금성 패미콤 FC-30과 볼륨 6.5의 법칙 — 왜 드라이버로 헤드 나사를 돌렸나
+
+제가 처음 만져본 컴퓨터는 1983년 10월 금성사(현 LG전자)가 출시한 **금성 패미콤 FC-30**이었습니다. 이름의 '패미콤'(Family Computer) 때문에 닌텐도 가정용 오락기 패미컴과 헷갈리기 쉽지만 전혀 다른 교육용 PC예요. 영국 싱클레어(Sinclair)사의 **ZX81** 설계를 기반으로 Z80A 8비트 CPU를 얹어 출고가 **129,800원**에 나온 '10만 원대 교육용 컴퓨터'였습니다. 납작한 버튼으로 BASIC 명령어를 치며 흑백 TV 채널을 맞춰 화면을 띄우던 물건이었죠.
+
+그 시절 카세트테이프로 데이터를 부를 때는 엄격한 의식이 따랐습니다. 볼륨은 딱 **6～7**에 맞추고, **고음**(Treble) 노브는 끝까지 올리며, 그래도 안 읽히면 작은 드라이버를 데크 구멍에 꽂아 헤드 나사를 미세하게 돌려 소리가 가장 맑게 찢어지는 지점을 찾아야 했습니다. 주술 같던 이 손놀림 뒤에는 명확한 아날로그 신호처리 원리가 숨어 있었습니다.
+
+당시 테이프 저장 규격은 두 주파수로 비트를 나누는 **FSK**(주파수 편이 변조) 방식이었습니다. MSX 기본 규격은 `1,200Hz`를 `0`, `2,400Hz`를 `1`로 썼고, 애플 II는 `2,000Hz`를 `0`, `1,000Hz`를 `1`로 기록했죠. 원가를 아껴야 했던 8비트 PC의 테이프 입력부는 정교한 복조기 대신 단순한 **전압 비교기**이자 **영교차 검출기**(Zero-Crossing Detector) 하나로 구성됐습니다. 애플 II의 경우 `741` Op-Amp 단 1개에 약 `100mV` 폭의 히스테리시스(`±50mV`, 입력 분압을 거친 단자 기준 약 `±100mV`)만 걸어두고, 파형이 `0V`를 교차할 때마다 출력 상태를 뒤집어 그 주기 간격으로 `0`과 `1`을 판독했습니다.
+
+<figure class="not-prose my-6">
+  <svg
+    viewBox="0 0 760 320"
+    class="w-full h-auto rounded-xl border border-border bg-card p-3 sm:p-4 text-foreground"
+    role="img"
+    aria-labelledby="fsk-zero-crossing-title"
+  >
+    <title id="fsk-zero-crossing-title">카세트테이프 FSK 아날로그 파형과 전압 비교기 영교차 복원 원리 비교 도식</title>
+
+    <text x="20" y="24" font-size="14" font-weight="700" fill="currentColor">카세트테이프 FSK 입력 파형과 영교차 검출기(Zero-Crossing) 비트 복원 비교</text>
+    <text x="20" y="44" font-size="11" fill="currentColor" fill-opacity="0.65">데크 볼륨 · 헤드 상태</text>
+    <text x="180" y="44" font-size="11" fill="currentColor" fill-opacity="0.65">아날로그 입력 파형 (저주파 → 고주파, 점선: 비교기 문턱값)</text>
+    <text x="530" y="44" font-size="11" fill="currentColor" fill-opacity="0.65">비교기 디지털 구형파 출력</text>
+
+    <rect x="14" y="54" width="732" height="80" rx="8" fill="#10b981" fill-opacity="0.06" stroke="#10b981" stroke-opacity="0.3" />
+    <text x="26" y="84" font-size="12" font-weight="700" fill="#10b981">① 정상 볼륨 (6～7)</text>
+    <text x="26" y="102" font-size="10.5" fill="currentColor" fill-opacity="0.75">적정 진폭 · 헤드 수직 정렬</text>
+    <text x="26" y="118" font-size="10" fill="currentColor" fill-opacity="0.55">영교차 간격 정밀 유지</text>
+
+    <line x1="175" y1="94" x2="505" y2="94" stroke="currentColor" stroke-opacity="0.25" stroke-width="1" />
+    <line x1="175" y1="81" x2="505" y2="81" stroke="#0ea5e9" stroke-opacity="0.45" stroke-dasharray="4 3" stroke-width="1" />
+    <line x1="175" y1="107" x2="505" y2="107" stroke="#0ea5e9" stroke-opacity="0.45" stroke-dasharray="4 3" stroke-width="1" />
+    <text x="462" y="77" font-size="9" fill="#0ea5e9">+100mV</text>
+    <path
+      d="M 180 94 Q 200 56, 220 94 T 260 94 Q 280 56, 300 94 T 340 94 Q 350 60, 360 94 T 380 94 Q 390 60, 400 94 T 420 94 Q 430 60, 440 94 T 460 94 Q 470 60, 480 94 T 500 94"
+      fill="none"
+      stroke="#10b981"
+      stroke-width="2.2"
+    />
+
+    <path
+      d="M 530 112 L 530 76 L 555 76 L 555 112 L 580 112 L 580 76 L 605 76 L 605 112 L 630 112 L 630 76 L 642 76 L 642 112 L 654 112 L 654 76 L 666 76 L 666 112 L 678 112 L 678 76 L 690 76 L 690 112 L 702 112"
+      fill="none"
+      stroke="#10b981"
+      stroke-width="2"
+    />
+    <text x="530" y="127" font-size="10.5" font-weight="600" fill="#10b981">주기 판독 정확 → 로딩 성공 (OK)</text>
+
+    <rect x="14" y="142" width="732" height="80" rx="8" fill="#ef4444" fill-opacity="0.06" stroke="#ef4444" stroke-opacity="0.3" />
+    <text x="26" y="172" font-size="12" font-weight="700" fill="#ef4444">② 볼륨 과다 (9～10)</text>
+    <text x="26" y="190" font-size="10.5" fill="currentColor" fill-opacity="0.75">앰프 포화 클리핑(Clipping)</text>
+    <text x="26" y="206" font-size="10" fill="currentColor" fill-opacity="0.55">비대칭 왜곡 · 고조파 노이즈</text>
+
+    <line x1="175" y1="182" x2="505" y2="182" stroke="currentColor" stroke-opacity="0.25" stroke-width="1" />
+    <line x1="175" y1="156" x2="505" y2="156" stroke="#ef4444" stroke-opacity="0.4" stroke-dasharray="2 2" stroke-width="1" />
+    <line x1="175" y1="208" x2="505" y2="208" stroke="#ef4444" stroke-opacity="0.4" stroke-dasharray="2 2" stroke-width="1" />
+    <path
+      d="M 180 182 L 186 156 L 218 156 L 228 208 L 254 208 L 262 156 L 296 156 L 306 208 L 334 208 L 341 156 L 358 156 L 365 208 L 376 208 L 382 156 L 399 156 L 407 208 L 417 208 L 423 156 L 441 156 L 448 208 L 459 208 L 465 156 L 483 156 L 491 208 L 500 182"
+      fill="none"
+      stroke="#ef4444"
+      stroke-width="2.2"
+    />
+
+    <path
+      d="M 530 200 L 530 164 L 562 164 L 562 200 L 581 200 L 581 164 L 614 164 L 614 200 L 631 200 L 631 164 L 649 164 L 649 200 L 656 200 L 656 164 L 675 164 L 675 200 L 683 200 L 683 164 L 702 164"
+      fill="none"
+      stroke="#ef4444"
+      stroke-width="2"
+    />
+    <text x="530" y="215" font-size="10.5" font-weight="600" class="fill-red-600 dark:fill-red-400">영교차 시점 밀림 → 판독 오류 (ERR)</text>
+
+    <rect x="14" y="230" width="732" height="80" rx="8" fill="#f59e0b" fill-opacity="0.06" stroke="#f59e0b" stroke-opacity="0.3" />
+    <text x="26" y="260" font-size="12" font-weight="700" class="fill-amber-600 dark:fill-amber-400">③ 헤드 아지무스 틀어짐</text>
+    <text x="26" y="278" font-size="10.5" fill="currentColor" fill-opacity="0.75">자기 트랙 · 헤드 각도 어긋남</text>
+    <text x="26" y="294" font-size="10" fill="currentColor" fill-opacity="0.55">고주파 대역 위상 상쇄 발생</text>
+
+    <line x1="175" y1="270" x2="505" y2="270" stroke="currentColor" stroke-opacity="0.25" stroke-width="1" />
+    <line x1="175" y1="257" x2="505" y2="257" stroke="#0ea5e9" stroke-opacity="0.45" stroke-dasharray="4 3" stroke-width="1" />
+    <line x1="175" y1="283" x2="505" y2="283" stroke="#0ea5e9" stroke-opacity="0.45" stroke-dasharray="4 3" stroke-width="1" />
+    <path
+      d="M 180 270 Q 200 240, 220 270 T 260 270 Q 280 240, 300 270 T 340 270 Q 350 262, 360 270 T 380 270 Q 390 263, 400 270 T 420 270 Q 430 263, 440 270 T 460 270 Q 470 263, 480 270 T 500 270"
+      fill="none"
+      stroke="#f59e0b"
+      stroke-width="2.2"
+    />
+
+    <path
+      d="M 530 288 L 530 252 L 555 252 L 555 288 L 580 288 L 580 252 L 605 252 L 605 288 L 702 288"
+      fill="none"
+      stroke="#f59e0b"
+      stroke-width="2"
+    />
+    <text x="530" y="303" font-size="10.5" font-weight="600" class="fill-amber-600 dark:fill-amber-400">문턱값 미달 → 고주파 비트 소실</text>
+  </svg>
+  <figcaption class="mt-2 text-center text-sm text-muted-foreground">
+    볼륨이 너무 작으면 문턱값을 못 넘고, 너무 크면 앰프 클리핑으로 영교차 시점이 뒤틀리며, 헤드 각도(아지무스)가 틀어지면 파장이 짧은 고주파 비트만 위상 상쇄로 증발한다.
+  </figcaption>
+</figure>
+
+- **볼륨 과소**(다이얼 3 이하): 신호 진폭이 `±100mV` 문턱값에 못 미쳐 비교기가 침묵합니다.
+- **볼륨 과다**(다이얼 9～10): 데크 내장 앰프가 포화되면서 사인파 봉우리가 네모나게 잘리는 **클리핑**(Clipping)이 일어납니다. 이때 비대칭 왜곡과 고조파 노이즈가 겹쳐 `0V`를 지나는 **영교차 타이밍**이 밀리면서 주기 판독이 깨져 버립니다.
+- **헤드 아지무스와 고음 보정**: 자기 트랙과 헤드 틈새의 수직 각도인 **아지무스**(Azimuth)가 조금만 어긋나도, 파장이 짧은 고주파(`2,000Hz`～`2,400Hz`) 대역에서는 헤드 상하단이 반대 위상을 동시에 읽어 신호가 지워지는 **위상 상쇄**(Phase Cancellation)가 발생합니다. 고음 노브를 치켜올리고 드라이버로 나사를 돌렸던 건 바로 이 고주파 감쇠를 손감각으로 보정하던 아날로그 튜닝이었습니다.
+
+---
+
+## "MSX는 오락기라 안 돼!" — 선생님 응원 업고 입성한 일체형 애플 II와 안경 사연
+
+![MSX1](https://i.namu.wiki/i/he3A5-EDmaNQQqLr-hc8zQq8Ya6i3EBC0JpjIdDJIV_XEtQyV4-1fTZUHMImaBcxFdduAbOzDGbatFkCWzKctA.webp)
+
+FC-30을 거치며 내 컴퓨터를 갖고 싶다는 열망이 커졌을 때, 사실 제 마음속 1순위는 롬팩만 꽂으면 1초 만에 컬러 게임이 뜨던 **MSX**였습니다. 하지만 부모님 눈에 카트리지 슬롯이 달린 MSX는 영락없는 '오락기'였죠. 그때 구원투수로 나선 분이 학교 선생님이셨습니다. "컴퓨터를 제대로 배우려면 애플을 사주셔야 한다"는 선생님의 응원 덕분에, '공부용 컴퓨터'라는 명분을 얻어 제 첫 컴퓨터인 **일체형 애플 II** 호환기가 방에 들어왔습니다.
+
+당시 세운상가·청계천 일대에서 유행하던 베이지색 일체형 본체는 초록색 그린 모니터와 기판, 키보드, 5.25인치 드라이브 두 대가 한 몸으로 합쳐진 기기였습니다. 전원을 켜는 순간 `Disk II` 스테퍼 모터가 트랙 0 감지 센서 없이 헤드를 물리 스토퍼에 쾅쾅 부딪치며 내던 거친 "드르륵!" 소리는 지금도 귓가에 선합니다.
+
+일체형 구조는 뜻밖의 자유도 안겨줬습니다. 전원선 하나만 꽂으면 동작하다 보니, 밤마다 본체를 통째로 들고 들어가 **이불을 머리부터 모니터까지 뒤집어쓰고** 몰래 게임을 즐긴 겁니다. 불빛 한 줄기 안 새는 완벽한 암실이었지만, 좁은 이불 속에서 코앞의 초록색 브라운관을 매일 밤 노려봤으니 눈이 버틸 리 없었죠. 결국 시력이 급격히 나빠져 안경을 쓰게 됐으니, 제 첫 안경은 공부가 아니라 애플 II가 맞춰준 셈입니다.
+
+---
+
+## 5.25인치 듀얼 드라이브의 무교체 사치와 애플 II 인생작 4선
+
+제 일체형 본체에서 가장 자랑스러웠던 사양은 나란히 달린 **5.25인치 드라이브 두 대**(Drive 1 & Drive 2)였습니다. 단면 35트랙 16섹터, 한 장에 **140KB**밖에 안 들어가던 시절이라 드라이브가 하나뿐인 집에선 맵이 바뀔 때마다 디스켓을 뺐다 꼈다 해야 했죠. 반면 1번에 부팅·엔진 디스크, 2번에 데이터 디스크를 넣어두면 챕터가 넘어갈 때도 손 하나 까딱할 필요 없이 1번과 2번 드라이브의 빨간 불빛이 번갈아 켜지며 매끄럽게 이어졌습니다. 이불 속에서 느끼던 그 무교체 로딩은 최고의 사치였습니다.
+
+![애플 II 일체형](https://cdn.rrauction.com/auction/690/3483912_1.jpg)
+
+그 두 대의 드라이브를 달구며 밤잠을 설치게 한 애플 II 명작 네 편은 지금 돌아봐도 설계가 깊었습니다.
+
+### 《로드러너》(1983, 브로더번드)
+
+![로드러너](https://i.redd.it/euuzxbrev9771.jpg)
+
+더그 스미스가 만든 **로드러너**는 바닥 벽돌을 파서 적을 가두고 머리 위를 밟고 지나가는 퍼즐 액션의 진수였습니다. 특히 가정용 게임 최초급으로 기본 탑재된 **스테이지 에디터**가 충격적이었는데, 직접 맵을 깎아 공디스켓에 저장해 친구와 바꿔 풀며 게임을 '설계'하는 재미를 처음 배웠습니다.
+
+### 《레스큐 레이더스》(1984, 서테크)
+서테크의 **레스큐 레이더스**는 헬기 공중전과 탱크·보병·공병·밴 생산 지휘를 결합한 전략 디펜스의 원조였습니다. 《듄 2》보다 8년 앞서 실시간 병종 상성 줄다리기를 완성한 수작이죠. 지금도 웹에서 무료로 즐길 수 있는데, 자세한 조작법과 비화는 [브라우저에서 부활한 《레스큐 레이더스》 리마스터 소개 글](/culture/rescue-raiders-armor-alley-remastered)에 정리해 두었습니다.
+
+<GitHubRepoCard
+  repo="scottschiller/ArmorAlley"
+  comment="애플 II 《레스큐 레이더스》의 직계 후속작 《아머 앨리》를 웹 표준(HTML5/JS) 오픈소스로 완벽하게 복원한 프로젝트."
+/>
+
+### 《오토듀얼》(1985)과 《울티마》 시리즈(오리진 시스템즈)
+
+![오토듀얼](https://www.everythingamiga.com/wp-content/uploads/2021/01/Autoduel-New-York.jpg)
+
+듀얼 드라이브의 진가를 체감하게 해 준 건 <PersonInline name="리처드 개리엇" role="게임 디자이너" imdbId="nm0308367" /> 사단의 작품들이었습니다. 미 동북부 도시를 오가며 차량에 장갑과 기관총 포탑을 튜닝해 결투를 벌이던 오픈월드 **오토듀얼**과, 단순한 마왕 퇴치를 넘어 플레이어의 행동으로 '8가지 미덕'을 검증해 아바타로 이끄는 **울티마** 3·4편은 영문 사전을 뒤져가며 밤새 파고들 만큼 묵직한 서구권 CRPG의 세계를 열어 주었습니다.
+
+![울티마 4](https://www.pixsoriginadventures.co.uk/wp-content/uploads/2013/05/20130524_201321.jpg)
+
+---
+
+## 친구네 MSX 《람보》와 《메탈기어》가 부러웠던 이유 — 6502 미니멀리즘 vs Z80 전용 칩셋
+
+![Rambo MSX](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8l1HyKotL47sK570OUtZg_nAbEHJ3PkfcORchg8F6j9G6bJ-9Z4G8w33I&s=10)
+
+애플 II의 깊이에 만족하면서도 MSX를 가진 친구 집에 놀러 가면 마음이 흔들렸습니다. 팩인비디오의 **람보**(1985)나 <PersonInline name="코지마 히데오" role="게임 디렉터" imdbId="nm0463620" />의 데뷔작 **메탈기어**(1987, MSX2 원작)가 뿜어내던 다채로운 색감과 끊이지 않는 배경음악은 오락실 게임기 그 자체였기 때문입니다. 특히 초대 《메탈기어》는 가로 주사선에 스프라이트가 많이 겹치면 탄환과 적이 깜빡이며 사라지던 MSX2 하드웨어 한계를 거꾸로 뒤집어, **총격전 대신 적의 시야를 피해 숨어 다니는 잠입 액션**이라는 새 장르를 탄생시킨 역발상의 명작이었죠.
+
+![메탈기어 MSX2](https://www.oldgamehermit.com/wp-content/uploads/2013/01/MG_MSX.png)
+
+왜 내 애플 II에선 그런 화면과 소리가 안 났을까. 어른이 되어 회로도를 보고서야 두 기종의 아키텍처 철학이 정반대였다는 걸 깨달았습니다.
+
+<PersonInline name="스티브 워즈니악" role="Apple 공동창업자" imdbId="nm0941967" />이 설계한 애플 II는 극단적인 **칩 개수 최소화**의 산물이었습니다([애플 사명과 베어 문 사과 로고의 유래](/dev/why-apple-named-after-fruit-logo-origin)에서도 다뤘듯 차고 시절 두 스티브의 미니멀리즘이 그대로 배어 있죠). `1.023MHz` **MOS 6502** 옆에는 전용 그래픽·사운드 칩이 아예 없었고, 컬러조차 NTSC 방송 신호의 위상차를 역이용해 픽셀 위치만으로 6색을 발색시키는 **아티팩트 컬러** 기법으로 해결했습니다.
+
+<Alert type="info" title="왜 애플 II 게임은 배경음악이 나오면 캐릭터가 멈칫거렸을까?">
+애플 II의 사운드 장치는 1비트 스피커에 연결된 메모리 주소 `$C030`(`PEEK(-16336)`) 하나뿐이었습니다. 이 주소를 읽을 때마다 진동판이 한 번 '딸깍' 움직이므로, 음계를 내려면 **CPU가 다른 연산을 멈추고 초당 수백～수천 번 주기를 직접 세며 `$C030`을 흔들어야** 했습니다. 소리를 내는 동안 CPU가 묶이다 보니 게임 중 상시 BGM을 깔기가 극도로 까다로웠습니다.
+</Alert>
+
+반면 **MSX**는 `3.58MHz` **Zilog Z80A** 옆에 전용 비디오 칩(`TMS9918A` / MSX2 `V9938`, 하드웨어 스프라이트 32개)과 **3채널 PSG 사운드 칩**(`AY-3-8910`)을 독립 배치했습니다. CPU가 레지스터에 음높이만 적어두면 PSG 칩이 알아서 3화음 BGM을 지속 연주하고, Z80은 온전히 게임 로직에만 집중할 수 있었죠.
+
+1987년 초대 《메탈기어》는 이 본체 내장 3채널 PSG만으로 긴박한 잠입 음악을 뽑아냈고, 코나미는 같은 해 《그라디우스 2》부터 아예 카트리지 내부에 5채널 파형 메모리 커스텀 음원 칩 **SCC**를 심었습니다. 1990년 《메탈기어 2: 솔리드 스네이크》 등에 이르면 본체 PSG 3채널에 카트리지 SCC 5채널을 더해 **총 8채널 사운드**를 울려 퍼뜨렸으니, 1비트 스피커 소리에 익숙하던 애플 II 소년이 부러워할 만도 했습니다.
+
+---
+
+## 이루지 못한 로망 '애플 IIe', 그리고 16비트 XT 시대로
+
+그래도 제 마음속 진짜 드림카는 따로 있었습니다. 영문 대소문자 입력을 기본 지원하고, 보조 슬롯 확장으로 80컬럼 텍스트와 128KB 메모리, **더블 하이레조**(560×192 기반 16색) 그래픽까지 뽑아주던 완성형 8비트 **애플 IIe**였습니다. 잡지 사진을 보며 언젠가 꼭 바꾸리라 꿈꿨지만 끝내 이루지 못했습니다.
+
+세상의 흐름이 이미 8비트를 넘어 **16비트 IBM PC 호환기**로 거세게 넘어가고 있었기 때문입니다. 세운상가의 주역이 큼직한 철제 케이스의 **XT**와 단색 **허큘리스** 그래픽 카드로 바뀌던 무렵, 저 역시 정들었던 일체형 애플 II를 떠나 부팅 디스켓의 `A:\>` 프롬프트가 깜빡이는 16비트 세상으로 이주하게 됩니다.
+
+이어지는 [**2편**](/dev/retro-pc-history-xt-286-hercules-dos)에서는 `CATALOG` 대신 `DIR`과 `4DOS`를 치던 부팅 디스켓의 쾌감부터, 초록빛 허큘리스 모니터에 컬러 게임을 띄우던 `SIMCGA`의 원리와 XT·286 시절 네 편의 인생 게임 이야기를 이어갑니다.

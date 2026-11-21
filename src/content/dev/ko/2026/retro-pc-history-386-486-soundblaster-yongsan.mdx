@@ -1,0 +1,168 @@
+---
+title: "사운드블라스터의 전율과 용산 486 조립기 — 해적 농담을 적던 전성시대"
+description: "내장 스피커 비프음을 넘어 VGA 256색과 사운드블라스터 SET BLASTER가 연 시청각 혁명, 원숭이 섬의 비밀 모욕 칼싸움 노트와 듄 II·피파의 밤, 은박지에 싸주던 삼성 금램과 용산 486 직접 조립의 기억을 되짚습니다."
+date: 2026-11-21T03:00:00Z
+category: "Trends"
+tags:
+  - "사운드블라스터"
+  - "MS-DOS"
+  - "486"
+  - "용산전자상가"
+  - "VGA"
+  - "원숭이섬의비밀"
+  - "레트로 PC"
+draft: false
+lang: ko
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/dev/2026/retro-pc-history-386-486-soundblaster-yongsan/thumbnail"
+series: "삐익 소리로 기억하는 나의 PC 연대기"
+series_order: 3
+---
+
+import Alert from '@/components/Alert.astro';
+import PersonInline from '@/components/PersonInline.astro';
+import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
+
+본체 안쪽 동그란 자석 스피커의 단음 `삐익` 소리에만 길들여져 있던 귀에, 사운드블라스터 후면 단자에 꽂은 작은 외장 스피커로 첫 스테레오 화음이 터져 나오던 날의 소름을 아직도 생생히 기억해요. 브라운관 모니터 옆에는 해적들의 영문 독설과 응수 문장을 볼펜으로 빼곡히 받아 적은 스프링 공책 한 권이 늘 펼쳐져 있었습니다.
+
+[1편](/dev/retro-pc-history-8bit-apple2-msx)의 애플 II 비프음과 [2편](/dev/retro-pc-history-xt-286-hercules-dos)의 초록빛 허큘리스·`SIMCGA` 시절을 지나, XT부터 286·386·486까지 한 계단씩 차근차근 밟아 올라온 1990년대 초중반은 PC가 사무용 타자기에서 총천연색 오락실로 탈바꿈한 **시청각 빅뱅**의 시대였습니다. 용산 전자상가에서 쿠킹호일에 말린 삼성 금램을 사 들고 와 첫 486 조립 PC를 맞추기까지, 그 뜨거웠던 전성기를 복기해 봅니다.
+
+| 구분 | 386 · 486 전환기 핵심 변화 | 기억 속 상징적 장면 |
+| :--- | :--- | :--- |
+| **그래픽** | CGA(4색)·EGA(16색) → **VGA Mode 13h** (`320×200`, 동시 256색) | `0xA0000` 선형 프레임버퍼가 빚어낸 멜리 섬의 푸른 밤바다 |
+| **사운드** | 1비트 방형파 → 애드립(OPL2) → **사운드블라스터** (FM + PCM 통합) | `SET BLASTER` 환경변수와 프린터 충돌 피하던 `IRQ 5` 점퍼 |
+| **인생 게임** | 《원숭이 섬의 비밀》 · 《듄 II》 · 《피파 인터내셔널 사커》 | 모욕 칼싸움 수기 공책, `"Reporting!"` 육성, 골키퍼 앞 점프 길막 |
+| **조립 PC** | **Socket 3** 보드(인텔·AMD 호환) + VLB **ATI** 카드 + **삼성 금램** | 스미토모 폭발 여파 속 주방용 은박지에 둘둘 말아주던 SIMM 램 |
+
+## 초록빛 허큘리스를 넘어선 시청각 빅뱅 — VGA Mode 13h와 사운드블라스터
+
+### 0xA0000 선형 프레임버퍼가 빚어낸 256색 밤바다
+
+단색 화면을 `SIMCGA`로 속여 가며 어른거리는 주사선 사이로 게임을 하던 눈에 **VGA**(Video Graphics Array) 모니터는 다른 세상이었습니다. 차가운 원색만 튀던 CGA 4색이나 16색의 한계에 갇혔던 EGA와 달리, 도스 게임의 표준이 된 **VGA Mode 13h**는 `320×200` 해상도 안에 **256색**을 동시에 뿌려주었거든요.
+
+비결은 RGB 채널당 6비트(`64`단계)씩 총 `262,144`색을 표현하는 18비트 DAC 팔레트였습니다. 그중 원하는 256색을 골라 도트 사이를 촘촘한 계조로 메우면 노을과 밤바다의 그라데이션이 부드럽게 살아났죠. 개발자 입장에서도 네 개의 비트플레인을 번갈아 마스킹하던 EGA의 악몽에서 벗어나, `0xA0000`번지부터 시작하는 `64,000`바이트(`320×200`)가 **1바이트 = 1픽셀**로 곧장 대응되는 선형 프레임버퍼 덕분에 포인터 연산 한 줄로 화면을 요리할 수 있었습니다.
+
+### 내장 스피커 방형파에서 사운드블라스터 SET BLASTER까지
+
+시각의 충격을 완성한 건 사운드카드였습니다. 인텔 `8253` PIT 타이머가 전압을 켰다 끄며 만들던 1비트 방형파 비프음만 듣다가, 애드립(AdLib) 카드의 야마하 **YM3812**(OPL2) 9채널 FM 합성 음원이 들려준 풍성한 배경음악은 책상 위 작은 오케스트라 같은 감동이었어요.
+
+여기에 마침표를 찍은 주역이 크리에이티브의 **사운드블라스터**(Sound Blaster)입니다. 애드립 FM 음원을 그대로 품어 기존 게임 음악과 하위 호환되면서도, 실제 녹음된 소리를 재생하는 **디지털 PCM 샘플링 채널**을 하나로 통합했기 때문이죠. FM 신시사이저가 배경 선율을 깔아주는 위로 사람의 목소리와 폭발음이 동시에 터져 나왔습니다.
+
+<figure class="not-prose my-6">
+  <svg viewBox="0 0 760 320" class="w-full h-auto rounded-lg border border-border bg-card p-2.5 sm:p-4 text-foreground" role="img" aria-label="PC 사운드 아키텍처의 진화와 사운드블라스터 ISA 자원 구조 도식">
+    <defs>
+      <marker id="arrow-sb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" class="fill-muted-foreground" />
+      </marker>
+    </defs>
+    <rect x="18" y="20" width="204" height="148" rx="10" class="fill-muted/40 stroke-border" stroke-width="1.5" />
+    <text x="32" y="46" class="fill-foreground text-[13px] font-bold">1단계 · PC 내장 스피커</text>
+    <text x="32" y="68" class="fill-muted-foreground text-[11px]">• Intel 8253 / 8254 PIT 타이머</text>
+    <text x="32" y="86" class="fill-muted-foreground text-[11px]">• 1-bit 방형파 (전압 ON / OFF)</text>
+    <text x="32" y="104" class="fill-muted-foreground text-[11px]">• 단음 비프음 · CPU 직접 제어</text>
+    <path d="M 36 146 L 36 128 L 62 128 L 62 146 L 88 146 L 88 128 L 114 128 L 114 146 L 140 146 L 140 128 L 166 128 L 166 146 L 196 146" fill="none" class="stroke-amber-500" stroke-width="2" />
+    <line x1="226" y1="94" x2="254" y2="94" class="stroke-muted-foreground" stroke-width="1.8" marker-end="url(#arrow-sb)" />
+    <rect x="260" y="20" width="212" height="148" rx="10" class="fill-sky-500/10 stroke-sky-500/50" stroke-width="1.5" />
+    <text x="274" y="46" class="fill-foreground text-[13px] font-bold">2단계 · 애드립 (AdLib, 1987)</text>
+    <text x="274" y="68" class="fill-muted-foreground text-[11px]">• Yamaha YM3812 (OPL2) 탑재</text>
+    <text x="274" y="86" class="fill-muted-foreground text-[11px]">• 9채널 2-Operator FM 주파수 합성</text>
+    <text x="274" y="104" class="fill-muted-foreground text-[11px]">• 풍성한 악기 BGM (실제 음성 불가)</text>
+    <path d="M 278 138 Q 296 118, 314 138 T 350 138 T 386 138 T 422 138 T 454 138" fill="none" class="stroke-sky-500" stroke-width="2" />
+    <line x1="476" y1="94" x2="504" y2="94" class="stroke-muted-foreground" stroke-width="1.8" marker-end="url(#arrow-sb)" />
+    <rect x="510" y="20" width="232" height="148" rx="10" class="fill-emerald-500/10 stroke-emerald-500/60" stroke-width="1.8" />
+    <text x="524" y="46" class="fill-foreground text-[13px] font-bold">3단계 · 사운드블라스터 (1989～)</text>
+    <rect x="524" y="58" width="204" height="42" rx="6" class="fill-background/80 stroke-border" stroke-width="1" />
+    <text x="534" y="75" class="fill-foreground text-[11px] font-semibold">① FM 신시사이저 (OPL2 / OPL3)</text>
+    <text x="534" y="91" class="fill-muted-foreground text-[10px]">애드립 완벽 하위 호환 배경음악 연주</text>
+    <rect x="524" y="108" width="204" height="46" rx="6" class="fill-background/80 stroke-emerald-500/50" stroke-width="1" />
+    <text x="534" y="125" class="fill-emerald-600 dark:fill-emerald-400 text-[11px] font-semibold">② Digital PCM DAC (8 / 16-bit)</text>
+    <text x="534" y="142" class="fill-muted-foreground text-[10px]">실제 사람 목소리 · 폭발음 동시 믹싱</text>
+    <line x1="626" y1="168" x2="626" y2="196" class="stroke-muted-foreground" stroke-width="1.8" marker-end="url(#arrow-sb)" />
+    <rect x="18" y="200" width="724" height="102" rx="10" class="fill-muted/30 stroke-border" stroke-width="1.5" />
+    <text x="34" y="224" class="fill-foreground text-[12px] font-bold">ISA 16-bit 시스템 버스 자원 매핑 — AUTOEXEC.BAT 환경변수 (SET BLASTER)</text>
+    <rect x="34" y="238" width="160" height="50" rx="6" class="fill-card stroke-border" stroke-width="1" />
+    <text x="46" y="258" class="fill-foreground font-mono text-[12px] font-bold">A220 (I/O Port)</text>
+    <text x="46" y="276" class="fill-muted-foreground text-[10px]">기본 입출력 주소 0x220h</text>
+    <rect x="206" y="238" width="184" height="50" rx="6" class="fill-amber-500/10 stroke-amber-500/50" stroke-width="1" />
+    <text x="218" y="258" class="fill-amber-700 dark:fill-amber-300 font-mono text-[12px] font-bold">I5 (IRQ 5 점퍼)</text>
+    <text x="218" y="276" class="fill-muted-foreground text-[10px]">프린터 LPT1(IRQ 7) 충돌 회피</text>
+    <rect x="402" y="238" width="164" height="50" rx="6" class="fill-card stroke-border" stroke-width="1" />
+    <text x="414" y="258" class="fill-foreground font-mono text-[12px] font-bold">D1 / H5 (DMA)</text>
+    <text x="414" y="276" class="fill-muted-foreground text-[10px]">8-bit · 16-bit PCM 직접 전송</text>
+    <rect x="578" y="238" width="148" height="50" rx="6" class="fill-card stroke-border" stroke-width="1" />
+    <text x="590" y="258" class="fill-foreground font-mono text-[12px] font-bold">P330 · T6</text>
+    <text x="590" y="276" class="fill-muted-foreground text-[10px]">MPU-401 MIDI · SB16 규격</text>
+  </svg>
+  <figcaption class="mt-2 text-center text-sm text-muted-foreground">PC 사운드 아키텍처의 3단계 진화와 사운드블라스터가 ISA 버스에서 점유하던 핵심 하드웨어 자원(I/O 포트 · IRQ · DMA) 구조</figcaption>
+</figure>
+
+물론 플러그 앤드 플레이(PnP)가 없던 도스 시절이라 카드를 꽂기만 해서는 먹통이었습니다. 부팅 때마다 `AUTOEXEC.BAT`에 아래 주문을 박아 넣어야 했죠.
+
+```bat
+@ECHO OFF
+SET SOUND=C:\SB16
+SET BLASTER=A220 I5 D1 H5 P330 T6
+```
+
+단골 삽질 원인은 인터럽트 충돌이었습니다. 초기 카드의 출하 설정인 `IRQ 7`이 도스 병렬 프린터 포트(`LPT1`)와 겹쳐, 효과음이 터지는 순간 화면이 그대로 얼어붙곤 했거든요. 결국 본체를 열어 사운드카드 기판의 좁쌀만 한 플라스틱 점퍼 캡을 손톱으로 뽑아 `IRQ 5` 핀으로 옮겨 꽂고, 게임 `SETUP.EXE`에서도 `IRQ 5`를 맞춘 뒤에야 맑은 음성이 흘러나왔습니다.
+
+<Alert type="tip" title="도스 게이머의 주문, SET BLASTER 문자열 해독법">
+`SET BLASTER=A220 I5 D1 H5 P330 T6`에서 `A220`은 기본 I/O 주소(`220h`), `I5`는 인터럽트 번호(`IRQ 5`), `D1`과 `H5`는 8비트·16비트 DMA 채널, `P330`은 미디(MPU-401) 포트, `T6`은 카드 세대 식별자(사운드블라스터 16 계열)를 뜻합니다. 기판 점퍼와 이 문자열이 하나라도 어긋나면 도스 게임은 여지없이 침묵했어요.
+</Alert>
+
+## 모니터 옆 공책과 밤샘 클릭 — 386·486을 수놓은 인생 게임 3선
+
+### 《원숭이 섬의 비밀》 — 해적의 욕설을 공책에 받아 적던 밤
+
+256색과 사운드블라스터의 진가를 가장 먼저 각인시킨 작품은 루카스필름 게임즈(루카스아츠)의 1990년 작 《원숭이 섬의 비밀》이었습니다. 절벽에서 발 한 번 헛디디면 즉사하던 시에라 온라인 어드벤처와 달리, <PersonInline name="론 길버트" role="디렉터" imdbId="nm0318222" />가 설계한 **SCUMM** 엔진은 억지 게임오버 스트레스 없이 유머와 퍼즐에만 몰입하게 해주었죠. <PersonInline name="마이클 랜드" role="작곡가" imdbId="nm0484357" />의 카리브해 레게풍 테마곡이 멜리 섬의 푸른 밤바다 위로 흐를 때면 방 안 공기가 단숨에 바뀌었습니다.
+
+그중에서도 잊지 못할 백미는 해적들과 벌이던 **모욕 칼싸움**(Insult Sword Fighting)이에요. 칼질 속도가 아니라 상대의 독설에 운율과 재치가 딱 맞는 반격 문장으로 받아쳐야 이기는 결투였는데, SF 소설 《엔더의 게임》을 쓴 <PersonInline name="오슨 스콧 카드" role="작가" imdbId="nm0136696" />가 이 기막힌 문답 집필에 직접 참여했다는 사실은 한참 뒤에야 알았습니다. 영한사전을 뒤적이며 플레이하던 학생이 수십 개 대사를 암기할 재간은 없었기에, 모니터 옆 공책에 새 해적을 만날 때마다 공격 대사와 정답 응수 문구를 볼펜으로 빼곡히 짝지어 적었습니다.
+
+- 해적의 공격: `"You fight like a dairy farmer!"` (넌 낙농업자처럼 싸우는군!)
+- 공책 속 정답: `"How appropriate. You fight like a cow!"` (마침 잘됐네, 넌 암소처럼 싸우니까!)
+
+공책 두 페이지가 시커멓게 채워진 끝에야 검술 달인 칼라를 꺾을 수 있었습니다. 다행히 당시 SCUMM 엔진을 재구현한 오픈소스 프로젝트 **ScummVM**이 건재해 원본 데이터 파일만 있으면 최신 OS에서도 가이브러시의 모험을 네이티브로 다시 즐길 수 있는데, 요즘 맥 환경에서의 구동법은 [Mac M 시리즈에서 원숭이 섬의 비밀 실행하기](/culture/monkey-island-scummvm-mac-m-series)에 단계별로 정리해 두었습니다.
+
+<GitHubRepoCard
+  repo="scummvm/scummvm"
+  comment="《원숭이 섬의 비밀》을 비롯한 고전 포인트 앤드 클릭 어드벤처 엔진을 현대 OS에서 그대로 구동해 주는 오픈소스 가상 머신."
+/>
+
+### 《듄 II》 — "Reporting!" 한마디가 바꾼 전략 게임의 역사
+
+1992년 12월 웨스트우드가 내놓은 《듄 II》는 하베스터로 사막의 스파이스를 채취해 기지를 넓히고 까만 전장의 안개(Fog of War)를 걷어내는 현대 실시간 전략(RTS)의 문법을 창시한 작품입니다. 무엇보다 사운드블라스터 PCM 채널을 타고 병사와 전차가 `"Reporting!"`, `"Acknowledged"`라며 실제 사람 목소리로 복창하던 순간의 전율은 충격 그 자체였어요.
+
+당시엔 마우스 드래그로 네모 박스를 그려 부대를 한꺼번에 묶는 기능조차 없었습니다. 시즈 탱크 열 대를 진격시키려면 한 기씩 일일이 찍고 이동 명령을 내려야 했지만, 모래벌레 경보음에 손땀을 쥐며 볼 마우스 때를 긁어내던 밤샘의 손맛만큼은 최고였습니다.
+
+### 《피파 인터내셔널 사커》 — 골키퍼 앞 점프 길막과 심판 도주극
+
+1993년 말 콘솔에 이어 1994년 도스로 찾아온 EA 스포츠 《피파 인터내셔널 사커》는 평면 탑뷰·사이드뷰 일색이던 축구 게임을 **대각선 아이소메트릭 쿼터뷰**로 뒤집어 놓고, 실제 중계석 같은 관중 함성을 쏟아내며 방구석을 뒤흔들었습니다.
+
+친구와 키보드 하나를 나눠 쥐면 어김없이 나오던 꼼수가 두 가지 있었죠. 상대 골키퍼가 공을 잡고 펀트킥을 차려는 정면 코앞에 공격수를 바짝 세워둔 뒤 타이밍 맞춰 점프해 몸으로 공을 막아 그대로 빈 골문에 우겨 넣던 **골키퍼 길막 골**, 그리고 반칙 직후 옐로카드를 꺼내 든 주심을 피해 경기장 구석구석으로 요리조리 도망 다니던 해프닝입니다. 결국 붙잡히거나 화면이 넘어가면 경고를 받았지만, 심판을 달고 운동장을 돌며 낄낄대던 그 도주극이 본경기보다 더 유쾌했어요.
+
+## 용산 전자상가에서 직접 맞춘 첫 486과 은박지에 싸주던 삼성 금램
+
+### 점퍼 몇 개로 인텔과 AMD를 오가던 Socket 3와 VLB의 시대
+
+완제품만 쓰던 저는 **486 시절**에 들어서며 부품 시세표를 직접 짜 들고 **용산 전자상가와 세운상가에서 첫 조립 PC**에 입문했습니다. 당시 SiS·UMC 칩셋 기반 **Socket 3 범용 메인보드**는 지금 돌이켜봐도 참 개방적이었어요. 보드 위 코어 전압(5V / 3.3V)과 클럭·배수 점퍼 몇 개만 설명서대로 바꿔 꽂으면 인텔 `i486DX2-66`·`DX4-100`(`33MHz × 3배수`)부터 가성비 좋은 AMD `Am486`, 나아가 `33MHz × 4배수`(133MHz)로 동작하던 국민 업그레이드 칩 `Am5x86-P75`까지 한 소켓에서 사이좋게 돌아갔습니다.
+
+8MHz·16비트 ISA 슬롯의 숨 막히는 병목을 뚫기 위해 등장한 길쭉한 갈색 **VESA 로컬버스**(VLB)와 초기 PCI 슬롯에는 색감과 가속 성능이 또렷하기로 정평이 난 **ATI 그래픽카드**(Mach32 및 Mach64 기반 Graphics Xpression)를 꽂았고, 옆 슬롯에는 사운드블라스터를 나란히 얹어 나사를 조였습니다.
+
+### 쿠킹호일에 둘둘 말아주던 삼성 정품 금램의 추억
+
+CPU와 보드는 타협해도 조립 견적에서 절대 양보 못 하던 철칙이 **램만큼은 무조건 삼성 정품**이라는 믿음이었습니다. 4개를 한 조로 짝맞춰야 했던 30핀 SIMM에서 낱개 장착이 되는 72핀 SIMM으로 넘어가던 시기였는데, 출처 모를 호환 램을 꽂으면 부팅 비프음만 울리기 일쑤라 `SAMSUNG` 각인은 곧 현찰이나 다름없었거든요.
+
+하필 그 무렵 메모리 시세가 **1MB당 3만～4만 원**까지 치솟아 용산에서는 이를 **금램**이라 불렀습니다. 4MB 한 줄에 14만 원 안팎, 8MB를 채우려면 30만 원 가까운 거금이 들었죠. 돈을 내밀면 상인은 정전기 방지 봉투 대신 서랍에서 **주방용 은박지**(쿠킹호일)를 북 찢어 귀한 삼성 램을 김밥처럼 둘둘 말아 건네주었는데, 그 은박지 뭉치를 가슴 주머니에 소중히 품고 집으로 돌아오던 발걸음이 지금도 선합니다.
+
+<Alert type="warning" title="1993년 스미토모 화학 폭발 사고와 은박지 포장의 물리학">
+금램 파동의 도화선은 1993년 7월 일본 **스미토모 화학** 공장 폭발 사고였습니다. 세계 반도체 봉지재용 에폭시 수지 공급량의 약 55～60%를 담당하던 곳이 멈추면서 D램값이 폭등했죠. 한편 용산식 **은박지 포장**은 도체인 알루미늄이 모든 핀을 **등전위**(Equipotential)로 단락시켜 핀 간 전위차로 인한 정전기 방전(ESD) 파괴를 막아주는 물리적 일리가 있었습니다. 단, 벗길 때 찢어진 미세한 호일 조각이 핀 사이에 남으면 전원을 켜자마자 쇼트가 날 수 있어 불빛에 비춰가며 입으로 후후 불어 꽂는 의식이 필수였어요.
+</Alert>
+
+## 8MB 금램을 꽂고도 마주한 "Insufficient memory"의 벽
+
+영혼까지 끌어모아 비싼 금램을 4MB, 8MB씩 꽂고 부팅 화면의 `8192KB OK` 숫자를 볼 때면 이제 못 돌릴 게임이 없을 줄 알았습니다. 하지만 야심 차게 대작 게임을 실행하는 순간 시커먼 프롬프트 위로 찬물 같은 문구가 떨어졌죠.
+
+```text
+Insufficient memory to run this program. (600K conventional memory required)
+```
+
+8MB 메모리를 꽂고도 사운드블라스터와 마우스 드라이버가 야금야금 갉아먹어 **640KB 기본 메모리**(Conventional Memory)가 모자란다며 튕기던 역설. 게임보다 더 치열했던 `EMM386` 메모리 확보 전쟁과 CD-ROM 멀티미디어 혁명, 그리고 도스의 시대를 배웅한 《스타크래프트》의 밤은 마지막 [4편](/dev/retro-pc-history-emm386-cdrom-starcraft)에서 이어갑니다.
