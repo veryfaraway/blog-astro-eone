@@ -31,10 +31,10 @@ thumbnail: "https://images.unsplash.com/photo-1528750126268-b23775e723fa?q=80&w=
 
 * **소개:** 맥 기본 메뉴바 시계는 달력을 보기가 불편하죠. Itsycal은 메뉴바에 작은 달력을 띄워주고 일정 확인까지 도와주는 가벼운 도구입니다.
 
-### **[대체 추천] Raycast (Alfred 대체 가능)**
+### [대체 추천] Raycast (Alfred 대체 가능)
 
-* **소개:** Alfred를 오래 쓰셨다면 이제 **Raycast**로 갈아탈 때입니다. 
-* **특징:** 단순 앱 실행을 넘어 클립보드 히스토리, 윈도우 매니징, 단위 변환 등이 기본 내장되어 있습니다. 무엇보다 UI가 매우 현대적입니다.
+* **소개:** Alfred를 오래 쓰셨거나 Powerpack 유료 결제가 망설여진다면 이제 [**Raycast**](/tools/raycast-complete-guide-2026)로 갈아탈 때입니다. 
+* **특징:** 단순 앱 실행을 넘어 클립보드 히스토리(3개월), 윈도우 매니징, 스니펫, 단위 변환이 무료 플랜에 기본 내장되어 있습니다. Alfred 스니펫 이사 방법과 세팅 팁은 [Raycast 2.0 완벽 가이드](/tools/raycast-complete-guide-2026)에서 확인하세요.
 
 ### **[대체 추천] Ice (Hidden Bar의 진화형)**
 
