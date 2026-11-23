@@ -1,0 +1,1949 @@
+---
+// 수도권 4대 4K 레이저 IMAX 상영관 인터랙티브 좌석 배치도 컴포넌트 (Props 없음)
+// - 왕아맥: CGV 왕십리 9관 (268석 · 22.0×13.3m · 중앙 계단 통로 + 홀수열 15·17번 와이드석)
+// - 천아맥: CGV 천호 6관 (323석 · 24.7×18.7m · 국내 2위 크기 · 중앙 A열 & 좌블 A–C열 철거 반영)
+// - 광아맥: CGV 광교 6관 (282석 · 20.0×12.0m · 빌트인 전용관 · 판아맥 대체 1순위)
+// - 영아맥: CGV 영등포 12관 (387석 · 18.5×10.6m · 7층 상단 거치 스크린)
+---
+
+<div class="not-prose mli-map-wrap my-6" data-mli-map data-theater-active="wangsimni">
+  <div class="mli-header">
+    <div class="mli-eyebrow">CGV LASER IMAX · METRO 4 THEATERS INTERACTIVE SEAT MAP</div>
+
+    <!-- 1단: 4개 상영관 선택 탭 -->
+    <div class="mli-theater-tabs" role="tablist" aria-label="수도권 레이저 IMAX 상영관 선택">
+      <button
+        type="button"
+        role="tab"
+        class="mli-theater-tab is-active"
+        data-theater="wangsimni"
+        aria-selected="true"
+      >
+        <span class="mli-tab-badge">22.0×13.3m</span>
+        <span>왕아맥 (왕십리 9관 · 268석)</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="mli-theater-tab"
+        data-theater="cheonho"
+        aria-selected="false"
+      >
+        <span class="mli-tab-badge mli-tab-badge-cyan">24.7×18.7m</span>
+        <span>천아맥 (천호 6관 · 323석)</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="mli-theater-tab"
+        data-theater="gwanggyo"
+        aria-selected="false"
+      >
+        <span class="mli-tab-badge mli-tab-badge-emerald">20.0×12.0m</span>
+        <span>광아맥 (광교 6관 · 282석)</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="mli-theater-tab"
+        data-theater="yeongdeungpo"
+        aria-selected="false"
+      >
+        <span class="mli-tab-badge mli-tab-badge-indigo">18.5×10.6m</span>
+        <span>영아맥 (영등포 12관 · 387석)</span>
+      </button>
+    </div>
+
+    <!-- 2단: 보기 모드 토글 -->
+    <div class="mli-mode-tabs" role="tablist" aria-label="좌석 배치도 보기 모드">
+      <button
+        type="button"
+        role="tab"
+        class="mli-mode-tab is-active"
+        data-mode="tier"
+        aria-selected="true"
+      >
+        종합 추천 티어
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="mli-mode-tab"
+        data-mode="zone"
+        aria-selected="false"
+      >
+        시야·단차 &amp; 음향존
+      </button>
+    </div>
+  </div>
+
+  <!-- 상영관별 동적 스크린 규격·특징 배너 -->
+  <div class="mli-screen-wrap" aria-hidden="true">
+    <div class="mli-screen-box is-wangsimni" data-mli-screen-box>
+      <div class="mli-screen-label" data-mli-screen-label>
+        IMAX WITH LASER · 22.0m × 13.3m (CoLa 1.90:1 투사 · 12ch 사운드)
+      </div>
+    </div>
+    <div class="mli-screen-caption" data-mli-screen-caption>
+      ※ 2024.09 리본 1호점 리뉴얼 · 정중앙(16|17번) 계단 통로 &amp; 홀수열(A·C·E·G·I) 15·17번 1.5배 와이드석
+    </div>
+    <div class="mli-proj-axis-line"></div>
+  </div>
+
+  <!-- 모드·지점별 동적 범례 -->
+  <div class="mli-legend" data-mli-legend></div>
+
+  <!-- 지점별 구조 특이사항 상단 배지 (천아맥 철거 안내 / 영아맥 층·등받이 주의 등) -->
+  <div class="mli-struct-banner" data-mli-banner></div>
+
+  <!-- 좌석 배치도 스크롤 래퍼 (모바일 좌측 잘림 방지: block + overflow-x:auto + 내부 max-content) -->
+  <div class="mli-scroll-wrap">
+    <div class="mli-board">
+      <!-- 동적 블록 구조 헤더 -->
+      <div class="mli-block-headers" data-mli-block-headers aria-hidden="true"></div>
+
+      <!-- 동적 열 번호 헤더 -->
+      <div class="mli-col-nums" data-mli-cols aria-hidden="true"></div>
+
+      <!-- 좌석 그리드 스테이지 -->
+      <div class="mli-seat-stage">
+        <div
+          class="mli-seat-grid"
+          data-mli-grid
+          role="group"
+          aria-label="왕아맥(CGV 왕십리 9관) 268석 좌석 배치도"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 정규화 각주 -->
+  <div class="mli-meta-note">
+    <span>
+      ※ 실제 총 좌석 수(왕아맥 268석 · 천아맥 323석 · 광아맥 282석 · 영아맥 387석) 기준 열별 미세 좌석 증감을 정렬한 정규화 도식입니다.
+    </span>
+  </div>
+
+  <!-- 하단 인터랙티브 상세 판독 패널 -->
+  <div class="mli-tooltip" data-mli-tooltip aria-live="polite">
+    좌석에 마우스를 올리거나 탭하면 <strong>지점별 좌표 등급 · 단차/시야각/12채널 음향 체감 · 한 줄 예매 판단</strong>이 여기에 표시됩니다.
+  </div>
+</div>
+
+<style is:global>
+  .mli-map-wrap {
+    --seat-w: 18px;
+    --seat-h: 18px;
+    --seat-gap: 2px;
+    --row-h: 21px;
+    --row-gap: 4px;
+    --label-w: 20px;
+    --label-gap: 5px;
+    --aisle-w: 14px;
+    --center-aisle-w: 22px;
+
+    /* IMAX Signature Dark Palette */
+    --mli-tier-s: #2563eb;
+    --mli-tier-a: #06b6d4;
+    --mli-tier-b: #10b981;
+    --mli-tier-c: #6366f1;
+    --mli-tier-avoid: #334155;
+
+    /* Zone colors */
+    --mli-zone-core: #7c3aed;
+    --mli-zone-imm: #0284c7;
+    --mli-zone-comf: #059669;
+    --mli-zone-warn: #d97706;
+    --mli-zone-avoid: #334155;
+
+    background: #0b0f17;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 14px;
+    padding: 1.3rem 1rem 1.15rem;
+    color: #e8eaf0;
+    font-family: inherit;
+    box-shadow:
+      0 14px 34px -14px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .mli-map-wrap[data-theater-active='gwanggyo'],
+  .mli-map-wrap[data-theater-active='yeongdeungpo'] {
+    --seat-w: 19px;
+    --aisle-w: 15px;
+  }
+
+  @media (max-width: 640px) {
+    .mli-map-wrap,
+    .mli-map-wrap[data-theater-active='gwanggyo'],
+    .mli-map-wrap[data-theater-active='yeongdeungpo'] {
+      --seat-w: 15px;
+      --seat-h: 16px;
+      --seat-gap: 2px;
+      --row-h: 19px;
+      --row-gap: 3.5px;
+      --label-w: 16px;
+      --label-gap: 4px;
+      --aisle-w: 10px;
+      --center-aisle-w: 16px;
+      padding: 1.05rem 0.65rem 0.95rem;
+    }
+  }
+
+  .mli-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .mli-eyebrow {
+    text-align: center;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    color: #60a5fa;
+    text-transform: uppercase;
+  }
+
+  .mli-theater-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    background: #121826;
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    border-radius: 10px;
+    padding: 5px;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  @media (max-width: 520px) {
+    .mli-theater-tabs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mli-theater-tab {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #8b95a9;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6.5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.16s ease;
+    line-height: 1.25;
+  }
+
+  .mli-theater-tab:hover {
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .mli-theater-tab.is-active {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.36) 0%, rgba(14, 116, 144, 0.3) 100%);
+    border-color: rgba(56, 189, 248, 0.52);
+    color: #ffffff;
+    box-shadow: 0 2px 10px -2px rgba(37, 99, 235, 0.45);
+  }
+
+  .mli-tab-badge {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 1.5px 5px;
+    border-radius: 4px;
+    background: rgba(37, 99, 235, 0.28);
+    color: #93c5fd;
+    border: 1px solid rgba(96, 165, 250, 0.36);
+    letter-spacing: 0.01em;
+    flex-shrink: 0;
+  }
+
+  .mli-tab-badge-cyan {
+    background: rgba(6, 182, 212, 0.24);
+    color: #67e8f9;
+    border-color: rgba(34, 211, 238, 0.38);
+  }
+
+  .mli-tab-badge-emerald {
+    background: rgba(16, 185, 129, 0.22);
+    color: #6ee7b7;
+    border-color: rgba(52, 211, 153, 0.38);
+  }
+
+  .mli-tab-badge-indigo {
+    background: rgba(99, 102, 241, 0.24);
+    color: #c7d2fe;
+    border-color: rgba(129, 140, 248, 0.38);
+  }
+
+  .mli-mode-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    background: #141925;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .mli-mode-tab {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #8a93a6;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4.5px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.2;
+  }
+
+  .mli-mode-tab:hover {
+    color: #e8eaf0;
+  }
+
+  .mli-mode-tab.is-active {
+    background: #232c40;
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .mli-theater-tab:focus-visible,
+  .mli-mode-tab:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 1px;
+  }
+
+  /* 상영관별 스크린 규격 동적 배너 */
+  .mli-screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto 8px;
+    max-width: 580px;
+    padding: 0 6px;
+  }
+
+  .mli-screen-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    box-sizing: border-box;
+    border-radius: 5px 5px 40% 40% / 5px 5px 14px 14px;
+  }
+
+  /* 왕아맥: 22.0m × 13.3m 정통 빌트인 IMAX */
+  .mli-screen-box.is-wangsimni {
+    max-width: 500px;
+    min-height: 48px;
+    padding: 10px 14px 14px;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.38) 0%, rgba(15, 23, 42, 0.92) 100%);
+    border: 1.5px solid rgba(96, 165, 250, 0.6);
+    box-shadow:
+      0 8px 24px -6px rgba(37, 99, 235, 0.48),
+      inset 0 1px 0 rgba(191, 219, 254, 0.36);
+  }
+
+  /* 천아맥: 24.7m × 18.7m 국내 2위 초대형 스크린 */
+  .mli-screen-box.is-cheonho {
+    max-width: 550px;
+    min-height: 64px;
+    padding: 15px 14px 17px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.38), transparent 72%),
+      linear-gradient(180deg, rgba(14, 116, 144, 0.46) 0%, rgba(15, 23, 42, 0.92) 100%);
+    border: 1.5px solid rgba(56, 189, 248, 0.72);
+    box-shadow:
+      0 10px 28px -6px rgba(6, 182, 212, 0.5),
+      inset 0 2px 0 rgba(165, 243, 252, 0.42);
+  }
+
+  /* 광아맥: 20.0m × 12.0m 컴팩트 고밀도 빌트인 */
+  .mli-screen-box.is-gwanggyo {
+    max-width: 465px;
+    min-height: 44px;
+    padding: 9px 14px 13px;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.32) 0%, rgba(15, 23, 42, 0.92) 100%);
+    border: 1.5px solid rgba(52, 211, 153, 0.55);
+    box-shadow:
+      0 8px 22px -6px rgba(16, 185, 129, 0.4),
+      inset 0 1px 0 rgba(167, 243, 208, 0.35);
+  }
+
+  /* 영아맥: 18.5m × 10.6m 상단 거치형 스크린 */
+  .mli-screen-box.is-yeongdeungpo {
+    max-width: 440px;
+    min-height: 40px;
+    padding: 8px 12px 12px;
+    margin-bottom: 4px;
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.36) 0%, rgba(15, 23, 42, 0.92) 100%);
+    border: 1.5px solid rgba(129, 140, 248, 0.58);
+    box-shadow:
+      0 12px 24px -5px rgba(99, 102, 241, 0.45),
+      inset 0 1px 0 rgba(199, 210, 254, 0.35);
+  }
+
+  .mli-screen-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #dbeafe;
+    line-height: 1.35;
+  }
+
+  .mli-screen-caption {
+    text-align: center;
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 5px;
+    line-height: 1.45;
+  }
+
+  .mli-proj-axis-line {
+    width: 1px;
+    height: 9px;
+    border-left: 1px dashed rgba(96, 165, 250, 0.35);
+    margin-top: 3px;
+  }
+
+  /* 범례 */
+  .mli-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 12px;
+    margin: 0 auto 9px;
+    font-size: 10.5px;
+    color: #9aa2b4;
+    max-width: 660px;
+  }
+
+  .mli-li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .mli-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2.5px;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  .mli-dot-core {
+    background: var(--mli-tier-s);
+    box-shadow: inset 0 0 0 1.5px #fde047;
+  }
+
+  .mli-dot-wide {
+    background: #1e293b;
+    box-shadow: inset 0 0 0 1.5px #fb923c;
+    position: relative;
+  }
+
+  /* 지점별 구조 포인트 알림 배지 */
+  .mli-struct-banner {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 9px;
+  }
+
+  .mli-struct-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1.35;
+  }
+
+  .mli-struct-pill.is-amber {
+    background: rgba(120, 53, 15, 0.28);
+    border-color: rgba(251, 191, 36, 0.42);
+    color: #fde68a;
+  }
+
+  .mli-struct-pill.is-cyan {
+    background: rgba(14, 116, 144, 0.25);
+    border-color: rgba(56, 189, 248, 0.4);
+    color: #bae6fd;
+  }
+
+  /* 모바일 안전 스크롤 래퍼 (block + overflow-x:auto + 내부 max-content) */
+  .mli-scroll-wrap {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+
+  .mli-board {
+    width: max-content;
+    margin: 0 auto;
+  }
+
+  .mli-label-spacer {
+    width: var(--label-w);
+    margin-right: var(--label-gap);
+    flex-shrink: 0;
+  }
+
+  .mli-label-spacer-r {
+    width: var(--label-w);
+    margin-left: var(--label-gap);
+    flex-shrink: 0;
+  }
+
+  .mli-block-headers {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+
+  .mli-bh {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #7b8499;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1.5px solid rgba(148, 163, 184, 0.25);
+    border-radius: 3px 3px 0 0;
+    padding: 2px 3px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .mli-bh-center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #93c5fd;
+    border-bottom-color: rgba(56, 189, 248, 0.52);
+    padding: 2px 5px;
+  }
+
+  .mli-bh-center-single {
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .mli-center-tag {
+    font-size: 7.5px;
+    font-weight: 800;
+    color: #fde047;
+    background: rgba(250, 204, 21, 0.12);
+    border: 1px solid rgba(250, 204, 21, 0.35);
+    border-radius: 999px;
+    padding: 0 4.5px;
+    line-height: 1.35;
+  }
+
+  .mli-aisle-hd {
+    width: var(--aisle-w);
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 6.5px;
+    font-weight: 700;
+    color: #556077;
+    line-height: 1.1;
+    white-space: nowrap;
+    letter-spacing: -0.05em;
+  }
+
+  .mli-center-aisle-hd {
+    width: var(--center-aisle-w);
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 7px;
+    font-weight: 800;
+    color: #fbbf24;
+    line-height: 1.1;
+    white-space: nowrap;
+    letter-spacing: -0.04em;
+  }
+
+  /* 상단 번호 헤더 */
+  .mli-col-nums {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .mli-col-block {
+    display: flex;
+    gap: var(--seat-gap);
+    flex-shrink: 0;
+  }
+
+  .mli-col-num {
+    width: var(--seat-w);
+    font-size: 7.5px;
+    font-weight: 700;
+    text-align: center;
+    color: #687388;
+    flex-shrink: 0;
+  }
+
+  .mli-col-num.is-center-col {
+    color: #fde047;
+    font-weight: 800;
+  }
+
+  .mli-col-aisle {
+    width: var(--aisle-w);
+    flex-shrink: 0;
+  }
+
+  .mli-col-center-aisle {
+    width: var(--center-aisle-w);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .mli-col-center-aisle::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: 50%;
+    border-left: 1px dashed rgba(251, 191, 36, 0.5);
+  }
+
+  /* 좌석 그리드 스테이지 */
+  .mli-seat-stage {
+    position: relative;
+    padding-bottom: 4px;
+  }
+
+  .mli-seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--row-gap);
+  }
+
+  .mli-seat-row {
+    display: flex;
+    align-items: center;
+    height: var(--row-h);
+  }
+
+  .mli-row-label {
+    width: var(--label-w);
+    height: var(--row-h);
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #6d778c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mli-row-label-l {
+    margin-right: var(--label-gap);
+  }
+
+  .mli-row-label-r {
+    margin-left: var(--label-gap);
+  }
+
+  .mli-row-label.is-sweet-row {
+    color: #7dd3fc;
+  }
+
+  .mli-block {
+    display: flex;
+    gap: var(--seat-gap);
+    height: var(--row-h);
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .mli-aisle {
+    width: var(--aisle-w);
+    height: var(--row-h);
+    flex-shrink: 0;
+  }
+
+  /* 왕아맥 정중앙 계단 통로 (16번 | 17번 사이) */
+  .mli-center-aisle {
+    width: var(--center-aisle-w);
+    height: var(--row-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: rgba(251, 191, 36, 0.05);
+    border-left: 1px dashed rgba(251, 191, 36, 0.28);
+    border-right: 1px dashed rgba(251, 191, 36, 0.28);
+    box-sizing: border-box;
+  }
+
+  .mli-center-aisle::after {
+    content: '';
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(251, 191, 36, 0.42);
+  }
+
+  .mli-seat-empty {
+    width: var(--seat-w);
+    height: var(--seat-h);
+    flex-shrink: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* 천아맥 철거 좌석 슬롯 (좌블 B–C열 1–10번 시각화용) */
+  .mli-seat-removed {
+    width: var(--seat-w);
+    height: var(--seat-h);
+    flex-shrink: 0;
+    border-radius: 2px;
+    border: 1px dashed rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.35);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .mli-seat {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    border-radius: 3px 3px 2px 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 7px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  /* 황금 코어 좌석 (노란 인셋 보더) */
+  .mli-seat.is-golden-core {
+    box-shadow: inset 0 0 0 1.5px #fde047, 0 0 8px rgba(56, 189, 248, 0.45);
+    color: #fef9c3;
+    font-weight: 800;
+  }
+
+  /* 왕아맥 홀수열(A,C,E,G,I) 15·17번 1.5배 와이드 시트 마커 */
+  .mli-seat.is-wide-seat {
+    box-shadow: inset 0 0 0 1.5px #fb923c;
+  }
+
+  .mli-seat.is-wide-seat::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: #fb923c;
+    border: 1px solid #0b0f17;
+    pointer-events: none;
+  }
+
+  .mli-seat.is-golden-core.is-wide-seat {
+    box-shadow: inset 0 0 0 2px #fde047, 0 0 10px rgba(251, 191, 36, 0.65);
+  }
+
+  .mli-seat.is-golden-core.is-wide-seat::after {
+    background: #fde047;
+  }
+
+  .mli-seat:hover {
+    transform: scale(1.26);
+    z-index: 15;
+    filter: brightness(1.14);
+  }
+
+  .mli-seat:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 1.5px;
+    z-index: 16;
+  }
+
+  .mli-seat.is-pinned {
+    transform: scale(1.24);
+    outline: 2px solid #ffffff;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.42);
+    z-index: 14;
+  }
+
+  /* Tier mode classes */
+  .mli-c-tier-s {
+    background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff;
+  }
+  .mli-c-tier-a {
+    background: var(--mli-tier-a);
+    color: #042f2e;
+  }
+  .mli-c-tier-b {
+    background: var(--mli-tier-b);
+    color: #052e16;
+  }
+  .mli-c-tier-c {
+    background: var(--mli-tier-c);
+    color: #eef2ff;
+  }
+  .mli-c-tier-avoid {
+    background: var(--mli-tier-avoid);
+    color: rgba(255, 255, 255, 0.52);
+  }
+
+  /* Zone mode classes */
+  .mli-c-zone-core {
+    background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
+    color: #ffffff;
+  }
+  .mli-c-zone-imm {
+    background: var(--mli-zone-imm);
+    color: #f0f9ff;
+  }
+  .mli-c-zone-comf {
+    background: var(--mli-zone-comf);
+    color: #ecfdf5;
+  }
+  .mli-c-zone-warn {
+    background: var(--mli-zone-warn);
+    color: #1c1917;
+  }
+  .mli-c-zone-avoid {
+    background: var(--mli-zone-avoid);
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .mli-meta-note {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 8px;
+    margin-top: 5px;
+    font-size: 10px;
+    color: #707a90;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  /* 하단 상세 판독 패널 */
+  .mli-tooltip {
+    margin-top: 10px;
+    background: #131824;
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: #9aa2b4;
+    min-height: 82px;
+  }
+
+  .mli-tooltip strong {
+    color: #f1f5f9;
+  }
+
+  .mli-tt-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 6px;
+    margin-bottom: 5px;
+  }
+
+  .mli-tt-theater {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #7dd3fc;
+    background: rgba(14, 116, 144, 0.26);
+    border: 1px solid rgba(56, 189, 248, 0.34);
+    padding: 1px 7px;
+    border-radius: 5px;
+  }
+
+  .mli-tt-coord {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-right: 2px;
+  }
+
+  .mli-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1.5px 7px;
+    border-radius: 999px;
+    line-height: 1.4;
+  }
+
+  .mli-chip-tier {
+    background: rgba(59, 130, 246, 0.22);
+    color: #dbeafe;
+    border: 1px solid rgba(96, 165, 250, 0.38);
+  }
+
+  .mli-chip-zone {
+    background: rgba(139, 92, 246, 0.2);
+    color: #ddd6fe;
+    border: 1px solid rgba(167, 139, 250, 0.36);
+  }
+
+  .mli-chip-warn {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fde68a;
+    border: 1px solid rgba(245, 158, 11, 0.42);
+  }
+
+  .mli-chip-wide {
+    background: rgba(251, 146, 60, 0.22);
+    color: #fed7aa;
+    border: 1px solid rgba(251, 146, 60, 0.5);
+  }
+
+  .mli-tt-desc {
+    color: #cbd5e1;
+    font-size: 11.5px;
+    line-height: 1.58;
+    margin-bottom: 4px;
+  }
+
+  .mli-tt-verdict {
+    font-size: 11px;
+    font-weight: 700;
+    color: #bae6fd;
+  }
+</style>
+
+<script>
+  type TheaterId = 'wangsimni' | 'cheonho' | 'gwanggyo' | 'yeongdeungpo';
+  type ViewMode = 'tier' | 'zone';
+  type TierKey = 's' | 'a' | 'b' | 'c' | 'avoid';
+  type ZoneKey = 'core' | 'imm' | 'comf' | 'warn' | 'avoid';
+  type SeatState = 'present' | 'empty' | 'removed';
+
+  interface BlockSegment {
+    kind: 'seats' | 'aisle' | 'center-aisle';
+    cols?: number[];
+    headerText?: string;
+    centerTag?: string;
+    isCenterBlock?: boolean;
+  }
+
+  interface TheaterSpec {
+    id: TheaterId;
+    shortName: string;
+    fullName: string;
+    seatsLabel: string;
+    screenLabel: string;
+    screenCaption: string;
+    bannerClass: 'is-amber' | 'is-cyan';
+    bannerHtml: string;
+    rows: readonly string[];
+    sweetRows: readonly string[];
+    centerCols: readonly number[];
+    segments: BlockSegment[];
+  }
+
+  function range(start: number, end: number): number[] {
+    const arr: number[] = [];
+    for (let i = start; i <= end; i += 1) arr.push(i);
+    return arr;
+  }
+
+  const THEATER_SPECS: Record<TheaterId, TheaterSpec> = {
+    wangsimni: {
+      id: 'wangsimni',
+      shortName: '왕아맥 (왕십리 9관 · 268석)',
+      fullName: '왕아맥(CGV 왕십리 9관) A–J열 268석 배치도',
+      seatsLabel: '왕아맥(268석 · A–J열)',
+      screenLabel: 'IMAX WITH LASER · 22.0m × 13.3m (CoLa 1.90:1 투사 · 12채널 사운드)',
+      screenCaption:
+        '※ 2024.09 IMAX 리본 1호점 리뉴얼 · 구 K·L열 철거 완료 · 정중앙(16|17번) 계단 통로 + 홀수열 15·17번 와이드석',
+      bannerClass: 'is-amber',
+      bannerHtml:
+        '✨ <strong>왕아맥 핵심 포인트</strong>: 정중앙(16|17번) 계단 통로 구조 · 홀수열(A·C·E·G·I) <strong>15번·17번 1.5배 와이드 시트</strong>(주황·금색 점 표시)',
+      rows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+      sweetRows: ['F', 'G', 'H', 'I'],
+      centerCols: [15, 16, 17, 18],
+      segments: [
+        { kind: 'seats', cols: range(1, 4), headerText: '좌블 1–4' },
+        { kind: 'aisle', headerText: '통로' },
+        {
+          kind: 'seats',
+          cols: range(5, 16),
+          headerText: '좌중블 5–16',
+          isCenterBlock: true,
+        },
+        { kind: 'center-aisle', headerText: '중앙통로' },
+        {
+          kind: 'seats',
+          cols: range(17, 28),
+          headerText: '우중블 17–28',
+          isCenterBlock: true,
+        },
+        { kind: 'aisle', headerText: '통로' },
+        { kind: 'seats', cols: range(29, 32), headerText: '우블 29–32' },
+      ],
+    },
+    cheonho: {
+      id: 'cheonho',
+      shortName: '천아맥 (천호 6관 · 323석)',
+      fullName: '천아맥(CGV 천호 6관) B–P열 323석 배치도',
+      seatsLabel: '천아맥(323석 · B–P열 중심)',
+      screenLabel: 'IMAX WITH LASER · 24.7m × 18.7m (국내 IMAX 2위 크기 · CoLa 1.90:1 + 12채널)',
+      screenCaption:
+        '※ 2025.12 레이저 리뉴얼 · 1.90:1 실투사 321.1㎡(수도권 CoLa 최대) · 압도적 저역 우퍼 음압',
+      bannerClass: 'is-cyan',
+      bannerHtml:
+        '🛠️ <strong>2025.12 리뉴얼 반영</strong>: 중앙 <strong>A열</strong> 및 좌블 <strong>A–C열(점선 칸)</strong> 철거 완료 · 정중앙 코어 <strong>17·18번</strong>',
+      rows: ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'],
+      sweetRows: ['F', 'G', 'H', 'I', 'J'],
+      centerCols: [17, 18],
+      segments: [
+        { kind: 'seats', cols: range(1, 10), headerText: '좌블 1–10' },
+        { kind: 'aisle', headerText: '통로' },
+        {
+          kind: 'seats',
+          cols: range(11, 25),
+          headerText: '중블 11–25',
+          centerTag: '17·18 정중앙',
+          isCenterBlock: true,
+        },
+        { kind: 'aisle', headerText: '통로' },
+        { kind: 'seats', cols: range(26, 34), headerText: '우블 26–34' },
+      ],
+    },
+    gwanggyo: {
+      id: 'gwanggyo',
+      shortName: '광아맥 (광교 6관 · 282석)',
+      fullName: '광아맥(CGV 광교 6관) A–L열 282석 배치도',
+      seatsLabel: '광아맥(282석 · A–L열)',
+      screenLabel: 'IMAX WITH LASER · 20.0m × 12.0m (국내 최초 빌트인 CoLa 전용관 · 12채널)',
+      screenCaption:
+        '※ 2026.08 폐점한 판아맥 직계 상위호환 성지 · 가죽 시트 넉넉한 레그룸 + 급경사 칼단차(282석)',
+      bannerClass: 'is-cyan',
+      bannerHtml:
+        '🚄 <strong>판아맥 대체 1순위</strong>: 신분당선 판교역→광교중앙역 18분 · 정중앙 코어 <strong>13·14번</strong> · 주차 3시간 무료',
+      rows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
+      sweetRows: ['F', 'G', 'H', 'I'],
+      centerCols: [13, 14],
+      segments: [
+        { kind: 'seats', cols: range(1, 6), headerText: '좌블 1–6' },
+        { kind: 'aisle', headerText: '통로' },
+        {
+          kind: 'seats',
+          cols: range(7, 21),
+          headerText: '중블 7–21',
+          centerTag: '13·14 정중앙',
+          isCenterBlock: true,
+        },
+        { kind: 'aisle', headerText: '통로' },
+        { kind: 'seats', cols: range(22, 27), headerText: '우블 22–27' },
+      ],
+    },
+    yeongdeungpo: {
+      id: 'yeongdeungpo',
+      shortName: '영아맥 (영등포 12관 · 387석)',
+      fullName: '영아맥(CGV 영등포 12관) A–N열 387석 배치도',
+      seatsLabel: '영아맥(387석 · A–N열)',
+      screenLabel: 'IMAX WITH LASER · 18.5m × 10.6m (상단 거치형 스크린 · CoLa 4K + 12채널)',
+      screenCaption:
+        '※ 구 SPHEREX 리뉴얼(2023.12) · 상단 거치 특성상 앞줄(A–E열) 목 꺾임 주의, H–J열 중블 수평 시야 우수',
+      bannerClass: 'is-amber',
+      bannerHtml:
+        '⚠️ <strong>7층 12관 전용</strong>(6층 SCREENX 혼동 주의!) · 계단 바닥과 <strong>시트 등받이 알파벳 반 계단 착시</strong> 확인 필수',
+      rows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'],
+      sweetRows: ['G', 'H', 'I', 'J'],
+      centerCols: [14, 15],
+      segments: [
+        { kind: 'seats', cols: range(1, 6), headerText: '좌블 1–6' },
+        { kind: 'aisle', headerText: '통로' },
+        {
+          kind: 'seats',
+          cols: range(7, 22),
+          headerText: '중블 7–22',
+          centerTag: '14·15 정중앙',
+          isCenterBlock: true,
+        },
+        { kind: 'aisle', headerText: '통로' },
+        { kind: 'seats', cols: range(23, 28), headerText: '우블 23–28' },
+      ],
+    },
+  };
+
+  function isWangsimniWideSeat(theater: TheaterId, row: string, col: number): boolean {
+    return (
+      theater === 'wangsimni' &&
+      ['A', 'C', 'E', 'G', 'I'].includes(row) &&
+      (col === 15 || col === 17)
+    );
+  }
+
+  function getSeatState(theater: TheaterId, row: string, col: number): SeatState {
+    if (theater === 'wangsimni') {
+      // 전방 A–B열 양끝 사블 비움 정규화
+      if ((row === 'A' || row === 'B') && (col <= 4 || col >= 29)) return 'empty';
+      return 'present';
+    }
+
+    if (theater === 'cheonho') {
+      // 2025.12 리뉴얼 시 좌블 A–C열 철거 반영 (B·C열 1–10번 철거 슬롯 표시)
+      if ((row === 'B' || row === 'C') && col <= 10) return 'removed';
+      if (row === 'B' && col >= 32) return 'empty';
+      if (row === 'P' && (col <= 5 || col >= 30)) return 'empty';
+      return 'present';
+    }
+
+    if (theater === 'gwanggyo') {
+      if (row === 'A' && (col <= 3 || col >= 25)) return 'empty';
+      if (row === 'L' && (col <= 2 || col >= 26)) return 'empty';
+      return 'present';
+    }
+
+    // yeongdeungpo
+    if (row === 'A' && (col <= 3 || col >= 26)) return 'empty';
+    if (row === 'N' && (col <= 2 || col >= 27)) return 'empty';
+    return 'present';
+  }
+
+  function isGoldenCore(theater: TheaterId, row: string, col: number): boolean {
+    if (theater === 'wangsimni') {
+      return (
+        (row === 'G' && (col === 15 || col === 17)) ||
+        ((row === 'F' || row === 'H') && (col === 16 || col === 17))
+      );
+    }
+    if (theater === 'cheonho') {
+      return ['G', 'H', 'I'].includes(row) && (col === 17 || col === 18);
+    }
+    if (theater === 'gwanggyo') {
+      return (row === 'G' || row === 'H') && (col === 13 || col === 14);
+    }
+    return (row === 'H' || row === 'I') && (col === 14 || col === 15);
+  }
+
+  function getTier(theater: TheaterId, row: string, col: number): TierKey {
+    if (theater === 'wangsimni') {
+      if (['A', 'B', 'C'].includes(row)) return 'avoid';
+      if (col <= 4 || col >= 29) return 'avoid';
+
+      if (['F', 'G', 'H'].includes(row)) {
+        if (col >= 13 && col <= 20) return 's';
+        if ((col >= 11 && col <= 12) || (col >= 21 && col <= 22)) return 'a';
+        if ((col >= 8 && col <= 10) || (col >= 23 && col <= 25)) return 'b';
+        return 'c'; // 5–7, 26–28 외곽 중블
+      }
+
+      if (row === 'E' || row === 'I') {
+        if (col >= 12 && col <= 21) return 'a';
+        if ((col >= 8 && col <= 11) || (col >= 22 && col <= 25)) return 'b';
+        return 'c'; // 5–7, 26–28 외곽 중블
+      }
+
+      if (row === 'J') {
+        if (col >= 11 && col <= 22) return 'b';
+        return 'c'; // 5–10, 23–28 외곽 중블
+      }
+
+      // D열 중블 (5–28)
+      if (row === 'D') {
+        return 'c';
+      }
+
+      return 'avoid';
+    }
+
+    if (theater === 'cheonho') {
+      if (['B', 'C', 'D'].includes(row)) return 'avoid';
+      if (col <= 6 || col >= 30) return 'avoid';
+
+      // 중블 11–25
+      const inCenter = col >= 11 && col <= 25;
+      // 사블 안쪽 7–10, 26–29
+      const inInnerSide = (col >= 7 && col <= 10) || (col >= 26 && col <= 29);
+
+      if (['G', 'H', 'I'].includes(row)) {
+        if (col >= 14 && col <= 22) return 's';
+        if (inCenter) return 'a'; // 11–13, 23–25
+        if (inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      if (row === 'F' || row === 'J') {
+        if (col >= 13 && col <= 23) return 'a';
+        if (inCenter) return 'b'; // 11–12, 24–25
+        if (inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      if (['E', 'K', 'L'].includes(row)) {
+        if (inCenter) return 'b';
+        if (row !== 'E' && inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      // M–P열
+      if (['M', 'N', 'O', 'P'].includes(row)) {
+        if (inCenter) return 'c';
+        if (row === 'M' && inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      return 'avoid';
+    }
+
+    if (theater === 'gwanggyo') {
+      if (['A', 'B', 'C'].includes(row)) return 'avoid';
+      if (col <= 3 || col >= 25) return 'avoid';
+
+      const inCenter = col >= 7 && col <= 21;
+      const inInnerSide = (col >= 4 && col <= 6) || (col >= 22 && col <= 24);
+
+      if (row === 'G' || row === 'H') {
+        if (col >= 10 && col <= 18) return 's';
+        if (col === 9 || col === 19) return 'a';
+        if (inCenter) return 'b'; // 7–8, 20–21
+        if (inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      if (row === 'F' || row === 'I') {
+        if (col >= 9 && col <= 19) return 'a';
+        if (inCenter) return 'b'; // 7–8, 20–21
+        if (inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      if (['E', 'J', 'K'].includes(row)) {
+        if (inCenter) return 'b';
+        if (inInnerSide) return 'c';
+        return 'avoid';
+      }
+
+      // D·L열
+      if (row === 'D' || row === 'L') {
+        if (inCenter) return 'c';
+        return 'avoid';
+      }
+
+      return 'avoid';
+    }
+
+    // yeongdeungpo
+    if (['A', 'B', 'C', 'D', 'E'].includes(row)) return 'avoid';
+    if (col <= 3 || col >= 26) return 'avoid';
+
+    const inCenter = col >= 7 && col <= 22;
+    const inInnerSide = (col >= 4 && col <= 6) || (col >= 23 && col <= 25);
+
+    if (row === 'H' || row === 'I') {
+      if (col >= 11 && col <= 18) return 's';
+      if (col === 10 || col === 19) return 'a';
+      if ((col >= 8 && col <= 9) || (col >= 20 && col <= 21)) return 'b';
+      if (col === 7 || col === 22 || inInnerSide) return 'c';
+      return 'avoid';
+    }
+
+    if (row === 'G' || row === 'J') {
+      if (col >= 10 && col <= 19) return 'a';
+      if ((col >= 8 && col <= 9) || (col >= 20 && col <= 21)) return 'b';
+      if (col === 7 || col === 22 || inInnerSide) return 'c';
+      return 'avoid';
+    }
+
+    if (row === 'F' || row === 'K') {
+      if (col >= 10 && col <= 19) return 'b';
+      if (inCenter) return 'c';
+      if (row === 'K' && inInnerSide) return 'c';
+      return 'avoid';
+    }
+
+    // L–N열 중블
+    if (['L', 'M', 'N'].includes(row)) {
+      if (inCenter) return 'c';
+      return 'avoid';
+    }
+
+    return 'avoid';
+  }
+
+  function getZone(theater: TheaterId, row: string, col: number): ZoneKey {
+    const tier = getTier(theater, row, col);
+    if (tier === 'avoid') return 'avoid';
+
+    if (theater === 'wangsimni') {
+      if (['F', 'G', 'H'].includes(row) && col >= 11 && col <= 22) return 'core';
+      if ((row === 'D' || row === 'E') && col >= 8 && col <= 25) return 'imm';
+      if ((row === 'I' || row === 'J') && col >= 8 && col <= 25) return 'comf';
+      return 'warn'; // 외곽 중블 5–7, 26–28 등
+    }
+
+    if (theater === 'cheonho') {
+      if (['G', 'H', 'I'].includes(row) && col >= 12 && col <= 24) return 'core';
+      if ((row === 'E' || row === 'F') && col >= 11 && col <= 25) return 'imm';
+      if (['J', 'K', 'L'].includes(row) && col >= 11 && col <= 25) return 'comf';
+      return 'warn'; // M–P 원거리 중블 및 사블 안쪽
+    }
+
+    if (theater === 'gwanggyo') {
+      if ((row === 'G' || row === 'H') && col >= 9 && col <= 19) return 'core';
+      if ((row === 'E' || row === 'F') && col >= 7 && col <= 21) return 'imm';
+      if (['I', 'J', 'K'].includes(row) && col >= 7 && col <= 21) return 'comf';
+      return 'warn'; // D·L열 중블 및 사블 안쪽
+    }
+
+    // yeongdeungpo
+    if ((row === 'H' || row === 'I') && col >= 10 && col <= 19) return 'core';
+    if ((row === 'F' || row === 'G') && col >= 9 && col <= 20) return 'imm';
+    if ((row === 'J' || row === 'K') && col >= 9 && col <= 20) return 'comf';
+    return 'warn'; // L–N열 및 외곽·사블 안쪽
+  }
+
+  const TIER_LABELS: Record<TierKey, string> = {
+    s: 'S등급 · 최우선 초명당',
+    a: 'A등급 · 강력 추천',
+    b: 'B등급 · 차선·실속 추천',
+    c: 'C등급 · 타협 가능',
+    avoid: '기피 권장 구역',
+  };
+
+  const ZONE_LABELS: Record<ZoneKey, string> = {
+    core: '12채널·시야 코어 스윗스팟',
+    imm: '근접 압도·고음압 몰입존',
+    comf: '수평 자막·단차 안정존',
+    warn: '외곽·후열·통로 주의존',
+    avoid: '목 꺾임·극사이드 비추천존',
+  };
+
+  function buildLegendHtml(mode: ViewMode, theater: TheaterId): string {
+    if (mode === 'zone') {
+      return `
+        <div class="mli-li"><span class="mli-dot" style="background:var(--mli-zone-core)"></span>12채널·시야 코어 스윗스팟</div>
+        <div class="mli-li"><span class="mli-dot" style="background:var(--mli-zone-imm)"></span>근접 압도·고음압존</div>
+        <div class="mli-li"><span class="mli-dot" style="background:var(--mli-zone-comf)"></span>수평 자막·단차 안정존</div>
+        <div class="mli-li"><span class="mli-dot" style="background:var(--mli-zone-warn)"></span>외곽·후열·통로 주의존</div>
+        <div class="mli-li"><span class="mli-dot" style="background:var(--mli-zone-avoid)"></span>목 꺾임·극사이드 비추천존</div>
+      `;
+    }
+
+    const wideItem =
+      theater === 'wangsimni'
+        ? `<div class="mli-li"><span class="mli-dot mli-dot-wide"></span>홀수열 15·17번 와이드석(1.5배 지그재그)</div>`
+        : '';
+
+    return `
+      <div class="mli-li"><span class="mli-dot mli-dot-core"></span>S — 최우선 초명당 (금색 테두리: 황금코어)</div>
+      <div class="mli-li"><span class="mli-dot" style="background:var(--mli-tier-a)"></span>A — 강력 추천</div>
+      <div class="mli-li"><span class="mli-dot" style="background:var(--mli-tier-b)"></span>B — 차선·실속</div>
+      <div class="mli-li"><span class="mli-dot" style="background:var(--mli-tier-c)"></span>C — 타협 가능</div>
+      <div class="mli-li"><span class="mli-dot" style="background:var(--mli-tier-avoid)"></span>기피 권장</div>
+      ${wideItem}
+    `;
+  }
+
+  function getBlockPositionText(theater: TheaterId, col: number): string {
+    if (theater === 'wangsimni') {
+      if (col === 16 || col === 17) return '중앙 계단 통로 바로 옆 코어석';
+      if (col === 15 || col === 18) return '중앙부 핵심 준통로석';
+      if (col >= 13 && col <= 20) return '좌우 중블 핵심 코어 (13–20번)';
+      if (col >= 8 && col <= 25) return '좌우 중블 안정권';
+      if (col >= 5 && col <= 28) return '좌우 중블 외곽';
+      return '양 끝 사이드 블록 (1–4·29–32번)';
+    }
+    if (theater === 'cheonho') {
+      if (col === 17 || col === 18) return '중블 정중앙 대칭축 (17·18번)';
+      if (col >= 14 && col <= 22) return '중블 핵심 코어 (14–22번)';
+      if (col >= 11 && col <= 25) return '중블 외곽·통로 인접 (11–13·23–25번)';
+      if ((col >= 7 && col <= 10) || (col >= 26 && col <= 29)) return '사블 안쪽 타협권';
+      return '극사이드 외곽 (1–6·30–34번)';
+    }
+    if (theater === 'gwanggyo') {
+      if (col === 13 || col === 14) return '중블 정중앙 대칭축 (13·14번)';
+      if (col >= 10 && col <= 18) return '중블 핵심 코어 (10–18번)';
+      if (col >= 7 && col <= 21) return '중블 통로 인접권 (7–9·19–21번)';
+      if ((col >= 4 && col <= 6) || (col >= 22 && col <= 24)) return '사블 안쪽 타협권';
+      return '극사이드 외곽 (1–3·25–27번)';
+    }
+    // yeongdeungpo
+    if (col === 14 || col === 15) return '중블 정중앙 대칭축 (14·15번)';
+    if (col >= 11 && col <= 18) return '중블 핵심 코어 (11–18번)';
+    if (col >= 7 && col <= 22) return '중블 준중앙·통로권';
+    if ((col >= 4 && col <= 6) || (col >= 23 && col <= 25)) return '사블 안쪽 타협권';
+    return '극사이드 외곽 (1–3·26–28번)';
+  }
+
+  function getSeatDetail(
+    theater: TheaterId,
+    row: string,
+    col: number,
+    tier: TierKey
+  ): { desc: string; verdict: string } {
+    const wide = isWangsimniWideSeat(theater, row, col);
+
+    if (theater === 'wangsimni') {
+      if (tier === 's') {
+        if (row === 'G' && (col === 15 || col === 17)) {
+          return {
+            desc: '왕아맥 268석 전체에서 단 두 자리뿐인 최고 존엄 황금석입니다. 22.0m×13.3m 레이저 스크린 정중앙 수평 시야와 12채널 사운드 초점이 일치할 뿐 아니라, 일반석 대비 약 1.5배 넓은 와이드 시트가 앞열(F열)과 지그재그로 엇갈려 앞사람 머리 가림이 0%입니다.',
+            verdict: '예매창에서 불이 켜져 있다면 0.1초의 망설임도 없이 결제해야 할 왕아맥 부동의 1티어입니다.',
+          };
+        }
+        if (col === 16 || col === 17) {
+          return {
+            desc: '정중앙(16|17번) 계단 통로 바로 옆 S등급 코어석입니다. 출입 개방감과 시야 대칭성이 탁월하지만 상영 중 통로 계단을 오르내리는 관객 움직임이 신경 쓰일 수 있습니다.',
+            verdict: '개방감을 선호하면 최고 명당이며, 통로 이동 간섭이 싫다면 한 칸 안쪽인 14–15·18–19번을 노리세요.',
+          };
+        }
+        return {
+          desc: '왕아맥 S등급 핵심 권역(F–H열 13–20번)입니다. 2008년 빌트인 IMAX 설계 특유의 급경사 칼단차 덕분에 자막 가림 스트레스가 전혀 없고, 중앙 계단 통로 관객 이동에서도 한두 칸 비켜나 몰입도가 완벽합니다.',
+          verdict: '1.90:1 확장비 블록버스터 관람 시 용아맥 중블이 전혀 부럽지 않은 최우선 명당입니다.',
+        };
+      }
+
+      if (tier === 'a') {
+        if (wide) {
+          return {
+            desc: `${row}열 중앙 코어 1.5배 와이드 시트(${row}${col})입니다. 지그재그 배치 덕분에 앞좌석 시야 간섭이 완전히 사라지며 양옆 여유 공간도 넉넉합니다.`,
+            verdict: 'S석 매진 시 일반 중블보다 먼저 집어야 할 특급 와이드 명당입니다.',
+          };
+        }
+        return {
+          desc: `${row === 'E' ? '22m 스크린이 시야를 꽉 채우는 박력 만점 전진 열(E열)' : row === 'I' ? '한눈에 화면과 자막이 편안하게 들어오는 안정 열(I열)' : 'S등급 바로 옆 F–H열 준중앙(11–12·21–22번)'} 구간입니다.`,
+          verdict: 'F–H열 코어가 나갔을 때 체감 손실 거의 없이 관람 가능한 강력 추천석입니다.',
+        };
+      }
+
+      if (tier === 'b') {
+        if (row === 'J') {
+          return {
+            desc: '2024년 리뉴얼 당시 후방 K·L열을 과감히 철거하면서 최후방이 된 J열 중앙부입니다. 영사기 광축과 가깝고 스크린이 한눈에 안정적으로 잡혀 일반 상영관 맨 뒷줄과 달리 시야·사운드 손실이 매우 적습니다.',
+            verdict: '뒷사람 눈치 보지 않고 쾌적하게 조망하고 싶을 때 아주 훌륭한 실속 명당입니다.',
+          };
+        }
+        return {
+          desc: '핵심 열(E–I열) 좌우 중블 준외곽(8–10·23–25번)입니다. 정중앙에서 약간 비켜나 있지만 빌트인 단차와 12채널 서라운드 출력 덕분에 만족도가 높습니다.',
+          verdict: '인기 개봉작 주말 피크타임에 후회 없이 선택할 수 있는 차선책입니다.',
+        };
+      }
+
+      if (tier === 'c') {
+        return {
+          desc: `${row === 'D' ? '스크린을 다소 올려다보지만 중앙 시야는 확보되는 D열 중블' : '좌우 중블 바깥쪽(5–7·26–28번) 또는 J열 외곽 중블'}입니다. 시야 각도나 거리감에서 약간의 타협이 필요합니다.`,
+          verdict: '앞줄(A–C열)이나 양끝 사이드 블록보다는 훨씬 나은 타협 마지노선입니다.',
+        };
+      }
+
+      return {
+        desc: `${['A', 'B', 'C'].includes(row) ? `13.3m 높이 스크린과 거리가 너무 가까워 고개를 크게 젖혀야 하는 앞줄(${row}열${wide ? ' · 와이드석 포함' : ''})` : '양 끝 사이드 블록(1–4·29–32번)이라 측면 사다리꼴 왜곡이 심한 구역'}입니다.`,
+        verdict: '특전 수령 목적이 아니라면 상영 25분 전 취소표 방출 대기를 권합니다.',
+      };
+    }
+
+    if (theater === 'cheonho') {
+      if (tier === 's') {
+        if (col === 17 || col === 18) {
+          return {
+            desc: '국내 IMAX 물리 크기 2위(24.7m×18.7m, 용아맥 Mk.2) 천아맥의 정중앙 황금 코어입니다. 1.90:1 기준 321.1㎡에 달하는 광활한 레이저 화면이 시야를 집어삼키고, 내장까지 울리는 천아맥 특유의 괴물 같은 중저음 우퍼 음압이 정면으로 꽂힙니다.',
+            verdict: '1.90:1·2.39:1 영화에서는 용아맥 사이드·앞줄을 압도하는 수도권 최고 명당입니다.',
+          };
+        }
+        return {
+          desc: '천아맥 레퍼런스 스윗스팟(G–I열 14–22번)입니다. 2025년 12월 4K 레이저 + 12채널 리뉴얼로 어두웠던 제논 시절의 단점이 완전히 사라졌으며 시야각과 천장 사운드 밸런스가 완벽합니다.',
+          verdict: '보이는 즉시 결제하세요. 대형 블록버스터의 스케일을 120% 체감할 수 있습니다.',
+        };
+      }
+
+      if (tier === 'a') {
+        return {
+          desc: `${row === 'F' ? '24.7m 초대형 벽면 스크린 속으로 빨려 들어가는 아이맥스 특유의 전진 명당(F열)' : row === 'J' ? '초대형 화면과 자막을 목 피로 없이 한눈에 장악하는 밸런스 명당(J열)' : 'S등급 열(G–I열) 중블 통로 인접 알짜석(11–13·23–25번)'}입니다.`,
+          verdict: 'G–I열 코어 매진 시 1순위로 선점해야 할 상급 명당입니다.',
+        };
+      }
+
+      if (tier === 'b') {
+        return {
+          desc: `${row === 'E' ? '압도적 시야각으로 화면이 쏟아지는 근접 마지노선(E열 중블)' : '초대형 스크린 덕분에 중후열인데도 화면 크기 체감이 여전히 웅장한 K·L열 중블(또는 F·J열 통로석)'}입니다.`,
+          verdict: '천아맥은 기본 스크린 체급이 워낙 커서 K·L열 중블까지도 돈값을 톡톡히 합니다.',
+        };
+      }
+
+      if (tier === 'c') {
+        return {
+          desc: `${['M', 'N', 'O', 'P'].includes(row) ? '상영관 후방(M–P열) 중블이라 아이맥스 특유의 시야 압도감은 다소 옅어지지만 전체 조망이 편안한 구역' : '중후열 사이드 블록 안쪽 통로 인접(7–10·26–29번) 타협 구역'}입니다.`,
+          verdict: '앞줄(B–D열) 목 꺾임보다 훨씬 쾌적하므로 매진 회차에서 무난히 타협 가능합니다.',
+        };
+      }
+
+      return {
+        desc: `${['B', 'C', 'D'].includes(row) ? '중앙 A열 철거 후에도 18.7m 높이 스크린이 코앞에 서 있어 목과 안구 피로가 극심한 전방 구역' : '가로 24.7m 대형 스크린의 양 끝 극사이드(1–6·30–34번)라 화면 왜곡이 큰 구역'}입니다.`,
+        verdict: '실관람 피로도가 높으니 취소표 골든타임(상영 30–21분 전)을 노려보세요.',
+      };
+    }
+
+    if (theater === 'gwanggyo') {
+      if (tier === 's') {
+        if (col === 13 || col === 14) {
+          return {
+            desc: '2026년 8월 폐점한 판아맥의 직계 상위호환 성지, 광아맥의 정중앙 황금 코어(G–H열 13·14번)입니다. 국내 최초 빌트인 CoLa 전용관다운 칼단차와 넉넉한 가죽 시트 레그룸 덕분에 20m×12m 스크린이 체감상 훨씬 꽉 차게 들어옵니다.',
+            verdict: '경기 남부·분당·판교 관객이라면 고민 없이 직행해야 할 완벽한 레퍼런스 명당입니다.',
+          };
+        }
+        return {
+          desc: '광아맥 최우선 스윗스팟(G–H열 10–18번)입니다. 상영관 체적 대비 12채널 사운드 밀도가 아주 단단하고 앞사람 머리에 자막이 가릴 일이 전혀 없습니다.',
+          verdict: '정중앙(13·14번)과 체감 차이가 거의 없는 0순위 추천 좌석입니다.',
+        };
+      }
+
+      if (tier === 'a') {
+        return {
+          desc: `${row === 'F' ? '빌트인 전용관 특유의 시원한 시야각으로 20m 화면에 폭 감기는 전진 명당(F열)' : row === 'I' ? '스크린 중심과 눈높이가 가장 편안하게 이어지는 안정 조망 명당(I열)' : 'G–H열 코어 바로 옆 준중앙(9·19번)'}입니다.`,
+          verdict: 'G–H열 중앙이 나갔을 때 망설임 없이 집어도 좋은 A급 좌석입니다.',
+        };
+      }
+
+      if (tier === 'b') {
+        return {
+          desc: `${row === 'E' ? '다소 올려다보지만 몰입감이 뛰어난 E열 중블' : 'A–L열 총 12개 열의 컴팩트한 깊이 덕분에 후방인데도 화면이 가깝고 또렷한 J·K열 중블(및 F–I열 통로석)'}입니다.`,
+          verdict: '주말 매진 시간대에 믿고 예매할 수 있는 알짜 실속 구역입니다.',
+        };
+      }
+
+      if (tier === 'c') {
+        return {
+          desc: `${row === 'D' ? '근접 시야 부담이 시작되는 D열 중블' : row === 'L' ? '최후방 벽면 인접 L열 중블(시야는 안정적이나 후방 반사음 소폭 존재)' : '중열 사이드 블록 안쪽 통로 인접(4–6·22–24번)'}입니다.`,
+          verdict: 'A–C열 앞줄보다 훨씬 쾌적한 현실적 타협선입니다.',
+        };
+      }
+
+      return {
+        desc: '스크린과 너무 가까운 A–C열 앞줄이거나 양 끝 극사이드(1–3·25–27번)라 시야각 왜곡이 큰 구역입니다.',
+        verdict: '다른 회차 중블이나 상영 20분 전 취소표 방출 대기를 추천합니다.',
+      };
+    }
+
+    // yeongdeungpo
+    if (tier === 's') {
+      if (col === 14 || col === 15) {
+        return {
+          desc: '영아맥(7층 12관) 387석의 정중앙 황금 코어(H–I열 14·15번)입니다. 비교적 높게 상단 거치된 18.5m×10.6m 레이저 스크린의 중심축과 시선이 정면으로 맞물리며 12채널 입체 음향의 밸런스가 가장 뛰어납니다.',
+          verdict: '서울 서남권에서 4K 레이저 IMAX를 가장 완벽하게 즐길 수 있는 0순위 명당입니다.',
+        };
+      }
+      return {
+        desc: '영아맥 S등급 핵심 권역(H–I열 11–18번)입니다. 상단 거치 스크린 특성상 일반 상영관보다 한두 줄 뒤인 H–I열에서 목 피로 없는 최적 시야각이 완성됩니다.',
+        verdict: '보이는 즉시 선점하세요(입장 시 계단 바닥 대신 시트 등받이 열 알파벳을 꼭 확인하세요!).',
+      };
+    }
+
+    if (tier === 'a') {
+      if (row === 'J') {
+        return {
+          desc: '높게 거치된 영아맥 스크린 특성상 눈높이 수평 시야와 하단 자막 가독성이 가장 편안하게 떨어지는 숨은 명당 열(J열 10–19번)입니다.',
+          verdict: '3시간에 달하는 장편 대작을 목 뻐근함 제로로 관람하고 싶다면 S석 못지않은 최고의 선택입니다.',
+        };
+      }
+      return {
+        desc: '박력 있는 시야각과 12채널 사운드 직진성이 살아 있는 G열 10–19번(또는 H–I열 10·19번)입니다.',
+        verdict: 'H–I열 코어가 매진되었을 때 가장 먼저 선택해야 할 A급 명당입니다.',
+      };
+    }
+
+    if (tier === 'b') {
+      return {
+        desc: `${row === 'F' ? '상단 거치 스크린을 살짝 올려다보며 몰입하는 F열 중앙(10–19번)' : row === 'K' ? '시선이 아주 편안하고 사운드 밸런스도 준수한 K열 중앙(10–19번)' : '황금 열(G–J열) 중블 통로 인접 구역(8–9·20–21번)'}입니다.`,
+        verdict: '피크타임 예매 시 충분히 돈값을 해내는 추천 좌석입니다.',
+      };
+    }
+
+    if (tier === 'c') {
+      return {
+        desc: `${['L', 'M', 'N'].includes(row) ? '후방(L–N열) 중블이라 18.5m 스크린이 다소 아담하게 느껴지지만 시선 높이는 매우 편안한 구역' : 'F·K열 중블 외곽 또는 중열 사이드 블록 안쪽(4–6·23–25번)'}입니다.`,
+        verdict: '영아맥은 앞줄(A–E열) 목 꺾임이 심하므로 매진 시 앞줄 대신 반드시 이 구역으로 우회하세요.',
+      };
+    }
+
+    return {
+      desc: `${['A', 'B', 'C', 'D', 'E'].includes(row) ? '영아맥은 스크린이 높게 상단 거치되어 있어 E열 이하 앞줄에 앉으면 러닝타임 내내 고개를 심하게 젖혀야 하는 목 꺾임 위험 구역' : '양 끝 극사이드(1–3·26–28번)라 측면 왜곡이 큰 구역'}입니다.`,
+      verdict: '일반 관의 E열 감각으로 예매하면 후회하기 쉽습니다. 최소 G–K열 취소표를 노리세요.',
+    };
+  }
+
+  function initMetroLaserImaxMaps() {
+    document.querySelectorAll<HTMLElement>('[data-mli-map]').forEach((root) => {
+      if (root.dataset.initialized === 'true') return;
+      root.dataset.initialized = 'true';
+
+      const blockHeadersEl = root.querySelector<HTMLElement>('[data-mli-block-headers]')!;
+      const colsEl = root.querySelector<HTMLElement>('[data-mli-cols]')!;
+      const gridEl = root.querySelector<HTMLElement>('[data-mli-grid]')!;
+      const legendEl = root.querySelector<HTMLElement>('[data-mli-legend]')!;
+      const bannerEl = root.querySelector<HTMLElement>('[data-mli-banner]')!;
+      const tooltipEl = root.querySelector<HTMLElement>('[data-mli-tooltip]')!;
+      const screenBoxEl = root.querySelector<HTMLElement>('[data-mli-screen-box]')!;
+      const screenLabelEl = root.querySelector<HTMLElement>('[data-mli-screen-label]')!;
+      const screenCapEl = root.querySelector<HTMLElement>('[data-mli-screen-caption]')!;
+
+      const theaterBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('.mli-theater-tab'));
+      const modeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('.mli-mode-tab'));
+
+      let currentTheater: TheaterId = 'wangsimni';
+      let currentMode: ViewMode = 'tier';
+      let pinnedKey: string | null = null;
+      const seatButtons = new Map<string, HTMLButtonElement>();
+
+      function calcBlockWidthCss(count: number): string {
+        return `calc(${count} * var(--seat-w) + ${count - 1} * var(--seat-gap))`;
+      }
+
+      function buildHeaders() {
+        const spec = THEATER_SPECS[currentTheater];
+        blockHeadersEl.innerHTML = '';
+        colsEl.innerHTML = '';
+
+        const spBhL = document.createElement('div');
+        spBhL.className = 'mli-label-spacer';
+        blockHeadersEl.appendChild(spBhL);
+
+        const spColL = document.createElement('div');
+        spColL.className = 'mli-label-spacer';
+        colsEl.appendChild(spColL);
+
+        spec.segments.forEach((seg) => {
+          if (seg.kind === 'aisle') {
+            const ah = document.createElement('div');
+            ah.className = 'mli-aisle-hd';
+            ah.textContent = seg.headerText || '통로';
+            blockHeadersEl.appendChild(ah);
+
+            const ac = document.createElement('div');
+            ac.className = 'mli-col-aisle';
+            colsEl.appendChild(ac);
+            return;
+          }
+
+          if (seg.kind === 'center-aisle') {
+            const cah = document.createElement('div');
+            cah.className = 'mli-center-aisle-hd';
+            cah.textContent = seg.headerText || '중앙통로';
+            blockHeadersEl.appendChild(cah);
+
+            const cac = document.createElement('div');
+            cac.className = 'mli-col-center-aisle';
+            colsEl.appendChild(cac);
+            return;
+          }
+
+          const cols = seg.cols || [];
+          const bh = document.createElement('div');
+          bh.style.width = calcBlockWidthCss(cols.length);
+
+          if (seg.isCenterBlock && seg.centerTag) {
+            bh.className = 'mli-bh mli-bh-center';
+            bh.innerHTML = `<span>${seg.headerText}</span><span class="mli-center-tag">${seg.centerTag}</span>`;
+          } else if (seg.isCenterBlock) {
+            bh.className = 'mli-bh mli-bh-center mli-bh-center-single';
+            bh.innerHTML = `<span>${seg.headerText}</span>`;
+          } else {
+            bh.className = 'mli-bh';
+            bh.textContent = seg.headerText || '';
+          }
+          blockHeadersEl.appendChild(bh);
+
+          const colBlk = document.createElement('div');
+          colBlk.className = 'mli-col-block';
+          cols.forEach((c) => {
+            const cn = document.createElement('div');
+            cn.className = `mli-col-num${spec.centerCols.includes(c) ? ' is-center-col' : ''}`;
+            cn.textContent = String(c);
+            colBlk.appendChild(cn);
+          });
+          colsEl.appendChild(colBlk);
+        });
+
+        const spBhR = document.createElement('div');
+        spBhR.className = 'mli-label-spacer-r';
+        blockHeadersEl.appendChild(spBhR);
+
+        const spColR = document.createElement('div');
+        spColR.className = 'mli-label-spacer-r';
+        colsEl.appendChild(spColR);
+      }
+
+      function updateScreenAndMeta() {
+        const spec = THEATER_SPECS[currentTheater];
+        root.setAttribute('data-theater-active', currentTheater);
+        screenBoxEl.className = `mli-screen-box is-${currentTheater}`;
+        screenLabelEl.textContent = spec.screenLabel;
+        screenCapEl.textContent = spec.screenCaption;
+        gridEl.setAttribute('aria-label', spec.fullName);
+        legendEl.innerHTML = buildLegendHtml(currentMode, currentTheater);
+        bannerEl.innerHTML = `<div class="mli-struct-pill ${spec.bannerClass}">${spec.bannerHtml}</div>`;
+      }
+
+      function getSeatClass(row: string, col: number, key: string): string {
+        const tier = getTier(currentTheater, row, col);
+        const zone = getZone(currentTheater, row, col);
+        const colorCls =
+          currentMode === 'tier' ? `mli-c-tier-${tier}` : `mli-c-zone-${zone}`;
+        const coreCls = isGoldenCore(currentTheater, row, col) ? ' is-golden-core' : '';
+        const wideCls = isWangsimniWideSeat(currentTheater, row, col) ? ' is-wide-seat' : '';
+        const pinCls = pinnedKey === key ? ' is-pinned' : '';
+        return `mli-seat ${colorCls}${coreCls}${wideCls}${pinCls}`;
+      }
+
+      function applySeatClasses() {
+        seatButtons.forEach((btn, key) => {
+          const [row, colStr] = key.split('-');
+          const col = Number(colStr);
+          btn.className = getSeatClass(row, col, key);
+          btn.setAttribute('aria-pressed', pinnedKey === key ? 'true' : 'false');
+        });
+      }
+
+      function renderTooltip(row: string, col: number, pinned: boolean) {
+        const spec = THEATER_SPECS[currentTheater];
+        const tier = getTier(currentTheater, row, col);
+        const zone = getZone(currentTheater, row, col);
+        const posText = getBlockPositionText(currentTheater, col);
+        const { desc, verdict } = getSeatDetail(currentTheater, row, col, tier);
+        const wide = isWangsimniWideSeat(currentTheater, row, col);
+
+        const pinHint = pinned
+          ? ' <span style="font-size:10px;color:#94a3b8;font-weight:500">(고정됨 · 재클릭 또는 Esc로 해제)</span>'
+          : '';
+        const zoneChipCls = zone === 'warn' ? 'mli-chip mli-chip-warn' : 'mli-chip mli-chip-zone';
+        const wideChip = wide
+          ? '<span class="mli-chip mli-chip-wide">1.5배 와이드석 (지그재그)</span>'
+          : '';
+
+        tooltipEl.innerHTML = `
+          <div class="mli-tt-top">
+            <span class="mli-tt-theater">${spec.shortName}</span>
+            <span class="mli-tt-coord">${row}열 ${col}번${pinHint}</span>
+            <span class="mli-chip mli-chip-tier">${TIER_LABELS[tier]}</span>
+            ${wideChip}
+            <span class="${zoneChipCls}">${ZONE_LABELS[zone]} · ${posText}</span>
+          </div>
+          <div class="mli-tt-desc">${desc}</div>
+          <div class="mli-tt-verdict">⚡ 예매 판단: ${verdict}</div>
+        `;
+      }
+
+      function restoreDefaultOrPinned() {
+        if (pinnedKey) {
+          const [r, cStr] = pinnedKey.split('-');
+          renderTooltip(r, Number(cStr), true);
+        } else {
+          const spec = THEATER_SPECS[currentTheater];
+          tooltipEl.innerHTML = `현재 <strong>${spec.seatsLabel}</strong> 배치도입니다. 좌석에 마우스를 올리거나 탭하면 <strong>추천 등급 · 시야/단차/12채널 음향 체감 · 한 줄 예매 판단</strong>이 표시됩니다.`;
+        }
+      }
+
+      function buildGrid() {
+        const spec = THEATER_SPECS[currentTheater];
+        gridEl.innerHTML = '';
+        seatButtons.clear();
+
+        spec.rows.forEach((row) => {
+          const rowEl = document.createElement('div');
+          rowEl.className = 'mli-seat-row';
+
+          const sweetRow = spec.sweetRows.includes(row);
+          const lblL = document.createElement('div');
+          lblL.className = `mli-row-label mli-row-label-l${sweetRow ? ' is-sweet-row' : ''}`;
+          lblL.textContent = row;
+          rowEl.appendChild(lblL);
+
+          spec.segments.forEach((seg) => {
+            if (seg.kind === 'aisle') {
+              const a = document.createElement('div');
+              a.className = 'mli-aisle';
+              a.setAttribute('aria-hidden', 'true');
+              rowEl.appendChild(a);
+              return;
+            }
+
+            if (seg.kind === 'center-aisle') {
+              const ca = document.createElement('div');
+              ca.className = 'mli-center-aisle';
+              ca.setAttribute('aria-hidden', 'true');
+              ca.title = '왕아맥 정중앙(16|17번) 계단 통로';
+              rowEl.appendChild(ca);
+              return;
+            }
+
+            const blk = document.createElement('div');
+            blk.className = 'mli-block';
+            (seg.cols || []).forEach((col) => {
+              const state = getSeatState(currentTheater, row, col);
+              if (state === 'empty') {
+                const empty = document.createElement('div');
+                empty.className = 'mli-seat-empty';
+                empty.setAttribute('aria-hidden', 'true');
+                blk.appendChild(empty);
+                return;
+              }
+              if (state === 'removed') {
+                const rem = document.createElement('div');
+                rem.className = 'mli-seat-removed';
+                rem.setAttribute('aria-hidden', 'true');
+                rem.title = '2025.12 레이저 리뉴얼 시 철거된 좌석 구역';
+                blk.appendChild(rem);
+                return;
+              }
+
+              const key = `${row}-${col}`;
+              const tier = getTier(currentTheater, row, col);
+              const wide = isWangsimniWideSeat(currentTheater, row, col);
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.dataset.seat = key;
+              btn.className = getSeatClass(row, col, key);
+              btn.setAttribute('aria-pressed', 'false');
+              btn.setAttribute(
+                'aria-label',
+                `${spec.shortName} ${row}열 ${col}번${wide ? ' 와이드석' : ''}, ${TIER_LABELS[tier]}`
+              );
+              btn.textContent = String(col);
+
+              btn.addEventListener('mouseenter', () => {
+                renderTooltip(row, col, pinnedKey === key);
+              });
+              btn.addEventListener('mouseleave', () => {
+                restoreDefaultOrPinned();
+              });
+              btn.addEventListener('focus', () => {
+                renderTooltip(row, col, pinnedKey === key);
+              });
+              btn.addEventListener('blur', () => {
+                restoreDefaultOrPinned();
+              });
+              btn.addEventListener('click', () => {
+                pinnedKey = pinnedKey === key ? null : key;
+                applySeatClasses();
+                restoreDefaultOrPinned();
+              });
+
+              seatButtons.set(key, btn);
+              blk.appendChild(btn);
+            });
+
+            rowEl.appendChild(blk);
+          });
+
+          const lblR = document.createElement('div');
+          lblR.className = `mli-row-label mli-row-label-r${sweetRow ? ' is-sweet-row' : ''}`;
+          lblR.setAttribute('aria-hidden', 'true');
+          lblR.textContent = row;
+          rowEl.appendChild(lblR);
+
+          gridEl.appendChild(rowEl);
+        });
+      }
+
+      // 초기 렌더링
+      updateScreenAndMeta();
+      buildHeaders();
+      buildGrid();
+      restoreDefaultOrPinned();
+
+      // 상영관 탭 전환
+      theaterBtns.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const nextTheater = tab.dataset.theater as TheaterId;
+          if (!nextTheater || nextTheater === currentTheater) return;
+          currentTheater = nextTheater;
+          pinnedKey = null;
+
+          theaterBtns.forEach((b) => {
+            const active = b === tab;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+
+          updateScreenAndMeta();
+          buildHeaders();
+          buildGrid();
+          restoreDefaultOrPinned();
+        });
+      });
+
+      // 보기 모드 토글
+      modeBtns.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const nextMode = tab.dataset.mode as ViewMode;
+          if (!nextMode || nextMode === currentMode) return;
+          currentMode = nextMode;
+
+          modeBtns.forEach((b) => {
+            const active = b === tab;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+
+          legendEl.innerHTML = buildLegendHtml(currentMode, currentTheater);
+          applySeatClasses();
+        });
+      });
+
+      // Escape 키 고정 해제 (연결 해제 시 리스너 자동 정리)
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (!root.isConnected) {
+          document.removeEventListener('keydown', onKeyDown);
+          return;
+        }
+        if (e.key === 'Escape' && pinnedKey !== null) {
+          pinnedKey = null;
+          applySeatClasses();
+          restoreDefaultOrPinned();
+        }
+      };
+      document.addEventListener('keydown', onKeyDown);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMetroLaserImaxMaps);
+  } else {
+    initMetroLaserImaxMaps();
+  }
+  document.addEventListener('astro:page-load', initMetroLaserImaxMaps);
+</script>
