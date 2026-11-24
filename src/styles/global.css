@@ -859,6 +859,15 @@ html[data-color-theme="christmas"].dark {
   display: none;
 }
 
+/* Collapse unfilled AdSense units & empty ad slots when an ad blocker is active */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+.ad-slot:has(ins.adsbygoogle[data-ad-status="unfilled"]),
+html[data-ads-state="blocked"] .ad-slot {
+  display: none !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -33,10 +33,10 @@ seo:				## 구글 검색 유입 및 기회 키워드/콘텐츠 갭 분석 (최�
 seo-report:			## 최근 90일 기준 심층 SEO 분석
 	pnpm run analyze:seo -- --days 90
 
-ga:				## GA4 유입 경로 및 페이지별 체류시간/이탈률 분석 (최근 28일)
+ga:				## GA4 유입·체류시간·AdSense 수익/RPM 분석 (최근 28일)
 	pnpm run analyze:ga
 
-ga-report:			## 최근 90일 기준 GA4 심층 분석
+ga-report:			## 최근 90일 기준 GA4 + AdSense 심층 분석
 	pnpm run analyze:ga -- --days 90
 
 # ── 쿠팡 상품 캐시 ───────────────────────────────────

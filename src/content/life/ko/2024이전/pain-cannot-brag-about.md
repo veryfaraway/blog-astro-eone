@@ -7,7 +7,7 @@ tags:
   - "예화"
 draft: false
 lang: ko
-thumbnail: "https://images.unsplash.com/photo-1601954954195-3174cd4217d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3"
+thumbnail: "https://images.unsplash.com/photo-1730372609335-beccc002cf44?q=80&w=3432&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
 골프 재미에 푹 빠진 목사가 있었다. 

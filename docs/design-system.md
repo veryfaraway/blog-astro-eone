@@ -183,6 +183,7 @@
 | `AffiliateLink` | `components/AffiliateLink.astro` | 쿠팡/Amazon 제휴 링크 |
 | `ProductCard` | `components/ProductCard.astro` | 제품 리뷰용 카드 (제휴 링크 포함) |
 | `AdSlot` | `components/AdSlot.astro` | AdSense 광고 슬롯 (디자인 통합형) |
+| `AdBlockNotice` | `components/AdBlockNotice.astro` | 광고 차단 감지 시 하단 비침습 응원 안내 및 예외 설정 가이드 (`?adblock=preview` 지원) |
 
 ---
 

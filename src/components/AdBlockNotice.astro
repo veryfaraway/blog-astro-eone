@@ -1,0 +1,328 @@
+---
+interface Props {
+  lang?: 'ko' | 'en';
+}
+
+const { lang = 'ko' } = Astro.props;
+const isEn = lang === 'en';
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
+const siteHost = (() => {
+  try {
+    return new URL(siteUrl).hostname;
+  } catch {
+    return 'blog.eone.one';
+  }
+})();
+const adsenseEnabled = Boolean(import.meta.env.PUBLIC_ADSENSE_CLIENT);
+---
+
+<aside
+  hidden
+  data-support-banner
+  data-ads-configured={adsenseEnabled ? 'true' : 'false'}
+  data-site-host={siteHost}
+  class="not-prose mt-10 rounded-lg border border-border border-l-2 bg-card/80 dark:bg-card/60 px-5 py-4 shadow-xs transition-opacity duration-200"
+  style="border-left-color: var(--section-accent);"
+  role="region"
+  aria-label={isEn ? 'Reader support note' : '콘텐츠 응원 안내'}
+  data-pagefind-ignore
+>
+  <div class="flex items-start justify-between gap-3">
+    <div class="flex items-center gap-2 text-xs font-semibold tracking-wide text-foreground/85">
+      <svg
+        class="h-4 w-4 shrink-0"
+        style="color: var(--section-accent);"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <path d="m9.5 11.5 1.8 1.8 3.2-3.3" />
+      </svg>
+      <span>{isEn ? 'Support Free Content' : '콘텐츠 응원 안내'}</span>
+    </div>
+
+    <button
+      type="button"
+      data-support-dismiss
+      class="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+    >
+      {isEn ? 'Hide for 30 days' : '30일간 보지 않기'}
+    </button>
+  </div>
+
+  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+    {isEn ? (
+      <>
+        It looks like an ad blocker is active. Ads help sustain in-depth, free guides on{' '}
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">{siteHost}</code>
+        , and we keep full-screen or pop-up ads turned off. If this post helped you, please consider adding this site to your allowlist.
+      </>
+    ) : (
+      <>
+        광고 차단 확장 프로그램이 켜져 있는 것 같아요. 광고 수익은 양질의 무료 가이드를 꾸준히 작성하는 데 큰 힘이 되며,{' '}
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">{siteHost}</code>
+        에서는 독서를 방해하는 전면·팝업 광고를 사용하지 않습니다. 글이 도움이 되었다면 예외 목록 추가를 부탁드려요.
+      </>
+    )}
+  </p>
+
+  <div class="mt-3.5 flex flex-wrap items-center gap-2">
+    <button
+      type="button"
+      data-support-toggle
+      aria-expanded="false"
+      class="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/70 hover:bg-muted px-3 py-1.5 text-xs font-medium text-foreground transition-colors cursor-pointer"
+    >
+      <span>{isEn ? 'How to allowlist (3 sec)' : '예외 목록 추가 방법 (3초)'}</span>
+      <svg
+        data-support-chevron
+        class="h-3.5 w-3.5 text-muted-foreground transition-transform duration-150"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      data-support-reload
+      class="inline-flex items-center gap-1.5 rounded-md border border-border bg-background hover:bg-muted/60 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+    >
+      <svg
+        class="h-3.5 w-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+        <polyline points="21 3 21 9 15 9" />
+      </svg>
+      <span>{isEn ? "I've allowlisted · Refresh" : '예외 설정 완료 · 새로고침'}</span>
+    </button>
+  </div>
+
+  <div
+    hidden
+    data-support-guide
+    class="mt-3.5 rounded-md border border-border/80 bg-muted/40 p-3.5 text-xs text-muted-foreground"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-border/70">
+      <span>
+        {isEn
+          ? 'Browser security prevents websites from editing extension settings directly. You can allowlist in two clicks:'
+          : '브라우저 보안 정책상 웹페이지가 확장 프로그램 설정을 직접 바꿀 수 없어, 아래 방법으로 2번만 클릭해 주시면 됩니다.'}
+      </span>
+      <button
+        type="button"
+        data-support-copy
+        data-copy-label={isEn ? `Copy ${siteHost}` : `${siteHost} 복사`}
+        data-copied-label={isEn ? 'Copied ✓' : '복사됨 ✓'}
+        class="inline-flex items-center gap-1 rounded border border-border bg-background hover:bg-muted px-2 py-1 font-mono text-[11px] text-foreground transition-colors cursor-pointer shrink-0"
+      >
+        <span>{isEn ? `Copy ${siteHost}` : `${siteHost} 복사`}</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="rounded border border-border/60 bg-background/70 p-2.5">
+        <div class="font-semibold text-foreground mb-1">uBlock Origin</div>
+        <p class="leading-relaxed m-0">
+          {isEn
+            ? 'Click the uBlock shield icon in the toolbar → click the large blue Power (⏻) button → refresh.'
+            : '주소창 옆 방패 아이콘 클릭 → 상단의 큰 파란색 전원(⏻) 버튼 클릭 → 새로고침'}
+        </p>
+      </div>
+      <div class="rounded border border-border/60 bg-background/70 p-2.5">
+        <div class="font-semibold text-foreground mb-1">AdBlock / ABP</div>
+        <p class="leading-relaxed m-0">
+          {isEn
+            ? 'Click the extension icon → choose "Pause on this site" or toggle off for this domain.'
+            : '확장 프로그램 아이콘 클릭 → "이 사이트에서 일시중지" 또는 현재 도메인 허용 체크'}
+        </p>
+      </div>
+      <div class="rounded border border-border/60 bg-background/70 p-2.5">
+        <div class="font-semibold text-foreground mb-1">Brave / AdGuard</div>
+        <p class="leading-relaxed m-0">
+          {isEn
+            ? 'Click the Lion or Shield icon in the address bar → toggle Shields/Protection OFF for this site.'
+            : '주소창의 사자(Brave) 또는 방패 아이콘 클릭 → 이 사이트의 보호 스위치 OFF'}
+        </p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script is:inline>
+  (function () {
+    var DISMISS_KEY = 'reader-support-dismissed';
+    var DISMISS_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+    var container = document.querySelector('[data-support-banner]');
+    if (!container) return;
+
+    var isPreview = false;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      isPreview = params.get('adblock') === 'preview' || params.get('support') === 'preview';
+    } catch {}
+
+    function isDismissed() {
+      if (isPreview) return false;
+      try {
+        var raw = localStorage.getItem(DISMISS_KEY);
+        if (!raw) return false;
+        var ts = parseInt(raw, 10);
+        if (!Number.isFinite(ts)) return false;
+        return Date.now() - ts < DISMISS_TTL_MS;
+      } catch {
+        return false;
+      }
+    }
+
+    function bindInteractions() {
+      if (container.dataset.bound === 'true') return;
+      container.dataset.bound = 'true';
+
+      var toggleBtn = container.querySelector('[data-support-toggle]');
+      var guideEl = container.querySelector('[data-support-guide]');
+      var chevronEl = container.querySelector('[data-support-chevron]');
+      var reloadBtn = container.querySelector('[data-support-reload]');
+      var dismissBtn = container.querySelector('[data-support-dismiss]');
+      var copyBtn = container.querySelector('[data-support-copy]');
+
+      if (toggleBtn && guideEl) {
+        toggleBtn.addEventListener('click', function () {
+          var willOpen = guideEl.hasAttribute('hidden');
+          if (willOpen) {
+            guideEl.removeAttribute('hidden');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            if (chevronEl) chevronEl.style.transform = 'rotate(180deg)';
+          } else {
+            guideEl.setAttribute('hidden', '');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            if (chevronEl) chevronEl.style.transform = '';
+          }
+        });
+      }
+
+      if (reloadBtn) {
+        reloadBtn.addEventListener('click', function () {
+          window.location.reload();
+        });
+      }
+
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', function () {
+          try {
+            localStorage.setItem(DISMISS_KEY, String(Date.now()));
+          } catch {}
+          container.setAttribute('hidden', '');
+        });
+      }
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var host = container.getAttribute('data-site-host') || window.location.hostname;
+          var labelSpan = copyBtn.querySelector('span');
+          var defaultLabel = copyBtn.getAttribute('data-copy-label') || host;
+          var copiedLabel = copyBtn.getAttribute('data-copied-label') || 'Copied';
+          if (!navigator.clipboard) return;
+          navigator.clipboard.writeText(host).then(function () {
+            if (labelSpan) labelSpan.textContent = copiedLabel;
+            setTimeout(function () {
+              if (labelSpan) labelSpan.textContent = defaultLabel;
+            }, 1600);
+          }).catch(function () {});
+        });
+      }
+    }
+
+    function markBlocked() {
+      document.documentElement.setAttribute('data-ads-state', 'blocked');
+      if (isDismissed()) return;
+      bindInteractions();
+      container.removeAttribute('hidden');
+    }
+
+    if (isPreview) {
+      markBlocked();
+      return;
+    }
+
+    var adsenseEnabled = container.getAttribute('data-ads-configured') === 'true';
+    if (!adsenseEnabled) return;
+
+    // 1. Caught early by <script onerror> in BaseLayout
+    if (window.__adsLoaderFailed === true) {
+      markBlocked();
+      return;
+    }
+
+    // 2. Cosmetic filter check (EasyList / uBlock / AdGuard element hiding)
+    function checkCosmeticBlock() {
+      try {
+        var bait = document.createElement('div');
+        bait.className = 'adsbox ad-banner pub_300x250';
+        bait.setAttribute('aria-hidden', 'true');
+        bait.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;pointer-events:none;';
+        bait.innerHTML = '&nbsp;';
+        document.body.appendChild(bait);
+        var style = window.getComputedStyle(bait);
+        var hidden =
+          bait.offsetHeight === 0 ||
+          style.display === 'none' ||
+          style.visibility === 'hidden';
+        bait.remove();
+        return hidden;
+      } catch {
+        return false;
+      }
+    }
+
+    // 3. Deferred verification once AdSense script has had time to initialize
+    function verifyAdSense() {
+      if (window.__adsLoaderFailed === true || checkCosmeticBlock()) {
+        markBlocked();
+        return;
+      }
+
+      setTimeout(function () {
+        if (window.__adsLoaderFailed === true) {
+          markBlocked();
+          return;
+        }
+        if (window.adsbygoogle && window.adsbygoogle.loaded === true) {
+          return;
+        }
+        fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+          method: 'HEAD',
+          mode: 'no-cors',
+          cache: 'no-store',
+        }).catch(function () {
+          markBlocked();
+        });
+      }, 1500);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', verifyAdSense);
+    } else {
+      verifyAdSense();
+    }
+  })();
+</script>

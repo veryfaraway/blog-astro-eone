@@ -15,6 +15,7 @@ Uses the existing Google Cloud Service Account (service-account.json) to:
 1. Fetch traffic sources (Google, Naver, AI assistants, Direct, etc.)
 2. Fetch top pages by views, active users, average engagement time, and bounce rate
 3. Identify high-traffic posts with high bounce rate / short engagement time for improvement
+4. Analyze linked Google AdSense revenue, impressions, clicks, and high-RPM opportunity posts
 """
 
 import argparse
@@ -153,12 +154,74 @@ def main():
                 limit=15,
             )
         )
+
+        adsense_source_resp = data_client.run_report(
+            RunReportRequest(
+                property=prop_id,
+                dimensions=[Dimension(name="adSourceName")],
+                metrics=[
+                    Metric(name="totalAdRevenue"),
+                    Metric(name="publisherAdImpressions"),
+                    Metric(name="publisherAdClicks"),
+                ],
+                date_ranges=[date_range],
+                order_bys=[
+                    OrderBy(
+                        metric=OrderBy.MetricOrderBy(metric_name="totalAdRevenue"),
+                        desc=True,
+                    )
+                ],
+                limit=10,
+            )
+        )
+
+        adsense_totals_resp = data_client.run_report(
+            RunReportRequest(
+                property=prop_id,
+                dimensions=[],
+                metrics=[
+                    Metric(name="totalAdRevenue"),
+                    Metric(name="publisherAdImpressions"),
+                    Metric(name="publisherAdClicks"),
+                    Metric(name="screenPageViews"),
+                ],
+                date_ranges=[date_range],
+            )
+        )
+
+        adsense_page_resp = data_client.run_report(
+            RunReportRequest(
+                property=prop_id,
+                dimensions=[Dimension(name="pagePath")],
+                metrics=[
+                    Metric(name="totalAdRevenue"),
+                    Metric(name="publisherAdImpressions"),
+                    Metric(name="publisherAdClicks"),
+                    Metric(name="screenPageViews"),
+                ],
+                date_ranges=[date_range],
+                order_bys=[
+                    OrderBy(
+                        metric=OrderBy.MetricOrderBy(metric_name="totalAdRevenue"),
+                        desc=True,
+                    )
+                ],
+                limit=50,
+            )
+        )
     except Exception as e:
         console.print(f"[bold red]❌ GA4 Data API 호출 실패:[/bold red] {e}")
         sys.exit(1)
 
+    def fmt_money(amount: float, currency: str) -> str:
+        if currency == "KRW":
+            return f"₩{amount:,.0f}" if amount >= 100 else f"₩{amount:,.1f}"
+        if currency == "USD":
+            return f"${amount:,.2f}"
+        return f"{amount:,.2f} {currency}".strip()
+
     md = []
-    md.append(f"# 📈 GA4 블로그 유입 & 체류 분석 리포트 (최근 {args.days}일)\n")
+    md.append(f"# 📈 GA4 블로그 유입 · 체류 · AdSense 수익 리포트 (최근 {args.days}일)\n")
     md.append(f"- **대상 속성**: {prop_name} (`{prop_id}`)\n")
 
     md.append("## 🌐 1. 주요 유입 경로 (Source / Medium)")
@@ -225,6 +288,104 @@ def main():
             )
     else:
         md.append("_현재 조건에 해당하는 개선 시급 포스트가 없습니다._")
+
+    # 4. AdSense revenue & RPM analysis
+    currency = getattr(adsense_page_resp.metadata, "currency_code", "") or "KRW"
+    ad_sources = [
+        row.dimension_values[0].value
+        for row in adsense_source_resp.rows
+        if row.dimension_values and row.dimension_values[0].value not in ("", "(not set)")
+    ]
+
+    total_ad_rev = 0.0
+    total_ad_imp = 0
+    total_ad_clicks = 0
+    total_site_views = 0
+    if adsense_totals_resp.rows:
+        t_row = adsense_totals_resp.rows[0]
+        total_ad_rev = float(t_row.metric_values[0].value or 0.0)
+        total_ad_imp = int(t_row.metric_values[1].value or 0)
+        total_ad_clicks = int(t_row.metric_values[2].value or 0)
+        total_site_views = int(t_row.metric_values[3].value or 0)
+
+    ad_ctr = (total_ad_clicks / total_ad_imp * 100) if total_ad_imp > 0 else 0.0
+    site_rpm = (total_ad_rev / total_site_views * 1000) if total_site_views > 0 else 0.0
+    ad_ecpm = (total_ad_rev / total_ad_imp * 1000) if total_ad_imp > 0 else 0.0
+
+    md.append("\n## 💰 4. AdSense 광고 수익 요약 & 상위 포스트")
+    if total_ad_imp > 0 or total_ad_rev > 0:
+        if ad_sources:
+            md.append(f"- **연결된 광고 소스**: {', '.join(f'`{s}`' for s in ad_sources)}")
+        md.append(
+            f"- **총 광고 수익**: **{fmt_money(total_ad_rev, currency)}** "
+            f"(광고 노출 {total_ad_imp:,}회 · 클릭 {total_ad_clicks:,}회 · CTR {ad_ctr:.2f}%)"
+        )
+        md.append(
+            f"- **수익 효율**: 전체 페이지 RPM **{fmt_money(site_rpm, currency)}** "
+            f"(1천 PV당) · 광고 eCPM **{fmt_money(ad_ecpm, currency)}** (1천 노출당)\n"
+        )
+
+        ad_pages = []
+        for row in adsense_page_resp.rows:
+            path = row.dimension_values[0].value
+            rev = float(row.metric_values[0].value or 0.0)
+            imp = int(row.metric_values[1].value or 0)
+            clicks = int(row.metric_values[2].value or 0)
+            views = int(row.metric_values[3].value or 0)
+            if rev <= 0 and imp <= 0:
+                continue
+            page_rpm = (rev / views * 1000) if views > 0 else 0.0
+            ad_pages.append(
+                {
+                    "path": path,
+                    "rev": rev,
+                    "imp": imp,
+                    "clicks": clicks,
+                    "views": views,
+                    "rpm": page_rpm,
+                }
+            )
+
+        if ad_pages:
+            md.append("### 🏆 수익 상위 포스트 Top 15")
+            md.append("| 페이지 경로 | 광고 수익 | 조회수 | 광고 노출 | 클릭 | 페이지 RPM |")
+            md.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
+            for ap in ad_pages[:15]:
+                md.append(
+                    f"| `{ap['path']}` | **{fmt_money(ap['rev'], currency)}** | "
+                    f"{ap['views']:,} | {ap['imp']:,} | {ap['clicks']:,} | "
+                    f"{fmt_money(ap['rpm'], currency)} |"
+                )
+
+            # High-RPM opportunity posts: decent views (>=20), not top-3 traffic, RPM >= 1.4x site average
+            rpm_threshold = max(site_rpm * 1.4, 700.0 if currency == "KRW" else 0.5)
+            high_rpm_posts = sorted(
+                [
+                    ap
+                    for ap in ad_pages
+                    if ap["views"] >= 20
+                    and ap["rpm"] >= rpm_threshold
+                    and ap["path"] not in ("/", "/life/", "/dev/", "/tools/", "/culture/", "/money/")
+                ],
+                key=lambda x: x["rpm"],
+                reverse=True,
+            )
+            if high_rpm_posts:
+                md.append("\n### 💎 고단가(High-RPM) 확장 추천 포스트")
+                md.append(
+                    "> 페이지 RPM이 사이트 평균 대비 1.4배 이상 높은 고단가 글입니다. "
+                    "관련 후속 글을 발행해 내부 링크로 묶거나 검색 상위 노출을 보강하면 수익 레버리지가 큽니다.\n"
+                )
+                md.append("| 페이지 경로 | 페이지 RPM | 광고 수익 | 조회수 | 광고 노출 | 클릭 |")
+                md.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
+                for ap in high_rpm_posts[:8]:
+                    md.append(
+                        f"| `{ap['path']}` | **{fmt_money(ap['rpm'], currency)}** | "
+                        f"{fmt_money(ap['rev'], currency)} | {ap['views']:,} | "
+                        f"{ap['imp']:,} | {ap['clicks']:,} |"
+                    )
+    else:
+        md.append("_수집된 AdSense 광고 수익 데이터가 없습니다. (GA4 ↔ AdSense 제품 연결 상태를 확인하세요)_")
 
     report_text = "\n".join(md)
     if args.out:

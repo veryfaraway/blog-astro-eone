@@ -6,6 +6,7 @@ import SeriesTOC from '../components/SeriesTOC.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import AffiliateNotice from '../components/AffiliateNotice.astro';
 import AdSlot from '../components/AdSlot.astro';
+import AdBlockNotice from '../components/AdBlockNotice.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
 import type { RelatedCandidate } from '../lib/related';
@@ -268,6 +269,9 @@ const breadcrumbJsonLd = {
           )}
         </div>
       </div>
+
+      <!-- Non-intrusive inline notice when an ad blocker is active -->
+      <AdBlockNotice lang={lang} />
 
       <!-- Series Nav -->
       {hasSeries && (
