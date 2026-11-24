@@ -54,6 +54,7 @@ src/content/{섹션}/en/{연도}/{slug}.mdx   # 영어 버전
 title: "포스트 제목 (한국어, 60자 이내 권장)"
 description: "검색엔진/카드에 표시될 요약 (120~160자 권장)"
 date: YYYY-MM-DD
+updatedDate: YYYY-MM-DD   # 선택. 기존 글의 핵심 내용을 실질적으로 보강·갱신했을 때만 기입
 category: 카테고리명
 tags:
   - "태그1"
@@ -65,6 +66,11 @@ series: "시리즈 이름"     # 선택. 시리즈물일 때만
 series_order: 1           # 선택. series와 함께 지정 (number)
 ---
 ```
+
+#### `updatedDate` 사용 기준 (SEO 정합성)
+- **연동 범위**: `updatedDate`가 `date`보다 이후 날짜로 지정되면 포스트 상단 메타 영역(`수정 YYYY년 M월 D일`), JSON-LD `BlogPosting.dateModified`, `<meta property="article:modified_time">`, `sitemap.xml`의 `<lastmod>`에 일괄 반영된다.
+- **기입해야 하는 경우 ✅**: 프레임워크·도구 버전 업그레이드 반영, 세법·금융 수치 및 정책 변경 갱신, 신규 섹션/비교표 추가, 중대한 팩트 오류 정정 등 **독자가 체감할 실질적 내용 보강**이 있을 때(`date`는 최초 발행일 그대로 유지).
+- **기입·갱신하면 안 되는 경우 ❌**: 신규 포스트 최초 발행 시, 단순 오타·맞춤법 교정, 마크다운/컴포넌트 리팩토링, 스타일·레이아웃 수정 시에는 넣지 않는다 (실질적 변경 없는 날짜 갱신은 검색엔진의 날짜 조작 페널티 원인이 됨).
 
 ### money 섹션 전용 추가 필드
 
@@ -184,7 +190,7 @@ import PlayerInline from '@/components/PlayerInline.astro';
 
 ---
 
-### GitHubRepoCard / AppCard / BookCard / PlaceCard / LinkPreviewCard
+### GitHubRepoCard / AppCard / BookCard / PlaceCard / LinkPreviewCard / LinkInline
 
 ```mdx
 import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
@@ -192,12 +198,17 @@ import AppCard from '@/components/AppCard.astro';
 import BookCard from '@/components/BookCard.astro';
 import PlaceCard from '@/components/PlaceCard.astro';
 import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
+import LinkInline from '@/components/LinkInline.astro';
 
 <GitHubRepoCard repo="catppuccin/tmux" />
 <AppCard name="Ghostty" platform="macOS" href="https://ghostty.org" brew="--cask ghostty" />
 <BookCard title="돈의 심리학" isbn13="9791157844685" comment="복리를 대하는 태도를 짚어주는 책." />
 <PlaceCard name="CGV 용산아이파크몰 IMAX" category="특별관" address="서울 용산구 한강대로23길 55" />
 <LinkPreviewCard url="https://docs.astro.build/en/getting-started/" />
+
+<!-- 외부 핵심 출처 인라인 링크 (기본: PersonInline 밑줄 멘션형 / badge: Perplexity풍 알약 칩) -->
+<LinkInline href="https://docs.astro.build/en/guides/content-collections/" label="Astro 5 공식 가이드" />에 따르면...
+세율은 15%로 조정되었다 <LinkInline href="https://www.moef.go.kr" label="기획재정부" variant="badge" />.
 ```
 
 상세 Props는 [`docs/astro-components.md`](astro-components.md) 참조.
@@ -308,6 +319,18 @@ import AdSlot from '@/components/AdSlot.astro';
 - `series` + `series_order` 함께 지정 시 시리즈 TOC·이전/다음 네비게이션 자동 생성
 - `draft: true` 설정 시 빌드 결과에서 제외
 - 컴포넌트 전체 목록 및 Props 상세: [`docs/astro-components.md`](astro-components.md)
+
+---
+
+## 외부 출처 표기 규칙 (SEO · AI 검색 최적화)
+
+공식 기술 문서, 정부·공공 통계, 법령·세제 개편안, 학술 논문 등 **Tier 1～2 핵심 근거**를 인용할 때는 출처명과 원문 딥링크를 명확히 밝혀 E-E-A-T 신뢰도와 AI 검색(Perplexity·ChatGPT·AI Overviews) 인용률을 높인다.
+
+- **본문 내 핵심 출처 포인트 (`LinkInline`)**: 문단 호흡을 해치지 않도록 핵심 1차 출처에만 절제해(포스트당 2～5회 내외) 사용한다.
+  - 문장 흐름 속 연결(`variant="inline"`, 기본): `<LinkInline href="https://..." label="공식 문서 제목" />에 따르면`
+  - 문장·통계 수치 끝 근거 배지(`variant="badge"`): `...조정되었다 <LinkInline href="https://..." label="기관명" variant="badge" />.`
+- **글 하단 `## 참고 자료` 섹션**: 참고한 1차 공식 출처가 **3개 이상**일 때는 본문에 링크를 과밀하게 배치하지 않고, 글 마지막에 `## 참고 자료` 섹션을 두어 **일반 마크다운 리스트**(`- [문서명 — 기관/사이트명](https://...)`)로 정리한다.
+- **블로그 내부 포스트 링크**: `LinkInline`을 쓰지 않고 **일반 마크다운 링크**(`[포스트 제목](/{섹션}/{slug})`)를 유지한다.
 
 ---
 

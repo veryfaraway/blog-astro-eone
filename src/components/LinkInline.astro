@@ -1,0 +1,202 @@
+---
+interface Props {
+  /** 연결할 외부 문서·출처 URL */
+  href: string;
+  /** 링크 앵커 텍스트 (생략 시 자식 슬롯 텍스트 사용, 둘 다 없으면 도메인명 폴백) */
+  label?: string;
+  /** 보조 출처명·연도 라벨 (예: "MDN", "2026 개편안", `true` 지정 시 도메인 자동 표시) */
+  source?: string | boolean;
+  /** 렌더링 형태: 문장 내 밑줄 멘션형('inline', 기본) vs 알약 출처 배지('badge') */
+  variant?: 'inline' | 'badge';
+  /** 커스텀 아이콘 URL 또는 false(파비콘 숨김) */
+  icon?: string | false;
+  /** 추가 래퍼 CSS 클래스 */
+  class?: string;
+}
+
+const {
+  href,
+  label,
+  source,
+  variant = 'inline',
+  icon,
+  class: className,
+} = Astro.props;
+
+let parsedUrl: URL | null = null;
+try {
+  parsedUrl = new URL(href);
+} catch {
+  parsedUrl = null;
+}
+
+const hostname = parsedUrl ? parsedUrl.hostname.replace(/^www\./i, '') : '';
+const showIcon = icon !== false;
+const faviconUrl =
+  typeof icon === 'string' && icon.trim().length > 0
+    ? icon.trim()
+    : parsedUrl
+      ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(parsedUrl.hostname)}&sz=32`
+      : undefined;
+
+const slotHtml =
+  !label && Astro.slots.has('default')
+    ? (await Astro.slots.render('default')).trim()
+    : '';
+const displayLabel = label?.trim() || (!slotHtml ? hostname || href : '');
+
+const resolvedSource =
+  source === true
+    ? hostname || undefined
+    : typeof source === 'string' && source.trim().length > 0
+      ? source.trim()
+      : undefined;
+---
+
+{variant === 'badge' ? (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    class:list={[
+      'group not-prose inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 py-0.5 pr-2 pl-1 align-middle text-xs font-medium text-foreground transition-colors hover:border-foreground/25 hover:bg-muted',
+      className,
+    ]}
+  >
+    {showIcon && (
+      <span
+        aria-hidden="true"
+        class="inline-flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-white p-[1.5px] dark:border-white/20 dark:bg-white/95"
+      >
+        {faviconUrl ? (
+          <img
+            src={faviconUrl}
+            alt=""
+            width="12"
+            height="12"
+            class="h-full w-full rounded-full object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-neutral-600"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M2 12h20" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        )}
+      </span>
+    )}
+    {slotHtml ? (
+      <span class="leading-none" set:html={slotHtml} />
+    ) : (
+      <span class="leading-none">{displayLabel}</span>
+    )}
+    {resolvedSource && (
+      <span class="font-mono text-[11px] leading-none text-muted-foreground">
+        · {resolvedSource}
+      </span>
+    )}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="10"
+      height="10"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      class="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
+    >
+      <path d="M7 17L17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
+  </a>
+) : (
+  <span class:list={['not-prose inline-flex items-center gap-1 align-middle', className]}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="group inline-flex items-center gap-1 font-medium text-foreground transition-opacity hover:opacity-75"
+    >
+      {showIcon && (
+        <span
+          aria-hidden="true"
+          class="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/80 bg-white p-[2px] dark:border-white/20 dark:bg-white/95"
+        >
+          {faviconUrl ? (
+            <img
+              src={faviconUrl}
+              alt=""
+              width="14"
+              height="14"
+              class="h-full w-full rounded-full object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-neutral-600"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          )}
+        </span>
+      )}
+      {slotHtml ? (
+        <span
+          class="underline decoration-muted-foreground/60 underline-offset-2 transition-colors group-hover:decoration-foreground"
+          set:html={slotHtml}
+        />
+      ) : (
+        <span class="underline decoration-muted-foreground/60 underline-offset-2 transition-colors group-hover:decoration-foreground">
+          {displayLabel}
+        </span>
+      )}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="11"
+        height="11"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        class="shrink-0 text-muted-foreground/80 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
+      >
+        <path d="M7 17L17 7" />
+        <path d="M7 7h10v10" />
+      </svg>
+    </a>
+    {resolvedSource && (
+      <span class="text-xs text-muted-foreground">({resolvedSource})</span>
+    )}
+  </span>
+)}

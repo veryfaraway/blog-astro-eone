@@ -31,7 +31,9 @@
 - **요약문 (`description`)**: 120～160자 권장. 포스트의 핵심 결론과 메인 키워드를 자연스럽게 포함하여 검색 결과 스니펫 클릭률(CTR) 극대화.
 - **헤딩 구조**: H1(`#`)은 포스트 제목으로 자동 렌더링되므로 본문 내 사용 금지. 대주제는 H2(`##`), 세부 항목은 H3(`###`)로 엄격히 계층화.
 - **첫 단락 훅 & 이미지 Alt**: 첫 단락(3줄 이내)에서 핵심 키워드와 함께 독자의 검색 목적을 즉시 해소하고, 모든 이미지에 구체적인 `alt` 속성 부여.
-- **내부 링크 & 레퍼런스 재사용**: 연관된 기존 포스트로의 자연스러운 내부 링크를 권장하며, 이미 별도 가이드로 정리된 설치 절차(예: Homebrew 설치 → `/tools/install-homebrew-2026`)는 중복 설명하지 말고 해당 글을 링크로 안내 (`docs/post-writing-guide.md` 참조).
+- **내부 링크 & 레퍼런스 재사용**: 연관된 기존 포스트로의 자연스러운 내부 링크를 권장하며, 이미 별도 가이드로 정리된 설치 절차(예: Homebrew 설치 → `/tools/install-homebrew-2026`)는 중복 설명하지 말고 해당 글을 링크로 안내 (`docs/post-writing-guide.md` 참조). 내부 포스트 링크는 일반 마크다운 링크(`[제목](/{섹션}/{slug})`)를 사용합니다.
+- **외부 핵심 출처 명시 (SEO E-E-A-T & AI 검색 GEO 최적화)**: Tier 1～2 공식 기술 문서·정부/공공 통계·법령·논문 등 핵심 팩트나 수치를 인용할 때는 구체적 출처명과 원문 링크를 명시해 검색엔진 신뢰도와 AI 검색(Perplexity·ChatGPT·AI Overviews) 인용 채택률을 높입니다. 본문 문장 내 핵심 출처 포인트에는 `LinkInline`(문장 흐름 속 기본 `inline` 또는 문장 끝 `variant="badge"`)을 절제해 사용하고, 참고한 1차 출처가 3개 이상일 때는 글 말미 `## 참고 자료` 섹션에 일반 마크다운 링크 목록으로 깔끔하게 정리합니다(단순 요약 나열이 아닌 필자의 실무 해석·비교 맥락 결합 필수).
+- **최근 수정일 (`updatedDate`) 정직한 운용**: 기존 포스트의 버전 대응·수치/정책 갱신·핵심 섹션 보강 등 **독자에게 유의미한 내용 업데이트**가 이뤄졌을 때만 `date`(최초 발행일)는 유지한 채 frontmatter에 `updatedDate: YYYY-MM-DD`를 수동 기입합니다(포스트 메타 UI · JSON-LD `dateModified` · OG `article:modified_time` · 사이트맵 `lastmod` 자동 반영). 신규 글 작성 시나 단순 오타·포맷·컴포넌트 리팩토링 시에는 절대 기입·갱신하지 않습니다.
 
 ### ② 탈(脫) AI 어투 (Authentic Human Voice)
 기계적이거나 뻔한 AI 클리셰를 철저히 배제하고, 실제 개발자/블로거가 동료에게 노하우를 전달하듯 생생하게 작성합니다.
@@ -59,7 +61,7 @@
 - **주제별 MDX 컴포넌트 적극 활용** (기존 컴포넌트로 해결 가능하면 신규 제작 금지, 상세 Props는 [`docs/astro-components.md`](docs/astro-components.md) 참조):
   - **영화·인물·도서·영상·장소**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13` 카카오+Google Books 하이브리드), `PlaceCard`(네이버·카카오·Google 지도 딥링크), `YouTubeEmbed`(`id="영상ID"`)
   - **주식·프로야구**: `StockCard` / `StockInline`(`ticker`, Yahoo Finance 자동 조회), `BaseballPlayerCard` / `PlayerInline`(MLB `mlbId` 자동 조회 · KBO 구단 컬러/등번호 타일)
-  - **개발·앱·북마크**: `GitHubRepoCard`(`repo="owner/name"`), `AppCard`(`appStoreId` 아이콘 자동 조회 · `brew` 원클릭 복사), `LinkPreviewCard`(OG 북마크)
+  - **개발·앱·북마크·출처**: `GitHubRepoCard`(`repo="owner/name"`), `AppCard`(`appStoreId` 아이콘 자동 조회 · `brew` 원클릭 복사), `LinkPreviewCard`(OG 북마크 카드) / `LinkInline`(도메인 파비콘 인라인 출처 링크·배지)
   - **데이터·시간대·이미지**: `Chart`(`bar | line | pie | doughnut | radar`), `ClockChart`(24시간 원형 시간대), `ImageRow`(2～4열 그리드), `CloudinaryImage`
   - **제휴·상품 추천** (사용 시 frontmatter에 `affiliate: true` 필수): `AffiliateLink`, `CoupangProductCard`(`href` + `title` 직접 지정 권장)
 - **`YouTubeEmbed` 한국(`KR`) 지역 제한 및 임베드 허용 검증 필수**: 미국 방송사·OTT 본사 채널(HBO, Hulu, Peacock, Paramount+ 등) 영상은 북미(`US`) 전용 지역 제한(Geo-block)이 걸려 한국에서 재생 불가 오류가 빈발하며, 웹 검색(`search_web`)만으로는 이를 걸러내지 못합니다. `YouTubeEmbed` 사용 시 반드시 `https://www.youtube.com/watch?v={id}&gl=KR` 응답(`ytInitialPlayerResponse`)에서 `playabilityStatus.status === "OK"`, `playableInEmbed === true`, `availableCountries` 내 `"KR"` 포함(또는 국가 제한 없음) 여부를 직접 검증하고, 차단된 경우 글로벌 배급사(Warner Bros. Entertainment, Sony Pictures 등)나 국내 공식 채널 영상으로 대체합니다.

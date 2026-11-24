@@ -6,6 +6,7 @@ const postSchema = z.object({
   title: z.string(),
   description: z.string(),
   date: z.coerce.date(),
+  updatedDate: z.coerce.date().optional(),
   category: z.string(),
   tags: z.array(z.string()).default([]),
   thumbnail: z.string().optional(),

@@ -29,6 +29,7 @@ interface Props {
   title: string;
   description: string;
   date: Date;
+  updatedDate?: Date;
   section: Section;
   category: string;
   tags?: string[];
@@ -51,6 +52,7 @@ const {
   title,
   description,
   date,
+  updatedDate,
   section,
   category,
   tags = [],
@@ -73,7 +75,13 @@ const sectionLabel: Record<Section, string> = {
   life: 'Life', money: 'Money', culture: 'Culture', tools: 'Tools', dev: 'Dev',
 };
 
-const formattedDate = date.toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US', {
+const dateLocale = lang === 'ko' ? 'ko-KR' : 'en-US';
+const formattedDate = date.toLocaleDateString(dateLocale, {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+const effectiveModifiedDate =
+  updatedDate && updatedDate.getTime() > date.getTime() ? updatedDate : undefined;
+const formattedUpdatedDate = effectiveModifiedDate?.toLocaleDateString(dateLocale, {
   year: 'numeric', month: 'long', day: 'numeric',
 });
 
@@ -89,7 +97,7 @@ const articleJsonLd = {
   "headline": title,
   "description": description,
   "datePublished": date.toISOString(),
-  "dateModified": date.toISOString(),
+  "dateModified": (effectiveModifiedDate ?? date).toISOString(),
   "author": { "@type": "Person", "name": "eone", "url": siteUrl },
   "publisher": { "@type": "Organization", "name": "일취월장", "url": siteUrl },
   "url": postUrl,
@@ -118,6 +126,7 @@ const breadcrumbJsonLd = {
   ogType="article"
   articleMeta={{
     publishedTime: date.toISOString(),
+    ...(effectiveModifiedDate && { modifiedTime: effectiveModifiedDate.toISOString() }),
     author: 'eone',
     tags,
   }}
@@ -173,6 +182,15 @@ const breadcrumbJsonLd = {
             data-pagefind-ignore
           >
             <time datetime={date.toISOString()}>{formattedDate}</time>
+            {effectiveModifiedDate && formattedUpdatedDate && (
+              <>
+                <span class="text-border">·</span>
+                <span>
+                  {lang === 'ko' ? '수정' : 'Updated'}{' '}
+                  <time datetime={effectiveModifiedDate.toISOString()}>{formattedUpdatedDate}</time>
+                </span>
+              </>
+            )}
             {readingTime && (
               <>
                 <span class="text-border">·</span>

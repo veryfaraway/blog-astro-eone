@@ -46,6 +46,9 @@ flowchart TD
    - 주제 방향이나 검색 트렌드 보정이 필요할 경우, [`docs/content-follow-up-plan.md`](../../../docs/content-follow-up-plan.md) 백로그를 확인하거나 `google-analytics` MCP(`get_account_summaries` → `run_report`, `dimensions: ["pagePath", "pageTitle"]`, `metrics: ["screenPageViews", "activeUsers"]` 문자열 배열 전달)로 기존 인기 글의 유입 패턴을 참고합니다.
 4. **포스트 유형 및 목표 분량** (코드 블록 제외, 공백 포함 본문 기준):
    - 단신·트러블슈팅·일상 (`1,500～2,500자`, 읽기 2～3분) | **표준 가이드·비교·추천** (`2,500～4,000자`, 읽기 3～5분, 기본 권장) | 심층 딥다이브·총정리 (`4,500～7,000자`, 읽기 6～9분, 상단 요약표 필수). 단일 주제가 `7,000자`(읽기 10분)를 넘길 만큼 방대하면 `series` + `series_order`를 활용한 시리즈 분할을 우선 검토합니다.
+5. **신규 작성 vs 기존 포스트 보강 (`updatedDate` 판단)**:
+   - 신규 포스트 작성 시에는 `date`만 지정하고 `updatedDate`는 생략합니다.
+   - 기존 포스트의 버전 업그레이드·수치/정책 변경·핵심 내용 대폭 보강을 수행할 때는 **기존 `date`(최초 발행일)를 절대 덮어쓰지 않고 유지**한 채 `updatedDate: YYYY-MM-DD`(당일 날짜)를 추가하여 포스트 바이라인·JSON-LD `dateModified`·사이트맵 `lastmod`에 최신성 신호를 반영합니다(단순 오타·포맷·컴포넌트 교체만 할 때는 `updatedDate` 미갱신).
 
 ---
 
@@ -75,9 +78,9 @@ flowchart TD
 - **전달 지침**: [`.agents/skills/blog/references/writer.md`](references/writer.md), [`AGENTS.md`](../../../AGENTS.md), [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md), [`docs/astro-components.md`](../../../docs/astro-components.md) 참조
 - **필수 준수 사항**:
   - **탈(脫) AI 어투**: 금지어 전면 배제, 첫 2문장 직격 훅, 단문·복문 호흡 변주 및 생생한 실무 맥락 서술
-  - **SEO, 적정 분량 및 내부 연결성**: 60자 이내 타이틀, 120~160자 description, H2/H3 계층, 첫 단락 키워드 노출, 유형별 적정 분량 준수(기본 `2,500～4,000자`, SEO 목적 최소 `1,500자` 이상, 심층편 `4,500～7,000자` 이내 — 억지 늘리기 금지), 기존 연관 포스트 내부 링크 연결, **기존 태그 표기(소문자 kebab-case 등) 재사용**
-  - **팩트 무결성**: Phase 1의 Tier 1~2 팩트 위주 서술, 불확실한 정보는 단정하지 않음
-  - **규격 및 MDX 컴포넌트·도식 적극 활용**: Frontmatter 스키마 준수, Shiki 소문자 언어 태그, CommonMark 구두점 경계 규칙(`~` → `～`/`–`, 볼드·이탤릭 내 `()`/`""` 뒤 한글 조사 분리), `<Alert>` 외 주제별 전용 컴포넌트(`CloudinaryImage`, `ImageRow`, `MovieCard`, `PersonCard`, `PersonInline`, `BookCard`, `StockCard`, `StockInline`, `BaseballPlayerCard`, `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `YouTubeEmbed`, `Chart`, `ClockChart`, `AffiliateLink`, `CoupangProductCard`) 및 필요 시 **커스텀 반응형 SVG 도식** 적극 배치 (`Callout` 절대 사용 금지)
+  - **SEO, 적정 분량 및 내부 연결성**: 60자 이내 타이틀, 120~160자 description, H2/H3 계층, 첫 단락 키워드 노출, 유형별 적정 분량 준수(기본 `2,500～4,000자`, SEO 목적 최소 `1,500자` 이상, 심층편 `4,500～7,000자` 이내 — 억지 늘리기 금지), 기존 연관 포스트 내부 링크(일반 마크다운 링크) 연결, **기존 태그 표기(소문자 kebab-case 등) 재사용**
+  - **팩트 무결성 및 출처 표기(SEO E-E-A-T · AI 검색 GEO)**: Phase 1의 Tier 1~2 팩트 위주로 서술하고 불확실한 정보는 단정하지 않음. 본문에서 핵심 공식 스펙·통계·법령·논문을 직접 인용할 때는 `<LinkInline>`(문장 속 기본 `inline` 또는 문장 끝 `variant="badge"`)로 1차 출처를 멋스럽게 명시하고, 참고한 Tier 1~2 출처가 3개 이상이면 글 하단 `## 참고 자료` 섹션에 일반 마크다운 링크 목록으로 정리
+  - **규격 및 MDX 컴포넌트·도식 적극 활용**: Frontmatter 스키마 준수, Shiki 소문자 언어 태그, CommonMark 구두점 경계 규칙(`~` → `～`/`–`, 볼드·이탤릭 내 `()`/`""` 뒤 한글 조사 분리), `<Alert>` 외 주제별 전용 컴포넌트(`CloudinaryImage`, `ImageRow`, `MovieCard`, `PersonCard`, `PersonInline`, `BookCard`, `StockCard`, `StockInline`, `BaseballPlayerCard`, `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `LinkInline`, `YouTubeEmbed`, `Chart`, `ClockChart`, `AffiliateLink`, `CoupangProductCard`) 및 필요 시 **커스텀 반응형 SVG 도식** 적극 배치 (`Callout` 절대 사용 금지)
 
 #### 2) 이해 중심 시각 에셋 기획 · 생성/수집 및 Cloudinary MCP 업로드
 상세 판단 기준과 호출 스키마는 [`.agents/skills/blog/references/visual.md`](references/visual.md)를 따릅니다.
@@ -104,7 +107,7 @@ flowchart TD
 - **검수 항목**:
   1. **팩트 및 코드 스펙 무결성**: 리서치 자료와의 일치성, 구버전 레거시 API 속성 혼입 여부, Preview/정식 기능 구분, 코드 스니펫 import/컴파일 완결성
   2. **탈-AI 어투**: 금지어 포함 여부, 첫 2문장 훅 및 문장 리듬 점검
-  3. **SEO, 분량 적정성 및 태그 일관성**: 타이틀/디스크립션 길이 및 키워드 배치, 헤딩 구조, 본문 분량 및 밀도 적정성(1,500자 미만 Thin Content 또는 7,000자 초과 과밀 여부, 장문 상단 요약표 유무), 기존 블로그 태그 컨벤션 일치 여부, 내부 링크 유효성
+  3. **SEO, 출처 신뢰도(GEO), 분량 적정성 및 태그 일관성**: 타이틀/디스크립션 길이 및 키워드 배치, 헤딩 구조, 본문 분량 및 밀도 적정성(1,500자 미만 Thin Content 또는 7,000자 초과 과밀 여부, 장문 상단 요약표 유무), Tier 1~2 핵심 팩트·수치에 대한 출처 표기(`<LinkInline>` 포인트 사용 및 다수 레퍼런스 시 하단 `참고 자료` 마크다운 목록 정리, 내부 링크에 `<LinkInline>` 오용 여부), 기존 블로그 태그 컨벤션 일치 여부, 내부 링크 유효성
   4. **기술 규격, 시각 자료 목적성 및 CommonMark/MDX 안전성**: Frontmatter 필수 필드 및 `thumbnail` URL(`w_1200,q_auto,f_jpg` OG 호환 포맷) 검증, 본문 이미지의 **정보 전달 목적성 감사**(단락 구분용 억지 메타포 배너 여부, `<CloudinaryImage>`의 `width`·`height`·`alt`·`caption` 및 외부 인용 시 `credit`/`creditUrl` 포함 여부, 본문 문맥과의 자연스러운 연결성), Shiki 소문자 언어 태그, `～`/`–` 범위 표기, 볼드/이탤릭 내 괄호·따옴표+조사 미파싱 노출 여부, 전용 컴포넌트 적절 활용 여부 (`Callout` 사용 시 즉시 필수 수정)
 - **출력**: `[🚨 필수 수정]`, `[💡 권장 개선]`, `[✅ 통과 항목]`으로 정리된 수정안 보고서
 

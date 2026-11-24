@@ -647,23 +647,46 @@ import PlaceCard from '@/components/PlaceCard.astro';
 
 ---
 
-#### `LinkPreviewCard.astro`
+#### `LinkPreviewCard.astro` / `LinkInline.astro`
 
-참고 아티클·공식 문서·외부 웹페이지를 노션 북마크 블록 형태로 보여주는 범용 링크 카드 (전 섹션 공통). 빌드 타임에 대상 페이지 `<head>`의 Open Graph(`og:title`, `og:description`, `og:image`, `og:site_name`) 메타태그를 파싱하며, 봇 차단 사이트나 오프라인 시에도 도메인 파비콘 + 제목/호스트명 카드로 깔끔하게 폴백한다.
+참고 아티클·공식 문서·외부 웹페이지를 노션 북마크 블록 형태로 보여주는 `LinkPreviewCard`와, 본문 문장 속에 도메인 파비콘과 함께 세련되게 출처를 녹이는 인라인 짝꿍 `LinkInline` (전 섹션 공통).
+
+- **`LinkPreviewCard`**: 빌드 타임에 대상 페이지 `<head>`의 Open Graph(`og:title`, `og:description`, `og:image`, `og:site_name`) 메타태그를 파싱하며, 봇 차단 사이트나 오프라인 시에도 도메인 파비콘 + 제목/호스트명 카드로 깔끔하게 폴백한다. 단독으로 주목시킬 핵심 레퍼런스 1～2개에 사용한다.
+- **`LinkInline`**: 별도 OG 네트워크 요청 없이 정적 `<a href="...">` 시맨틱 링크와 도메인 파비콘 미니 칩(`bg-white` 다크모드 가시성 보정, `alt=""`로 크롤러 앵커 텍스트 노이즈 차단)을 렌더링한다.
+  - 기본값(`variant="inline"`): `PersonInline`과 통일된 **원형 파비콘 + 밑줄 텍스트 + 미세 `↗` 화살표 + 선택적 `(source)`** 형태. 바로 뒤에 한글 조사(`에 따르면`, `에서는`)가 자연스럽게 붙는다.
+  - 배지형(`variant="badge"`): Perplexity 출처 인용구나 `StockInline`처럼 **은은한 보더·배경 알약 칩** 형태. 문장이나 통계 수치 끝에 근거 출처를 깔끔하게 달 때 사용한다.
+  - **사용 범위 원칙**: 본문 내 **Tier 1～2 외부 핵심 출처**(공식 기술 문서, 공공 통계·법령, 논문 등)에만 포인트로 사용하며, 블로그 내부 포스트 링크(`[제목](/dev/slug)`)나 글 하단 `## 참고 자료` 목록에는 일반 마크다운 링크를 사용한다.
 
 ```mdx
 import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
+import LinkInline from '@/components/LinkInline.astro';
 
+<!-- 블록형 북마크 카드 -->
 <LinkPreviewCard url="https://docs.astro.build/en/getting-started/" />
 <LinkPreviewCard url="https://example.com/post" title="수동 지정 제목" comment="핵심 레퍼런스 아티클." />
+
+<!-- 인라인 멘션형 (기본: PersonInline 스타일, 뒤에 조사 바로 연결 가능) -->
+<LinkInline href="https://docs.astro.build/en/guides/content-collections/" label="Astro 5 공식 가이드" />에 따르면 Content Layer API가 기본이 되었다.
+<LinkInline href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/timeout_static" label="AbortSignal.timeout()" source="MDN" />을 쓰면 별도 컨트롤러 없이 타임아웃을 걸 수 있다.
+
+<!-- 인라인 배지형 (Perplexity 출처 칩 스타일, 문장·수치 끝 근거 표기) -->
+2026년 개편안 기준 기본 공제 한도가 상향 조정되었다 <LinkInline href="https://www.moef.go.kr" label="기획재정부" source="2026 세법개정안" variant="badge" />.
 ```
 
-| Prop | 타입 | 기본값 | 설명 |
+| Prop (`LinkPreviewCard`) | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
 | `url` | `string` | — | 대상 URL |
 | `title` / `description` / `siteName` | `string` | OG 자동 | 제목·요약·사이트명 수동 오버라이드 및 차단 대비 폴백 |
 | `image` | `string \| false` | OG 자동 | 썸네일 URL 직접 지정 (`false` 전달 시 썸네일 숨김) |
 | `comment` | `string` | — | 카드 하단 코멘트 |
+
+| Prop (`LinkInline`) | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `href` | `string` | — | 연결할 외부 문서·출처 URL (필수) |
+| `label` | `string` | 슬롯 텍스트 / 도메인 | 링크 앵커 텍스트 (`<LinkInline href="...">텍스트</LinkInline>` 슬롯 방식도 지원) |
+| `source` | `string \| boolean` | — | 보조 출처·연도 라벨 (예: `"MDN"`, `"2026 개편안"`). `true` 전달 시 도메인명 자동 표시 |
+| `variant` | `'inline' \| 'badge'` | `'inline'` | `'inline'`(밑줄 멘션형) 또는 `'badge'`(알약 출처 배지형) |
+| `icon` | `string \| false` | Google 파비콘 자동 | 커스텀 아이콘 URL 직접 지정 또는 `false`로 아이콘 숨김 |
 
 ---
 

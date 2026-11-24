@@ -49,6 +49,7 @@ description: blog-astro-eone에 새 블로그 포스트(.md/.mdx)를 작성한�
 title: "포스트 제목 (한국어, 60자 이내 권장)"
 description: "검색엔진/카드 요약 (120~160자 권장)"
 date: YYYY-MM-DD
+updatedDate: YYYY-MM-DD   # 선택. 기존 글의 핵심 정보·버전·수치를 실질적으로 보강했을 때만 기입 (신규 글·단순 오타 수정 시 생략)
 category: 카테고리명
 tags:
   - "태그1"

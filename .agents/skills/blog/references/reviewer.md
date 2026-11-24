@@ -37,14 +37,18 @@
   - `4,500자` 이상의 심층 장문일 경우 독자 이탈을 막는 **상단 핵심 요약표**가 배치되어 있는지 확인하고, 순수 본문이 `7,000자`(읽기 10분)를 초과해 호흡이 지나치게 길다면 `[💡 권장 개선]`으로 불필요한 단락 압축 또는 `series` 분할을 제안
 - [ ] **Heading 계층**: 본문에 H1(`#`)이 없으며, H2(`##`) 아래에 H3(`###`)가 논리적으로 구성되어 있는가?
 - [ ] **첫 단락 키워드**: 첫 문단(3줄 이내)에 핵심 검색어가 자연스럽게 노출되어 있는가?
-- [ ] **태그 컨벤션 및 내부 링크**: `tags`가 기존 포스트의 표기 규칙(영문 소문자 kebab-case 등)과 일치하여 불필요한 중복 태그를 만들지 않는가? 본문 내 내부 링크(`/{섹션}/{slug}`) 경로가 실제 존재하는 포스트와 일치하는가?
+- [ ] **태그 컨벤션 및 내부 링크**: `tags`가 기존 포스트의 표기 규칙(영문 소문자 kebab-case 등)과 일치하여 불필요한 중복 태그를 만들지 않는가? 본문 내 내부 링크(`/{섹션}/{slug}`) 경로가 실제 존재하는 포스트와 일치하며 일반 마크다운 링크로 작성되었는가?
+- [ ] **외부 출처 명시 및 `<LinkInline>` 사용 적정성 (E-E-A-T & GEO)**:
+  - 공식 스펙·통계·법령·논문 등 Tier 1～2 핵심 수치나 팩트를 언급할 때 원문 출처가 적절히 연결되어 있는가? (단순 요약 나열이 아닌 필자의 해석·비교 맥락이 함께 담겼는지 확인)
+  - `<LinkInline>`이 **외부 Tier 1～2 핵심 출처에만 포인트로 절제 있게 사용**되었는가? (내부 포스트 링크나 하단 `## 참고 자료` 목록에 `<LinkInline>`을 남발했거나, Tier 4 개인 블로그를 공식 출처처럼 걸었다면 수정 제안)
+  - 참고한 1차 공식 레퍼런스가 3개 이상일 때 본문 링크 과밀 대신 글 하단 `## 참고 자료` 섹션에 일반 마크다운 링크 목록으로 깔끔히 정리되어 있는가?
 
 ### ④ 블로그 기술 규격 및 CommonMark 안전성 (Astro & MDX Spec)
-- [ ] [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md)의 frontmatter 필수 필드(`title`, `description`, `date`, `category`, `tags`, `lang`, `draft`)가 온전한가? (제휴 컴포넌트 사용 시 `affiliate: true` 포함 여부, `thumbnail` 지정 시 Cloudinary OG 호환 URL `.../image/upload/w_1200,q_auto,f_jpg/posts/...` 형식 또는 로컬 폴백 시 실제 파일 확장자 일치 여부)
+- [ ] [`docs/post-writing-guide.md`](../../../docs/post-writing-guide.md)의 frontmatter 필수 필드(`title`, `description`, `date`, `category`, `tags`, `lang`, `draft`)가 온전한가? (제휴 컴포넌트 사용 시 `affiliate: true` 포함 여부, 기존 글 실질적 내용 보강 시 `date` 보존 + `updatedDate` 기입 여부 및 신규 글·단순 교정 시 `updatedDate` 불필요 기입 방지, `thumbnail` 지정 시 Cloudinary OG 호환 URL `.../image/upload/w_1200,q_auto,f_jpg/posts/...` 형식 또는 로컬 폴백 시 실제 파일 확장자 일치 여부)
 - [ ] MDX 컴포넌트 import가 frontmatter 바로 아래에 올바르게 위치해 있으며, 미사용 import가 남아 있지 않은가?
 - [ ] 폐기 대상인 `Callout.astro`를 사용하지 않았는가? (강조 박스는 `Alert.astro` 사용)
 - [ ] **주제별 특화 MDX 컴포넌트 및 시각 자료 목적성 감사**:
-  - 주제 성격에 맞춰 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13`), `StockCard` / `StockInline`, `BaseballPlayerCard` / `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard`, `YouTubeEmbed` 등 전용 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
+  - 주제 성격에 맞춰 `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13`), `StockCard` / `StockInline`, `BaseballPlayerCard` / `PlayerInline`, `GitHubRepoCard`, `AppCard`, `PlaceCard`, `LinkPreviewCard` / `LinkInline`, `YouTubeEmbed` 등 전용 컴포넌트를 적절히 활용했는가? (`YouTubeEmbed`가 사용된 경우 미국 방송사 단독 업로드 영상의 한국 지역 차단 가능성을 짚고 Phase 4 메인 세션에 `gl=KR` 재생·임베드 검증 수행을 리마인드할 것)
   - 수치/시간대·흐름 설명 시 `Chart` / `ClockChart` / `Mermaid` / 커스텀 SVG 도식 등 [`docs/astro-components.md`](../../../docs/astro-components.md)의 기존 수단을 적재적소에 활용했는가?
   - **장식용 이미지 남발 및 캡션·문맥 연동 감사**:
     - 본문 이미지가 단락 구분용 추상 은유 배너('체스말', '천칭 저울', '등대', '방패' 등)로 쓰이지 않고, 실제 내용 이해·현장감을 돕는 구체적 대상(사료, 풍경, 제품 구성도, 인물 캐리커처 등)인가? 코드·IT 글에 의미 없는 감성 AI 일러스트가 억지로 들어갔다면 **삭제**하거나 `Mermaid`/커스텀 SVG 도식으로 교체하도록 제안할 것 (`0장`도 정상).

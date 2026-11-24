@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import pagefind from 'astro-pagefind';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeAdInject from './src/lib/rehype-ad-inject.mjs';
+import { getPostLastmodMap } from './src/lib/sitemap-lastmod.mjs';
 
 // import.meta.env is not available in the config, and vite is not a direct
 // dependency, so its loadEnv is out of reach. Netlify supplies the AdSense
@@ -29,6 +30,11 @@ export default defineConfig({
       i18n: {
         defaultLocale: 'ko',
         locales: { ko: 'ko', en: 'en' },
+      },
+      serialize: (item) => {
+        const pathname = new URL(item.url).pathname.replace(/\/$/, '') || '/';
+        const lastmod = getPostLastmodMap().get(pathname);
+        return lastmod ? { ...item, lastmod } : item;
       },
     }),
   ],
