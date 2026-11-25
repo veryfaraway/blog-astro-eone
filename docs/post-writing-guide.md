@@ -190,13 +190,14 @@ import PlayerInline from '@/components/PlayerInline.astro';
 
 ---
 
-### GitHubRepoCard / AppCard / BookCard / PlaceCard / LinkPreviewCard / LinkInline
+### GitHubRepoCard / AppCard / BookCard / PlaceCard / TripMap / LinkPreviewCard / LinkInline
 
 ```mdx
 import GitHubRepoCard from '@/components/GitHubRepoCard.astro';
 import AppCard from '@/components/AppCard.astro';
 import BookCard from '@/components/BookCard.astro';
 import PlaceCard from '@/components/PlaceCard.astro';
+import TripMap from '@/components/TripMap.astro';
 import LinkPreviewCard from '@/components/LinkPreviewCard.astro';
 import LinkInline from '@/components/LinkInline.astro';
 
@@ -204,6 +205,20 @@ import LinkInline from '@/components/LinkInline.astro';
 <AppCard name="Ghostty" platform="macOS" href="https://ghostty.org" brew="--cask ghostty" />
 <BookCard title="돈의 심리학" isbn13="9791157844685" comment="복리를 대하는 태도를 짚어주는 책." />
 <PlaceCard name="CGV 용산아이파크몰 IMAX" category="특별관" address="서울 용산구 한강대로23길 55" />
+<TripMap
+  title="도쿄 주요 스팟 & 추천 숙소 권역"
+  spots={[
+    { id: 'hp', name: '해리포터 스튜디오 도쿄', lat: 35.7451, lng: 139.6458, info: '도시마엔역 도보 2분' },
+    { id: 'disney', name: '도쿄 디즈니랜드', lat: 35.6329, lng: 139.8804, info: '마이하마역 도보 5분' },
+  ]}
+  zones={[
+    { id: 'tokyo', name: '도쿄역·유라쿠초 권역', lat: 35.677, lng: 139.766, radiusMeters: 1500, badge: '추천 숙소존', reason: '양쪽 스팟 모두 환승 부담 최소' },
+  ]}
+  routes={[
+    { from: 'tokyo', to: 'disney', label: 'JR 게이요선 직통 15분' },
+    { from: 'tokyo', to: 'hp', label: '유라쿠초선 약 40분' },
+  ]}
+/>
 <LinkPreviewCard url="https://docs.astro.build/en/getting-started/" />
 
 <!-- 외부 핵심 출처 인라인 링크 (기본: PersonInline 밑줄 멘션형 / badge: Perplexity풍 알약 칩) -->

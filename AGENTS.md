@@ -59,7 +59,7 @@
 
 - **컴포넌트 import 및 폐기 목록**: MDX import는 frontmatter 바로 아래, 본문 시작 전에 배치(미사용 import 금지). 강조 박스는 `Alert.astro`를 사용하며, **폐기 예정인 `Callout.astro`는 절대 사용 금지**.
 - **주제별 MDX 컴포넌트 적극 활용** (기존 컴포넌트로 해결 가능하면 신규 제작 금지, 상세 Props는 [`docs/astro-components.md`](docs/astro-components.md) 참조):
-  - **영화·인물·도서·영상·장소**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13` 카카오+Google Books 하이브리드), `PlaceCard`(네이버·카카오·Google 지도 딥링크), `YouTubeEmbed`(`id="영상ID"`)
+  - **영화·인물·도서·영상·장소**: `MovieCard`(`imdbId="tt..."`), `PersonCard` / `PersonInline`(`imdbId="nm..."`), `BookCard`(`isbn13` 카카오+Google Books 하이브리드), `PlaceCard`(네이버·카카오·Google 지도 딥링크), `TripMap`(복수 스팟·추천 숙소 권역·동선 인터랙티브 지도), `YouTubeEmbed`(`id="영상ID"`)
   - **주식·프로야구**: `StockCard` / `StockInline`(`ticker`, Yahoo Finance 자동 조회), `BaseballPlayerCard` / `PlayerInline`(MLB `mlbId` 자동 조회 · KBO 구단 컬러/등번호 타일)
   - **개발·앱·북마크·출처**: `GitHubRepoCard`(`repo="owner/name"`), `AppCard`(`appStoreId` 아이콘 자동 조회 · `brew` 원클릭 복사), `LinkPreviewCard`(OG 북마크 카드) / `LinkInline`(도메인 파비콘 인라인 출처 링크·배지)
   - **데이터·시간대·이미지**: `Chart`(`bar | line | pie | doughnut | radar`), `ClockChart`(24시간 원형 시간대), `ImageRow`(2～4열 그리드), `CloudinaryImage`

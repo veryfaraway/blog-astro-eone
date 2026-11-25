@@ -647,6 +647,88 @@ import PlaceCard from '@/components/PlaceCard.astro';
 
 ---
 
+#### `TripMap.astro`
+
+여러 방문지의 위치 관계, 추천 숙소 권역(`zones`), 이동 동선·소요 시간(`routes`)을 한 화면에서 시각적으로 비교해 주는 인터랙티브 지도 컴포넌트 (`culture` · `life` 섹션).
+- **API 키·비용 0원 & 미니멀 벡터 타일**: MapLibre GL JS + OpenFreeMap(`positron` 라이트 / `dark` 다크 벡터 스타일)을 사용해 키 발급 없이 전 세계 지도를 고해상도 벡터로 렌더링한다. 고속도로 번호판 노이즈를 제거하고 지명을 **한국어(`name:ko`) 우선**으로 자동 변환하며, 밀집 구간의 핀 이름표는 화면 픽셀 충돌 감지(Collision Detection)로 자동 숨김 처리(마우스 오버·확대 시 노출)해 깔끔함을 유지한다.
+- **모바일·본문 스크롤 간섭 방지**: 기본값(`interactiveByDefault={false}`)에서는 한 손가락 터치 스크롤과 마우스 휠이 페이지 본문 스크롤로 통과하며, 우측 상단 **`지도 조작 켜기`** 버튼을 누를 때만 드래그·확대가 활성화된다(잠금 상태에서도 마커 팝업 열기, 그룹 탭 전환, 하단 퀵 포커스 칩 이동은 바로 동작).
+- **선택적 그룹(`group`) 탭 & 다중 삽입 모두 지원**: 항목에 `group`(예: `"1안: 도쿄역 숙소"`, `"Day 1"`)을 지정하면 상단에 필터 탭이 자동 생성되고, 지정하지 않으면 탭 없는 단일 지도로 깔끔하게 렌더링된다. 뷰포트 진입 시점(`IntersectionObserver`)에 초기화되므로 한 포스트에 여러 개 삽입해도 초기 로딩 부담이 없다.
+- **국내/해외 딥링크 자동 분기**: 좌표가 대한민국 영역 안이면 팝업에 네이버·카카오·Google 지도 버튼을, 해외면 Google 지도 버튼만 자동 노출한다(`abroad` prop으로 수동 지정 가능).
+
+```mdx
+import TripMap from '@/components/TripMap.astro';
+
+<TripMap
+  title="도쿄 해리포터 스튜디오 + 디즈니랜드 동선별 추천 숙소 권역"
+  caption="북서쪽(네리마)과 남동쪽(마이하마) 양극단 일정을 모두 소화하기 좋은 도심 환승 거점 비교"
+  spots={[
+    {
+      id: 'hp',
+      name: '해리포터 스튜디오 도쿄',
+      lat: 35.7451,
+      lng: 139.6458,
+      badge: '북서쪽 · 오전 추천',
+      info: '세이부 이케부쿠로선·오에도선 도시마엔역 도보 2분',
+    },
+    {
+      id: 'disney',
+      name: '도쿄 디즈니랜드',
+      lat: 35.6329,
+      lng: 139.8804,
+      badge: '남동쪽 · 종일 일정',
+      info: 'JR 게이요선 마이하마역 도보 5분',
+    },
+  ]}
+  zones={[
+    {
+      id: 'tokyo-yurakucho',
+      name: '도쿄역·유라쿠초·긴자 권역',
+      lat: 35.677,
+      lng: 139.766,
+      radiusMeters: 1500,
+      color: '#10b981',
+      badge: '추천 1순위',
+      reason: '디즈니랜드(게이요선 직통 15분)와 해리포터(유라쿠초선 약 40분) 양쪽 이동 밸런스가 가장 안정적',
+      group: '1안: 도쿄역·긴자',
+    },
+    {
+      id: 'ikebukuro',
+      name: '이케부쿠로역 권역',
+      lat: 35.7295,
+      lng: 139.7109,
+      radiusMeters: 1200,
+      color: '#3b82f6',
+      badge: '가성비 2순위',
+      reason: '해리포터 스튜디오 17분 컷 + 유라쿠초선 신키바 환승으로 디즈니랜드도 50분 내 이동 가능',
+      group: '2안: 이케부쿠로',
+    },
+  ]}
+  routes={[
+    { from: 'tokyo-yurakucho', to: 'disney', label: 'JR 게이요선 직통 15분', group: '1안: 도쿄역·긴자' },
+    { from: 'tokyo-yurakucho', to: 'hp', label: '유라쿠초선 약 40분', group: '1안: 도쿄역·긴자' },
+    { from: 'ikebukuro', to: 'hp', label: '세이부선 17분', group: '2안: 이케부쿠로' },
+    { from: 'ikebukuro', to: 'disney', label: '유라쿠초선→신키바 환승 50분', group: '2안: 이케부쿠로' },
+  ]}
+/>
+```
+
+| Prop (`TripMap`) | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `spots` | `TripSpot[]` | `[]` | 방문지(`type: 'spot'`), 숙소(`'stay'`), 환승 거점(`'hub'`) 마커 배열 |
+| `zones` | `TripZone[]` | `[]` | 추천 숙소 권역·핵심 구역 원형(`radiusMeters`) 또는 다각형(`polygon`) 배열 |
+| `routes` | `TripRoute[]` | `[]` | `spots`/`zones`의 `id` 또는 `[lat, lng]` 간 이동 동선 및 소요 시간 라벨 배열 |
+| `title` / `caption` | `string` | — | 상단 카드 헤더 제목 / 하단 `<figcaption>` 캡션 |
+| `height` | `number` | `420` | 지도 캔버스 높이(px) |
+| `abroad` | `boolean` | 좌표 자동 판별 | `true`면 Google 지도만 표시, `false`면 네이버·카카오·Google 모두 표시 |
+| `defaultGroup` | `string` | 전체 보기 | `group` 사용 시 초기 활성화할 탭 이름 |
+| `showLabels` / `showRouteLabels` | `boolean` | `true` | 마커 이름표 상시 노출 여부 / 동선 중앙 소요 시간 배지 상시 노출 여부 |
+| `interactiveByDefault` | `boolean` | `false` | `false`면 스크롤 우선 잠금 상태로 시작하여 모바일 터치 스크롤 간섭을 막는다 |
+| `center` / `zoom` | `[number, number]` / `number` | 자동 `fitBounds` | 초기 중심 좌표와 줌 레벨 수동 고정 시 사용 |
+
+> **그룹 탭 공통 항목 규칙**: `group` 탭이 있는 지도에서 `group`을 생략한 항목(예: 공통 방문지나 고정 숙소)은 모든 탭에 기준점으로 함께 표시된다. 특정 탭에서만 숨기려면 해당 항목에도 `group`을 명시하거나 `shared: false`를 지정한다.
+
+---
+
 #### `LinkPreviewCard.astro` / `LinkInline.astro`
 
 참고 아티클·공식 문서·외부 웹페이지를 노션 북마크 블록 형태로 보여주는 `LinkPreviewCard`와, 본문 문장 속에 도메인 파비콘과 함께 세련되게 출처를 녹이는 인라인 짝꿍 `LinkInline` (전 섹션 공통).

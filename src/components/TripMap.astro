@@ -1,0 +1,1660 @@
+---
+import 'maplibre-gl/dist/maplibre-gl.css';
+
+export interface TripSpot {
+  /** 고유 식별자 (routes의 from/to 연결용, 생략 시 자동 생성) */
+  id?: string;
+  /** 장소명 (예: "해리포터 스튜디오 도쿄", "도쿄 디즈니랜드") */
+  name: string;
+  /** 위도 */
+  lat: number;
+  /** 경도 */
+  lng: number;
+  /** 마커 성격: 'spot'(방문지, 기본) | 'stay'(숙소·호텔) | 'hub'(환승역·공항·거점) */
+  type?: 'spot' | 'stay' | 'hub';
+  /** 핀 내부 커스텀 표기 (예: "A", 생략 시 활성 탭 기준 1, 2, 3... 순번 자동 부여) */
+  markerLabel?: string;
+  /** 보조 배지 (예: "오전 추천", "종일 일정", "환승 거점") */
+  badge?: string;
+  /** 교통편·소요시간·방문 팁 한줄 설명 */
+  info?: string;
+  /** 커스텀 핀 색상 (HEX 등, 생략 시 type별 기본 색상 적용) */
+  color?: string;
+  /** 외부 지도 검색어 오버라이드 (생략 시 name 사용) */
+  query?: string;
+  /** 네이버 지도 공유 URL 직접 지정 */
+  naverUrl?: string;
+  /** 카카오맵 공유 URL 직접 지정 */
+  kakaoUrl?: string;
+  /** Google 지도 URL 직접 지정 */
+  googleUrl?: string;
+  /** 선택적 그룹/일차 탭 이름 (예: "Day 1", "1안: 도쿄역 숙소" 또는 복수 그룹 배열). 생략 시 공통 항목으로 모든 탭에 표시 */
+  group?: string | string[];
+  /** group 미지정 시 다른 그룹 탭에서도 공통 표시할지 여부 (기본 true) */
+  shared?: boolean;
+}
+
+export interface TripZone {
+  /** 고유 식별자 (routes의 from/to 연결용, 생략 시 자동 생성) */
+  id?: string;
+  /** 권역명 (예: "도쿄역·유라쿠초·긴자 권역") */
+  name: string;
+  /** 권역 중심 위도 */
+  lat: number;
+  /** 권역 중심 경도 */
+  lng: number;
+  /** 원형 반경(m). 기본값 1200. polygon 지정 시 무시됨 */
+  radiusMeters?: number;
+  /** 다각형 권역 좌표 [[lat, lng], ...] (선택, 지정 시 원 대신 다각형 렌더링) */
+  polygon?: [number, number][];
+  /** 권역 강조 색상 (기본 '#10b981') */
+  color?: string;
+  /** 권역 배지 (예: "추천 1순위", "가성비 거점") */
+  badge?: string;
+  /** 이 권역을 추천하는 핵심 이유 (팝업 및 하단 요약 카드에 노출) */
+  reason?: string;
+  /** 권역 상단 테두리에 배지 마커를 표시할지 여부 (기본 true) */
+  showLabel?: boolean;
+  /** 외부 지도 검색어 오버라이드 (생략 시 name 사용) */
+  query?: string;
+  naverUrl?: string;
+  kakaoUrl?: string;
+  googleUrl?: string;
+  /** 선택적 그룹/일차 탭 이름 */
+  group?: string | string[];
+  /** group 미지정 시 다른 그룹 탭에서도 공통 표시할지 여부 (기본 true) */
+  shared?: boolean;
+}
+
+export interface TripRoute {
+  /** 출발지 ID (spots/zones의 id) 또는 직접 좌표 [lat, lng] */
+  from: string | [number, number];
+  /** 도착지 ID (spots/zones의 id) 또는 직접 좌표 [lat, lng] */
+  to: string | [number, number];
+  /** 이동 수단·소요 시간 라벨 (예: "JR 게이요선 직통 15분") */
+  label?: string;
+  /** 선 색상 (생략 시 연결된 권역 색상 또는 기본 블루 자동 적용) */
+  color?: string;
+  /** 점선 표시 여부 (기본 true) */
+  dashed?: boolean;
+  /** 부드러운 아치 곡선 여부 (기본 true, via 지정 시 false) */
+  curved?: boolean;
+  /** 경유 좌표 목록 [[lat, lng], ...] */
+  via?: [number, number][];
+  /** 선택적 그룹/일차 탭 이름 */
+  group?: string | string[];
+  /** group 미지정 시 다른 그룹 탭에서도 공통 표시할지 여부 (기본 true) */
+  shared?: boolean;
+}
+
+interface Props {
+  /** 상단 제목 (생략 가능) */
+  title?: string;
+  /** 하단 캡션 설명 (생략 가능) */
+  caption?: string;
+  /** 방문지·숙소·환승 거점 마커 목록 */
+  spots?: TripSpot[];
+  /** 추천 숙소 권역·핵심 구역 하이라이트 목록 */
+  zones?: TripZone[];
+  /** 이동 동선 연결 목록 */
+  routes?: TripRoute[];
+  /** 지도 영역 높이(px). 기본값 440 */
+  height?: number;
+  /** 해외 지역 여부 (생략 시 좌표가 대한민국 영역 밖이면 자동 true 추론 — true일 때 Google 지도만 노출) */
+  abroad?: boolean;
+  /** 그룹 탭 사용 시 초기 선택할 탭 이름 (생략 시 전체 보기) */
+  defaultGroup?: string;
+  /** 전체 탭/버튼 라벨 */
+  allLabel?: string;
+  /** 마커 이름표 표시 여부 (기본 true — 밀집 시 자동 충돌 회피 동작) */
+  showLabels?: boolean;
+  /** 동선 중앙 소요 시간 라벨 표시 여부 (기본 true) */
+  showRouteLabels?: boolean;
+  /** 초기 드래그·휠줌 활성화 여부 (기본 false — 모바일/본문 스크롤 간섭 방지) */
+  interactiveByDefault?: boolean;
+  /** 초기 고정 중심 좌표 [lat, lng] (생략 시 전체 마커/권역 자동 fitBounds) */
+  center?: [number, number];
+  /** 초기 고정 줌 레벨 (center와 함께 사용, 생략 시 자동 계산) */
+  zoom?: number;
+  /** 추가 래퍼 클래스 */
+  class?: string;
+}
+
+const {
+  title,
+  caption,
+  spots = [],
+  zones = [],
+  routes = [],
+  height = 440,
+  abroad,
+  defaultGroup,
+  allLabel,
+  showLabels = true,
+  showRouteLabels = true,
+  interactiveByDefault = false,
+  center,
+  zoom,
+  class: className,
+} = Astro.props;
+
+const isEn = Astro.url.pathname.startsWith('/en/') || Astro.url.pathname === '/en';
+const resolvedAllLabel = allLabel ?? (isEn ? 'All' : '전체 보기');
+
+function isKoreaCoord(lat: number, lng: number): boolean {
+  return lat >= 33.0 && lat <= 38.7 && lng >= 124.5 && lng <= 132.0;
+}
+
+const allCoords: [number, number][] = [
+  ...spots.map((s): [number, number] => [s.lat, s.lng]),
+  ...zones.map((z): [number, number] => [z.lat, z.lng]),
+];
+
+const resolvedAbroad =
+  abroad ?? (allCoords.length > 0 ? !allCoords.every(([lat, lng]) => isKoreaCoord(lat, lng)) : false);
+
+function normalizeGroups(g?: string | string[]): string[] {
+  if (!g) return [];
+  return (Array.isArray(g) ? g : [g]).map(v => v.trim()).filter(Boolean);
+}
+
+function buildMapLinks(name: string, query?: string, naverUrl?: string, kakaoUrl?: string, googleUrl?: string) {
+  const q = encodeURIComponent((query ?? name).trim());
+  return {
+    naver: naverUrl ?? (!resolvedAbroad ? `https://map.naver.com/p/search/${q}` : undefined),
+    kakao: kakaoUrl ?? (!resolvedAbroad ? `https://map.kakao.com/link/search/${q}` : undefined),
+    google: googleUrl ?? `https://www.google.com/maps/search/?api=1&query=${q}`,
+  };
+}
+
+let spotAutoIdx = 0;
+const normalizedSpots = spots.map((s, idx) => {
+  const type = s.type ?? 'spot';
+  if (type === 'spot') spotAutoIdx += 1;
+  const defaultColor =
+    type === 'stay' ? '#10b981' : type === 'hub' ? '#f59e0b' : '#3b82f6';
+  return {
+    ...s,
+    id: s.id ?? `spot-${idx}`,
+    type,
+    customMarkerLabel: s.markerLabel ?? null,
+    markerLabel: s.markerLabel ?? (type === 'spot' ? String(spotAutoIdx) : ''),
+    color: s.color ?? defaultColor,
+    groups: normalizeGroups(s.group),
+    shared: s.shared ?? true,
+    links: buildMapLinks(s.name, s.query, s.naverUrl, s.kakaoUrl, s.googleUrl),
+  };
+});
+
+const normalizedZones = zones.map((z, idx) => ({
+  ...z,
+  id: z.id ?? `zone-${idx}`,
+  radiusMeters: z.radiusMeters ?? 1200,
+  color: z.color ?? '#10b981',
+  showLabel: z.showLabel ?? true,
+  groups: normalizeGroups(z.group),
+  shared: z.shared ?? true,
+  links: buildMapLinks(z.name, z.query, z.naverUrl, z.kakaoUrl, z.googleUrl),
+}));
+
+const normalizedRoutes = routes.map((r, idx) => ({
+  ...r,
+  id: `route-${idx}`,
+  dashed: r.dashed ?? true,
+  curved: r.curved ?? (!r.via || r.via.length === 0),
+  groups: normalizeGroups(r.group),
+  shared: r.shared ?? true,
+}));
+
+const groupSet = new Set<string>();
+for (const item of [...normalizedZones, ...normalizedSpots, ...normalizedRoutes]) {
+  for (const g of item.groups) groupSet.add(g);
+}
+const groups = Array.from(groupSet);
+const initialGroup = defaultGroup && groupSet.has(defaultGroup) ? defaultGroup : '__all__';
+
+const uid = `tripmap-${Math.random().toString(36).slice(2, 9)}`;
+
+const serializedPayload = JSON.stringify({
+  spots: normalizedSpots,
+  zones: normalizedZones,
+  routes: normalizedRoutes,
+  groups,
+  initialGroup,
+  showLabels,
+  showRouteLabels,
+  interactiveByDefault,
+  center: center ?? null,
+  zoom: zoom ?? null,
+  isEn,
+}).replace(/</g, '\\u003c');
+
+const uiText = {
+  unlockBtn: isEn ? 'Unlock map' : '지도 조작 켜기',
+  lockBtn: isEn ? 'Lock scroll' : '스크롤 우선 잠금',
+  lockedHint: isEn
+    ? 'Click "Unlock map" in the top-right to pan or zoom'
+    : '우측 상단 "지도 조작 켜기"를 누르면 자유롭게 이동·확대할 수 있어요',
+  resetView: isEn ? 'Reset view' : '전체 맞춤',
+};
+---
+
+<figure
+  id={uid}
+  class:list={[
+    'trip-map-root not-prose my-6 overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xs',
+    className,
+  ]}
+>
+  {(title || groups.length > 0) && (
+    <div class="flex flex-col gap-2.5 border-b border-border px-4 py-3">
+      {title && (
+        <div class="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground sm:text-base">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="shrink-0 text-primary"
+            aria-hidden="true"
+          >
+            <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
+            <path d="M15 5.764v15" />
+            <path d="M9 3.236v15" />
+          </svg>
+          <span>{title}</span>
+        </div>
+      )}
+
+      {groups.length > 0 && (
+        <div
+          class="flex flex-wrap items-center gap-1 rounded-lg bg-muted/55 p-1 w-fit max-w-full"
+          role="tablist"
+          aria-label={isEn ? 'Map route filter' : '지도 코스 필터'}
+        >
+          <button
+            type="button"
+            role="tab"
+            data-group-tab="__all__"
+            aria-selected={initialGroup === '__all__' ? 'true' : 'false'}
+            class:list={[
+              'trip-group-tab cursor-pointer rounded-md px-2.5 py-1 text-xs font-semibold transition-all',
+              initialGroup === '__all__'
+                ? 'bg-card text-foreground shadow-xs ring-1 ring-border'
+                : 'text-muted-foreground hover:text-foreground',
+            ]}
+          >
+            {resolvedAllLabel}
+          </button>
+          {groups.map(groupName => (
+            <button
+              type="button"
+              role="tab"
+              data-group-tab={groupName}
+              aria-selected={initialGroup === groupName ? 'true' : 'false'}
+              class:list={[
+                'trip-group-tab cursor-pointer rounded-md px-2.5 py-1 text-xs font-semibold transition-all',
+                initialGroup === groupName
+                  ? 'bg-card text-foreground shadow-xs ring-1 ring-border'
+                  : 'text-muted-foreground hover:text-foreground',
+              ]}
+            >
+              {groupName}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
+
+  <!-- 지도 스테이지 (독립 스태킹 컨텍스트) -->
+  <div class="trip-map-stage relative w-full bg-muted/30" style={`height:${height}px;`}>
+    <div
+      class="trip-map-canvas h-full w-full"
+      data-locked={interactiveByDefault ? 'false' : 'true'}
+      role="region"
+      aria-label={title ?? caption ?? (isEn ? 'Interactive route map' : '인터랙티브 여행 동선 지도')}
+    ></div>
+
+    <!-- 우측 상단 미니멀 글래스 컨트롤 -->
+    <div class="pointer-events-none absolute top-3 right-3 z-20 flex items-center gap-1.5">
+      <button
+        type="button"
+        class="trip-reset-btn pointer-events-auto inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border/80 bg-card/88 px-2.5 py-1.5 text-[11px] font-medium text-foreground shadow-sm backdrop-blur-md transition hover:bg-card"
+        title={uiText.resetView}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+        </svg>
+        <span class="hidden sm:inline">{uiText.resetView}</span>
+      </button>
+
+      <button
+        type="button"
+        class="trip-lock-btn pointer-events-auto inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border/80 bg-card/88 px-2.5 py-1.5 text-[11px] font-semibold text-foreground shadow-sm backdrop-blur-md transition hover:bg-card"
+        aria-pressed={interactiveByDefault ? 'true' : 'false'}
+        data-unlock-label={uiText.unlockBtn}
+        data-lock-label={uiText.lockBtn}
+      >
+        <span class="trip-lock-dot h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true"></span>
+        <span class="trip-lock-text">{interactiveByDefault ? uiText.lockBtn : uiText.unlockBtn}</span>
+      </button>
+    </div>
+
+    <!-- 잠금 상태 안내 토스트 -->
+    <div
+      class="trip-lock-hint pointer-events-none absolute inset-x-4 bottom-8 z-20 mx-auto w-fit max-w-full rounded-full border border-border/80 bg-card/92 px-3.5 py-1.5 text-center text-xs font-medium text-foreground opacity-0 shadow-md backdrop-blur-md transition-opacity duration-200"
+      aria-live="polite"
+    >
+      {uiText.lockedHint}
+    </div>
+  </div>
+
+  <!-- 하단 원클릭 포커스 칩 바 -->
+  {(normalizedZones.length > 0 || normalizedSpots.length > 0) && (
+    <div class="flex flex-wrap items-center gap-1.5 border-t border-border bg-muted/20 px-3.5 py-2.5">
+      {normalizedZones.map(zone => (
+        <button
+          type="button"
+          data-focus-zone={zone.id}
+          data-item-groups={zone.groups.join('|')}
+          data-item-shared={zone.shared ? 'true' : 'false'}
+          class="trip-focus-chip inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border/90 bg-card px-2.5 py-1 text-xs font-medium text-foreground transition hover:border-foreground/30 hover:bg-muted/60"
+        >
+          <span
+            class="h-2 w-2 shrink-0 rounded-full ring-2 ring-current/25"
+            style={`background:${zone.color};color:${zone.color};`}
+            aria-hidden="true"
+          />
+          <span class="truncate max-w-[210px]">{zone.badge ? `${zone.badge} · ${zone.name}` : zone.name}</span>
+        </button>
+      ))}
+
+      {normalizedSpots.map(spot => (
+        <button
+          type="button"
+          data-focus-spot={spot.id}
+          data-item-groups={spot.groups.join('|')}
+          data-item-shared={spot.shared ? 'true' : 'false'}
+          class="trip-focus-chip inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border/90 bg-card px-2.5 py-1 text-xs font-medium text-foreground transition hover:border-foreground/30 hover:bg-muted/60"
+        >
+          <span
+            data-chip-num={spot.id}
+            class="inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
+            style={`background:${spot.color};`}
+            aria-hidden="true"
+          >
+            {spot.type === 'stay' ? '숙' : spot.type === 'hub' ? '역' : spot.markerLabel || '•'}
+          </span>
+          <span class="truncate max-w-[180px]">{spot.name}</span>
+        </button>
+      ))}
+    </div>
+  )}
+
+  <!-- 추천 숙소 권역 핵심 근거 카드 -->
+  {normalizedZones.some(z => z.reason) && (
+    <div class="grid gap-2 border-t border-border bg-card px-4 py-3 sm:grid-cols-2">
+      {normalizedZones
+        .filter(z => z.reason)
+        .map(zone => (
+          <div
+            data-summary-zone={zone.id}
+            data-item-groups={zone.groups.join('|')}
+            data-item-shared={zone.shared ? 'true' : 'false'}
+            class="trip-zone-summary flex items-start gap-2.5 rounded-lg border border-border/75 bg-muted/25 p-2.5 text-xs"
+          >
+            <span
+              class="mt-1 h-2 w-2 shrink-0 rounded-full ring-2 ring-current/25"
+              style={`background:${zone.color};color:${zone.color};`}
+              aria-hidden="true"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="font-bold text-foreground">{zone.name}</span>
+                {zone.badge && (
+                  <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                    {zone.badge}
+                  </span>
+                )}
+              </div>
+              <p class="mt-0.5 leading-relaxed text-muted-foreground">{zone.reason}</p>
+            </div>
+          </div>
+        ))}
+    </div>
+  )}
+
+  <!-- 검색엔진 크롤러 및 JS 미실행 폴백 -->
+  <noscript>
+    <div class="border-t border-border p-4 text-xs text-muted-foreground">
+      <ul class="space-y-1">
+        {normalizedSpots.map(s => (
+          <li>
+            <strong class="text-foreground">{s.name}</strong>
+            {s.info ? ` — ${s.info}` : ''}{' '}
+            (<a href={s.links.google} target="_blank" rel="noopener noreferrer" class="underline">Google 지도</a>)
+          </li>
+        ))}
+      </ul>
+    </div>
+  </noscript>
+
+  {caption && (
+    <figcaption class="border-t border-border bg-muted/15 px-4 py-2 text-center text-xs text-muted-foreground">
+      {caption}
+    </figcaption>
+  )}
+
+  <script is:inline type="application/json" class="trip-map-data" set:html={serializedPayload} />
+</figure>
+
+<style is:global>
+  .trip-map-stage {
+    isolation: isolate;
+    z-index: 0;
+  }
+
+  .trip-map-canvas[data-locked='true'],
+  .trip-map-canvas[data-locked='true'] .maplibregl-canvas {
+    touch-action: pan-y !important;
+  }
+
+  .trip-map-root [data-trip-hidden='true'] {
+    display: none !important;
+  }
+
+  /* MapLibre 네비게이션 버튼 미니멀 글래스 테마 */
+  .trip-map-root .maplibregl-ctrl-group {
+    background: color-mix(in oklab, var(--card) 88%, transparent) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.12) !important;
+    overflow: hidden;
+  }
+
+  .trip-map-root .maplibregl-ctrl-group button {
+    width: 28px !important;
+    height: 28px !important;
+    border-bottom-color: var(--border) !important;
+  }
+
+  .trip-map-root .maplibregl-ctrl-group button:hover {
+    background-color: var(--muted) !important;
+  }
+
+  .dark .trip-map-root .maplibregl-ctrl-icon {
+    filter: invert(1) brightness(0.92);
+  }
+
+  /* 우측 하단 컴팩트 저작권 표시 */
+  .trip-map-root .maplibregl-ctrl-attrib {
+    background: color-mix(in oklab, var(--card) 75%, transparent) !important;
+    backdrop-filter: blur(4px);
+    color: var(--muted-foreground) !important;
+    font-size: 10px !important;
+    padding: 1px 6px !important;
+    border-radius: 0.375rem !important;
+  }
+
+  .trip-map-root .maplibregl-ctrl-attrib a {
+    color: var(--muted-foreground) !important;
+  }
+
+  .trip-map-root .maplibregl-ctrl-attrib-button {
+    background-color: transparent !important;
+  }
+
+  /* 다크·시즌 테마 통합 팝업 카드 */
+  .trip-map-root .maplibregl-popup {
+    z-index: 30;
+  }
+
+  .trip-map-root .maplibregl-popup-content {
+    background: color-mix(in oklab, var(--card) 96%, transparent) !important;
+    backdrop-filter: blur(12px);
+    color: var(--card-foreground) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 0.875rem !important;
+    box-shadow: 0 12px 30px -6px rgb(0 0 0 / 0.28) !important;
+    font-family: var(--font-sans);
+  }
+
+  .trip-map-root .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+    border-top-color: var(--card) !important;
+  }
+  .trip-map-root .maplibregl-popup-anchor-top .maplibregl-popup-tip {
+    border-bottom-color: var(--card) !important;
+  }
+  .trip-map-root .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    border-right-color: var(--card) !important;
+  }
+  .trip-map-root .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    border-left-color: var(--card) !important;
+  }
+
+  .trip-map-root .maplibregl-popup-close-button {
+    color: var(--muted-foreground) !important;
+    font-size: 16px !important;
+    top: 4px !important;
+    right: 6px !important;
+    border-radius: 4px;
+    padding: 0 4px;
+  }
+
+  .trip-map-root .maplibregl-popup-close-button:hover {
+    background: var(--muted) !important;
+    color: var(--foreground) !important;
+  }
+
+  /* 마커 & 스마트 플로팅 라벨 */
+  .trip-spot-marker {
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .trip-spot-marker:hover {
+    z-index: 25 !important;
+  }
+
+  .trip-spot-pin {
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.32), 0 0 0 3px rgb(255 255 255 / 0.12);
+    transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trip-spot-marker:hover .trip-spot-pin {
+    transform: scale(1.14);
+  }
+
+  .trip-spot-floating-label {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--card) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .trip-spot-marker[data-label-collided='true'] .trip-spot-floating-label {
+    opacity: 0;
+  }
+
+  /* 밀집 구간에서 숨겨진 이름표도 마우스를 올리면 즉시 선명하게 표시 */
+  .trip-spot-marker:hover .trip-spot-floating-label {
+    opacity: 1 !important;
+  }
+
+  .trip-zone-rim-badge {
+    cursor: pointer;
+    z-index: 8;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    padding: 2.5px 8.5px;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--card) 92%, transparent);
+    backdrop-filter: blur(8px);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--foreground);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.22);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .trip-zone-rim-badge:hover {
+    transform: translateY(-1px) scale(1.04);
+    z-index: 24;
+  }
+</style>
+
+<script>
+  interface MapLinks {
+    naver?: string;
+    kakao?: string;
+    google: string;
+  }
+
+  interface NormalizedSpot {
+    id: string;
+    name: string;
+    lat: number;
+    lng: number;
+    type: 'spot' | 'stay' | 'hub';
+    customMarkerLabel: string | null;
+    markerLabel: string;
+    badge?: string;
+    info?: string;
+    color: string;
+    groups: string[];
+    shared: boolean;
+    links: MapLinks;
+  }
+
+  interface NormalizedZone {
+    id: string;
+    name: string;
+    lat: number;
+    lng: number;
+    radiusMeters: number;
+    polygon?: [number, number][];
+    color: string;
+    badge?: string;
+    reason?: string;
+    showLabel: boolean;
+    groups: string[];
+    shared: boolean;
+    links: MapLinks;
+  }
+
+  interface NormalizedRoute {
+    id: string;
+    from: string | [number, number];
+    to: string | [number, number];
+    label?: string;
+    color?: string;
+    dashed: boolean;
+    curved: boolean;
+    via?: [number, number][];
+    groups: string[];
+    shared: boolean;
+  }
+
+  interface TripMapPayload {
+    spots: NormalizedSpot[];
+    zones: NormalizedZone[];
+    routes: NormalizedRoute[];
+    groups: string[];
+    initialGroup: string;
+    showLabels: boolean;
+    showRouteLabels: boolean;
+    interactiveByDefault: boolean;
+    center: [number, number] | null;
+    zoom: number | null;
+    isEn: boolean;
+  }
+
+  const LIGHT_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron';
+  const DARK_STYLE_URL = 'https://tiles.openfreemap.org/styles/dark';
+
+  function escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function buildPopupHtml(opts: {
+    title: string;
+    badge?: string;
+    description?: string;
+    color: string;
+    links: MapLinks;
+    isEn: boolean;
+  }): string {
+    const badgeHtml = opts.badge
+      ? `<span style="display:inline-block;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;background:color-mix(in oklab, ${escapeHtml(opts.color)} 18%, transparent);color:${escapeHtml(opts.color)};">${escapeHtml(opts.badge)}</span>`
+      : '';
+
+    const descHtml = opts.description
+      ? `<p style="margin:5px 0 0;color:var(--muted-foreground);font-size:11.5px;line-height:1.45;">${escapeHtml(opts.description)}</p>`
+      : '';
+
+    const linkBtns: string[] = [];
+    if (opts.links.naver) {
+      linkBtns.push(
+        `<a href="${escapeHtml(opts.links.naver)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--foreground);text-decoration:none;font-size:11px;font-weight:600;"><span style="width:6px;height:6px;border-radius:9999px;background:#03C75A;"></span>네이버</a>`
+      );
+    }
+    if (opts.links.kakao) {
+      linkBtns.push(
+        `<a href="${escapeHtml(opts.links.kakao)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--foreground);text-decoration:none;font-size:11px;font-weight:600;"><span style="width:6px;height:6px;border-radius:9999px;background:#FEE500;box-shadow:0 0 0 1px rgba(0,0,0,0.18);"></span>카카오</a>`
+      );
+    }
+    linkBtns.push(
+      `<a href="${escapeHtml(opts.links.google)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--foreground);text-decoration:none;font-size:11px;font-weight:600;"><span style="width:6px;height:6px;border-radius:9999px;background:#4285F4;"></span>${opts.isEn ? 'Google Maps' : 'Google 지도'}</a>`
+    );
+
+    return `
+      <div style="min-width:195px;max-width:255px;padding-right:10px;">
+        ${badgeHtml ? `<div style="margin-bottom:3px;">${badgeHtml}</div>` : ''}
+        <div style="font-weight:700;font-size:13px;color:var(--foreground);line-height:1.35;">${escapeHtml(opts.title)}</div>
+        ${descHtml}
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;padding-top:7px;border-top:1px solid var(--border);">
+          ${linkBtns.join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function createCirclePolygonLngLat(lat: number, lng: number, radiusMeters: number, steps = 64): [number, number][] {
+    const coords: [number, number][] = [];
+    const latRad = (lat * Math.PI) / 180;
+    const degLat = radiusMeters / 111320;
+    const degLng = radiusMeters / (111320 * Math.max(Math.cos(latRad), 0.2));
+
+    for (let i = 0; i <= steps; i += 1) {
+      const angle = (i / steps) * Math.PI * 2;
+      coords.push([lng + Math.cos(angle) * degLng, lat + Math.sin(angle) * degLat]);
+    }
+    return coords;
+  }
+
+  function computeCurvedLngLat(startLatLng: [number, number], endLatLng: [number, number], segments = 24): [number, number][] {
+    const [lat1, lng1] = startLatLng;
+    const [lat2, lng2] = endLatLng;
+    const dLat = lat2 - lat1;
+    const dLng = lng2 - lng1;
+    const midLat = (lat1 + lat2) / 2;
+    const midLng = (lng1 + lng2) / 2;
+    const ctrlLat = midLat - dLng * 0.13;
+    const ctrlLng = midLng + dLat * 0.13;
+
+    const pts: [number, number][] = [];
+    for (let i = 0; i <= segments; i += 1) {
+      const t = i / segments;
+      const inv = 1 - t;
+      const lat = inv * inv * lat1 + 2 * inv * t * ctrlLat + t * t * lat2;
+      const lng = inv * inv * lng1 + 2 * inv * t * ctrlLng + t * t * lng2;
+      pts.push([lng, lat]);
+    }
+    return pts;
+  }
+
+  function matchesGroup(itemGroups: string[], shared: boolean, activeGroup: string): boolean {
+    if (activeGroup === '__all__') return true;
+    if (itemGroups.length === 0) return shared;
+    return itemGroups.includes(activeGroup);
+  }
+
+  /** 벡터 지도 심볼 한국어/영어 로컬라이징 + 불필요한 고속도로 번호판 노이즈 제거 + 다크모드 수면 톤 보정 */
+  function polishBaseStyle(map: import('maplibre-gl').Map, isDark: boolean, isEn: boolean) {
+    const style = map.getStyle();
+    if (!style || !style.layers) return;
+
+    if (isDark) {
+      if (map.getLayer('background')) {
+        map.setPaintProperty('background', 'background-color', '#0f141e');
+      }
+      if (map.getLayer('water')) {
+        map.setPaintProperty('water', 'fill-color', '#162235');
+      }
+    }
+
+    const localizedField = isEn
+      ? ['coalesce', ['get', 'name:en'], ['get', 'name:latin'], ['get', 'name']]
+      : ['coalesce', ['get', 'name:ko'], ['get', 'name:en'], ['get', 'name']];
+
+    for (const layer of style.layers) {
+      // 도로 번호판(shield) 아이콘 노이즈 숨김
+      if (layer.id.includes('shield') || layer.id.includes('highway-name-path')) {
+        try {
+          map.setLayoutProperty(layer.id, 'visibility', 'none');
+        } catch {
+          // ignore unsupported layout layers
+        }
+        continue;
+      }
+
+      if (layer.type === 'symbol' && layer.layout && 'text-field' in layer.layout) {
+        try {
+          map.setLayoutProperty(layer.id, 'text-field', localizedField as unknown as string);
+        } catch {
+          // keep default expression if custom coalesce fails on specific layer
+        }
+      }
+    }
+  }
+
+  async function mountSingleMap(root: HTMLElement) {
+    if (root.dataset.initialized === 'true') return;
+    root.dataset.initialized = 'true';
+
+    const dataEl = root.querySelector<HTMLScriptElement>('script.trip-map-data');
+    const canvasEl = root.querySelector<HTMLElement>('.trip-map-canvas');
+    if (!dataEl || !canvasEl || !dataEl.textContent) return;
+
+    let payload: TripMapPayload;
+    try {
+      payload = JSON.parse(dataEl.textContent) as TripMapPayload;
+    } catch {
+      return;
+    }
+
+    const [maplibregl, workerMod] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'),
+    ]);
+    maplibregl.setWorkerUrl(workerMod.default);
+
+    const isDarkNow = () => document.documentElement.classList.contains('dark');
+
+    const fallbackCenter: [number, number] = payload.center
+      ? [payload.center[1], payload.center[0]]
+      : payload.spots[0]
+        ? [payload.spots[0].lng, payload.spots[0].lat]
+        : payload.zones[0]
+          ? [payload.zones[0].lng, payload.zones[0].lat]
+          : [139.75, 35.68];
+
+    const map = new maplibregl.Map({
+      container: canvasEl,
+      style: isDarkNow() ? DARK_STYLE_URL : LIGHT_STYLE_URL,
+      center: fallbackCenter,
+      zoom: payload.zoom ?? 11,
+      attributionControl: false,
+      dragRotate: false,
+      pitchWithRotate: false,
+      dragPan: payload.interactiveByDefault,
+      scrollZoom: payload.interactiveByDefault,
+      touchZoomRotate: payload.interactiveByDefault,
+      doubleClickZoom: payload.interactiveByDefault,
+      boxZoom: payload.interactiveByDefault,
+      keyboard: payload.interactiveByDefault,
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+    // 외부 벡터 스타일의 선택적 패턴 스프라이트 누락 경고 방지 (1x1 투명 픽셀 등록)
+    map.on('styleimagemissing', e => {
+      if (!map.hasImage(e.id)) {
+        map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array([0, 0, 0, 0]) });
+      }
+    });
+
+    const coordById = new Map<string, { coord: [number, number]; color: string }>();
+    for (const z of payload.zones) coordById.set(z.id, { coord: [z.lat, z.lng], color: z.color });
+    for (const s of payload.spots) coordById.set(s.id, { coord: [s.lat, s.lng], color: s.color });
+
+    let currentGroup = payload.initialGroup;
+    let activePopup: import('maplibre-gl').Popup | null = null;
+
+    function openCleanPopup(lngLat: [number, number], html: string, offsetPx = 16) {
+      if (activePopup) activePopup.remove();
+      activePopup = new maplibregl.Popup({
+        offset: offsetPx,
+        maxWidth: '280px',
+        closeButton: true,
+        closeOnClick: true,
+      })
+        .setLngLat(lngLat)
+        .setHTML(html)
+        .addTo(map);
+    }
+
+    // 권역 상단 테두리(북쪽 가장자리) 배지 마커 생성 — 중심 스팟 핀들과 절대 겹치지 않음
+    const zoneRecords = payload.zones.map(zone => {
+      const polygonCoords =
+        zone.polygon && zone.polygon.length >= 3
+          ? [...zone.polygon.map(([lat, lng]): [number, number] => [lng, lat]), [zone.polygon[0][1], zone.polygon[0][0]]]
+          : createCirclePolygonLngLat(zone.lat, zone.lng, zone.radiusMeters);
+
+      const degLat = zone.radiusMeters / 111320;
+      const degLng = zone.radiusMeters / (111320 * Math.max(Math.cos((zone.lat * Math.PI) / 180), 0.2));
+
+      const northLat =
+        zone.polygon && zone.polygon.length >= 3
+          ? Math.max(...zone.polygon.map(p => p[0]))
+          : zone.lat + degLat;
+      const southLat =
+        zone.polygon && zone.polygon.length >= 3
+          ? Math.min(...zone.polygon.map(p => p[0]))
+          : zone.lat - degLat;
+      const eastLng =
+        zone.polygon && zone.polygon.length >= 3
+          ? Math.max(...zone.polygon.map(p => p[1]))
+          : zone.lng + degLng;
+      const westLng =
+        zone.polygon && zone.polygon.length >= 3
+          ? Math.min(...zone.polygon.map(p => p[1]))
+          : zone.lng - degLng;
+
+      const rimCandidates: Array<{
+        lngLat: [number, number];
+        anchor: 'bottom' | 'top' | 'left' | 'right';
+        offset: [number, number];
+      }> = [
+        { lngLat: [zone.lng, northLat], anchor: 'bottom', offset: [0, -5] },
+        { lngLat: [zone.lng, southLat], anchor: 'top', offset: [0, 5] },
+        { lngLat: [eastLng, zone.lat], anchor: 'left', offset: [6, 0] },
+        { lngLat: [westLng, zone.lat], anchor: 'right', offset: [-6, 0] },
+      ];
+
+      const popupHtml = buildPopupHtml({
+        title: zone.name,
+        badge: zone.badge ?? (payload.isEn ? 'Stay Zone' : '추천 숙소 권역'),
+        description: zone.reason,
+        color: zone.color,
+        links: zone.links,
+        isEn: payload.isEn,
+      });
+
+      let rimMarker: import('maplibre-gl').Marker | null = null;
+      let rimEl: HTMLButtonElement | null = null;
+      let activeCand = rimCandidates[0];
+
+      if (zone.showLabel) {
+        rimEl = document.createElement('button');
+        rimEl.type = 'button';
+        rimEl.className = 'trip-zone-rim-badge';
+        rimEl.style.border = `1.5px solid ${zone.color}`;
+        const shortText = zone.badge ?? zone.name;
+        rimEl.innerHTML = `<span style="width:6px;height:6px;border-radius:9999px;background:${escapeHtml(zone.color)};"></span><span>${escapeHtml(shortText)}</span>`;
+        rimEl.addEventListener('click', e => {
+          e.stopPropagation();
+          openCleanPopup(activeCand.lngLat, popupHtml, 10);
+        });
+        rimMarker = new maplibregl.Marker({
+          element: rimEl,
+          anchor: activeCand.anchor,
+          offset: activeCand.offset,
+        }).setLngLat(activeCand.lngLat);
+      }
+
+      return {
+        zone,
+        polygonCoords,
+        rimCandidates,
+        getActiveCand: () => activeCand,
+        setActiveCand: (next: (typeof rimCandidates)[number]) => {
+          activeCand = next;
+        },
+        getRimLngLat: () => activeCand.lngLat,
+        popupHtml,
+        rimMarker,
+        rimEl,
+      };
+    });
+
+    // 방문지·거점 핀 마커 생성
+    const spotRecords = payload.spots.map(spot => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'trip-spot-marker';
+
+      const pin = document.createElement('div');
+      pin.className = 'trip-spot-pin';
+      pin.style.background = spot.color;
+
+      const pinText = document.createElement('span');
+      pinText.style.cssText = 'color:#fff;font-size:11.5px;font-weight:800;line-height:1;';
+
+      if (spot.type === 'stay') {
+        pin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>`;
+      } else if (spot.type === 'hub') {
+        pin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/></svg>`;
+      } else {
+        pinText.textContent = spot.markerLabel || '•';
+        pin.appendChild(pinText);
+      }
+
+      wrapper.appendChild(pin);
+
+      let labelEl: HTMLElement | null = null;
+      if (payload.showLabels) {
+        labelEl = document.createElement('div');
+        labelEl.className = 'trip-spot-floating-label';
+        labelEl.textContent = spot.name;
+        wrapper.appendChild(labelEl);
+      }
+
+      const popupHtml = buildPopupHtml({
+        title: spot.name,
+        badge: spot.badge,
+        description: spot.info,
+        color: spot.color,
+        links: spot.links,
+        isEn: payload.isEn,
+      });
+
+      wrapper.addEventListener('click', e => {
+        e.stopPropagation();
+        openCleanPopup([spot.lng, spot.lat], popupHtml, 16);
+      });
+
+      const marker = new maplibregl.Marker({ element: wrapper, anchor: 'center' }).setLngLat([spot.lng, spot.lat]);
+
+      return { spot, marker, wrapper, pinText, labelEl, popupHtml, mounted: false };
+    });
+
+    const routeRecords = payload.routes
+      .map(route => {
+        const fromResolved =
+          typeof route.from === 'string' ? coordById.get(route.from) : { coord: route.from, color: '#64748b' };
+        const toResolved =
+          typeof route.to === 'string' ? coordById.get(route.to) : { coord: route.to, color: '#64748b' };
+        if (!fromResolved || !toResolved) return null;
+
+        const color = route.color ?? fromResolved.color ?? '#3b82f6';
+        let coordsLngLat: [number, number][];
+        if (route.via && route.via.length > 0) {
+          coordsLngLat = [
+            [fromResolved.coord[1], fromResolved.coord[0]],
+            ...route.via.map(([lat, lng]): [number, number] => [lng, lat]),
+            [toResolved.coord[1], toResolved.coord[0]],
+          ];
+        } else if (route.curved) {
+          coordsLngLat = computeCurvedLngLat(fromResolved.coord, toResolved.coord);
+        } else {
+          coordsLngLat = [
+            [fromResolved.coord[1], fromResolved.coord[0]],
+            [toResolved.coord[1], toResolved.coord[0]],
+          ];
+        }
+
+        const midCoord = coordsLngLat[Math.floor(coordsLngLat.length / 2)];
+        return { route, color, coordsLngLat, midCoord };
+      })
+      .filter((r): r is NonNullable<typeof r> => r !== null);
+
+    function buildGeoJsonForActiveGroup() {
+      const zoneFeatures = zoneRecords
+        .filter(zr => matchesGroup(zr.zone.groups, zr.zone.shared, currentGroup))
+        .map(zr => ({
+          type: 'Feature' as const,
+          properties: {
+            id: zr.zone.id,
+            color: zr.zone.color,
+          },
+          geometry: {
+            type: 'Polygon' as const,
+            coordinates: [zr.polygonCoords],
+          },
+        }));
+
+      const activeRoutes = routeRecords.filter(rr =>
+        matchesGroup(rr.route.groups, rr.route.shared, currentGroup)
+      );
+
+      const routeLineFeatures = activeRoutes.map(rr => ({
+        type: 'Feature' as const,
+        properties: {
+          id: rr.route.id,
+          color: rr.color,
+          dashed: rr.route.dashed,
+        },
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: rr.coordsLngLat,
+        },
+      }));
+
+      const routeLabelFeatures = payload.showRouteLabels
+        ? activeRoutes
+            .filter(rr => Boolean(rr.route.label))
+            .map(rr => ({
+              type: 'Feature' as const,
+              properties: {
+                label: rr.route.label ?? '',
+              },
+              geometry: {
+                type: 'Point' as const,
+                coordinates: rr.midCoord,
+              },
+            }))
+        : [];
+
+      return {
+        zonesGeoJson: { type: 'FeatureCollection' as const, features: zoneFeatures },
+        routesGeoJson: { type: 'FeatureCollection' as const, features: routeLineFeatures },
+        routeLabelsGeoJson: { type: 'FeatureCollection' as const, features: routeLabelFeatures },
+      };
+    }
+
+    function ensureCustomVectorLayers() {
+      const dark = isDarkNow();
+      const { zonesGeoJson, routesGeoJson, routeLabelsGeoJson } = buildGeoJsonForActiveGroup();
+
+      if (!map.getSource('trip-zones')) {
+        map.addSource('trip-zones', { type: 'geojson', data: zonesGeoJson });
+        map.addLayer({
+          id: 'trip-zones-glow',
+          type: 'line',
+          source: 'trip-zones',
+          paint: {
+            'line-color': ['get', 'color'],
+            'line-width': 8,
+            'line-opacity': dark ? 0.16 : 0.12,
+            'line-blur': 4,
+          },
+        });
+        map.addLayer({
+          id: 'trip-zones-fill',
+          type: 'fill',
+          source: 'trip-zones',
+          paint: {
+            'fill-color': ['get', 'color'],
+            'fill-opacity': dark ? 0.15 : 0.12,
+          },
+        });
+        map.addLayer({
+          id: 'trip-zones-outline',
+          type: 'line',
+          source: 'trip-zones',
+          paint: {
+            'line-color': ['get', 'color'],
+            'line-width': 1.75,
+            'line-dasharray': [3, 2.2],
+            'line-opacity': 0.88,
+          },
+        });
+
+        // 권역 원 내부 클릭 시에도 팝업 오픈
+        map.on('click', 'trip-zones-fill', e => {
+          const feature = e.features?.[0];
+          const zoneId = feature?.properties?.id;
+          const found = zoneRecords.find(z => z.zone.id === zoneId);
+          if (found && e.lngLat) {
+            openCleanPopup([e.lngLat.lng, e.lngLat.lat], found.popupHtml, 8);
+          }
+        });
+        map.on('mouseenter', 'trip-zones-fill', () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'trip-zones-fill', () => {
+          map.getCanvas().style.cursor = '';
+        });
+      } else {
+        (map.getSource('trip-zones') as import('maplibre-gl').GeoJSONSource).setData(zonesGeoJson);
+      }
+
+      if (!map.getSource('trip-routes')) {
+        map.addSource('trip-routes', { type: 'geojson', data: routesGeoJson });
+        map.addLayer({
+          id: 'trip-routes-casing',
+          type: 'line',
+          source: 'trip-routes',
+          paint: {
+            'line-color': dark ? '#0f141e' : '#ffffff',
+            'line-width': 4.5,
+            'line-opacity': 0.65,
+          },
+        });
+        map.addLayer({
+          id: 'trip-routes-dashed',
+          type: 'line',
+          source: 'trip-routes',
+          filter: ['==', ['get', 'dashed'], true],
+          paint: {
+            'line-color': ['get', 'color'],
+            'line-width': 2.2,
+            'line-dasharray': [2.2, 2.2],
+            'line-opacity': 0.92,
+          },
+        });
+        map.addLayer({
+          id: 'trip-routes-solid',
+          type: 'line',
+          source: 'trip-routes',
+          filter: ['==', ['get', 'dashed'], false],
+          paint: {
+            'line-color': ['get', 'color'],
+            'line-width': 2.4,
+            'line-opacity': 0.92,
+          },
+        });
+      } else {
+        (map.getSource('trip-routes') as import('maplibre-gl').GeoJSONSource).setData(routesGeoJson);
+      }
+
+      if (!map.getSource('trip-route-labels')) {
+        map.addSource('trip-route-labels', { type: 'geojson', data: routeLabelsGeoJson });
+        map.addLayer({
+          id: 'trip-route-labels-layer',
+          type: 'symbol',
+          source: 'trip-route-labels',
+          layout: {
+            'text-field': ['get', 'label'],
+            'text-font': ['Noto Sans Regular'],
+            'text-size': 11,
+            'text-allow-overlap': false,
+            'text-padding': 6,
+          },
+          paint: {
+            'text-color': dark ? '#cbd5e1' : '#334155',
+            'text-halo-color': dark ? '#0f141e' : '#ffffff',
+            'text-halo-width': 2,
+          },
+        });
+      } else {
+        (map.getSource('trip-route-labels') as import('maplibre-gl').GeoJSONSource).setData(routeLabelsGeoJson);
+      }
+    }
+
+    /** 화면 픽셀 거리 기반 스마트 라벨 충돌 방지 — 밀집된 핀들은 번호만 남기고 줌인 시 자동 노출 */
+    function updateLabelCollisions() {
+      if (!payload.showLabels) return;
+
+      interface Box {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+      }
+
+      const occupied: Box[] = [];
+      const intersects = (a: Box, b: Box) =>
+        !(a.x2 < b.x1 || a.x1 > b.x2 || a.y2 < b.y1 || a.y1 > b.y2);
+
+      // 1) 활성 핀 위치를 먼저 확보한 뒤, 권역 테두리 배지가 핀·다른 배지와 가장 멀리 떨어지는 방향(북/남/동/서) 자동 선택
+      const activeSpots = spotRecords.filter(sr =>
+        matchesGroup(sr.spot.groups, sr.spot.shared, currentGroup)
+      );
+
+      const spotPoints = activeSpots.map(sr => map.project([sr.spot.lng, sr.spot.lat]));
+      for (const pt of spotPoints) {
+        occupied.push({
+          x1: pt.x - 15,
+          y1: pt.y - 15,
+          x2: pt.x + 15,
+          y2: pt.y + 15,
+        });
+      }
+
+      const placedRimCenters: Array<{ x: number; y: number }> = [];
+
+      for (const zr of zoneRecords) {
+        if (!matchesGroup(zr.zone.groups, zr.zone.shared, currentGroup) || !zr.rimEl || !zr.rimMarker) continue;
+        const halfW = Math.max(zr.rimEl.offsetWidth / 2, 46);
+
+        let bestCand = zr.rimCandidates[0];
+        let bestBox: Box | null = null;
+        let bestCenter = { x: 0, y: 0 };
+        let bestScore = -Infinity;
+
+        for (const cand of zr.rimCandidates) {
+          const pt = map.project(cand.lngLat);
+          let cx = pt.x;
+          let cy = pt.y;
+          if (cand.anchor === 'bottom') cy -= 14;
+          else if (cand.anchor === 'top') cy += 14;
+          else if (cand.anchor === 'left') cx += halfW + 6;
+          else if (cand.anchor === 'right') cx -= halfW + 6;
+
+          const box: Box = {
+            x1: cx - halfW - 4,
+            y1: cy - 13,
+            x2: cx + halfW + 4,
+            y2: cy + 13,
+          };
+
+          let minDist = Infinity;
+          for (const sp of spotPoints) {
+            const d = Math.hypot(cx - sp.x, cy - sp.y);
+            if (d < minDist) minDist = d;
+          }
+          for (const rc of placedRimCenters) {
+            const d = Math.hypot(cx - rc.x, cy - rc.y);
+            if (d < minDist) minDist = d;
+          }
+          const hasOverlap = occupied.some(existing => intersects(box, existing));
+          const score = (hasOverlap ? -500 : 0) + minDist + (cand.anchor === 'bottom' ? 8 : 0);
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestCand = cand;
+            bestBox = box;
+            bestCenter = { x: cx, y: cy };
+          }
+        }
+
+        if (bestCand !== zr.getActiveCand()) {
+          zr.setActiveCand(bestCand);
+          zr.rimMarker.remove();
+          zr.rimMarker = new maplibregl.Marker({
+            element: zr.rimEl,
+            anchor: bestCand.anchor,
+            offset: bestCand.offset,
+          })
+            .setLngLat(bestCand.lngLat)
+            .addTo(map);
+        }
+
+        if (bestBox) occupied.push(bestBox);
+        placedRimCenters.push(bestCenter);
+      }
+
+      // 2) 각 스팟 플로팅 라벨 박스가 기존 핀/배지/다른 라벨과 겹치는지 판정
+      for (const sr of activeSpots) {
+        if (!sr.labelEl) continue;
+        const pt = map.project([sr.spot.lng, sr.spot.lat]);
+        const estWidth = Math.max(sr.labelEl.offsetWidth, sr.spot.name.length * 10 + 18);
+        const box: Box = {
+          x1: pt.x - estWidth / 2 - 3,
+          y1: pt.y + 16,
+          x2: pt.x + estWidth / 2 + 3,
+          y2: pt.y + 38,
+        };
+
+        const collided = occupied.some(existing => intersects(box, existing));
+        if (collided) {
+          sr.wrapper.setAttribute('data-label-collided', 'true');
+        } else {
+          sr.wrapper.removeAttribute('data-label-collided');
+          occupied.push(box);
+        }
+      }
+    }
+
+    function fitActiveBounds(animate: boolean) {
+      if (payload.center && payload.zoom !== null && currentGroup === payload.initialGroup) {
+        map.jumpTo({ center: [payload.center[1], payload.center[0]], zoom: payload.zoom });
+        return;
+      }
+
+      const bounds = new maplibregl.LngLatBounds();
+      let hasPoint = false;
+
+      for (const zr of zoneRecords) {
+        if (!matchesGroup(zr.zone.groups, zr.zone.shared, currentGroup)) continue;
+        for (const [lng, lat] of zr.polygonCoords) {
+          bounds.extend([lng, lat]);
+          hasPoint = true;
+        }
+      }
+
+      for (const sr of spotRecords) {
+        if (!matchesGroup(sr.spot.groups, sr.spot.shared, currentGroup)) continue;
+        bounds.extend([sr.spot.lng, sr.spot.lat]);
+        hasPoint = true;
+      }
+
+      if (hasPoint) {
+        map.fitBounds(bounds, {
+          padding: { top: 54, bottom: 48, left: 48, right: 48 },
+          maxZoom: 14.5,
+          duration: animate ? 650 : 0,
+        });
+      }
+    }
+
+    function syncMarkersAndUi(animateBounds: boolean) {
+      if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+      }
+
+      // 권역 테두리 배지 표시 동기화
+      for (const zr of zoneRecords) {
+        if (!zr.rimMarker) continue;
+        const visible = matchesGroup(zr.zone.groups, zr.zone.shared, currentGroup);
+        if (visible) zr.rimMarker.addTo(map);
+        else zr.rimMarker.remove();
+      }
+
+      // 방문지 마커 표시 동기화 + 탭별 1, 2, 3... 연속 번호 자동 재정렬
+      let seq = 0;
+      for (const sr of spotRecords) {
+        const visible = matchesGroup(sr.spot.groups, sr.spot.shared, currentGroup);
+        if (visible) {
+          if (sr.spot.type === 'spot') {
+            seq += 1;
+            const displayNum = sr.spot.customMarkerLabel ?? String(seq);
+            sr.pinText.textContent = displayNum;
+            const chipBadge = root.querySelector<HTMLElement>(`[data-chip-num="${sr.spot.id}"]`);
+            if (chipBadge) chipBadge.textContent = displayNum;
+          }
+          if (!sr.mounted) {
+            sr.marker.addTo(map);
+            sr.mounted = true;
+          }
+        } else if (sr.mounted) {
+          sr.marker.remove();
+          sr.mounted = false;
+        }
+      }
+
+      // 하단 포커스 칩 & 요약 카드 표시 동기화
+      root.querySelectorAll<HTMLElement>('[data-item-groups]').forEach(el => {
+        const raw = el.dataset.itemGroups ?? '';
+        const itemGroups = raw ? raw.split('|').filter(Boolean) : [];
+        const shared = el.dataset.itemShared !== 'false';
+        const visible = matchesGroup(itemGroups, shared, currentGroup);
+        if (visible) el.removeAttribute('data-trip-hidden');
+        else el.setAttribute('data-trip-hidden', 'true');
+      });
+
+      // 세그먼트 탭 활성 스타일 동기화
+      root.querySelectorAll<HTMLButtonElement>('.trip-group-tab').forEach(btn => {
+        const active = btn.dataset.groupTab === currentGroup;
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        btn.classList.toggle('bg-card', active);
+        btn.classList.toggle('text-foreground', active);
+        btn.classList.toggle('shadow-xs', active);
+        btn.classList.toggle('ring-1', active);
+        btn.classList.toggle('ring-border', active);
+        btn.classList.toggle('text-muted-foreground', !active);
+      });
+
+      if (map.isStyleLoaded()) {
+        ensureCustomVectorLayers();
+      }
+
+      fitActiveBounds(animateBounds);
+      requestAnimationFrame(updateLabelCollisions);
+    }
+
+    map.on('style.load', () => {
+      polishBaseStyle(map, isDarkNow(), payload.isEn);
+      ensureCustomVectorLayers();
+      updateLabelCollisions();
+    });
+
+    map.on('move', updateLabelCollisions);
+    map.on('zoomend', updateLabelCollisions);
+
+    syncMarkersAndUi(false);
+
+    // 다크모드 실시간 전환 시 벡터 스타일 스위칭
+    let prevDark = isDarkNow();
+    const themeObserver = new MutationObserver(() => {
+      const nextDark = isDarkNow();
+      if (nextDark === prevDark) return;
+      prevDark = nextDark;
+      map.setStyle(nextDark ? DARK_STYLE_URL : LIGHT_STYLE_URL);
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    // 탭 전환
+    root.querySelectorAll<HTMLButtonElement>('.trip-group-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentGroup = btn.dataset.groupTab ?? '__all__';
+        syncMarkersAndUi(true);
+      });
+    });
+
+    // 전체 범위 리셋
+    root.querySelector<HTMLButtonElement>('.trip-reset-btn')?.addEventListener('click', () => {
+      if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+      }
+      fitActiveBounds(true);
+    });
+
+    // 하단 칩 클릭 → 부드러운 이동 + 팝업 오픈
+    root.querySelectorAll<HTMLButtonElement>('[data-focus-zone]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const zoneId = btn.dataset.focusZone;
+        const found = zoneRecords.find(z => z.zone.id === zoneId);
+        if (!found) return;
+        const zBounds = new maplibregl.LngLatBounds();
+        for (const [lng, lat] of found.polygonCoords) zBounds.extend([lng, lat]);
+        map.fitBounds(zBounds, { padding: 68, maxZoom: 14, duration: 650 });
+        map.once('moveend', () => {
+          openCleanPopup(found.getRimLngLat(), found.popupHtml, 10);
+        });
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('[data-focus-spot]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const spotId = btn.dataset.focusSpot;
+        const found = spotRecords.find(s => s.spot.id === spotId);
+        if (!found) return;
+        map.flyTo({
+          center: [found.spot.lng, found.spot.lat],
+          zoom: Math.max(map.getZoom(), 13.4),
+          duration: 650,
+        });
+        map.once('moveend', () => {
+          openCleanPopup([found.spot.lng, found.spot.lat], found.popupHtml, 16);
+        });
+      });
+    });
+
+    // 스크롤 간섭 방지 잠금/해제 토글
+    let isInteractive = payload.interactiveByDefault;
+    const lockBtn = root.querySelector<HTMLButtonElement>('.trip-lock-btn');
+    const lockDot = root.querySelector<HTMLElement>('.trip-lock-dot');
+    const lockText = root.querySelector<HTMLElement>('.trip-lock-text');
+    const hintEl = root.querySelector<HTMLElement>('.trip-lock-hint');
+    let hintTimer: ReturnType<typeof setTimeout> | undefined;
+
+    function setInteractiveState(next: boolean) {
+      isInteractive = next;
+      canvasEl!.dataset.locked = next ? 'false' : 'true';
+
+      if (next) {
+        map.dragPan.enable();
+        map.scrollZoom.enable();
+        map.touchZoomRotate.enable();
+        map.doubleClickZoom.enable();
+        map.boxZoom.enable();
+        map.keyboard.enable();
+        hintEl?.classList.remove('opacity-100');
+        hintEl?.classList.add('opacity-0');
+      } else {
+        map.dragPan.disable();
+        map.scrollZoom.disable();
+        map.touchZoomRotate.disable();
+        map.doubleClickZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+      }
+
+      if (lockBtn && lockDot && lockText) {
+        lockBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
+        lockText.textContent = next
+          ? lockBtn.dataset.lockLabel ?? ''
+          : lockBtn.dataset.unlockLabel ?? '';
+        lockDot.classList.toggle('bg-emerald-500', next);
+        lockDot.classList.toggle('bg-amber-500', !next);
+      }
+    }
+
+    setInteractiveState(isInteractive);
+
+    lockBtn?.addEventListener('click', () => {
+      setInteractiveState(!isInteractive);
+    });
+
+    function showLockedHint() {
+      if (isInteractive || !hintEl) return;
+      hintEl.classList.remove('opacity-0');
+      hintEl.classList.add('opacity-100');
+      if (hintTimer) clearTimeout(hintTimer);
+      hintTimer = setTimeout(() => {
+        hintEl.classList.remove('opacity-100');
+        hintEl.classList.add('opacity-0');
+      }, 1700);
+    }
+
+    canvasEl.addEventListener('wheel', showLockedHint, { passive: true });
+    let pointerDownPos: { x: number; y: number } | null = null;
+    canvasEl.addEventListener(
+      'pointerdown',
+      e => {
+        if (e.pointerType === 'mouse') pointerDownPos = { x: e.clientX, y: e.clientY };
+      },
+      { passive: true }
+    );
+    canvasEl.addEventListener(
+      'pointermove',
+      e => {
+        if (!isInteractive && pointerDownPos && e.buttons === 1) {
+          const dx = Math.abs(e.clientX - pointerDownPos.x);
+          const dy = Math.abs(e.clientY - pointerDownPos.y);
+          if (dx + dy > 8) {
+            showLockedHint();
+            pointerDownPos = null;
+          }
+        }
+      },
+      { passive: true }
+    );
+    canvasEl.addEventListener(
+      'pointerup',
+      () => {
+        pointerDownPos = null;
+      },
+      { passive: true }
+    );
+  }
+
+  function observeTripMaps() {
+    const roots = document.querySelectorAll<HTMLElement>('.trip-map-root:not([data-observed="true"])');
+    if (roots.length === 0) return;
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        entries => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              io.unobserve(entry.target);
+              void mountSingleMap(entry.target as HTMLElement);
+            }
+          }
+        },
+        { rootMargin: '250px 0px' }
+      );
+
+      roots.forEach(root => {
+        root.dataset.observed = 'true';
+        io.observe(root);
+      });
+    } else {
+      roots.forEach(root => {
+        root.dataset.observed = 'true';
+        void mountSingleMap(root);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeTripMaps);
+  } else {
+    observeTripMaps();
+  }
+  document.addEventListener('astro:page-load', observeTripMaps);
+</script>

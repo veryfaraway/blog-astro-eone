@@ -55,8 +55,8 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      // Chart.astro는 MDX 포스트 내부에서만 import되어 초기 페이지 엔트리 스캔에서 누락될 수 있으므로 사전 번들링 고정
-      include: ['chart.js'],
+      // Chart.astro · TripMap.astro는 MDX 포스트 내부에서만 import되어 초기 페이지 엔트리 스캔에서 누락될 수 있으므로 사전 번들링 고정
+      include: ['chart.js', 'maplibre-gl'],
     },
   },
   i18n: {
