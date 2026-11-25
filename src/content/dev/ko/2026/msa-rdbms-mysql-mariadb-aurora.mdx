@@ -329,4 +329,4 @@ flowchart TD
 
 레거시 종속이 없는 2026년 신규 MSA 백엔드라면 **PostgreSQL 18·19**(AWS 매니지드 핵심계라면 **Aurora PostgreSQL**)를 기본값으로 두고 출발하는 편이 가장 안전합니다. 기존 노하우 때문에 MySQL 계열을 선택하더라도 JSON 내부 포맷, 무료 Thread Pool 유무, AWS Aurora 지원 여부까지 완전히 갈라진 MySQL과 MariaDB를 별개 엔진으로 보고 의사결정서를 작성해야 오픈 이후의 마이그레이션 재작업과 요금 폭탄을 피할 수 있습니다.
 
-관계형 DB의 기준선을 잡았다면 다음 과제는 RDBMS만으로 감당하기 버거운 초고속 키-밸류 조회와 비정형 검색 영역입니다. 이어지는 **시리즈 2편**에서는 MSA 영속성 계층의 나머지 퍼즐인 **MongoDB · DynamoDB · OpenSearch**의 내부 구조와 적재적소 배치 공식을 다룹니다.
+관계형 DB의 기준선을 잡았다면 다음 과제는 RDBMS만으로 감당하기 버거운 초고속 키-밸류 조회와 비정형 검색 영역입니다. 이어지는 **[시리즈 2편](/dev/msa-nosql-mongodb-dynamodb-opensearch)**에서는 MSA 영속성 계층의 나머지 퍼즐인 **MongoDB · DynamoDB · OpenSearch**의 내부 구조와 적재적소 배치 공식을 다룹니다.

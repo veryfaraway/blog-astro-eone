@@ -1,0 +1,224 @@
+---
+title: "1200bps 모뎀과 케텔(KETEL) — 우편으로 온 비밀번호부터 전화비 폭탄까지"
+description: "세운상가에서 사 온 내장형 1200bps 모뎀과 우편함으로 날아오던 케텔(KETEL) 초기 비밀번호 통지서, 게시판 괴담 이야기꾼 시절부터 도스 세이브 파일 Hex 에디팅, 전용 전화 회선 증설 끝에 맞은 시분제 전화비 폭탄과 《퇴마록》의 추억을 복기합니다."
+date: 2026-11-25
+category: "주절주절"
+tags:
+  - "PC통신"
+  - "케텔"
+  - "하이텔"
+  - "모뎀"
+  - "세운상가"
+  - "퇴마록"
+  - "MS-DOS"
+  - "레트로 PC"
+draft: false
+lang: ko
+thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/life/2026/1200bps-modem-ketel-memories/thumbnail"
+series: "1200bps에서 GG까지: 나의 인터넷 연대기"
+series_order: 1
+---
+
+import Alert from '@/components/Alert.astro';
+import PlaceCard from '@/components/PlaceCard.astro';
+import CloudinaryImage from '@/components/CloudinaryImage.astro';
+import Chart from '@/components/Chart.astro';
+import BookCard from '@/components/BookCard.astro';
+import LinkInline from '@/components/LinkInline.astro';
+
+집 앞 철제 우편함 구멍으로 하얀 종이봉투가 꽂히던 날을 아직도 기억합니다. 봉투 안에는 한국경제신문사가 보낸 **케텔**(KETEL) 초기 비밀번호 통지서가 접혀 있었고, 그날 밤 본체 뒤편에 꽂은 전화선 너머로 "삐이이익— 치지직—" 하는 금속성 교신음이 방 안을 가득 채웠죠.
+
+디스켓만 갈아 끼우며 혼자 놀던 내 방 컴퓨터가 처음으로 집 밖의 세상과 이어지던 순간이었습니다. [초록빛 허큘리스 모니터와 SIMCGA로 버티던 16비트 DOS 시대](/dev/retro-pc-history-xt-286-hercules-dos)의 연장선 위에서, 세운상가표 **1200bps 내장형 모뎀** 하나로 시작해 전화비 폭탄 고지서를 받아 들기까지 좌충우돌했던 나의 인터넷 연대기 첫 장을 꺼내 봅니다.
+
+| 구분 | 1990년대 초 입문기의 풍경 | 손끝에 남은 기억과 시대 배경 |
+| :--- | :--- | :--- |
+| **통신 장비** | 세운상가발 **내장형 1200bps 모뎀** | 8비트 ISA 슬롯 장착, 2바이트 한글 기준 **초당 약 60자** 타자기 출력 |
+| **첫 접속지** | **케텔**(KETEL, 한경 무료 PC통신) | 1988년 9월 개통, 가입 신청 후 **실물 우편**으로 초기 비밀번호 수령 |
+| **교실과 도스방** | 게시판 유머·괴담 & **Hex Editor** | 친구들 앞 능청스러운 이야기꾼 노릇, 리틀 엔디안 세이브 골드 조작 |
+| **회선과 요금** | 전용 전화 1회선 증설 → **전화비 폭탄** | 1990년 **3분 시분제** 도입 직격탄, 밤샘 접속 끝에 집에서 쫓겨날 뻔한 참사 |
+| **밤샘 독서** | 케텔에서 하이텔로 이어진 《**퇴마록**》 | 1993년 여름 납량특집방 연재 시작, 괴담 독자에서 장르소설 팬으로 입문 |
+
+## 세운상가에서 품에 안고 온 1200bps 내장형 모뎀
+
+솔직히 고백하자면 그때 책상 위 본체가 XT 끝물이었는지 초기형 286이었는지는 세월 속에 가물가물합니다. [이불 속 애플 II를 만지작거리던 8비트 시절](/dev/retro-pc-history-8bit-apple2-msx)을 지나 도스 프롬프트에 꽤 익숙해졌을 무렵이었는데, 정작 본체 사양보다 훨씬 또렷하게 남아 있는 기억은 종로 **세운상가** 계단을 오르내리며 직접 사 온 **내장형 1200bps 모뎀**이에요.
+
+당시 입문자 앞에는 외장형과 내장형 두 갈래 선택지가 있었습니다. 반듯한 케이스에 상태 표시 LED가 번쩍이던 외장형은 보기엔 근사했지만 별도 전원 어댑터와 RS-232C 시리얼 케이블 값까지 붙어 주머니 가벼운 학생에겐 버거웠죠. 반면 세운상가 부품 가게에 비닐 포장으로 쌓여 있던 8비트 ISA 내장형 기판 모뎀은 본체 덮개를 열고 빈 슬롯에 꾹 눌러 꽂기만 하면 끝나는 알짜 입문템이었습니다.
+
+<PlaceCard
+  name="세운상가"
+  category="종합전자상가 · 도심제조거점"
+  address="서울 종로구 청계천로 159"
+  query="종로 세운상가"
+  info="종로3가역 12번 출구·을지로4가역 3번 출구 도보 5분 · 1968년 완공된 대한민국 최초의 주상복합 전자상가"
+/>
+
+기판 뒤편 브래킷에는 벽면 전화선을 꽂는 `LINE` 단자와 전화기로 선을 넘겨주는 `PHONE` 단자가 나란히 달려 있었고, 기판 위 동전만 한 원통형 스피커가 다이얼 톤과 연결음을 방 안으로 뿜어냈습니다. 국제표준 <LinkInline href="https://www.itu.int/rec/T-REC-V.22/en" label="ITU-T V.22 권고안" />을 따르던 **1200bps** 규격은 비동기 직렬 `8N1`(시작·정지 비트 포함 바이트당 10비트) 기준으로 나누면 초당 전송량이 약 **120바이트**(`120 cps`), 2바이트 완성형 한글로는 **초당 약 60자**가 고작이었습니다.
+
+<CloudinaryImage
+  publicId="posts/life/2026/1200bps-modem-ketel-memories/fig-01-isa-internal-modem"
+  width={1376}
+  height={768}
+  alt="PC 본체 ISA 슬롯에 장착하는 초록색 기판의 내장형 다이얼업 모뎀 카드와 회색 RJ-11 전화선"
+  caption="PC 본체 덮개를 열고 메인보드 ISA 슬롯에 직접 꽂아 쓰던 내장형 다이얼업 모뎀 기판 — 하단 금색 접점(골드핑거)과 통화 연결음을 내던 원통형 스피커, 점퍼 핀, 좌측 브래킷의 LINE·PHONE 전화선 단자가 한 장에 모여 있다."
+/>
+
+그런데 그 느림에는 묘한 맛이 있었습니다. `CONNECT 1200` 문구 뒤로 본문이 열리면 화면 왼쪽에서 오른쪽으로 타자기를 치듯 글자가 또르르 찍혀 내려갔거든요. 눈으로 문장을 따라 읽는 속도와 글자가 찍히는 속도가 얼추 맞아떨어져서, 마치 전화선 건너편의 누군가가 내 앞에서 실시간으로 이야기를 타이핑해 주는 듯한 생동감이 살아 있었습니다.
+
+## 우편함으로 날아온 '케텔(KETEL)' 비밀번호 통지서
+
+모뎀을 달고 처음 찾아간 곳은 한국경제신문사가 운영하던 **케텔**(KETEL, Korea Economic Daily Telepress)이었습니다. 1986년 프레스텔 시범 서비스를 거쳐 **1988년 9월** 대중에게 정식 개통한 케텔은 뉴스·증시 조회는 물론 대형 전자게시판 '큰마을'까지 **정보이용료 무료**로 개방하며 학생과 청년층을 단숨에 끌어모았죠. <LinkInline href="https://www.hankyung.com/article/2015110188007" label="한국경제" variant="badge" />
+
+지금 돌아보면 가장 진풍경이었던 절차는 단연 가입 방식이었습니다. 휴대폰 본인인증도 보조 이메일도 없던 시절이잖아요. 모뎀으로 손님 계정에 접속해 이름과 집 주소를 입력하고 가입 신청을 마치면, 며칠 뒤 실제 우체부 아저씨가 초기 비밀번호 통지서를 집 우편함에 꽂아 주었습니다.
+
+그날부터 하굣길 일과는 대문 옆 우편함 구멍을 들여다보는 일이었습니다. 사나흘쯤 애타게 기다리다 마침내 내 이름이 찍힌 우편물을 꺼내 들었을 때의 기분이란, 비밀 결사대의 정식 입단 허가서라도 거머쥔 듯 뿌듯했죠. 아날로그 우편 배달을 거쳐야만 디지털 세상의 문을 열 수 있었던 과도기만의 낭만이었습니다.
+
+<Alert type="info" title="왜 초기 비밀번호를 실물 우편으로 보냈을까?">
+1980년대 말～1990년대 초에는 온라인에서 가입자의 실명과 거주지를 즉시 대조할 전산 인증 수단이 없었습니다. 케텔은 가입자가 기입한 자택 주소로 **ID와 초기 비밀번호가 인쇄된 우편 통지서**를 발송해 수령 여부를 확인하는 방식으로 신원 검증과 계정 발급을 해결했습니다. 이후 이용자 급증에 따른 회선 적자 누적으로 1991년 12월 한국PC통신(주)이 설립됐고, 1992년 3월 코텔(KORTEL)을 거쳐 **1992년 7월 유료 하이텔**(HiTEL)로 전환됩니다.
+</Alert>
+
+## 교실의 능청스러운 이야기꾼, 그리고 도스 Hex Editor의 짜릿함
+
+내 계정을 얻어 케텔 큰마을 게시판을 누비며 가장 먼저 빠져든 곳은 **유머와 무서운 이야기**(괴담) 코너였습니다. 당시만 해도 집에 모뎀을 단 친구가 반에서 손에 꼽을 정도여서, 케텔 게시판은 나만 출입할 수 있는 비밀 이야기 창고나 다름없었거든요.
+
+밤마다 모니터 앞에서 낄낄대며 읽은 유머와 등골이 서늘해지던 괴담을 머릿속에 외워 두었다가, 다음 날 쉬는 시간이면 교실 뒤편에서 보따리를 풀었습니다. '케텔에서 읽었다'는 말은 쏙 빼놓은 채 마치 내가 직접 겪었거나 지어낸 이야기인 양 능청스럽게 살을 붙여 들려주면, 순식간에 친구들이 책상 주위로 몰려들어 다음 이야기를 재촉하곤 했죠.
+
+입담으로 인기몰이를 하던 눈길은 점차 게시판 구석의 **해킹·크랙 관련 글**로 옮겨갔습니다. 거창한 시스템 침투가 아니라 도스 만능 유틸리티 `PC Tools`(`PCSHELL`) 등에 내장된 **Hex Editor**로 게임 세이브 파일을 직접 열어 돈(골드) 수치를 늘리는 비법이었습니다.
+
+초반 자금난에 시달리던 RPG에서 소지금이 `1,000` 골드라면 16진수로 변환한 값은 `0x03E8`이 됩니다. 그런데 에디터로 `SAVE.DAT`를 열어 `03 E8`을 아무리 찾아도 나오지 않아 애를 태우다, 게시판 강좌 글을 읽고서야 인텔 x86 CPU가 하위 바이트부터 기록하는 **리틀 엔디안**(Little-Endian) 구조를 쓴다는 사실을 깨달았습니다.
+
+<figure class="not-prose my-6">
+  <svg
+    viewBox="0 0 760 326"
+    class="h-auto w-full rounded-xl border border-border bg-card p-4"
+    role="img"
+    aria-label="도스 게임 세이브 파일에서 10진수 1000 골드를 리틀 엔디안 E8 03으로 탐색하고 부호 있는 16비트 정수의 FF FF 음수 함정을 피해 FF 7F로 수정하는 Hex Edit 구조도"
+  >
+    <defs>
+      <marker id="hex-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" class="fill-muted-foreground" />
+      </marker>
+      <marker id="hex-arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+      </marker>
+      <marker id="hex-arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+      </marker>
+    </defs>
+
+    <text x="380" y="24" text-anchor="middle" font-size="13" font-weight="700" class="fill-foreground">DOS 세이브 파일(SAVE.DAT) 리틀 엔디안 탐색과 16비트 부호 비트 함정</text>
+
+    <rect x="20" y="44" width="208" height="106" rx="10" class="fill-sky-500/10 stroke-sky-500/50" stroke-width="1.5" />
+    <text x="124" y="68" text-anchor="middle" font-size="12" font-weight="700" class="fill-foreground">① 인게임 소지금 확인</text>
+    <text x="124" y="89" text-anchor="middle" font-size="11" class="fill-muted-foreground">화면 표시 수치: 1,000 GOLD</text>
+    <text x="124" y="107" text-anchor="middle" font-size="11" class="fill-muted-foreground">16진수(Hex) 변환: 0x03E8</text>
+    <rect x="38" y="118" width="172" height="22" rx="4" class="fill-muted" />
+    <text x="124" y="133" text-anchor="middle" font-size="10" font-family="monospace" class="fill-foreground">상위 03h · 하위 E8h</text>
+
+    <line x1="228" y1="97" x2="270" y2="97" class="stroke-muted-foreground" stroke-width="1.6" marker-end="url(#hex-arrow)" />
+    <text x="249" y="88" text-anchor="middle" font-size="9.5" class="fill-muted-foreground">역순 저장</text>
+
+    <rect x="276" y="44" width="208" height="106" rx="10" class="fill-amber-500/10 stroke-amber-500/50" stroke-width="1.5" />
+    <text x="380" y="68" text-anchor="middle" font-size="12" font-weight="700" class="fill-foreground">② x86 리틀 엔디안 배치</text>
+    <text x="380" y="89" text-anchor="middle" font-size="11" class="fill-muted-foreground">하위 바이트부터 낮은 주소에 기록</text>
+    <text x="380" y="107" text-anchor="middle" font-size="11" class="fill-muted-foreground">'03 E8' 정방향 검색 시 탐색 실패</text>
+    <rect x="294" y="118" width="172" height="22" rx="4" class="fill-muted" />
+    <text x="380" y="133" text-anchor="middle" font-size="10" font-family="monospace" class="fill-amber-700 dark:fill-amber-400">Find → E8 03</text>
+
+    <line x1="484" y1="97" x2="526" y2="97" class="stroke-muted-foreground" stroke-width="1.6" marker-end="url(#hex-arrow)" />
+    <text x="505" y="88" text-anchor="middle" font-size="9.5" class="fill-muted-foreground">주소 특정</text>
+
+    <rect x="532" y="44" width="208" height="106" rx="10" class="fill-violet-500/10 stroke-violet-500/50" stroke-width="1.5" />
+    <text x="636" y="68" text-anchor="middle" font-size="12" font-weight="700" class="fill-foreground">③ Hex Editor 바이트 수정</text>
+    <text x="636" y="89" text-anchor="middle" font-size="11" class="fill-muted-foreground">골드 변화량 대조로 오프셋 확정</text>
+    <text x="636" y="107" text-anchor="middle" font-size="11" class="fill-muted-foreground">16비트 정수(int16) 2바이트 덮어쓰기</text>
+    <rect x="550" y="118" width="172" height="22" rx="4" class="fill-muted" />
+    <text x="636" y="133" text-anchor="middle" font-size="10" font-family="monospace" class="fill-foreground">01A4h: [E8] [03]</text>
+
+    <path
+      d="M 636 150 L 636 168 L 196 168 L 196 186"
+      fill="none"
+      stroke="#f43f5e"
+      stroke-width="1.6"
+      stroke-dasharray="5 3"
+      marker-end="url(#hex-arrow-red)"
+    />
+    <path
+      d="M 636 150 L 636 168 L 564 168 L 564 186"
+      fill="none"
+      stroke="#10b981"
+      stroke-width="1.8"
+      marker-end="url(#hex-arrow-green)"
+    />
+
+    <rect x="28" y="192" width="336" height="114" rx="10" class="fill-rose-500/10 stroke-rose-500/50" stroke-width="1.5" />
+    <text x="196" y="216" text-anchor="middle" font-size="12" font-weight="700" class="fill-rose-700 dark:fill-rose-400">❌ 욕심의 대가: FF FF 입력 시</text>
+    <text x="196" y="238" text-anchor="middle" font-size="11" class="fill-muted-foreground">0xFFFF → 최상위 부호 비트(MSB)가 1로 설정됨</text>
+    <text x="196" y="256" text-anchor="middle" font-size="11" class="fill-muted-foreground">부호 있는 정수(int16) 게임에서 2의 보수 음수로 판독</text>
+    <rect x="50" y="268" width="292" height="24" rx="5" class="fill-muted" />
+    <text x="196" y="284" text-anchor="middle" font-size="10.5" font-weight="600" class="fill-rose-700 dark:fill-rose-400">결과: -1 GOLD (순식간에 빈털터리·오버플로)</text>
+
+    <rect x="396" y="192" width="336" height="114" rx="10" class="fill-emerald-500/10 stroke-emerald-500/50" stroke-width="1.5" />
+    <text x="564" y="216" text-anchor="middle" font-size="12" font-weight="700" class="fill-emerald-700 dark:fill-emerald-400">✅ 안전한 수정: FF 7F 또는 0F 27 입력 시</text>
+    <text x="564" y="238" text-anchor="middle" font-size="11" class="fill-muted-foreground">0x7FFF(부호 비트 0 유지) 또는 0x270F 역순 배치</text>
+    <text x="564" y="256" text-anchor="middle" font-size="11" class="fill-muted-foreground">오버플로 없이 상점 최고급 장비를 싹쓸이할 거금 확보</text>
+    <rect x="418" y="268" width="292" height="24" rx="5" class="fill-muted" />
+    <text x="564" y="284" text-anchor="middle" font-size="10.5" font-weight="600" class="fill-emerald-700 dark:fill-emerald-400">결과: +32,767 / +9,999 GOLD (단숨에 마을 최고 갑부)</text>
+  </svg>
+  <figcaption class="mt-2 text-center text-xs text-muted-foreground">
+    x86 CPU의 리틀 엔디안 바이트 정렬 때문에 상위·하위 바이트를 뒤집어 찾아야 했고, 부호 비트(MSB)를 건드리면 오히려 음수 골드가 되던 도스 세이브 에디팅의 원리
+  </figcaption>
+</figure>
+
+거꾸로 뒤집은 `E8 03`을 치자 거짓말처럼 정확한 번지가 튀어나왔습니다. 신나서 무턱대고 `FF FF`로 채웠다가 부호 있는 16비트 정수(`int16`) 게임에서 소지금이 `-1` 골드(빚더미)로 바뀌어 가슴을 쓸어내린 적도 있었죠. 그 시행착오 끝에 양수 최댓값인 `FF 7F`(`32,767`)나 `0F 27`(`9,999`)을 기입하고 게임을 다시 띄워 마을 상점의 최고급 검과 갑옷을 쓸어 담던 쾌감은 어떤 치트키보다 강렬했습니다.
+
+## 전용 전화선 증설의 함정, 그리고 집에서 쫓겨날 뻔한 전화비 폭탄
+
+케텔에 푹 빠질수록 집안에는 전운이 감돌았습니다. 저녁마다 몇 시간씩 모뎀을 붙잡고 있으면 외부에서 걸려 오는 전화가 모조리 통화 중으로 막혔고, 가족 누군가 거실 수화기를 잘못 들면 날카로운 기계음과 함께 `NO CARRIER`가 뜨며 접속이 끊겼거든요. 매일같이 쏟아지는 잔소리 끝에 내린 결단이 바로 내 방으로 들어오는 **전화 1회선 추가 설치**였습니다. 당시 설비비(청약 예치금)만 24만～25만 원에 달하던 큰 공사였죠.
+
+그런데 "이제 아무 눈치 안 봐도 된다"는 해방감이 곧장 대참사를 불렀습니다. 케텔 정보이용료가 무료라는 말만 믿고 방학 내내 밤을 새워 하루 6～7시간씩 접속해 두었는데, 정작 전화국 도수 계량기가 무섭게 돌아가고 있다는 사실을 까맣게 잊고 있었던 거예요.
+
+<Chart
+  type="bar"
+  height={300}
+  caption="1990년대 초 시내전화 3분 시분제(1도수 25원, 월 30일 순수 통화료 기준) 일일 모뎀 접속 시간별 월간 요금 추이 (단위: 원)"
+  data={{
+    labels: ['하루 1시간', '하루 3시간', '하루 5시간', '전용회선 개통 후 하루 7시간'],
+    datasets: [
+      {
+        label: '월간 시내전화 통화료 (원)',
+        data: [15000, 45000, 75000, 105000],
+        backgroundColor: ['#64748b', '#0ea5e9', '#f59e0b', '#ef4444'],
+      },
+    ],
+  }}
+/>
+
+결정타는 **1990년 1월 1일**부터 서울 등 대도시에 전격 도입된 **시내전화 시분제**였습니다. <LinkInline href="https://www.joongang.co.kr/article/2485541" label="중앙일보 아카이브" variant="badge" /> 1989년 말까지만 해도 시내전화는 몇 시간을 통화하든 1통화 25원 정액이었지만, PC통신 보급과 맞물려 **3분당 1도수**(25원, 1993년 2월 30원으로 인상) 종량제로 바뀐 뒤였거든요. 당시엔 통신 전용 할인망도 생기기 전이라 일반 7자리 시내전화 번호로 직접 다이얼해야 했으니 매 3분마다 동전이 빠져나가고 있었던 셈입니다.
+
+다음 달 우편함에 꽂힌 고지서를 본 집안은 발칵 뒤집혔습니다. 새로 깐 회선 앞으로 월 4,000도수가 넘어가는 **10만 원대 전화비 폭탄 청구서**가 날아왔으니까요. 동네 중국집 짜장면 한 그릇이 1,200～1,500원 하던 시절에 앉은자리에서 짜장면 거의 백 그릇 값을 전화선으로 태워 먹었으니, 청구서를 흔드시던 부모님의 불호령에 그날은 정말 가방을 싸서 집 밖으로 쫓겨날 뻔했습니다.
+
+## 케텔에서 하이텔로 흐르던 밤, 어렴풋이 남은 《퇴마록》의 기억
+
+쫓겨날 위기를 간신히 넘기고 모뎀 옆에 손목시계를 풀어 둔 채 3분 단위로 접속 시간을 재던 사이, 정들었던 무료 통신망 케텔도 코텔(KORTEL)을 거쳐 1992년 여름 **하이텔**(HiTEL)로 새 간판을 달았습니다.
+
+케텔에서 하이텔로 이어지던 그 파란 화면의 길목 어딘가에서 처음 읽었던 소설이 바로 이우혁 작가의 《**퇴마록**》입니다. **1993년 7월 여름**, 하이텔 납량특집 게시판(`SUMMER`란)에 〈하늘이 불타던 날〉이 올라오며 시작된 이 연재물은 밤마다 게시판을 마비시켰고, 이듬해 1월 도서출판 들녘에서 첫 단행본으로 묶여 나왔죠.
+
+<BookCard
+  title="퇴마록 국내편 1 (소장판)"
+  isbn13="9788954615860"
+  author="이우혁"
+  comment="1993년 여름 하이텔 납량특집방 연재로 시작해 밤마다 PC통신 게시판을 마비시켰던 한국 장르소설의 전설."
+  coupangHref="https://link.coupang.com/a/iYh52HrXxI"
+/>
+
+세부 장면들은 세월 속에 흐릿해졌지만, 어두운 방 안에서 한 줄씩 찍혀 내려오던 박신부와 이현암, 장준후의 이야기를 숨죽여 읽던 공기의 온도만큼은 어렴풋이 남아 있습니다. 케텔 괴담방의 짧은 이야기를 주워 모아 친구들에게 떠벌리던 소년이, 어느새 전화 도수가 올라가는 줄도 모르고 다음 연재분을 기다리는 독자가 되어 있었던 셈입니다.
+
+우편함 속 비밀번호 종이 한 장과 1200bps 모뎀의 느릿한 글자 행진으로 열렸던 첫 온라인 세상은 그렇게 소년기의 한 페이지를 넘기고 있었습니다. 그리고 곧 일반 시내전화의 무자비한 도수 요금을 구원해 줄 마법의 다이얼 번호 `ATDT 01410`과 더 빨라진 고속 모뎀, 밤새 화면을 넘기며 사람들과 어울리던 하이텔 동호회의 전성시대가 기다리고 있었습니다. 이어지는 2화에서 그 본격적인 통신 시대의 이야기를 이어가 보겠습니다.
+
+## 참고 자료
+
+- [PC통신 서비스부터 닷컴 도입까지…디지털 프런티어 한경의 30년 — 한국경제](https://www.hankyung.com/article/2015110188007)
+- [한국PC통신·하이텔의 출범과 역사 — 한국민족문화대백과사전](https://encykorea.aks.ac.kr/Article/E0074218)
+- [1200 bit/s Duplex Modem Standardized for Use in the General Switched Telephone Network (V.22) — ITU-T](https://www.itu.int/rec/T-REC-V.22/en)
+- [시내전화 시분제 시행 기록 — 중앙일보 아카이브](https://www.joongang.co.kr/article/2485541)
+- [초기 PC통신과 인터넷의 발전 — 한국인터넷역사프로젝트(KISA 후원)](https://sites.google.com/site/koreainternethistory)
