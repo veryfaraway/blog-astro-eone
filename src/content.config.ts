@@ -10,6 +10,7 @@ const postSchema = z.object({
   category: z.string(),
   tags: z.array(z.string()).default([]),
   thumbnail: z.string().optional(),
+  watermark: z.union([z.boolean(), z.enum(['nakgwan', 'wax'])]).optional(),
   draft: z.boolean().default(false),
   lang: z.enum(['ko', 'en']).default('ko'),
   series: z.string().optional(),

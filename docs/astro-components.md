@@ -346,22 +346,25 @@ import TmuxThemePreview from '@/components/TmuxThemePreview.astro';
 
 ---
 
-#### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro` / `DolbyCinemaSeatMap.astro` / `MetroLaserImaxSeatMap.astro`
+#### `ScreenXSeatMap.astro` / `Yongsan4dxSeatMap.astro` / `DolbyCinemaSeatMap.astro` / `MetroLaserImaxSeatMap.astro` / `WorldtowerSuperplexSeatMap.astro`
 
 특별관 좌석 판별 포스트 전용 인터랙티브 좌석 배치도 컴포넌트 (Props 없음).
 - `ScreenXSeatMap.astro`: CGV 용산아이파크몰 4관(4면 SCREENX, A–I열 × 21석) 위치별 추천 등급 호버 지도 (`cgv-yongsan-screenx-seat-guide.mdx`)
 - `Yongsan4dxSeatMap.astro`: CGV 용산아이파크몰 3관(ULTRA 4DX · 용포디, A–I열 × 16석 = 144석) 3가지 뷰 모드(`종합 추천 티어` / `프라임 vs 스탠다드` / `4연석 모션 강도`), 프라임 40석(`E–I열 5–12번`) 프레임, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`cgv-yongsan-4dx-seat-guide.mdx`)
 - `DolbyCinemaSeatMap.astro`: 메가박스 코엑스(`코돌비` 1관 · 378석 · A–R열 · 2.39:1 커브드)와 남양주현대아울렛 스페이스원(`남돌비` 5관 · 290석 · A–M열 · 1.85:1 플랫) 듀얼 상영관 전환 및 2가지 뷰 모드(`종합 추천 티어` / `시야·단차 & 음향존`), 영사기 광축·안전 난간 표시, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`coex-namyangju-dolby-seat-guide.mdx`)
 - `MetroLaserImaxSeatMap.astro`: 수도권 4대 4K 레이저 IMAX(`왕아맥` 왕십리 9관 268석 · 중앙 계단 통로 & 홀수열 `15·17번` 와이드석 / `천아맥` 천호 6관 323석 · 좌블 `A–C열` 철거 반영 / `광아맥` 광교 6관 282석 / `영아맥` 영등포 12관 387석 · 상단 거치) 4탭 전환 및 2가지 뷰 모드, 데스크톱 호버 및 모바일 탭 고정 상세 판독 패널 (`metro-laser-imax-seat-guide.mdx`)
+- `WorldtowerSuperplexSeatMap.astro`: 롯데시네마 월드타워 21관 수퍼플렉스(`월수플` · 총 295석 · A–I열 9개 열 · 34.0m × 13.8m 커브드) 2가지 뷰 모드(`종합 추천 티어` / `5종 좌석 등급 & 요금존`), `빈백`·`소파베드`·`스탠다드`·`스위트`(F·G열 중앙 50석)·`스튜디오`(10–11층 복층 12부스 30석) 구획 및 데스크톱 호버·모바일 탭 상세 판독 패널 (`worldtower-superplex-seat-guide.mdx`)
 
 ```mdx
 import Yongsan4dxSeatMap from '@/components/Yongsan4dxSeatMap.astro';
 import DolbyCinemaSeatMap from '@/components/DolbyCinemaSeatMap.astro';
 import MetroLaserImaxSeatMap from '@/components/MetroLaserImaxSeatMap.astro';
+import WorldtowerSuperplexSeatMap from '@/components/WorldtowerSuperplexSeatMap.astro';
 
 <Yongsan4dxSeatMap />
 <DolbyCinemaSeatMap />
 <MetroLaserImaxSeatMap />
+<WorldtowerSuperplexSeatMap />
 ```
 
 ---
@@ -774,9 +777,10 @@ import LinkInline from '@/components/LinkInline.astro';
 
 #### `CloudinaryImage.astro`
 
-Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성 + 선택적 하단 캡션(`caption`) 및 출처 표기(`credit`/`creditUrl`) 지원.
+Cloudinary 기반 반응형 이미지. srcset(400/800/1200/1600w) + LQIP 블러 플레이스홀더 자동 생성 + 동적 브랜드 워터마크(`nakgwan` 낙관 / `wax` 왁스 씰) + 선택적 하단 캡션(`caption`) 및 출처 표기(`credit`/`creditUrl`) 지원.
 
-> **환경변수**: `PUBLIC_CLOUDINARY_CLOUD_NAME` 필요.
+> **환경변수**: `PUBLIC_CLOUDINARY_CLOUD_NAME` (미설정 시 프로젝트 기본 클라우드 `doal3ofyr` 폴백).
+> **워터마크 자동 규칙**: `credit`이 없는 자체 촬영·제작·AI 생성 이미지에는 기본적으로 `일취월장` 낙관(`brand/watermark-nakgwan`)이 우측 하단에 은은하게 합성되며, `credit`이 지정된 외부 사료·퍼블릭 도메인 이미지는 워터마크가 자동 생략됩니다. 영화·여행·문화 등 왁스 씰 감성이 어울리는 이미지에는 `watermark="wax"`(`brand/watermark-wax`, GE 모노그램풍 `eo` 왁스 씰)를 지정할 수 있습니다.
 
 ```mdx
 import CloudinaryImage from '@/components/CloudinaryImage.astro';
@@ -789,11 +793,19 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
   caption="본문 이해를 돕는 이미지 핵심 읽는 포인트 설명"
 />
 <CloudinaryImage
+  publicId="posts/culture/2026/hogwarts-trip/fig-01-great-hall"
+  alt="호그와트 연회장 세트장 전경"
+  width={1200}
+  height={800}
+  watermark="wax"
+  caption="GE 모노그램풍 eo 실링 왁스 워터마크를 적용한 예시"
+/>
+<CloudinaryImage
   publicId="posts/life/2026/advent/fig-01-wichern-wreath"
   alt="1839년 독일 함부르크 라우에 하우스의 수레바퀴 대림환"
   width={1200}
   height={800}
-  caption="비헤른 목사가 마차 바퀴로 만든 초기 대림환 구조"
+  caption="비헤른 목사가 마차 바퀴로 만든 초기 대림환 구조 (credit 지정 시 워터마크 자동 생략)"
   credit="Wikimedia Commons, Public Domain"
   creditUrl="https://commons.wikimedia.org/wiki/..."
 />
@@ -809,6 +821,8 @@ import CloudinaryImage from '@/components/CloudinaryImage.astro';
 | `caption` | `string` | — | 이미지 하단 `<figcaption>` 설명 문구 (독자가 주목할 포인트 안내) |
 | `credit` | `string` | — | 외부 사료·퍼블릭 도메인·공식 자료 인용 시 출처/라이선스 표기 |
 | `creditUrl` | `string` | — | `credit`에 연결할 원본 출처 URL (`target="_blank"` 자동 적용) |
+| `watermark` | `boolean \| 'nakgwan' \| 'wax'` | `credit ? false : 'nakgwan'` | 워터마크 스타일 (`'nakgwan'` 모던 한글 낙관, `'wax'` GE풍 `eo` 왁스 씰, `false` 비활성화) |
+| `watermarkPosition` | `'south_east' \| 'south_west' \| 'north_east' \| 'north_west'` | `'south_east'` | 워터마크 배치 모서리 (UI 가림 방지가 필요할 때 변경) |
 
 > `width` / `height`를 모두 지정하면 이미지 로드 전에도 공간이 확보되어 레이아웃 시프트(CLS)가 방지됩니다. 본문 내 단독 삽입 시 독자의 이해를 돕는 `caption` 지정을 권장합니다.
 

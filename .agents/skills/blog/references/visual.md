@@ -168,13 +168,15 @@
 ### ③ Frontmatter 및 본문 MDX 반영 규격 (캡션 & 본문 연동 필수)
 
 1. **대표 썸네일 (`thumbnail` frontmatter)**
-   - 메신저 OG 크롤러 호환성을 위해 반드시 **`w_1200,q_auto,f_jpg`** 변환을 명시합니다:
+   - 메신저 OG 크롤러 호환성을 위해 반드시 **`w_1200,q_auto,f_jpg`** 변환을 명시합니다 (`PostLayout`에서 렌더링 시 `brand/watermark-nakgwan` 낙관 워터마크가 자동 레이어링되며, 영화·판타지·여행 등 왁스 씰 감성이 어울리는 글은 frontmatter에 `watermark: "wax"`를 선택 지정할 수 있습니다):
    ```yaml
    thumbnail: "https://res.cloudinary.com/doal3ofyr/image/upload/w_1200,q_auto,f_jpg/posts/life/2026/christmas-origins/thumbnail"
+   # 선택: 'nakgwan'(기본값, 생략 가능) | 'wax'(GE 모노그램풍 eo 왁스 씰) | false(외부 출처 썸네일 등 워터마크 비활성화)
    ```
 
-2. **본문 단일 이미지 (`CloudinaryImage.astro` — `caption` 필수 권장)**
-   - CLS 방지용 `width`·`height`, 접근성용 `alt`와 함께 **독자가 이미지에서 무엇을 봐야 하는지 짚어주는 `caption`**을 반드시 작성합니다. 외부 자료 인용 시에는 `credit`과 `creditUrl`을 함께 기입합니다:
+2. **본문 단일 이미지 (`CloudinaryImage.astro` — `caption` 필수 권장 & 워터마크 자동 분기)**
+   - CLS 방지용 `width`·`height`, 접근성용 `alt`와 함께 **독자가 이미지에서 무엇을 봐야 하는지 짚어주는 `caption`**을 반드시 작성합니다.
+   - `credit`이 없는 자체/AI 생성 이미지는 기본적으로 `nakgwan` 워터마크가 자동 적용되며(`watermark="wax"`로 왁스 씰 전환 또는 UI 가림 시 `watermark={false}` / `watermarkPosition` 변경 가능), 외부 자료 인용 시 `credit`과 `creditUrl`을 기입하면 워터마크가 자동으로 제외됩니다:
    ```mdx
    import CloudinaryImage from '@/components/CloudinaryImage.astro';
 

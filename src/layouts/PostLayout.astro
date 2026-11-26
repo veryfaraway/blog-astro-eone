@@ -11,6 +11,7 @@ import RelatedPosts from '../components/RelatedPosts.astro';
 import type { SeriesPost } from '../components/SeriesTOC.astro';
 import type { RelatedCandidate } from '../lib/related';
 import { getLocalizedPath } from '../lib/i18n';
+import { withCloudinaryUrlWatermark, type WatermarkOption } from '../lib/cloudinary';
 
 type Section = 'life' | 'money' | 'culture' | 'tools' | 'dev';
 
@@ -35,6 +36,7 @@ interface Props {
   category: string;
   tags?: string[];
   thumbnail?: string;
+  watermark?: WatermarkOption;
   lang?: 'ko' | 'en';
   alternateUrl?: string;
   readingTime?: number;
@@ -58,6 +60,7 @@ const {
   category,
   tags = [],
   thumbnail,
+  watermark,
   lang = 'ko',
   alternateUrl,
   readingTime,
@@ -91,6 +94,8 @@ const hasSeries = !!(series && seriesPosts && seriesPosts.length > 1 && currentS
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://blog.eone.one';
 const postUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const heroThumbnail = withCloudinaryUrlWatermark(thumbnail, { watermark, format: 'auto' });
+const ogThumbnail = withCloudinaryUrlWatermark(thumbnail, { watermark, format: 'jpg' });
 
 const articleJsonLd = {
   "@context": "https://schema.org",
@@ -102,7 +107,7 @@ const articleJsonLd = {
   "author": { "@type": "Person", "name": "eone", "url": siteUrl },
   "publisher": { "@type": "Organization", "name": "일취월장", "url": siteUrl },
   "url": postUrl,
-  ...(thumbnail && { "image": thumbnail }),
+  ...(ogThumbnail && { "image": ogThumbnail }),
   "keywords": tags.join(', '),
   "inLanguage": lang === 'ko' ? 'ko-KR' : 'en-US',
 };
@@ -123,7 +128,7 @@ const breadcrumbJsonLd = {
   title={title}
   description={description}
   section={section}
-  ogImage={thumbnail}
+  ogImage={ogThumbnail}
   ogType="article"
   articleMeta={{
     publishedTime: date.toISOString(),
@@ -222,10 +227,10 @@ const breadcrumbJsonLd = {
         )}
 
         <!-- Thumbnail -->
-        {thumbnail && (
+        {heroThumbnail && (
           <div class="mb-10 rounded-lg overflow-hidden aspect-video bg-muted">
             <img
-              src={thumbnail}
+              src={heroThumbnail}
               alt={title}
               class="w-full h-full object-cover"
               data-pagefind-meta="image[src], image_alt[alt]"

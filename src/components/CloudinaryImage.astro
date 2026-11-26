@@ -1,4 +1,12 @@
 ---
+import {
+  buildCloudinaryImageUrl,
+  buildCloudinaryLqipUrl,
+  resolveWatermarkStyle,
+  type WatermarkOption,
+  type WatermarkPosition,
+} from '@/lib/cloudinary';
+
 interface Props {
   publicId: string;
   alt: string;
@@ -8,6 +16,8 @@ interface Props {
   caption?: string;
   credit?: string;
   creditUrl?: string;
+  watermark?: WatermarkOption;
+  watermarkPosition?: WatermarkPosition;
 }
 
 const {
@@ -19,26 +29,45 @@ const {
   caption,
   credit,
   creditUrl,
+  watermark,
+  watermarkPosition = 'south_east',
 } = Astro.props;
 
-const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
-const base = cloudName
-  ? `https://res.cloudinary.com/${cloudName}/image/upload`
-  : null;
+const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME || 'doal3ofyr';
 
-const url = (transforms: string) => `${base}/${transforms}/${publicId}`;
+// 외부 출처(credit)가 명시된 인용 이미지는 기본적으로 워터마크를 생략하고, 자체/생성 이미지는 낙관('nakgwan')을 기본 적용
+const resolvedWatermark = resolveWatermarkStyle(watermark, credit ? false : 'nakgwan');
 
-const src    = base ? url('w_1200,q_auto,f_auto') : undefined;
-const srcset = base
-  ? [400, 800, 1200, 1600].map(w => `${url(`w_${w},q_auto,f_auto`)} ${w}w`).join(', ')
+const src = cloudName
+  ? buildCloudinaryImageUrl(publicId, {
+      cloudName,
+      width: 1200,
+      watermark: resolvedWatermark,
+      position: watermarkPosition,
+    })
   : undefined;
-const lqip   = base ? url('w_50,e_blur:1000,q_1,f_auto') : undefined;
+
+const srcset = cloudName
+  ? [400, 800, 1200, 1600]
+      .map(
+        (w) =>
+          `${buildCloudinaryImageUrl(publicId, {
+            cloudName,
+            width: w,
+            watermark: resolvedWatermark,
+            position: watermarkPosition,
+          })} ${w}w`
+      )
+      .join(', ')
+  : undefined;
+
+const lqip = cloudName ? buildCloudinaryLqipUrl(publicId, cloudName) : undefined;
 
 // width/height가 있으면 aspect-ratio로 레이아웃 시프트 방지
 const aspectRatio = width && height ? `${width} / ${height}` : undefined;
 ---
 
-{base ? (
+{src ? (
   <figure class="not-prose my-6">
     <div
       class="overflow-hidden rounded-lg bg-muted"

@@ -61,7 +61,8 @@ tags:
   - "태그2"
 draft: false              # 미완성이면 true
 lang: ko                  # 'ko' | 'en', 기본값 ko
-thumbnail: "https://..."  # 선택. Unsplash URL 또는 실제 이미지 URL
+thumbnail: "https://..."  # 선택. Unsplash URL 또는 실제 이미지 URL (Cloudinary URL은 PostLayout에서 자동 워터마크 합성)
+watermark: "nakgwan"      # 선택. 'nakgwan'(기본) | 'wax'(GE풍 eo 왁스 씰) | false(대표 썸네일 워터마크 해제)
 series: "시리즈 이름"     # 선택. 시리즈물일 때만
 series_order: 1           # 선택. series와 함께 지정 (number)
 ---
