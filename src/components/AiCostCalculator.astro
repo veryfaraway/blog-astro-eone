@@ -1,0 +1,1553 @@
+---
+interface Props {
+  defaultPreset?: 'chat' | 'agent' | 'swarm';
+  defaultModel?: string;
+}
+
+const {
+  defaultPreset = 'agent',
+  defaultModel = 'claude-opus-5-5',
+} = Astro.props;
+
+const uid = `aic-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class="ai-calc-root not-prose my-6 rounded-xl border border-border bg-card p-4 sm:p-6 text-foreground shadow-sm"
+  data-default-preset={defaultPreset}
+  data-default-model={defaultModel}
+  data-uid={uid}
+>
+  <!-- 1. 상단 헤더 바 -->
+  <div class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-4">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Interactive LLM &amp; Coding Agent Break-Even Simulator
+      </div>
+      <div class="mt-0.5 text-base sm:text-lg font-bold text-foreground">
+        AI 구독제 vs API 종량제 손익분기점 계산기
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <span class="ai-snapshot-badge inline-flex items-center rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300">
+        2026.12 정규가 기준
+      </span>
+    </div>
+  </div>
+
+  <!-- 2. 사용 스타일 프리셋 탭 (3종) -->
+  <div class="mt-4">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <span class="text-xs sm:text-sm font-semibold text-foreground">
+        1. 평소 AI 사용 스타일 선택
+      </span>
+      <span class="text-[11px] text-muted-foreground">
+        토큰 수 몰라도 행동 단위로 자동 환산
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" role="tablist" aria-label="AI 사용 스타일 프리셋">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'chat'}
+        data-preset="chat"
+        class={defaultPreset === 'chat'
+          ? 'ai-preset-btn rounded-lg border border-primary bg-primary/10 px-3 py-2.5 text-left transition cursor-pointer'
+          : 'ai-preset-btn rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-left transition cursor-pointer hover:bg-muted/70'}
+      >
+        <div class="text-xs font-bold text-foreground">💬 일반 웹 채팅·번역/요약</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">단일 질문 턴 · 일 10회 × 22일</div>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'agent'}
+        data-preset="agent"
+        class={defaultPreset === 'agent'
+          ? 'ai-preset-btn rounded-lg border border-primary bg-primary/10 px-3 py-2.5 text-left transition cursor-pointer'
+          : 'ai-preset-btn rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-left transition cursor-pointer hover:bg-muted/70'}
+      >
+        <div class="text-xs font-bold text-foreground">💻 데일리 코딩 에이전트</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">25회 툴 루프 · 일 3태스크 × 20일</div>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={defaultPreset === 'swarm'}
+        data-preset="swarm"
+        class={defaultPreset === 'swarm'
+          ? 'ai-preset-btn rounded-lg border border-primary bg-primary/10 px-3 py-2.5 text-left transition cursor-pointer'
+          : 'ai-preset-btn rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-left transition cursor-pointer hover:bg-muted/70'}
+      >
+        <div class="text-xs font-bold text-foreground">🚀 풀타임 멀티 에이전트·스웜</div>
+        <div class="text-[11px] text-muted-foreground mt-0.5">40회 대형 루프 · 일 8태스크 × 22일</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. 주력 모델 선택 그리드 (8종) -->
+  <div class="mt-4 border-t border-border pt-4">
+    <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-2">
+      <span class="text-xs sm:text-sm font-semibold text-foreground">
+        2. 주력 비교 모델 선택 ($ / 1M 토큰, 입·출력 정규가)
+      </span>
+      <span class="ai-model-sub-hint text-[11px] text-muted-foreground">
+        매칭 구독: Claude Pro $20 · Max $100 · Ultra $200
+      </span>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="비교할 AI 모델">
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'claude-opus-5-5'}
+        data-model="claude-opus-5-5"
+        class={defaultModel === 'claude-opus-5-5'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-orange-600 dark:text-orange-400">Anthropic</span>
+          <span class="rounded bg-foreground/10 px-1.5 py-0.5 text-[10px] font-semibold text-foreground">데일리 1순위</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Claude Opus 5.5</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$4 / $20 · 캐시 $0.20</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'claude-fable-5-2'}
+        data-model="claude-fable-5-2"
+        class={defaultModel === 'claude-fable-5-2'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-orange-600 dark:text-orange-400">Anthropic</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">난제 플래그십</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Claude Fable 5.2</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$8 / $40 · 캐시 $0.20</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'claude-sonnet-5-5'}
+        data-model="claude-sonnet-5-5"
+        class={defaultModel === 'claude-sonnet-5-5'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-orange-600 dark:text-orange-400">Anthropic</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">경량 워커</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Claude Sonnet 5.5</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$2 / $10 · 캐시 $0.10</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'gpt-6-1-sol'}
+        data-model="gpt-6-1-sol"
+        class={defaultModel === 'gpt-6-1-sol'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-emerald-600 dark:text-emerald-400">OpenAI</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">가성비 주력</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">GPT-6.1 Sol</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$2 / $10 · 캐시 $0.10</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'gemini-4-neon'}
+        data-model="gemini-4-neon"
+        class={defaultModel === 'gemini-4-neon'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-blue-600 dark:text-blue-400">Google</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">프로덕션 기본</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Gemini 4 Neon</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$3 / $15 · 캐시 $0.15</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'gemini-4-carbon'}
+        data-model="gemini-4-carbon"
+        class={defaultModel === 'gemini-4-carbon'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-blue-600 dark:text-blue-400">Google</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">12/1 정규가</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Gemini 4 Carbon</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$4 / $20 · 캐시 $0.20</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'gemini-4-hydrogen'}
+        data-model="gemini-4-hydrogen"
+        class={defaultModel === 'gemini-4-hydrogen'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-blue-600 dark:text-blue-400">Google</span>
+          <span class="rounded bg-blue-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700 dark:text-blue-300">무료 티어</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">Gemini 4 Hydrogen</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$1.5 / $7.5 · 캐시 $0.075</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={defaultModel === 'deepseek-v4-1-flash'}
+        data-model="deepseek-v4-1-flash"
+        class={defaultModel === 'deepseek-v4-1-flash'
+          ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+          : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60'}
+      >
+        <div class="flex items-center justify-between gap-1">
+          <span class="text-[10px] font-bold uppercase tracking-tight text-cyan-600 dark:text-cyan-400">DeepSeek</span>
+          <span class="rounded bg-cyan-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-700 dark:text-cyan-300">초저가 API</span>
+        </div>
+        <div class="mt-1 text-xs font-bold text-foreground">DeepSeek V4.1 Flash</div>
+        <div class="mt-0.5 text-[11px] text-muted-foreground">$0.30 / $1.20 (주말 반값)</div>
+      </button>
+    </div>
+
+    <!-- 선택 모델 단가 요약 바 -->
+    <div class="ai-model-spec-bar mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border border-border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs text-muted-foreground">
+      <span>입력 $4.00 · 캐시 쓰기 $5.00(1.25×) · 캐시 읽기 $0.20 · 출력 $20.00 / 1M</span>
+      <span>1M 전 구간 평탄 요금</span>
+    </div>
+  </div>
+
+  <!-- 4. 핵심 행동 단위 슬라이더 3종 -->
+  <div class="mt-4 grid gap-3.5 sm:grid-cols-3 border-t border-border pt-4">
+    <!-- (1) 하루 평균 작업/질문 수 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="ai-daily-title text-xs font-semibold text-foreground" for={`${uid}-daily`}>
+          하루 에이전트 작업 수
+        </label>
+        <span class="ai-daily-label text-xs sm:text-sm font-extrabold text-foreground">3건 / 일</span>
+      </div>
+      <input
+        id={`${uid}-daily`}
+        type="range"
+        min="1"
+        max="30"
+        step="1"
+        value="3"
+        class="ai-daily-range mt-2 w-full cursor-pointer accent-cyan-600"
+      />
+      <div class="ai-daily-chips mt-1.5 flex flex-wrap gap-1">
+        <button type="button" data-daily="1" class="ai-daily-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1건</button>
+        <button type="button" data-daily="3" class="ai-daily-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">3건</button>
+        <button type="button" data-daily="8" class="ai-daily-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">8건</button>
+        <button type="button" data-daily="15" class="ai-daily-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">15건</button>
+      </div>
+    </div>
+
+    <!-- (2) 한 달 사용 일수 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="text-xs font-semibold text-foreground" for={`${uid}-days`}>
+          한 달 사용 일수
+        </label>
+        <span class="ai-days-label text-xs sm:text-sm font-extrabold text-foreground">20일 / 월</span>
+      </div>
+      <input
+        id={`${uid}-days`}
+        type="range"
+        min="1"
+        max="30"
+        step="1"
+        value="20"
+        class="ai-days-range mt-2 w-full cursor-pointer accent-cyan-600"
+      />
+      <div class="mt-1.5 flex flex-wrap gap-1">
+        <button type="button" data-days="8" class="ai-days-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">주말만 8일</button>
+        <button type="button" data-days="20" class="ai-days-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">주 5일 20일</button>
+        <button type="button" data-days="30" class="ai-days-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">매일 30일</button>
+      </div>
+    </div>
+
+    <!-- (3) 작업 복잡도 / 툴 호출 루프 -->
+    <div class="rounded-lg border border-border bg-muted/20 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <label class="ai-comp-title text-xs font-semibold text-foreground" for={`${uid}-comp`}>
+          태스크당 툴 호출 루프
+        </label>
+        <span class="ai-comp-label text-xs sm:text-sm font-extrabold text-cyan-600 dark:text-cyan-400">25회 루프</span>
+      </div>
+      <input
+        id={`${uid}-comp`}
+        type="range"
+        min="5"
+        max="50"
+        step="1"
+        value="25"
+        class="ai-comp-range mt-2 w-full cursor-pointer accent-cyan-600"
+      />
+      <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+        <span class="ai-comp-tokens text-[11px] text-muted-foreground">누적 1.93M 입 · 25K 출</span>
+        <div class="ai-comp-chips flex flex-wrap gap-1">
+          <button type="button" data-comp="12" class="ai-comp-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">단순 12회</button>
+          <button type="button" data-comp="25" class="ai-comp-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">표준 25회</button>
+          <button type="button" data-comp="40" class="ai-comp-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">대형 40회</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 접이식 전문가 세부 변수 조정 -->
+  <details class="ai-adv-details mt-3 rounded-lg border border-border bg-muted/20 text-xs">
+    <summary class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted/40 rounded-lg">
+      <span>전문가 세부 변수 조정: 캐시 적중률 · 환율 · 숨은 할증</span>
+      <span class="ai-adv-summary-pill text-[11px] font-normal text-muted-foreground">캐시 90% · 1,400원/$ · 부가세·수수료 포함 ▾</span>
+    </summary>
+    <div class="border-t border-border p-3.5 space-y-3.5">
+      <div class="grid gap-3.5 sm:grid-cols-2">
+        <!-- 프롬프트 캐시 적중률 -->
+        <div class="rounded-md border border-border bg-card p-3">
+          <div class="flex items-center justify-between gap-2">
+            <label class="font-semibold text-foreground" for={`${uid}-cache`}>
+              프롬프트 캐시 적중률
+            </label>
+            <span class="ai-cache-label font-extrabold text-cyan-600 dark:text-cyan-400">90%</span>
+          </div>
+          <input
+            id={`${uid}-cache`}
+            type="range"
+            min="0"
+            max="95"
+            step="0.5"
+            value="90"
+            class="ai-cache-range mt-2 w-full cursor-pointer accent-cyan-600"
+          />
+          <div class="mt-1.5 flex flex-wrap gap-1">
+            <button type="button" data-cache="0" class="ai-cache-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">미적용 0%</button>
+            <button type="button" data-cache="75" class="ai-cache-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">분산 75%</button>
+            <button type="button" data-cache="90" class="ai-cache-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">실전 90%</button>
+            <button type="button" data-cache="93.5" class="ai-cache-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">무중단 93.5%</button>
+          </div>
+        </div>
+
+        <!-- 적용 환율 -->
+        <div class="rounded-md border border-border bg-card p-3">
+          <div class="flex items-center justify-between gap-2">
+            <label class="font-semibold text-foreground" for={`${uid}-fx`}>
+              적용 환율 (원 / USD)
+            </label>
+            <span class="ai-fx-label font-extrabold text-foreground">1,400원 / $</span>
+          </div>
+          <input
+            id={`${uid}-fx`}
+            type="range"
+            min="1250"
+            max="1600"
+            step="10"
+            value="1400"
+            class="ai-fx-range mt-2 w-full cursor-pointer accent-slate-600"
+          />
+          <div class="mt-1.5 flex flex-wrap gap-1">
+            <button type="button" data-fx="1350" class="ai-fx-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1,350원</button>
+            <button type="button" data-fx="1400" class="ai-fx-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1,400원</button>
+            <button type="button" data-fx="1450" class="ai-fx-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">1,450원</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 현실 보정 체크박스 3종 -->
+      <div class="space-y-2 rounded-md border border-border bg-card p-3">
+        <label class="flex items-start gap-2 font-medium text-foreground cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked
+            class="ai-vat-chk mt-0.5 h-4 w-4 rounded border-border accent-cyan-600 cursor-pointer shrink-0"
+          />
+          <span>
+            한국 개인 결제 부가세 10% + 해외결제 수수료(1.25%) 반영
+            <span class="text-muted-foreground">(총 +11.25% · 해제 시 사업자 KR BRN 면세 및 순수 달러 원가 기준)</span>
+          </span>
+        </label>
+
+        <label class="flex items-start gap-2 font-medium text-foreground cursor-pointer select-none">
+          <input
+            type="checkbox"
+            class="ai-ttl-chk mt-0.5 h-4 w-4 rounded border-border accent-cyan-600 cursor-pointer shrink-0"
+          />
+          <span>
+            커피 타임 캐시 만료 페널티 반영
+            <span class="text-muted-foreground">(5분 TTL 만료로 자리 비운 뒤 컨텍스트 캐시 재쓰기 빈도 2배 발생)</span>
+          </span>
+        </label>
+
+        <label class="flex items-start gap-2 font-medium text-foreground cursor-pointer select-none">
+          <input
+            type="checkbox"
+            class="ai-cliff-chk mt-0.5 h-4 w-4 rounded border-border accent-cyan-600 cursor-pointer shrink-0"
+          />
+          <span>
+            장문 컨텍스트 할증 구간 진입 (&gt;272K 거대 레포·로그 투입)
+            <span class="ai-cliff-status text-muted-foreground">(GPT-6 입력 2배·출력 1.5배 할증 vs Claude·Gemini 1M 단일가 비교)</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </details>
+
+  <!-- ==================== 실시간 결과 대시보드 ==================== -->
+
+  <!-- 1. 3단 맞춤 의사결정 코멘트 배너 -->
+  <div class="ai-verdict-box mt-5 rounded-xl border border-border bg-muted/40 p-4" aria-live="polite">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="ai-verdict-sub text-xs font-medium text-muted-foreground">
+          월 60건 (20일 × 일 3건) · Claude Opus 5.5 기준
+        </div>
+        <div class="mt-1 flex flex-wrap items-baseline gap-2">
+          <span class="ai-verdict-title text-base sm:text-lg font-extrabold text-violet-600 dark:text-violet-400">
+            구간 C (헤비 에이전트 경보): 순수 API 요금 폭탄 주의 → Claude Max (5x) 추천
+          </span>
+          <span class="ai-verdict-badge rounded-md bg-violet-500/15 px-2 py-0.5 text-xs font-bold text-violet-700 dark:text-violet-300">
+            Claude Max (5x) 전환 시 월 $5.00 (약 7,000원) 절약
+          </span>
+        </div>
+      </div>
+    </div>
+    <p class="ai-verdict-desc mt-2.5 border-t border-border/70 pt-2.5 text-xs leading-relaxed text-muted-foreground">
+      터미널 코딩 에이전트를 매일 본격 가동하는 전형적인 헤비 워크로드입니다. 순수 API 사용 시 월 $116.25(약 16.3만 원)가 빠져나가므로 Claude Max (5x) 정액제로 상한선을 잠그고, 병렬 스웜 워커는 초저가 API로 분리하세요.
+    </p>
+  </div>
+
+  <!-- 2. KPI 요약 카드 4종 -->
+  <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="text-[11px] font-semibold text-muted-foreground">예상 API 종량제 월 청구액</div>
+      <div class="ai-kpi-api-main mt-1 text-base sm:text-lg font-extrabold text-foreground">
+        $116.25 <span class="text-xs font-semibold text-muted-foreground">(162,743원)</span>
+      </div>
+      <div class="ai-kpi-api-sub mt-1 text-[11px] text-muted-foreground">
+        1건당 $1.94 (2,712원) · 세전 월 $104.49
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="ai-kpi-sub-label text-[11px] font-semibold text-muted-foreground">Claude 구독 월 고정비</div>
+      <div class="ai-kpi-sub-main mt-1 text-base sm:text-lg font-extrabold text-foreground">
+        $22.25 <span class="text-xs font-semibold text-muted-foreground">· $111.25</span>
+      </div>
+      <div class="ai-kpi-sub-detail mt-1 text-[11px] text-muted-foreground">
+        Pro 약 3.1만 원 · Max (5x) 약 15.6만 원 · Ultra (10x) $222.50
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="text-[11px] font-semibold text-muted-foreground">손익분기점 (Break-Even)</div>
+      <div class="ai-kpi-be-main mt-1 text-base sm:text-lg font-extrabold text-amber-600 dark:text-amber-400">
+        월 12건 이상 $20 구독 유리
+      </div>
+      <div class="ai-kpi-be-sub mt-1 text-[11px] text-muted-foreground">
+        일 0.6건 · $100 구독 분기점: 월 58건
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-muted/30 p-3.5">
+      <div class="text-[11px] font-semibold text-muted-foreground">최종 추천 포지션</div>
+      <div class="ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-violet-600 dark:text-violet-400">
+        Claude Max (5x) 정액제
+      </div>
+      <div class="ai-kpi-rec-sub mt-1 text-[11px] text-muted-foreground">
+        프롬프트 캐싱이 월 $431.11 추가 폭탄 방어 중
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 실시간 반응형 SVG 손익분기 그래프 -->
+  <div class="mt-4 rounded-xl border border-border bg-muted/20 p-3.5 sm:p-4">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <div class="text-xs sm:text-sm font-bold text-foreground">
+          월간 작업 횟수별 API 누적 비용 vs 구독제 손익분기 차트
+        </div>
+        <div class="ai-chart-caption mt-0.5 text-[11px] sm:text-xs text-muted-foreground">
+          [내 사용량: 월 60건] 캐시 적용 API $116.25 · 캐시 미적용 $547.35 · $20 구독 $22.25 · $100 구독 $111.25
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 text-[11px] font-semibold shrink-0">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#06b6d4;"></span>
+          <span>API (캐시 적용)</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-0.5 w-3.5 border-t-2 border-dashed border-muted-foreground"></span>
+          <span class="text-muted-foreground">캐시 미적용</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#f59e0b;"></span>
+          <span>$20 구독</span>
+        </span>
+        <span class="ai-legend-100 inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#8b5cf6;"></span>
+          <span>$100 구독</span>
+        </span>
+        <span class="ai-legend-200 hidden inline-flex items-center gap-1.5">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" style="background:#f43f5e;"></span>
+          <span>$200 구독</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="mt-3 w-full overflow-x-auto">
+      <svg
+        viewBox="0 0 680 250"
+        class="ai-svg-chart w-full h-auto min-w-[460px] select-none"
+        role="img"
+        aria-label="월간 작업 횟수에 따른 API 종량제 누적 비용과 정액 구독 요금 손익분기 비교 그래프"
+      >
+        <defs>
+          <clipPath id={`${uid}-plot-clip`}>
+            <rect x="58" y="18" width="598" height="194"></rect>
+          </clipPath>
+        </defs>
+        <g class="ai-svg-grid"></g>
+        <g clip-path={`url(#${uid}-plot-clip)`}>
+          <!-- 구독 수평 기준선 -->
+          <line class="ai-svg-sub20" x1="58" y1="180" x2="656" y2="180" stroke="#f59e0b" stroke-width="1.75" stroke-dasharray="5 4"></line>
+          <line class="ai-svg-sub100" x1="58" y1="90" x2="656" y2="90" stroke="#8b5cf6" stroke-width="1.75" stroke-dasharray="5 4"></line>
+          <line class="ai-svg-sub200 hidden" x1="58" y1="40" x2="656" y2="40" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 4"></line>
+
+          <!-- 캐시 미적용 API 곡선 (회색 점선) -->
+          <line class="ai-svg-uncached" x1="58" y1="212" x2="656" y2="18" stroke="currentColor" stroke-opacity="0.32" stroke-width="2" stroke-dasharray="4 4"></line>
+
+          <!-- 캐시 적용 API 곡선 (시안 실선) -->
+          <line class="ai-svg-cached" x1="58" y1="212" x2="656" y2="60" stroke="#06b6d4" stroke-width="2.75" stroke-linecap="round"></line>
+
+          <!-- 현재 사용량 수직 가이드선 -->
+          <line class="ai-svg-user-vline" x1="350" y1="18" x2="350" y2="212" stroke="#06b6d4" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="3 3"></line>
+          <line class="ai-svg-hover-vline hidden" x1="350" y1="18" x2="350" y2="212" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.25"></line>
+
+          <!-- 교차점 및 사용자 마커 -->
+          <g class="ai-svg-markers"></g>
+        </g>
+        <g class="ai-svg-labels"></g>
+        <rect class="ai-svg-hitrect" x="58" y="18" width="598" height="194" fill="transparent" style="cursor:crosshair;"></rect>
+      </svg>
+    </div>
+    <div class="mt-1 text-center text-[11px] text-muted-foreground">
+      그래프 위에 마우스를 움직이거나 터치하면 월간 작업 횟수별 API 비용과 구독료 격차를 실시간으로 비교합니다.
+    </div>
+  </div>
+
+  <div class="mt-2.5 text-[11px] leading-relaxed text-muted-foreground">
+    ※ 산출 기준 (<span class="ai-footnote-date">2026-12-01 정규가 반영</span>): 코딩 에이전트 모드는 초기 시스템·레포 컨텍스트 29K에서 루프마다 4K씩 누적 재전송되는 <code class="rounded bg-muted px-1 py-0.5 text-[10px]">O(K²)</code> 구조(25루프 시 누적 입력 1.925M · 출력+사고 25K)를 반영합니다. 구독제는 5시간 롤링 쿼터 및 주간 상한이 존재하므로 단일 월간 총액뿐 아니라 피크 시간대 연속 호출 여부를 함께 고려하세요.
+  </div>
+</div>
+
+<script>
+  // ==================== 단일 가격 상수 (유지보수 SSOT) ====================
+  const PRICING_SNAPSHOT_DATE = '2026-12-01 정규가 반영';
+
+  type VendorKey = 'anthropic' | 'openai' | 'google' | 'deepseek';
+  type PresetKey = 'chat' | 'agent' | 'swarm';
+
+  interface SubTierGroup {
+    vendorLabel: string;
+    tier20Name: string;
+    tier20Price: number;
+    tier100Name: string;
+    tier100Price: number;
+    tier200Name: string;
+    tier200Price: number;
+    note?: string;
+  }
+
+  const SUB_TIERS: Record<VendorKey, SubTierGroup> = {
+    anthropic: {
+      vendorLabel: 'Claude 구독',
+      tier20Name: 'Claude Pro',
+      tier20Price: 20,
+      tier100Name: 'Claude Max (5x)',
+      tier100Price: 100,
+      tier200Name: 'Claude Ultra (10x)',
+      tier200Price: 200,
+    },
+    openai: {
+      vendorLabel: 'ChatGPT 구독',
+      tier20Name: 'ChatGPT Plus',
+      tier20Price: 20,
+      tier100Name: 'ChatGPT Pro 100',
+      tier100Price: 100,
+      tier200Name: 'ChatGPT Pro 200',
+      tier200Price: 200,
+    },
+    google: {
+      vendorLabel: 'Google AI 구독',
+      tier20Name: 'Google AI Pro',
+      tier20Price: 19.99,
+      tier100Name: 'Google AI Ultra 5x',
+      tier100Price: 99.99,
+      tier200Name: 'Google AI Ultra 20x',
+      tier200Price: 199.99,
+    },
+    deepseek: {
+      vendorLabel: '범용 $20 구독 비교선',
+      tier20Name: '타사 $20 Pro 기준',
+      tier20Price: 20,
+      tier100Name: '타사 $100 Max 기준',
+      tier100Price: 100,
+      tier200Name: '타사 $200 Ultra 기준',
+      tier200Price: 200,
+      note: '오픈웨이트 API 전용 (정액 구독 없음 · 타사 $20 구독 대비 절감액 계산)',
+    },
+  };
+
+  interface ModelSpec {
+    id: string;
+    name: string;
+    vendor: VendorKey;
+    inputRate: number; // $ / 1M
+    outputRate: number; // $ / 1M
+    cacheWriteMult: number; // 1.25 for Anthropic/OpenAI, 1.0 for Google/DeepSeek
+    cacheReadRate: number; // $ / 1M
+    has272kCliff: boolean; // GPT-6 >272K: input 2x, output 1.5x
+    hasFreeTier?: boolean;
+    subNote: string;
+    cliffNote: string;
+  }
+
+  const MODELS: Record<string, ModelSpec> = {
+    'claude-opus-5-5': {
+      id: 'claude-opus-5-5',
+      name: 'Claude Opus 5.5',
+      vendor: 'anthropic',
+      inputRate: 4.0,
+      outputRate: 20.0,
+      cacheWriteMult: 1.25,
+      cacheReadRate: 0.2,
+      has272kCliff: false,
+      subNote: '매칭 구독: Claude Pro $20 · Max $100 · Ultra $200',
+      cliffNote: '1M 전 구간 평탄 요금 · 캐시 기본 TTL 5분',
+    },
+    'claude-fable-5-2': {
+      id: 'claude-fable-5-2',
+      name: 'Claude Fable 5.2',
+      vendor: 'anthropic',
+      inputRate: 8.0,
+      outputRate: 40.0,
+      cacheWriteMult: 1.25,
+      cacheReadRate: 0.2,
+      has272kCliff: false,
+      subNote: '매칭 구독: Claude Max $100 · Ultra $200 ($20 Pro 쿼터 극소 참고선)',
+      cliffNote: '난제 해결 Advisor 권장 · 캐시 읽기 97.5% 할인($0.20)',
+    },
+    'claude-sonnet-5-5': {
+      id: 'claude-sonnet-5-5',
+      name: 'Claude Sonnet 5.5',
+      vendor: 'anthropic',
+      inputRate: 2.0,
+      outputRate: 10.0,
+      cacheWriteMult: 1.25,
+      cacheReadRate: 0.1,
+      has272kCliff: false,
+      subNote: '매칭 구독: Claude Pro $20 · Max $100 · Ultra $200',
+      cliffNote: '1M 전 구간 평탄 요금 · 서브에이전트 구현 워커 최적',
+    },
+    'gpt-6-1-sol': {
+      id: 'gpt-6-1-sol',
+      name: 'GPT-6.1 Sol',
+      vendor: 'openai',
+      inputRate: 2.0,
+      outputRate: 10.0,
+      cacheWriteMult: 1.25,
+      cacheReadRate: 0.1,
+      has272kCliff: true,
+      subNote: '매칭 구독: ChatGPT Plus $20 · Pro 100 $100 · Pro 200 $200',
+      cliffNote: '주의: 입력 272K 초과 시 요청 전체 입력 2배·출력 1.5배 할증',
+    },
+    'gemini-4-neon': {
+      id: 'gemini-4-neon',
+      name: 'Gemini 4 Neon',
+      vendor: 'google',
+      inputRate: 3.0,
+      outputRate: 15.0,
+      cacheWriteMult: 1.0,
+      cacheReadRate: 0.15,
+      has272kCliff: false,
+      subNote: '매칭 구독: Google AI Pro $19.99 · Ultra 5x $99.99 · Ultra 20x $199.99',
+      cliffNote: '암묵적 캐시 쓰기 할증 없음(1.0×) · 1M 평탄 요금',
+    },
+    'gemini-4-carbon': {
+      id: 'gemini-4-carbon',
+      name: 'Gemini 4 Carbon',
+      vendor: 'google',
+      inputRate: 4.0,
+      outputRate: 20.0,
+      cacheWriteMult: 1.0,
+      cacheReadRate: 0.2,
+      has272kCliff: false,
+      subNote: '매칭 구독: Google AI Ultra 5x $99.99 · 20x $199.99 ($19.99 Pro 참고선)',
+      cliffNote: '12/1 정규가 $4/$20 반영 · 암묵적 캐시 쓰기 할증 없음',
+    },
+    'gemini-4-hydrogen': {
+      id: 'gemini-4-hydrogen',
+      name: 'Gemini 4 Hydrogen',
+      vendor: 'google',
+      inputRate: 1.5,
+      outputRate: 7.5,
+      cacheWriteMult: 1.0,
+      cacheReadRate: 0.075,
+      has272kCliff: false,
+      hasFreeTier: true,
+      subNote: '매칭 구독: Google AI Pro $19.99 (API 무료 티어 제공 — 학습 약관 주의)',
+      cliffNote: '유일한 Gemini 4 무료 티어 보유 · 고속 반복 실행기',
+    },
+    'deepseek-v4-1-flash': {
+      id: 'deepseek-v4-1-flash',
+      name: 'DeepSeek V4.1 Flash',
+      vendor: 'deepseek',
+      inputRate: 0.3,
+      outputRate: 1.2,
+      cacheWriteMult: 1.0,
+      cacheReadRate: 0.015,
+      has272kCliff: false,
+      subNote: '오픈웨이트 API 전용 (UTC 오프피크·주말 $0.15 / $0.60 반값 할인)',
+      cliffNote: 'Anthropic 호환 엔드포인트 직결 지원 · 최대 출력 384K',
+    },
+  };
+
+  interface PresetConfig {
+    dailyMax: number;
+    defaultDaily: number;
+    defaultDays: number;
+    compMin: number;
+    compMax: number;
+    defaultComp: number;
+    defaultCachePct: number;
+    unitWord: string;
+    dailyTitle: string;
+    compTitle: string;
+    dailyChips: { val: number; label: string }[];
+    compChips: { val: number; label: string }[];
+  }
+
+  const PRESETS: Record<PresetKey, PresetConfig> = {
+    chat: {
+      dailyMax: 100,
+      defaultDaily: 10,
+      defaultDays: 22,
+      compMin: 1,
+      compMax: 10,
+      defaultComp: 1,
+      defaultCachePct: 15,
+      unitWord: '회',
+      dailyTitle: '하루 질문 횟수 (1–100회)',
+      compTitle: '질문·첨부 문서 규모 (1–10배)',
+      dailyChips: [
+        { val: 5, label: '가볍게 5회' },
+        { val: 10, label: '평균 10회' },
+        { val: 30, label: '집중 30회' },
+        { val: 60, label: '헤비 60회' },
+      ],
+      compChips: [
+        { val: 1, label: '단문 1x (2K)' },
+        { val: 3, label: '코드 3x (6K)' },
+        { val: 8, label: '문서 8x (16K)' },
+      ],
+    },
+    agent: {
+      dailyMax: 30,
+      defaultDaily: 3,
+      defaultDays: 20,
+      compMin: 5,
+      compMax: 50,
+      defaultComp: 25,
+      defaultCachePct: 90,
+      unitWord: '건',
+      dailyTitle: '하루 에이전트 작업 수 (1–30건)',
+      compTitle: '태스크당 툴 호출 루프 (5–50회)',
+      dailyChips: [
+        { val: 1, label: '사이드 1건' },
+        { val: 3, label: '데일리 3건' },
+        { val: 8, label: '집중 8건' },
+        { val: 15, label: '헤비 15건' },
+      ],
+      compChips: [
+        { val: 12, label: '단순 12회' },
+        { val: 25, label: '표준 25회' },
+        { val: 40, label: '대형 40회' },
+      ],
+    },
+    swarm: {
+      dailyMax: 30,
+      defaultDaily: 8,
+      defaultDays: 22,
+      compMin: 5,
+      compMax: 50,
+      defaultComp: 40,
+      defaultCachePct: 92,
+      unitWord: '건',
+      dailyTitle: '하루 멀티 에이전트 작업 수 (1–30건)',
+      compTitle: '태스크당 스웜 루프 수 (5–50회)',
+      dailyChips: [
+        { val: 3, label: '소규모 3건' },
+        { val: 8, label: '풀타임 8건' },
+        { val: 15, label: '팀급 15건' },
+        { val: 25, label: '자동화 25건' },
+      ],
+      compChips: [
+        { val: 25, label: '중형 25회' },
+        { val: 40, label: '스웜 40회' },
+        { val: 50, label: '초대형 50회' },
+      ],
+    },
+  };
+
+  function fmtUsd(v: number): string {
+    if (v < 0.01 && v > 0) return `$${v.toFixed(4)}`;
+    if (v < 1) return `$${v.toFixed(2)}`;
+    return `$${v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function fmtKrw(usd: number, fx: number): string {
+    const won = Math.round(usd * fx);
+    return `${won.toLocaleString('ko-KR')}원`;
+  }
+
+  function fmtKrwMan(usd: number, fx: number): string {
+    const won = usd * fx;
+    if (won >= 10000) {
+      return `약 ${(won / 10000).toFixed(1)}만 원`;
+    }
+    return `약 ${Math.round(won).toLocaleString('ko-KR')}원`;
+  }
+
+  function fmtTokens(tok: number): string {
+    if (tok >= 1_000_000) return `${(tok / 1_000_000).toFixed(2)}M`;
+    return `${Math.round(tok / 1_000)}K`;
+  }
+
+  function calcTaskCostUsd(
+    preset: PresetKey,
+    compVal: number,
+    cachePct: number,
+    model: ModelSpec,
+    ttlPenalty: boolean,
+    cliffActive: boolean,
+  ): {
+    rawCached: number;
+    rawUncached: number;
+    totalInputTok: number;
+    outputTok: number;
+  } {
+    const h = Math.max(0, Math.min(0.95, cachePct / 100));
+    const inCliffMult = cliffActive && model.has272kCliff ? 2.0 : 1.0;
+    const outCliffMult = cliffActive && model.has272kCliff ? 1.5 : 1.0;
+
+    const effIn = model.inputRate * inCliffMult;
+    const effWrite = model.inputRate * model.cacheWriteMult * inCliffMult;
+    const effRead = model.cacheReadRate * inCliffMult;
+    const effOut = model.outputRate * outCliffMult;
+
+    if (preset === 'chat') {
+      // 1단계 기본: 입력 2K + 출력 1.5K (장문 할증 체크 시 280K 문서 컨텍스트 가정)
+      const baseIn = cliffActive ? 280_000 : 2_000 * compVal;
+      const outTok = 1_500 * (1 + (compVal - 1) * 0.35);
+
+      const effHit = ttlPenalty ? h * 0.5 : h;
+      const readTok = baseIn * effHit;
+      const nonReadTok = baseIn - readTok;
+
+      // 일반 단문 채팅은 명시적 캐시 쓰기 할증 없이 일반 입력 처리 (장문/TTL 페널티 시 캐시 쓰기 반영)
+      const writeUnit = cliffActive || ttlPenalty ? effWrite : effIn;
+      const rawCached =
+        (nonReadTok / 1_000_000) * writeUnit +
+        (readTok / 1_000_000) * effRead +
+        (outTok / 1_000_000) * effOut;
+      const rawUncached =
+        (baseIn / 1_000_000) * effIn + (outTok / 1_000_000) * effOut;
+
+      return { rawCached, rawUncached, totalInputTok: baseIn, outputTok: outTok };
+    }
+
+    // 에이전트 & 스웜 모드: O(K^2) 누적 컨텍스트 수식
+    // K = 25일 때 C1 = 29K, delta = 4K -> 신규 쓰기 125K + 반복 프리픽스 1,800K = 누적 1,925K (1.925M), 출력 25K
+    const loops = Math.max(5, Math.min(50, compVal));
+    const baseC1 = cliffActive ? 280_000 : 29_000;
+    const delta = 4_000;
+
+    const uniqueWriteTok = baseC1 + (loops - 1) * delta;
+    const totalInputTok = loops * baseC1 + ((loops * (loops - 1)) / 2) * delta;
+    const outputTok = loops * 1_000;
+
+    const rawUncached =
+      (totalInputTok / 1_000_000) * effIn + (outputTok / 1_000_000) * effOut;
+
+    if (h <= 0) {
+      return { rawCached: rawUncached, rawUncached, totalInputTok, outputTok };
+    }
+
+    let readTok = totalInputTok * h;
+    let nonReadTok = totalInputTok - readTok;
+    let cacheWriteTok = Math.min(nonReadTok, uniqueWriteTok);
+    let regularMissTok = Math.max(0, nonReadTok - cacheWriteTok);
+
+    // 커피 타임 5분 TTL 만료 시: 누적된 uniqueWriteTok 만큼 캐시 읽기가 증발하고 캐시 재쓰기가 1회 추가 발생
+    if (ttlPenalty) {
+      const extraWrite = Math.min(readTok, uniqueWriteTok);
+      readTok -= extraWrite;
+      cacheWriteTok += extraWrite;
+    }
+
+    const rawCached =
+      (cacheWriteTok / 1_000_000) * effWrite +
+      (regularMissTok / 1_000_000) * effIn +
+      (readTok / 1_000_000) * effRead +
+      (outputTok / 1_000_000) * effOut;
+
+    return { rawCached, rawUncached, totalInputTok, outputTok };
+  }
+
+  function initAiCostCalculators() {
+    document.querySelectorAll<HTMLElement>('.ai-calc-root').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      let currentPreset: PresetKey =
+        (root.dataset.defaultPreset as PresetKey) || 'agent';
+      if (!PRESETS[currentPreset]) currentPreset = 'agent';
+
+      let currentModelId = root.dataset.defaultModel || 'claude-opus-5-5';
+      if (!MODELS[currentModelId]) currentModelId = 'claude-opus-5-5';
+
+      let hoveredX: number | null = null;
+
+      // DOM Elements
+      const snapshotBadge = root.querySelector<HTMLElement>('.ai-snapshot-badge')!;
+      const footnoteDate = root.querySelector<HTMLElement>('.ai-footnote-date')!;
+      snapshotBadge.textContent = PRICING_SNAPSHOT_DATE;
+      footnoteDate.textContent = PRICING_SNAPSHOT_DATE;
+
+      const presetBtns = root.querySelectorAll<HTMLButtonElement>('.ai-preset-btn');
+      const modelBtns = root.querySelectorAll<HTMLButtonElement>('.ai-model-btn');
+      const modelSubHint = root.querySelector<HTMLElement>('.ai-model-sub-hint')!;
+      const modelSpecBar = root.querySelector<HTMLElement>('.ai-model-spec-bar')!;
+
+      const dailyTitle = root.querySelector<HTMLElement>('.ai-daily-title')!;
+      const dailyLabel = root.querySelector<HTMLElement>('.ai-daily-label')!;
+      const dailyRange = root.querySelector<HTMLInputElement>('.ai-daily-range')!;
+      const dailyChipsWrap = root.querySelector<HTMLElement>('.ai-daily-chips')!;
+
+      const daysLabel = root.querySelector<HTMLElement>('.ai-days-label')!;
+      const daysRange = root.querySelector<HTMLInputElement>('.ai-days-range')!;
+
+      const compTitle = root.querySelector<HTMLElement>('.ai-comp-title')!;
+      const compLabel = root.querySelector<HTMLElement>('.ai-comp-label')!;
+      const compRange = root.querySelector<HTMLInputElement>('.ai-comp-range')!;
+      const compTokens = root.querySelector<HTMLElement>('.ai-comp-tokens')!;
+      const compChipsWrap = root.querySelector<HTMLElement>('.ai-comp-chips')!;
+
+      const advSummaryPill = root.querySelector<HTMLElement>('.ai-adv-summary-pill')!;
+      const cacheLabel = root.querySelector<HTMLElement>('.ai-cache-label')!;
+      const cacheRange = root.querySelector<HTMLInputElement>('.ai-cache-range')!;
+      const fxLabel = root.querySelector<HTMLElement>('.ai-fx-label')!;
+      const fxRange = root.querySelector<HTMLInputElement>('.ai-fx-range')!;
+
+      const vatChk = root.querySelector<HTMLInputElement>('.ai-vat-chk')!;
+      const ttlChk = root.querySelector<HTMLInputElement>('.ai-ttl-chk')!;
+      const cliffChk = root.querySelector<HTMLInputElement>('.ai-cliff-chk')!;
+      const cliffStatus = root.querySelector<HTMLElement>('.ai-cliff-status')!;
+
+      // Outputs
+      const verdictSub = root.querySelector<HTMLElement>('.ai-verdict-sub')!;
+      const verdictTitle = root.querySelector<HTMLElement>('.ai-verdict-title')!;
+      const verdictBadge = root.querySelector<HTMLElement>('.ai-verdict-badge')!;
+      const verdictDesc = root.querySelector<HTMLElement>('.ai-verdict-desc')!;
+
+      const kpiApiMain = root.querySelector<HTMLElement>('.ai-kpi-api-main')!;
+      const kpiApiSub = root.querySelector<HTMLElement>('.ai-kpi-api-sub')!;
+      const kpiSubLabel = root.querySelector<HTMLElement>('.ai-kpi-sub-label')!;
+      const kpiSubMain = root.querySelector<HTMLElement>('.ai-kpi-sub-main')!;
+      const kpiSubDetail = root.querySelector<HTMLElement>('.ai-kpi-sub-detail')!;
+      const kpiBeMain = root.querySelector<HTMLElement>('.ai-kpi-be-main')!;
+      const kpiBeSub = root.querySelector<HTMLElement>('.ai-kpi-be-sub')!;
+      const kpiRecMain = root.querySelector<HTMLElement>('.ai-kpi-rec-main')!;
+      const kpiRecSub = root.querySelector<HTMLElement>('.ai-kpi-rec-sub')!;
+
+      // SVG Chart
+      const chartCaption = root.querySelector<HTMLElement>('.ai-chart-caption')!;
+      const legend100 = root.querySelector<HTMLElement>('.ai-legend-100')!;
+      const legend200 = root.querySelector<HTMLElement>('.ai-legend-200')!;
+      const svgEl = root.querySelector<SVGSVGElement>('.ai-svg-chart')!;
+      const svgGrid = root.querySelector<SVGGElement>('.ai-svg-grid')!;
+      const svgSub20 = root.querySelector<SVGLineElement>('.ai-svg-sub20')!;
+      const svgSub100 = root.querySelector<SVGLineElement>('.ai-svg-sub100')!;
+      const svgSub200 = root.querySelector<SVGLineElement>('.ai-svg-sub200')!;
+      const svgUncached = root.querySelector<SVGLineElement>('.ai-svg-uncached')!;
+      const svgCached = root.querySelector<SVGLineElement>('.ai-svg-cached')!;
+      const svgUserVline = root.querySelector<SVGLineElement>('.ai-svg-user-vline')!;
+      const svgHoverVline = root.querySelector<SVGLineElement>('.ai-svg-hover-vline')!;
+      const svgMarkers = root.querySelector<SVGGElement>('.ai-svg-markers')!;
+      const svgLabels = root.querySelector<SVGGElement>('.ai-svg-labels')!;
+      const svgHitrect = root.querySelector<SVGRectElement>('.ai-svg-hitrect')!;
+
+      function applyPresetDefaults(pKey: PresetKey) {
+        const cfg = PRESETS[pKey];
+        dailyRange.max = String(cfg.dailyMax);
+        dailyRange.value = String(cfg.defaultDaily);
+        daysRange.value = String(cfg.defaultDays);
+        compRange.min = String(cfg.compMin);
+        compRange.max = String(cfg.compMax);
+        compRange.value = String(cfg.defaultComp);
+        cacheRange.value = String(cfg.defaultCachePct);
+
+        dailyTitle.textContent = cfg.dailyTitle;
+        compTitle.textContent = cfg.compTitle;
+
+        dailyChipsWrap.innerHTML = cfg.dailyChips
+          .map(
+            (c) =>
+              `<button type="button" data-daily="${c.val}" class="ai-daily-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">${c.label}</button>`,
+          )
+          .join('');
+
+        compChipsWrap.innerHTML = cfg.compChips
+          .map(
+            (c) =>
+              `<button type="button" data-comp="${c.val}" class="ai-comp-chip rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">${c.label}</button>`,
+          )
+          .join('');
+
+        dailyChipsWrap.querySelectorAll<HTMLButtonElement>('.ai-daily-chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            hoveredX = null;
+            dailyRange.value = btn.dataset.daily || String(cfg.defaultDaily);
+            render();
+          });
+        });
+
+        compChipsWrap.querySelectorAll<HTMLButtonElement>('.ai-comp-chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            hoveredX = null;
+            compRange.value = btn.dataset.comp || String(cfg.defaultComp);
+            render();
+          });
+        });
+      }
+
+      let latestState = {
+        billedCachedPerTask: 0,
+        billedUncachedPerTask: 0,
+        billedSub20: 20,
+        billedSub100: 100,
+        monthlyTasks: 60,
+        maxX: 90,
+        unitWord: '건',
+      };
+
+      function updateChartCaption(xCount: number, isHover: boolean) {
+        const s = latestState;
+        const apiAtX = xCount * s.billedCachedPerTask;
+        const uncachedAtX = xCount * s.billedUncachedPerTask;
+        const prefix = isHover ? `[비교 지점: 월 ${xCount}${s.unitWord}]` : `[내 사용량: 월 ${xCount}${s.unitWord}]`;
+        chartCaption.textContent = `${prefix} 캐시 적용 API ${fmtUsd(apiAtX)} · 캐시 미적용 ${fmtUsd(uncachedAtX)} · $20 구독 ${fmtUsd(s.billedSub20)} · $100 구독 ${fmtUsd(s.billedSub100)}`;
+      }
+
+      function render() {
+        // Sync active button classes
+        presetBtns.forEach((btn) => {
+          const active = btn.dataset.preset === currentPreset;
+          btn.setAttribute('aria-selected', String(active));
+          btn.className = active
+            ? 'ai-preset-btn rounded-lg border border-primary bg-primary/10 px-3 py-2.5 text-left transition cursor-pointer'
+            : 'ai-preset-btn rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-left transition cursor-pointer hover:bg-muted/70';
+        });
+
+        modelBtns.forEach((btn) => {
+          const active = btn.dataset.model === currentModelId;
+          btn.setAttribute('aria-checked', String(active));
+          btn.className = active
+            ? 'ai-model-btn rounded-lg border border-primary bg-primary/10 p-2.5 text-left transition cursor-pointer shadow-xs'
+            : 'ai-model-btn rounded-lg border border-border bg-muted/30 p-2.5 text-left transition cursor-pointer hover:bg-muted/60';
+        });
+
+        const cfg = PRESETS[currentPreset];
+        const model = MODELS[currentModelId];
+        const subGroup = SUB_TIERS[model.vendor];
+
+        const dailyCount = Math.max(1, parseInt(dailyRange.value, 10) || cfg.defaultDaily);
+        const daysCount = Math.max(1, Math.min(30, parseInt(daysRange.value, 10) || cfg.defaultDays));
+        const compVal = Math.max(cfg.compMin, Math.min(cfg.compMax, parseInt(compRange.value, 10) || cfg.defaultComp));
+        const cachePct = Math.max(0, Math.min(95, parseFloat(cacheRange.value) || 0));
+        const fx = Math.max(1000, parseInt(fxRange.value, 10) || 1400);
+
+        const vatActive = vatChk.checked;
+        const ttlActive = ttlChk.checked;
+        const cliffActive = cliffChk.checked;
+        const billingMult = vatActive ? 1.1125 : 1.0;
+
+        const monthlyTasks = dailyCount * daysCount;
+
+        // Labels update
+        dailyLabel.textContent = `${dailyCount}${cfg.unitWord} / 일`;
+        daysLabel.textContent = `${daysCount}일 / 월 (총 ${monthlyTasks}${cfg.unitWord})`;
+        compLabel.textContent = currentPreset === 'chat' ? `${compVal}배 규모` : `${compVal}회 루프`;
+        cacheLabel.textContent = `${cachePct % 1 === 0 ? cachePct.toFixed(0) : cachePct.toFixed(1)}%`;
+        fxLabel.textContent = `${fx.toLocaleString('ko-KR')}원 / $`;
+
+        const pillParts = [
+          `캐시 ${cachePct % 1 === 0 ? cachePct.toFixed(0) : cachePct.toFixed(1)}%`,
+          `${fx.toLocaleString('ko-KR')}원/$`,
+          vatActive ? '부가세·수수료 포함' : '사업자 면세·원가',
+        ];
+        if (ttlActive) pillParts.push('TTL 페널티');
+        if (cliffActive) pillParts.push('>272K 장문');
+        advSummaryPill.textContent = `${pillParts.join(' · ')} ▾`;
+
+        if (cliffActive) {
+          cliffStatus.textContent = model.has272kCliff
+            ? '⚠️ GPT-6 >272K 할증 발동 중! (입력 2배 · 출력 1.5배 적용)'
+            : '✓ 선택 모델은 1M 평탄 요금제 (단가 할증 0%, 280K+ 컨텍스트 분량만 반영)';
+          cliffStatus.className = model.has272kCliff
+            ? 'ai-cliff-status font-semibold text-amber-600 dark:text-amber-400'
+            : 'ai-cliff-status font-semibold text-emerald-600 dark:text-emerald-400';
+        } else {
+          cliffStatus.textContent = '(GPT-6 입력 2배·출력 1.5배 할증 vs Claude·Gemini 1M 단일가 비교)';
+          cliffStatus.className = 'ai-cliff-status text-muted-foreground';
+        }
+
+        // Model Spec Bar
+        modelSubHint.textContent = model.subNote;
+        const writeRate = model.inputRate * model.cacheWriteMult;
+        const writeLabel =
+          model.cacheWriteMult > 1
+            ? `캐시 쓰기 $${writeRate.toFixed(2)}(${model.cacheWriteMult}×)`
+            : `캐시 쓰기 할증 없음($${writeRate.toFixed(2)})`;
+        modelSpecBar.innerHTML = `
+          <span>입력 <strong>$${model.inputRate.toFixed(2)}</strong> · ${writeLabel} · 캐시 읽기 <strong>$${model.cacheReadRate}</strong> · 출력 <strong>$${model.outputRate.toFixed(2)}</strong> / 1M</span>
+          <span>${model.cliffNote}</span>
+        `;
+
+        // Calculate costs
+        const { rawCached, rawUncached, totalInputTok, outputTok } = calcTaskCostUsd(
+          currentPreset,
+          compVal,
+          cachePct,
+          model,
+          ttlActive,
+          cliffActive,
+        );
+
+        compTokens.textContent = `1회 누적 ${fmtTokens(totalInputTok)} 입 · ${fmtTokens(outputTok)} 출`;
+
+        const billedCachedPerTask = rawCached * billingMult;
+        const billedUncachedPerTask = rawUncached * billingMult;
+
+        const rawMonthlyApi = rawCached * monthlyTasks;
+        const billedMonthlyApi = billedCachedPerTask * monthlyTasks;
+        const billedMonthlyUncached = billedUncachedPerTask * monthlyTasks;
+        const savedByCache = Math.max(0, billedMonthlyUncached - billedMonthlyApi);
+
+        const billedSub20 = subGroup.tier20Price * billingMult;
+        const billedSub100 = subGroup.tier100Price * billingMult;
+        const billedSub200 = subGroup.tier200Price * billingMult;
+
+        // Break-even counts (invariant to billingMult since both sides scale equally)
+        const be20Exact = rawCached > 0 ? subGroup.tier20Price / rawCached : Infinity;
+        const be100Exact = rawCached > 0 ? subGroup.tier100Price / rawCached : Infinity;
+        const be20Ceil = Math.ceil(be20Exact);
+        const be100Ceil = Math.ceil(be100Exact);
+        const be20Daily = be20Exact / daysCount;
+
+        // KPI 1: API Monthly
+        kpiApiMain.innerHTML = `${fmtUsd(billedMonthlyApi)} <span class="text-xs font-semibold text-muted-foreground">(${fmtKrw(billedMonthlyApi, fx)})</span>`;
+        kpiApiSub.textContent = `1${cfg.unitWord}당 ${fmtUsd(billedCachedPerTask)} (${fmtKrw(billedCachedPerTask, fx)}) · 세전 월 ${fmtUsd(rawMonthlyApi)}`;
+
+        // KPI 2: Subscription Fixed
+        kpiSubLabel.textContent = `${subGroup.vendorLabel} 월 고정비`;
+        kpiSubMain.innerHTML = `${fmtUsd(billedSub20)} <span class="text-xs font-semibold text-muted-foreground">· ${fmtUsd(billedSub100)}</span>`;
+        const short20 = subGroup.tier20Name.replace(/^(Claude|ChatGPT|Google AI)\s*/, '');
+        const short100 = subGroup.tier100Name.replace(/^(Claude|ChatGPT|Google AI)\s*/, '');
+        const short200 = subGroup.tier200Name.replace(/^(Claude|ChatGPT|Google AI)\s*/, '');
+        kpiSubDetail.textContent = `${short20} ${fmtKrwMan(billedSub20, fx)} · ${short100} ${fmtKrwMan(billedSub100, fx)} · ${short200} ${fmtUsd(billedSub200)}`;
+
+        // KPI 3: Break-Even
+        if (be20Ceil > 9999) {
+          kpiBeMain.textContent = '구독 손익분기 도달 불가';
+          kpiBeMain.className = 'ai-kpi-be-main mt-1 text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+          kpiBeSub.textContent = '초저가 API 구간으로 종량제가 상시 유리';
+        } else {
+          kpiBeMain.textContent = `월 ${be20Ceil.toLocaleString()}${cfg.unitWord} 이상 $20 구독 유리`;
+          kpiBeMain.className =
+            monthlyTasks >= be20Ceil
+              ? 'ai-kpi-be-main mt-1 text-base sm:text-lg font-extrabold text-amber-600 dark:text-amber-400'
+              : 'ai-kpi-be-main mt-1 text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+          kpiBeSub.textContent = `일 ${be20Daily < 10 ? be20Daily.toFixed(1) : Math.round(be20Daily)}${cfg.unitWord} · $100 구독 분기점: 월 ${be100Ceil.toLocaleString()}${cfg.unitWord}`;
+        }
+
+        // 3단 의사결정 배너 & KPI 4
+        verdictSub.textContent = `월 ${monthlyTasks.toLocaleString()}${cfg.unitWord} (${daysCount}일 × 일 ${dailyCount}${cfg.unitWord}) · ${model.name} 기준`;
+
+        if (model.vendor === 'deepseek') {
+          const diffVs20 = billedSub20 - billedMonthlyApi;
+          if (diffVs20 > 0) {
+            verdictTitle.textContent = '초저가 오픈웨이트 API 압승: 정액 구독 불필요';
+            verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+            verdictBadge.textContent = `$20 구독 대비 월 ${fmtUsd(diffVs20)} (${fmtKrw(diffVs20, fx)}) 절약`;
+            verdictBadge.className = 'ai-verdict-badge rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300';
+          } else {
+            verdictTitle.textContent = '대규모 스웜 물량 구간: 주말·오프피크 50% 할인 활용 권장';
+            verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-cyan-600 dark:text-cyan-400';
+            verdictBadge.textContent = `주말 반값 적용 시 약 ${fmtUsd(billedMonthlyApi * 0.5)} 수준`;
+            verdictBadge.className = 'ai-verdict-badge rounded-md bg-cyan-500/15 px-2 py-0.5 text-xs font-bold text-cyan-700 dark:text-cyan-300';
+          }
+          verdictDesc.textContent =
+            'DeepSeek V4.1 Flash는 별도 월정액 없이 Anthropic 호환 엔드포인트로 즉시 연결됩니다. UTC 오프피크 및 주말 전체 시간대에는 단가가 절반($0.15/$0.60)으로 내려가 대량 테스트·문서화 배치 워커로 압도적입니다.';
+          kpiRecMain.textContent = 'API 직결 (오프피크 병행)';
+          kpiRecMain.className = 'ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+        } else if (rawMonthlyApi < subGroup.tier20Price * 0.7) {
+          // 구간 A: API 압승 (< ~$14)
+          const saveUsd = billedSub20 - billedMonthlyApi;
+          verdictTitle.textContent = '구간 A (API 종량제 압승): 구독 해지 및 BYOK 전환 추천';
+          verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+          verdictBadge.textContent = `${subGroup.tier20Name} 대비 월 ${fmtUsd(saveUsd)} (${fmtKrw(saveUsd, fx)}) 절약`;
+          verdictBadge.className = 'ai-verdict-badge rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300';
+          verdictDesc.textContent = model.hasFreeTier
+            ? '현재 사용량에서는 $20 정액제가 고정비 낭비입니다. 특히 Gemini 4 Hydrogen은 무료 티어도 열려 있어 개인 학습·비보안 프로젝트는 0원으로 시작할 수 있습니다(단, 사내 코드는 반드시 유료 API 티어 연결).'
+            : `월 예상 API 비용이 ${fmtUsd(billedMonthlyApi)}에 불과해 정액 구독료의 절반에도 못 미칩니다. 안 쓰는 주간에도 빠져나가는 구독을 정리하고 OpenRouter(BYOK 수수료 0%)나 공식 API 키를 연결해 쓴 만큼만 내세요.`;
+          kpiRecMain.textContent = 'API 종량제 (BYOK)';
+          kpiRecMain.className = 'ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400';
+        } else if (rawMonthlyApi <= subGroup.tier20Price * 1.4) {
+          // 구간 B: 경계 구간 ($14 ~ $28)
+          const diff = Math.abs(billedMonthlyApi - billedSub20);
+          verdictTitle.textContent = `구간 B (손익분기 경계선): 심리적 정액 해방감 vs 5시간 쿼터 제한`;
+          verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-amber-600 dark:text-amber-400';
+          verdictBadge.textContent = `구독제와 월 차액 ${fmtUsd(diff)} (${fmtKrw(diff, fx)}) 이내`;
+          verdictBadge.className = 'ai-verdict-badge rounded-md bg-amber-500/15 px-2 py-0.5 text-xs font-bold text-amber-700 dark:text-amber-300';
+          verdictDesc.textContent =
+            '금전적 유불리 차이가 커피 한두 잔 값 이내인 팽팽한 구간입니다. 프롬프트 던질 때마다 요금 미터기 눈치 보는 스트레스가 싫다면 $20 구독이 낫고, 특정 마감일에 몰아서 작업하다 5시간 롤링 쿼터 락아웃에 막히는 게 싫다면 API 종량제가 유리합니다.';
+          kpiRecMain.textContent = rawMonthlyApi <= subGroup.tier20Price ? '성향별 선택 (경계 구간)' : `${subGroup.tier20Name} ($20) 우위`;
+          kpiRecMain.className = 'ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-amber-600 dark:text-amber-400';
+        } else {
+          // 구간 C: 헤비 에이전트 구간 (> $28)
+          if (rawMonthlyApi < subGroup.tier100Price * 0.95) {
+            const saveVs20 = billedMonthlyApi - billedSub20;
+            verdictTitle.textContent = `구간 C (에이전트 본전 돌파): ${subGroup.tier20Name} + 경량 API 하이브리드 추천`;
+            verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-cyan-600 dark:text-cyan-400';
+            verdictBadge.textContent = `순수 API 대비 최대 ${fmtUsd(saveVs20)} 방어 구간`;
+            verdictBadge.className = 'ai-verdict-badge rounded-md bg-cyan-500/15 px-2 py-0.5 text-xs font-bold text-cyan-700 dark:text-cyan-300';
+            verdictDesc.textContent =
+              model.id === 'claude-fable-5-2'
+                ? '주의: Fable 5.2는 단가가 무거워 $20 Pro 구독에서는 몇 번만 호출해도 5시간 쿼터가 바닥납니다. 일상 구현은 Opus 5.5로 내리고, Fable 5.2를 주력으로 쓰려면 $100 Max 이상 티어가 필수입니다.'
+                : `순수 API로만 쓰면 월 ${fmtUsd(billedMonthlyApi)}가 청구됩니다. $20 구독 1개를 베이스캠프로 깔고, 바쁜 오후 5시간 쿼터에 걸릴 때나 단순 파일 탐색 루프만 경량 API(Hydrogen · GPT-6.1 Sol · DeepSeek)로 우회하면 $100 티어로 올리지 않고도 쾌적하게 방어됩니다.`;
+            kpiRecMain.textContent = '$20 구독 + 보조 API 하이브리드';
+            kpiRecMain.className = 'ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-cyan-600 dark:text-cyan-400';
+          } else {
+            const bestSubPrice = rawMonthlyApi >= subGroup.tier200Price * 1.15 ? billedSub200 : billedSub100;
+            const bestSubName = rawMonthlyApi >= subGroup.tier200Price * 1.15 ? subGroup.tier200Name : subGroup.tier100Name;
+            const saveHeavy = Math.max(0, billedMonthlyApi - bestSubPrice);
+            verdictTitle.textContent = `구간 C (헤비 에이전트 경보): 순수 API 요금 폭탄 주의 → ${bestSubName} 추천`;
+            verdictTitle.className = 'ai-verdict-title text-base sm:text-lg font-extrabold text-violet-600 dark:text-violet-400';
+            verdictBadge.textContent =
+              saveHeavy > 0
+                ? `${bestSubName} 전환 시 월 ${fmtUsd(saveHeavy)} (${fmtKrwMan(saveHeavy, fx)}) 절약`
+                : `${bestSubName} 손익분기 정면 돌파`;
+            verdictBadge.className = 'ai-verdict-badge rounded-md bg-violet-500/15 px-2 py-0.5 text-xs font-bold text-violet-700 dark:text-violet-300';
+            verdictDesc.textContent = `터미널 코딩 에이전트를 매일 본격 가동하는 전형적인 헤비 워크로드입니다. 순수 API 사용 시 월 ${fmtUsd(billedMonthlyApi)}(${fmtKrwMan(billedMonthlyApi, fx)})가 빠져나가므로 ${bestSubName} 정액제로 상한선을 잠그고, 병렬 스웜 워커는 초저가 API로 분리하세요.`;
+            kpiRecMain.textContent = `${bestSubName} 정액제`;
+            kpiRecMain.className = 'ai-kpi-rec-main mt-1 text-base sm:text-lg font-extrabold text-violet-600 dark:text-violet-400';
+          }
+        }
+
+        kpiRecSub.textContent =
+          savedByCache >= 1
+            ? `프롬프트 캐싱이 월 ${fmtUsd(savedByCache)} 추가 폭탄 방어 중`
+            : `캐시 절감액 월 ${fmtUsd(savedByCache)} 반영`;
+
+        // ==================== SVG Chart Rendering ====================
+        const padL = 58;
+        const padR = 24;
+        const padT = 18;
+        const padB = 38;
+        const plotW = 680 - padL - padR; // 598
+        const plotH = 250 - padT - padB; // 194
+
+        // X-axis range: ensure user's monthlyTasks and $20 break-even (if reasonable) are nicely visible
+        let targetMaxX = Math.max(monthlyTasks * 1.45, currentPreset === 'chat' ? 300 : 40);
+        if (be20Exact < monthlyTasks * 2.5 && Number.isFinite(be20Exact)) {
+          targetMaxX = Math.max(targetMaxX, be20Exact * 1.35);
+        }
+        const stepUnit = targetMaxX <= 50 ? 10 : targetMaxX <= 150 ? 20 : targetMaxX <= 400 ? 50 : 100;
+        const maxX = Math.ceil(targetMaxX / stepUnit) * stepUnit;
+
+        const apiAtMaxX = maxX * billedCachedPerTask;
+        const showSub100 = apiAtMaxX >= billedSub100 * 0.55 || billedMonthlyApi >= billedSub100 * 0.5;
+        const showSub200 = apiAtMaxX >= billedSub200 * 0.7 || billedMonthlyApi >= billedSub200 * 0.7;
+
+        legend100.classList.toggle('hidden', !showSub100);
+        legend200.classList.toggle('hidden', !showSub200);
+
+        let rawMaxY = Math.max(
+          billedSub20 * 1.55,
+          billedMonthlyApi * 1.28,
+          apiAtMaxX * 1.08,
+          showSub100 ? billedSub100 * 1.22 : 0,
+          showSub200 ? billedSub200 * 1.15 : 0,
+        );
+        const yStep =
+          rawMaxY <= 35 ? 10 : rawMaxY <= 80 ? 20 : rawMaxY <= 200 ? 50 : rawMaxY <= 500 ? 100 : 200;
+        const maxY = Math.ceil(rawMaxY / yStep) * yStep;
+
+        const xAt = (cnt: number) => padL + (cnt / maxX) * plotW;
+        const yAt = (usd: number) => padT + plotH - (usd / maxY) * plotH;
+
+        // Gridlines
+        let gridHtml = '';
+        const yTickCount = Math.min(5, Math.max(3, Math.round(maxY / yStep)));
+        for (let i = 0; i <= yTickCount; i++) {
+          const val = (maxY * i) / yTickCount;
+          const y = yAt(val).toFixed(1);
+          gridHtml += `<line x1="${padL}" y1="${y}" x2="${680 - padR}" y2="${y}" stroke="currentColor" stroke-opacity="0.1" stroke-width="1" />`;
+          gridHtml += `<text x="${padL - 7}" y="${Number(y) + 4}" text-anchor="end" fill="currentColor" fill-opacity="0.6" font-size="11">$${Math.round(val)}</text>`;
+        }
+
+        const xTicks = 5;
+        for (let i = 0; i <= xTicks; i++) {
+          const cnt = Math.round((maxX * i) / xTicks);
+          const x = xAt(cnt).toFixed(1);
+          gridHtml += `<text x="${x}" y="${250 - 11}" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="11">${cnt}${cfg.unitWord}</text>`;
+        }
+        svgGrid.innerHTML = gridHtml;
+
+        // Horizontal subscription lines
+        const y20 = yAt(billedSub20).toFixed(1);
+        svgSub20.setAttribute('y1', y20);
+        svgSub20.setAttribute('y2', y20);
+
+        if (showSub100) {
+          const y100 = yAt(billedSub100).toFixed(1);
+          svgSub100.setAttribute('y1', y100);
+          svgSub100.setAttribute('y2', y100);
+          svgSub100.classList.remove('hidden');
+        } else {
+          svgSub100.classList.add('hidden');
+        }
+
+        if (showSub200) {
+          const y200 = yAt(billedSub200).toFixed(1);
+          svgSub200.setAttribute('y1', y200);
+          svgSub200.setAttribute('y2', y200);
+          svgSub200.classList.remove('hidden');
+        } else {
+          svgSub200.classList.add('hidden');
+        }
+
+        // Sloped API lines from (0, 0) to (maxX, costAtMaxX)
+        const yZero = yAt(0).toFixed(1);
+        svgUncached.setAttribute('x1', String(padL));
+        svgUncached.setAttribute('y1', yZero);
+        svgUncached.setAttribute('x2', String(680 - padR));
+        svgUncached.setAttribute('y2', yAt(maxX * billedUncachedPerTask).toFixed(1));
+
+        svgCached.setAttribute('x1', String(padL));
+        svgCached.setAttribute('y1', yZero);
+        svgCached.setAttribute('x2', String(680 - padR));
+        svgCached.setAttribute('y2', yAt(apiAtMaxX).toFixed(1));
+
+        // User position vertical line & markers
+        const ux = xAt(monthlyTasks).toFixed(1);
+        const uy = yAt(billedMonthlyApi).toFixed(1);
+        svgUserVline.setAttribute('x1', ux);
+        svgUserVline.setAttribute('x2', ux);
+
+        let markersHtml = '';
+        let labelsHtml = '';
+
+        // Right-aligned tier labels inside plot (guard against tight vertical overlap at extreme maxY)
+        const y20Num = Number(y20);
+        const y100Num = Number(yAt(billedSub100));
+        const y200Num = Number(yAt(billedSub200));
+
+        if (!showSub100 || y20Num - y100Num >= 14) {
+          labelsHtml += `<text x="${680 - padR - 4}" y="${y20Num - 5}" text-anchor="end" fill="#f59e0b" font-size="10.5" font-weight="700">$20 구독 (${fmtUsd(billedSub20)})</text>`;
+        }
+        if (showSub100 && y100Num > padT + 12 && (!showSub200 || y100Num - y200Num >= 14)) {
+          labelsHtml += `<text x="${680 - padR - 4}" y="${y100Num - 5}" text-anchor="end" fill="#8b5cf6" font-size="10.5" font-weight="700">$100 구독 (${fmtUsd(billedSub100)})</text>`;
+        }
+        if (showSub200 && y200Num > padT + 12) {
+          labelsHtml += `<text x="${680 - padR - 4}" y="${y200Num - 5}" text-anchor="end" fill="#f43f5e" font-size="10.5" font-weight="700">$200 구독 (${fmtUsd(billedSub200)})</text>`;
+        }
+
+        // Break-even intersection dots
+        if (be20Exact > 0 && be20Exact <= maxX) {
+          const bx20 = xAt(be20Exact).toFixed(1);
+          markersHtml += `<circle cx="${bx20}" cy="${y20}" r="4.5" fill="#f59e0b" stroke="hsl(var(--card))" stroke-width="1.5" />`;
+          if (!showSub100 || y20Num - y100Num >= 12) {
+            const labelAnchor = be20Exact > maxX * 0.8 ? 'end' : 'start';
+            const labelDx = be20Exact > maxX * 0.8 ? -6 : 6;
+            const labelY = Math.min(padT + plotH - 4, y20Num + 13);
+            labelsHtml += `<text x="${Number(bx20) + labelDx}" y="${labelY}" text-anchor="${labelAnchor}" fill="#f59e0b" font-size="10" font-weight="700">BE ${be20Ceil}${cfg.unitWord}</text>`;
+          }
+        }
+
+        if (showSub100 && be100Exact > 0 && be100Exact <= maxX) {
+          const bx100 = xAt(be100Exact).toFixed(1);
+          const by100 = y100Num.toFixed(1);
+          markersHtml += `<circle cx="${bx100}" cy="${by100}" r="4.5" fill="#8b5cf6" stroke="hsl(var(--card))" stroke-width="1.5" />`;
+          const labelAnchor = be100Exact > maxX * 0.8 ? 'end' : 'start';
+          const labelDx = be100Exact > maxX * 0.8 ? -6 : 6;
+          const labelY = Math.min(padT + plotH - 4, y100Num + 13);
+          labelsHtml += `<text x="${Number(bx100) + labelDx}" y="${labelY}" text-anchor="${labelAnchor}" fill="#8b5cf6" font-size="10" font-weight="700">BE ${be100Ceil}${cfg.unitWord}</text>`;
+        }
+
+        // Glowing user marker
+        markersHtml += `<circle cx="${ux}" cy="${uy}" r="9" fill="#06b6d4" fill-opacity="0.22" />`;
+        markersHtml += `<circle cx="${ux}" cy="${uy}" r="5" fill="#06b6d4" stroke="#ffffff" stroke-width="1.75" />`;
+
+        if (Number(uy) >= padT + 14) {
+          const uAnchor = monthlyTasks > maxX * 0.78 ? 'end' : monthlyTasks < maxX * 0.15 ? 'start' : 'middle';
+          const uDx = uAnchor === 'end' ? -8 : uAnchor === 'start' ? 8 : 0;
+          labelsHtml += `<text x="${Number(ux) + uDx}" y="${Math.max(padT + 12, Number(uy) - 11)}" text-anchor="${uAnchor}" fill="#06b6d4" font-size="11" font-weight="800">현재 ${monthlyTasks}${cfg.unitWord} (${fmtUsd(billedMonthlyApi)})</text>`;
+        }
+
+        svgMarkers.innerHTML = markersHtml;
+        svgLabels.innerHTML = labelsHtml;
+
+        latestState = {
+          billedCachedPerTask,
+          billedUncachedPerTask,
+          billedSub20,
+          billedSub100,
+          monthlyTasks,
+          maxX,
+          unitWord: cfg.unitWord,
+        };
+
+        if (hoveredX !== null) {
+          const clamped = Math.min(maxX, Math.max(0, hoveredX));
+          const hx = xAt(clamped).toFixed(1);
+          svgHoverVline.setAttribute('x1', hx);
+          svgHoverVline.setAttribute('x2', hx);
+          svgHoverVline.classList.remove('hidden');
+          updateChartCaption(clamped, true);
+        } else {
+          svgHoverVline.classList.add('hidden');
+          updateChartCaption(monthlyTasks, false);
+        }
+      }
+
+      // Event listeners
+      presetBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const next = (btn.dataset.preset as PresetKey) || 'agent';
+          currentPreset = next;
+          hoveredX = null;
+          applyPresetDefaults(currentPreset);
+          render();
+        });
+      });
+
+      modelBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const next = btn.dataset.model || 'claude-opus-5-5';
+          if (MODELS[next]) {
+            currentModelId = next;
+            hoveredX = null;
+            render();
+          }
+        });
+      });
+
+      [dailyRange, daysRange, compRange, cacheRange, fxRange].forEach((inp) => {
+        inp.addEventListener('input', () => {
+          hoveredX = null;
+          render();
+        });
+      });
+
+      [vatChk, ttlChk, cliffChk].forEach((chk) => {
+        chk.addEventListener('change', () => {
+          hoveredX = null;
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ai-days-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          hoveredX = null;
+          daysRange.value = btn.dataset.days || '20';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ai-cache-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          hoveredX = null;
+          cacheRange.value = btn.dataset.cache || '90';
+          render();
+        });
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('.ai-fx-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          hoveredX = null;
+          fxRange.value = btn.dataset.fx || '1400';
+          render();
+        });
+      });
+
+      // SVG Pointer Interaction
+      const handlePointer = (clientX: number) => {
+        const rect = svgEl.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        const svgX = ((clientX - rect.left) / rect.width) * 680;
+        const padL = 58;
+        const plotW = 598;
+        const ratio = Math.max(0, Math.min(1, (svgX - padL) / plotW));
+        hoveredX = Math.round(ratio * latestState.maxX);
+        const hx = (padL + (hoveredX / latestState.maxX) * plotW).toFixed(1);
+        svgHoverVline.setAttribute('x1', hx);
+        svgHoverVline.setAttribute('x2', hx);
+        svgHoverVline.classList.remove('hidden');
+        updateChartCaption(hoveredX, true);
+      };
+
+      svgHitrect.addEventListener('pointermove', (e) => handlePointer(e.clientX));
+      svgHitrect.addEventListener('pointerdown', (e) => handlePointer(e.clientX));
+      svgEl.addEventListener('pointerleave', () => {
+        hoveredX = null;
+        svgHoverVline.classList.add('hidden');
+        updateChartCaption(latestState.monthlyTasks, false);
+      });
+
+      applyPresetDefaults(currentPreset);
+      render();
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initAiCostCalculators)
+    : initAiCostCalculators();
+</script>

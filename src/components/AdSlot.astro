@@ -3,9 +3,10 @@ interface Props {
   slot?: 'inArticle' | 'display';
   /** Overrides the slot id from env. Rarely needed. */
   adSlot?: string;
+  class?: string;
 }
 
-const { slot: type = 'display', adSlot } = Astro.props;
+const { slot: type = 'display', adSlot, class: className } = Astro.props;
 
 const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 const isInArticle = type === 'inArticle';
@@ -22,7 +23,7 @@ const slotId =
 if (!client || !slotId) return;
 ---
 
-<div class:list={['ad-slot not-prose', isInArticle ? 'my-8' : 'my-6']}>
+<div class:list={['ad-slot not-prose', isInArticle ? 'my-8' : 'my-6', className]}>
   <ins
     class="adsbygoogle"
     style="display:block"
@@ -30,6 +31,6 @@ if (!client || !slotId) return;
     data-ad-slot={slotId}
     data-ad-format={isInArticle ? 'fluid' : 'auto'}
     data-ad-layout={isInArticle ? 'in-article' : undefined}
-    data-full-width-responsive="true"
+    data-full-width-responsive={isInArticle ? undefined : 'true'}
   />
 </div>

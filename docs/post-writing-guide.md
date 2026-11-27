@@ -358,5 +358,6 @@ import AdSlot from '@/components/AdSlot.astro';
 |------|--------------|
 | Homebrew 설치 | `/tools/install-homebrew-2026` (`src/content/tools/ko/2026/install-homebrew-2026.md`) — Apple Silicon(`/opt/homebrew`)/Intel(`/usr/local`) 경로 차이, PATH(`brew shellenv`) 설정 포함. `brew install ...`로 패키지 설치가 필요한 포스트를 쓸 때는 설치 과정을 다시 쓰지 말고 이 글을 링크로 안내할 것 |
 | SEC 13F 공시 개념·일정·사각지대 | `/money/13f-sec-top10-investors-guide` (`src/content/money/ko/2026/13f-sec-top10-investors-guide.mdx`) — 13F 기본 개념, 연 4회 제출 마감일, 45일 시차 및 옵션·비미국 주식 착시, 장기투자 대가 TOP 10 총정리. 분기별 13F 정기 연재(`series: "월가 전설들의 13F 투자 일지"`, 슬러그 `13f-YYYY-qN-...`)를 쓸 때는 13F 기본 설명을 중복 서술하지 말고 이 글을 링크로 참조할 것 |
+| AeroLOPA 도면 판독법·5대 함정석·비상구 좌석 규정 | `/culture/airplane-seat-selection-aerolopa-guide` (`src/content/culture/ko/2026/airplane-seat-selection-aerolopa-guide.mdx`) — SeatGuru 종료 이후 AeroLOPA 창문 슬릿·날개·서브타입 확인법, 공조 덕트 무창석·2연속 비상구 등받이 고정 등 공통 함정석 원리, 출발 48시간 전 온라인 체크인 무료 전환 범위 및 비상구 대면 심사 규정. 항공사·기종별 실전 좌석 가이드(`series: "비행기 좌석 완전 가이드"`)를 쓸 때는 공통 도면 판독법과 법적 규정을 중복 서술하지 말고 이 글을 링크로 참조할 것 |
 
 새로 이런 "레퍼런스 포스트"가 생기면 이 표에 추가한다.

@@ -275,6 +275,9 @@ const breadcrumbJsonLd = {
         </div>
       </div>
 
+      <!-- Ad: below the article, before related/series navigation -->
+      <AdSlot slot="display" class="mt-10" />
+
       <!-- Non-intrusive inline notice when an ad blocker is active -->
       <AdBlockNotice lang={lang} />
 
@@ -313,9 +316,6 @@ const breadcrumbJsonLd = {
           )}
         </div>
       )}
-
-      <!-- Ad: after the internal links have had first claim on the click -->
-      <AdSlot slot="inArticle" />
 
       <!-- Comments -->
       <Comments client:visible lang={lang} />

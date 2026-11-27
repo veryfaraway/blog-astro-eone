@@ -328,6 +328,24 @@ import EvHybridCalculator from '@/components/EvHybridCalculator.astro';
 
 ---
 
+#### `AiCostCalculator.astro`
+
+2026년 12월 정규가 기준 주요 LLM·코딩 에이전트 모델 8종(`Claude Opus 5.5` · `Fable 5.2` · `Sonnet 5.5`, `GPT-6.1 Sol`, `Gemini 4 Neon` · `Carbon` · `Hydrogen`, `DeepSeek V4.1 Flash`)의 API 종량제 누적 비용(`O(K²)` 에이전트 툴 루프 및 프롬프트 캐싱 반영)과 3대 벤더 정액 구독제(`$20` · `$100` · `$200`)의 손익분기점을 실시간 시뮬레이션하는 인터랙티브 계산기 (`ai-subscription-vs-api-calculator.mdx`). 사용 스타일 프리셋 3종(웹 채팅·데일리 코딩 에이전트·멀티 에이전트 스웜), 한국 부가세(10%)+해외결제 수수료(1.25%)·5분 캐시 TTL 만료·272K 장문 할증 보정 체크박스, 반응형 SVG 손익분기 차트를 포함하며 다크모드에 자동 대응한다.
+
+```mdx
+import AiCostCalculator from '@/components/AiCostCalculator.astro';
+
+<AiCostCalculator />
+<AiCostCalculator defaultPreset="chat" defaultModel="gpt-6-1-sol" />
+```
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `defaultPreset` | `'chat' \| 'agent' \| 'swarm'` | `'agent'` | 초기 표시할 사용 스타일 프리셋 |
+| `defaultModel` | `string` | `'claude-opus-5-5'` | 초기 선택 모델 ID (`MODELS` 상수 키) |
+
+---
+
 #### `TmuxThemePreview.astro`
 
 tmux 대중 테마 TOP 5(`Catppuccin` v2 · `Tokyo Night` · `Dracula` · `Nord` · `Gruvbox`)와 플러그인 없는 순정 `.tmux.conf` 커스텀까지 총 6종의 터미널·상태바 색감과 설정 스니펫을 실시간 비교하는 인터랙티브 시뮬레이터. 한/영(`lang="ko" | "en"`) 다국어 라벨, 서브 플레이버 전환, 상태바 상·하단/구분자 모양 토글, Prefix 키 점등 시뮬레이션, 공식 Hex 스와치 복사 및 `.tmux.conf` 원클릭 복사를 지원한다 (`tmux-theme-top5.mdx`).
