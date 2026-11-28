@@ -28,19 +28,21 @@ function adNode(client, slot) {
   return {
     type: 'element',
     tagName: 'div',
-    properties: { className: ['ad-slot', 'not-prose', 'my-8'] },
+    properties: {
+      className: ['ad-slot', 'not-prose', 'w-full', 'my-8'],
+      dataPagefindIgnore: '',
+    },
     children: [
       {
         type: 'element',
         tagName: 'ins',
         properties: {
           className: ['adsbygoogle'],
-          style: 'display:block',
+          style: 'display:block; text-align:center;',
           dataAdClient: client,
           dataAdSlot: slot,
           dataAdFormat: 'fluid',
           dataAdLayout: 'in-article',
-          dataFullWidthResponsive: 'true',
         },
         children: [],
       },

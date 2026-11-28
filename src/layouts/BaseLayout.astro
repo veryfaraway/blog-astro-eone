@@ -264,12 +264,22 @@ const themeRuntime = {
           a slot it has claimed, so the guard keeps a second run from pushing twice.
         */}
         <script is:inline>
-          document.addEventListener('DOMContentLoaded', function () {
-            var slots = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])');
-            for (var i = 0; i < slots.length; i++) {
-              (window.adsbygoogle = window.adsbygoogle || []).push({});
+          (function () {
+            function initAds() {
+              var slots = document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])');
+              for (var i = 0; i < slots.length; i++) {
+                try {
+                  (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch {}
+              }
             }
-          });
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', initAds);
+            } else {
+              initAds();
+            }
+          })();
         </script>
       </>
     )}

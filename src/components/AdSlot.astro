@@ -1,4 +1,6 @@
 ---
+import { cn } from '../lib/utils';
+
 interface Props {
   slot?: 'inArticle' | 'display';
   /** Overrides the slot id from env. Rarely needed. */
@@ -23,10 +25,17 @@ const slotId =
 if (!client || !slotId) return;
 ---
 
-<div class:list={['ad-slot not-prose', isInArticle ? 'my-8' : 'my-6', className]}>
+<div
+  class={cn(
+    'ad-slot not-prose w-full',
+    isInArticle ? 'my-8' : 'my-6 max-w-[756px] mx-auto',
+    className
+  )}
+  data-pagefind-ignore
+>
   <ins
     class="adsbygoogle"
-    style="display:block"
+    style={isInArticle ? 'display:block; text-align:center;' : 'display:block'}
     data-ad-client={client}
     data-ad-slot={slotId}
     data-ad-format={isInArticle ? 'fluid' : 'auto'}
